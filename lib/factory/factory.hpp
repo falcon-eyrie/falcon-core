@@ -75,6 +75,23 @@ Base * createInstance( Args&& ...args ) {
     return new Derived( std::forward<Args>(args)... ) ;
 }
 
+
+template<class KEY, class BASE, class DERIVED, typename ...Args>
+class Registrar {
+public:
+    Registrar(const KEY & key);
+};
+
+template <class KEY, class BASE, class DERIVED, typename ...Args>
+Registrar<KEY, BASE, DERIVED, Args...>::Registrar(const KEY & key) {
+    ObjectFactory<BASE,KEY,Args...>::instance().registerClass(key, createInstance<BASE, DERIVED, Args...>);
+}
+
+#define FACTORYREGISTEROBJECT(BASE,DERIVED,...) \
+    namespace { \
+        static factory::Registrar<std::string,BASE, DERIVED, ##__VA_ARGS__> _##DERIVED( #DERIVED ); \
+    };
+
 } // namespace factory
 
 #endif // FACTORY_H

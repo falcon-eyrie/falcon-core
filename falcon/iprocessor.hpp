@@ -275,20 +275,6 @@ typedef std::map<std::string, std::pair< std::string, std::unique_ptr<IProcessor
 
 typedef factory::ObjectFactory<IProcessor, std::string> ProcessorFactory;
 
-template<class PROCESSOR>
-class ProcessorRegistrar {
-public:
-    ProcessorRegistrar(std::string name);
-};
-
-template <class PROCESSOR>
-ProcessorRegistrar<PROCESSOR>::ProcessorRegistrar(std::string name) {
-    ProcessorFactory::instance().registerClass( name, factory::createInstance<IProcessor, PROCESSOR> );
-}
-
-#define REGISTERPROCESSOR(PROCESSOR) \
-    namespace { \
-        static ProcessorRegistrar<PROCESSOR> _registrar( #PROCESSOR ); \
-    };
+#define REGISTERPROCESSOR(PROCESSOR) FACTORYREGISTEROBJECT(IProcessor,PROCESSOR)
 
 #endif
