@@ -95,7 +95,9 @@ public:
     std::vector<std::pair<std::string, std::shared_ptr<IState>>> LookUpStates(std::vector<std::string> state_addresses);
     
     void BuildSharedStates( const YAML::Node& node );
-
+    
+    void ConstructDevices( const YAML::Node& node );
+    
 protected:
     void CreateConnection( SlotAddress & out, SlotAddress & in );
 

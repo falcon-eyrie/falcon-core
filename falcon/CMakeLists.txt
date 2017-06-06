@@ -24,6 +24,7 @@ file(GLOB sources *.cpp)
 include_directories( "../lib" )
 include_directories(".")
 
+set( DEVICE_LIBS )
 set( DATATYPE_LIBS )
 set( PROCESSOR_LIBS )
 
@@ -49,6 +50,10 @@ if (COMPILE_EXTENSIONS)
         include_directories( ${FALCON_PATH}/lib )
       endif()
       
+      if (EXISTS ${FALCON_PATH}/devices)
+        include_directories( ${FALCON_PATH}/devices )
+      endif()
+      
       if (EXISTS ${FALCON_PATH}/datatypes)
         include_directories( ${FALCON_PATH}/datatypes )
       endif()
@@ -69,7 +74,42 @@ if (COMPILE_EXTENSIONS)
         endif()
       math(EXPR ITER "${ITER} + 1")
     endforeach()
+    
+    # next, let's add all devices
+    
+    foreach( FALCON_PATH ${REAL_FALCON_PATHS} )
       
+      if (EXISTS ${FALCON_PATH}/devices)
+        
+        MESSAGE( "Adding devices for extension: ${FALCON_PATH}" )
+        
+        SUBDIRLIST( DEVICES "${FALCON_PATH}/devices" )
+        
+        set(EXCLUDED_ITEMS "")
+        if (EXISTS ${FALCON_PATH}/devices/exclude.txt)
+          FILE(STRINGS ${FALCON_PATH}/devices/exclude.txt EXCLUDED_ITEMS)
+        endif()
+        
+        FOREACH( DEVICE ${DEVICES} )
+          LIST(FIND EXCLUDED_ITEMS ${DEVICE} DO_EXCLUDE)
+          if(DO_EXCLUDE GREATER -1)
+            MESSAGE( "Excluding device: ${DEVICE}")
+            continue()
+          else()
+            if( EXISTS "${FALCON_PATH}/devices/${DEVICE}/CMakeLists.txt" )
+              MESSAGE( "Adding device: ${DEVICE}" )
+              add_subdirectory(${FALCON_PATH}/devices/${DEVICE} ${CMAKE_CURRENT_BINARY_DIR}/devices/${DEVICE})
+              if( TARGET ${DEVICE} )
+                LIST( APPEND DEVICE_LIBS ${DEVICE} )
+              endif()
+            endif()
+          endif()
+        ENDFOREACH()
+        
+      endif()
+      
+    endforeach()
+    
     # next, let's add all datatypes
     
     foreach( FALCON_PATH ${REAL_FALCON_PATHS} )
@@ -164,7 +204,7 @@ target_link_libraries (falcon logging yaml-cpp zmq ${PLATFORM_LINK_LIBRARIES})
 # here we have to use --whole-archive linker option, otherwise the data type and processor libs are not
 # linked at all because none of their exported symbols are explicitly used in falcon. Same is true for (part of)
 # the disruptor and utilities libraries
-SET (WHOLELIBS -Wl,--whole-archive utilities disruptor ${DATATYPE_LIBS} ${PROCESSOR_LIBS} -Wl,--no-whole-archive)
+SET (WHOLELIBS -Wl,--whole-archive utilities disruptor ${DEVICE_LIBS} ${DATATYPE_LIBS} ${PROCESSOR_LIBS} -Wl,--no-whole-archive)
 target_link_libraries (falcon ${WHOLELIBS} )
 
 install(TARGETS falcon RUNTIME DESTINATION bin)

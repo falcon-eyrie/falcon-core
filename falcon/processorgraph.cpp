@@ -24,6 +24,11 @@
 #include "processorgraph.hpp"
 #include "sharedstate.hpp"
 
+#include "device_manager.hpp"
+#include "device.hpp"
+
+#include "utilities/general.hpp"
+
 using namespace graph;
 
 std::string graph_state_string( GraphState state ) {
@@ -181,6 +186,11 @@ ProcessorGraph::ProcessorGraph( GlobalContext& context ) : global_context_(conte
     for (auto item : processors ) {
         LOG(INFO) << "Registered processor " << item;
     }
+    
+    std::vector<std::string> device_list = device::DeviceFactory::instance().listEntries();
+    for (auto item : device_list ) {
+        LOG(INFO) << "Registered device " << item;
+    }
 }
 
 std::string ProcessorGraph::state_string() const {
@@ -312,6 +322,52 @@ void ProcessorGraph::CreateConnection( SlotAddress & out, SlotAddress & in ) {
 
 }
 
+void ProcessorGraph::ConstructDevices( const YAML::Node& node ) {
+    // devices:
+    //   <ID>:
+    //     type: <type>
+    //     address: <address>
+    //     options: { }
+    //     adapters: { }
+    
+    // loop through all devices
+    for(YAML::const_iterator it=node.begin();it!=node.end();++it) {
+        
+        // get device ID
+        std::string id = it->first.as<std::string>();
+        
+        // it->second should be a map with type
+        if (!it->second.IsMap() || !it->second["type"]) {
+            throw InvalidGraphError("Incomplete device description (" + id + ")");
+        }
+        
+        std::string device_type = it->second["type"].as<std::string>();
+        
+        std::string address = "";
+        if (it->second["address"]) {
+            address = it->second["address"].as<std::string>();
+        }
+        
+        // now let's construct the device and add it to the pool
+        device::DeviceManager::instance().AddDevice(id, device_type, address,
+            it->second["options"], it->second["adapters"] ? it->second["adapters"] : YAML::Node());
+        
+        auto dev = device::DeviceManager::instance().DeviceByID(id);
+        
+        LOG(INFO) << "Device created: " << dev->to_string();
+        
+        auto adapters = dev->adapters();
+        auto interfaces = dev->interfaces();
+        
+        if (adapters.empty() && interfaces.empty()) {
+            LOG(INFO) << "Device has no adapters installed and does not support any interfaces.";
+        } else {
+            LOG_IF(INFO, !adapters.empty()) << "installed adapters: " << join(adapters.cbegin(), adapters.cend(), std::string(", "));
+            LOG_IF(INFO, !interfaces.empty()) << "supported interfaces: " << join(interfaces.cbegin(), interfaces.cend(), std::string(", "));
+        }
+    }
+    
+}
 
 void ProcessorGraph::Build( const YAML::Node& node ) {
     
@@ -324,6 +380,16 @@ void ProcessorGraph::Build( const YAML::Node& node ) {
     }
     
     set_state( GraphState::CONSTRUCTING );
+    
+    if (node["devices"] && node["devices"].IsMap()) {
+        try {
+            ConstructDevices( node["devices"] );
+            LOG(INFO) << "Constructed and configured all devices";
+        } catch (...) {
+            Destroy();
+            throw;
+        }
+    }
     
     try {
         
@@ -710,6 +776,10 @@ std::string ProcessorGraph::ExportYAML() {
         }
         
         node["states"] = shared_state_map_.ExportYAML();
+        
+        if (yaml_["devices"]) {
+            node["devices"] = yaml_["devices"];
+        }
         
         out << node;
         s = out.c_str();
