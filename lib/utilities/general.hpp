@@ -23,6 +23,8 @@
 #include <memory>
 #include <cassert>
 
+#include <atomic>
+
 #include "math_numeric.hpp"
 //#include "../neuralynx/nlx.hpp"
 
@@ -65,6 +67,29 @@ void check_buffer_sizes_and_log(
 
 const double MAX_N_HOURS_TEST = 1.5;
 constexpr std::size_t MAX_TEST_SAMPLING_FREQUENCY = 32000;
+
+class SpinLock {
+public:
+    void lock() {
+        while (lock_.test_and_set()) {}
+    }
+    
+    void unlock() {
+        lock_.clear();
+    }
+    
+private:
+    std::atomic_flag lock_ = ATOMIC_FLAG_INIT;
+};
+
+class SpinLockGuard {
+public:
+    SpinLockGuard(SpinLock & lock) : spinlock_(lock) { spinlock_.lock(); }
+    ~SpinLockGuard() { spinlock_.unlock(); }
+private:
+    SpinLock & spinlock_;
+};
+
 
 #include "general.ipp"
 
