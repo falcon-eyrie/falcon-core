@@ -26,8 +26,8 @@ template <typename DATATYPE>
 class ISource : public IProcessor{
 
 private:
-    virtual void Process_loop(ProcessingContext& context) {};
-    virtual bool Process_start(ProcessingContext& context) {return true;};
+    virtual bool ProcessStart(ProcessingContext& context)  {return true;};
+    virtual bool ProcessData(ProcessingContext& context, DATATYPE* data) {return true;};
     virtual void CreateStates() {};
     virtual void SetPortName()  {port_name = "input";};
     virtual void SetPortParam()  {port_param = "";};
@@ -38,7 +38,6 @@ public:
 
 protected:
     PortOut<DATATYPE>* data_port_;
-    DATATYPE* data;
     std::string port_name;
     std::string port_param;
 };

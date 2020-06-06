@@ -33,12 +33,12 @@ inline void ISource<DATATYPE>::CreatePorts() {
 
 template<typename DATATYPE>
 inline void ISource<DATATYPE>::Process( ProcessingContext& context ) {
-
-    if (!Process_start(context)){ return;};
+    DATATYPE* data = nullptr;
+    if (!ProcessStart(context)){ return;};
 
     while (!context.terminated()) {
 
-        Process_loop(context);
+        if (!ProcessData(context, data)){ break;};
         data_port_->slot(0)->PublishData();
     }
 }

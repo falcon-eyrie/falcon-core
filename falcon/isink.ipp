@@ -32,10 +32,9 @@ inline void ISink<DATATYPE>::CreatePorts() {
 
 template<typename DATATYPE>
 inline void ISink<DATATYPE>::Process( ProcessingContext& context ) {
-
-    data = nullptr;
+    DATATYPE* data = nullptr;
     auto start = std::chrono::system_clock::now();
-    if (!Process_start(context)){ return;};
+    if (!ProcessStart(context)){ return;};
 
     while (!context.terminated()) {
 
@@ -44,7 +43,7 @@ inline void ISink<DATATYPE>::Process( ProcessingContext& context ) {
             break;
         }
 
-        if (!Process_loop(context)){ break;};
+        if (!ProcessData(context, data)){ break;};
 
         data_port_->slot(0)->ReleaseData();
     }

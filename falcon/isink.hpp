@@ -27,8 +27,8 @@ template <typename DATATYPE>
 class ISink : public IProcessor
 {
 private:
-    virtual bool Process_loop( ProcessingContext& context ) {return true;} ;
-    virtual bool Process_start( ProcessingContext& context ) {return true;};
+    virtual bool ProcessStart( ProcessingContext& context) {return true;} ;
+    virtual bool ProcessData( ProcessingContext& context, DATATYPE* data) {return true;};
     virtual void CreateStates() {};
     virtual void SetPortName() {port_name = "output";};
 
@@ -38,7 +38,6 @@ public:
 
 protected:
     PortIn<DATATYPE>* data_port_;
-    DATATYPE* data;
     std::string port_name;
     std::chrono::duration<double>  duration;
 
