@@ -32,7 +32,7 @@
 #include "graphmanager.hpp"
 #include "buildconstant.hpp"
 #include "configuration.hpp"
-#include "context.hpp"
+#include "context/context.hpp"
 #include "options/units.hpp"
 #include "utilities/time.hpp"
 

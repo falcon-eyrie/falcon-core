@@ -97,13 +97,13 @@ MACRO (select_extensions extension_file)
 	
 ENDMACRO()
 
-
-MACRO(import_extensions) 
-
+MACRO(import_extensions)
+if (COMPILE_EXTENSIONS)
     set(DATATYPE_LIBS)
     set(PROCESSOR_LIBS)
-    set(PROCESSOR_DOC)
+    set(PROCESSOR_TEST)
     # get real absolute extension paths
+    set(PROCESSOR_DOC)
     SET(REAL_FALCON_PATHS, "")
 
     foreach (FALCON_PATH ${EXTENSION_PATHS})
@@ -118,11 +118,6 @@ MACRO(import_extensions)
 
         if (EXISTS ${FALCON_PATH}/lib)
             include_directories(${FALCON_PATH}/lib)
-        endif ()
-
-        if (EXISTS ${FALCON_PATH}/resources)
-            MESSAGE("Adding resources for extension: ${FALCON_PATH}")
-            include_directories(${FALCON_PATH}/resources)
         endif ()
 
         if (EXISTS ${FALCON_PATH}/datatypes)
@@ -172,7 +167,9 @@ MACRO(import_extensions)
                         add_subdirectory(${FALCON_PATH}/datatypes/${DATATYPE} ${CMAKE_CURRENT_BINARY_DIR}/datatypes/${DATATYPE})
                         if (TARGET ${DATATYPE})
                             LIST(APPEND DATATYPE_LIBS ${DATATYPE})
+                            target_compile_definitions(${DATATYPE} PUBLIC -DTESTING)
                         endif ()
+
                     endif ()
                 endif ()
             ENDFOREACH ()
@@ -204,14 +201,27 @@ MACRO(import_extensions)
                 else ()
                     if (EXISTS "${FALCON_PATH}/processors/${PROCESSOR}/CMakeLists.txt")
                         MESSAGE("Adding processor: ${PROCESSOR}")
+                       
                         add_subdirectory(${FALCON_PATH}/processors/${PROCESSOR} ${CMAKE_CURRENT_BINARY_DIR}/processors/${PROCESSOR})
+                        
                         if (TARGET ${PROCESSOR})
-                            LIST(APPEND PROCESSOR_LIBS ${PROCESSOR})
-                        endif ()
-                        if (EXISTS "${FALCON_PATH}/processors/${PROCESSOR}/doc.yaml")
+		             LIST(APPEND PROCESSOR_LIBS ${PROCESSOR})
+		             target_compile_definitions(${PROCESSOR} PUBLIC -DTESTING)
+		        endif ()
+		   
+                        if(TARGET ${PROCESSOR}_test)
+                             MESSAGE("Add test:  ${PROCESSOR}_test")
+		             LIST(APPEND PROCESSOR_TEST ${PROCESSOR}_test)
+		        endif ()
+
+
+		        
+                       if (EXISTS "${FALCON_PATH}/processors/${PROCESSOR}/doc.yaml")
                             configure_file(${FALCON_PATH}/processors/${PROCESSOR}/doc.yaml
                                     ${CMAKE_CURRENT_BINARY_DIR}/processors/${PROCESSOR} COPYONLY)
                         endif ()
+                        
+                        
                     endif ()
                 endif ()
             ENDFOREACH ()
@@ -219,7 +229,11 @@ MACRO(import_extensions)
         endif ()
 
     endforeach ()
+endif()
+ENDMACRO()
 
+MACRO(import_tools) 
+if (COMPILE_EXTENSIONS)
     # and finally add all tools
     SET(ITER 0)
 
@@ -233,12 +247,18 @@ MACRO(import_extensions)
         math(EXPR ITER "${ITER} + 1")
 
     endforeach ()
-
+endif()
 ENDMACRO()
 
 
 MACRO(import_resources)
+if (COMPILE_EXTENSIONS)
     foreach (FALCON_PATH ${REAL_FALCON_PATHS})
+       
+        if (EXISTS ${FALCON_PATH}/resources)
+            MESSAGE("Adding resources for extension: ${FALCON_PATH}")
+            include_directories(${FALCON_PATH}/resources)
+        endif ()
         FILE(GLOB RESOURCES RELATIVE ${FALCON_PATH}/resources ${FALCON_PATH}/resources/*)
         ADD_CUSTOM_COMMAND(TARGET falcon
                 POST_BUILD
@@ -252,6 +272,12 @@ MACRO(import_resources)
 
         endforeach ()
     endforeach ()
+    
+    # install in the installation folder
+    install(DIRECTORY ${BUILD_RESOURCES_PATH}/resources
+            CONFIGURATIONS Release 
+            DESTINATION ${RESOURCES_PATH})
+endif()
 ENDMACRO()
 
 

@@ -24,7 +24,7 @@
 #include <deque>
 
 #include "commandsource.hpp"
-#include "context.hpp"
+#include "context/context.hpp"
 
 namespace commands {
 

@@ -1,7 +1,7 @@
 add_library(utilities keyboard.cpp general.cpp zmqutil.cpp time.cpp
-        string.cpp math_numeric.cpp configuration.cpp filesystem.cpp)
+        string.cpp math_numeric.cpp configuration.cpp filesystem.cpp serialization.cpp)
 
-
+target_link_libraries(utilities zmq)
 # modified from https://stackoverflow.com/a/55783677
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7.4)

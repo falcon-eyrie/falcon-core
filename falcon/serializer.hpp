@@ -24,16 +24,16 @@
 #include <ostream>
 #include <string>
 
+#include "utilities/serialization.hpp"
 #include "yaml-cpp/yaml.h"
 
 #include "idata.hpp"
-#include "serialization.hpp"
 #include "datatype_generated.h"
 
 namespace Serialization {
 
 class Serializer {
- public:
+public:
   Serializer(Format fmt = Format::FULL, std::string description = "",
              std::string extension = "")
       : format_(fmt), description_(description), extension_(extension) {}
@@ -49,14 +49,14 @@ class Serializer {
   std::string description() const;
   std::string extension() const;
 
- protected:
+protected:
   Format format_;
   std::string description_;
   std::string extension_;
 };
 
 class BinarySerializer : public Serializer {
- public:
+public:
   BinarySerializer(Format fmt = Format::FULL)
       : Serializer(fmt, "Compact binary format", "bin"){}
 
@@ -80,7 +80,7 @@ class FlatBufferSerializer : public Serializer {
 };
 
 class YAMLSerializer : public Serializer {
- public:
+public:
   YAMLSerializer(Format fmt = Format::FULL)
       : Serializer(fmt, "Human readable YAML format", "yaml") {}
 
@@ -95,4 +95,4 @@ Serializer *serializer_from_string(std::string s,
 Serializer *serializer(Serialization::Encoding enc,
                        Serialization::Format fmt = Format::FULL);
 
-}  // namespace Serialization
+} // namespace Serialization

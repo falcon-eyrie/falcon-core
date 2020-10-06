@@ -23,7 +23,7 @@
 #include <thread>
 #include <string>
 
-#include "context.hpp"
+#include "context/context.hpp"
 #include "processorgraph.hpp"
 
 namespace graph {

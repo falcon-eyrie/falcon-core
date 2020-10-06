@@ -23,7 +23,7 @@
 #include <string>
 #include <map>
 #include <zmq.hpp>
-#include "utilities/string.hpp"
+#include "../utilities/string.hpp"
 
 class StorageContext {
  public:

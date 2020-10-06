@@ -24,6 +24,7 @@
 #include "istreamports.hpp"
 #include "iprocessor.hpp"
 
+
 void ISlotOut::Connect(ISlotIn *downstream) {
   if (downstream_slots_.count(downstream) == 0) {
     downstream_slots_.insert(downstream);

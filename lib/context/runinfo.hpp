@@ -32,8 +32,8 @@
 #include <mutex>
 
 #include "context.hpp"
-#include "logging/log.hpp"
-#include "utilities/time.hpp"
+#include "../logging/log.hpp"
+#include "../utilities/time.hpp"
 
 // forward declaration
 namespace graph {

@@ -161,9 +161,10 @@ else()
 	message(STATUS "No extensions found.")
 endif()
 
+option(TESTING "compile extension tests" OFF)
+option(COMPILE_EXTENSIONS "compile all extensions" ON)
 
 add_subdirectory(lib)
-add_subdirectory(falcon)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     include(CTest)
@@ -176,6 +177,12 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     )
 
     FetchContent_MakeAvailable(googletest)
-
     add_subdirectory(tests)
 endif()
+
+if(NOT TESTING OR CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_subdirectory(falcon)
+endif()
+
+
+

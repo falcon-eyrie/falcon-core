@@ -29,11 +29,11 @@
 
 #include "yaml-cpp/yaml.h"
 #include "logging/log.hpp"
-#include "iprocessor.hpp"
+#include "context/runinfo.hpp"
+
 #include "graphexceptions.hpp"
 #include "connectionparser.hpp"
 #include "iprocessor.hpp"
-#include "runinfo.hpp"
 
 /**
  * Get processor's documentation.
@@ -47,7 +47,10 @@
  */
 YAML::Node LoadProcessorDoc(std::string processor);
 
+<<<<<<< HEAD
 std::vector<std::string> expandProcessorName(std::string s);
+=======
+>>>>>>> Create a test framework
 void ParseConnectionRules(const YAML::Node &node,
                           StreamConnections &connections);
 
