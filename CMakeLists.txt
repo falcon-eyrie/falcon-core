@@ -166,19 +166,16 @@ add_subdirectory(lib)
 add_subdirectory(falcon)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    include(CTest)
+    enable_testing()
 
-MESSAGE("Build TEST")
-include(CTest)
-enable_testing()
+    FetchContent_Declare(
+                    googletest
+                    GIT_REPOSITORY https://github.com/google/googletest.git
+                    GIT_TAG        release-1.10.0
+    )
 
-FetchContent_Declare(
-		googletest
-		GIT_REPOSITORY https://github.com/google/googletest.git
-		GIT_TAG        release-1.10.0
-)
+    FetchContent_MakeAvailable(googletest)
 
-FetchContent_MakeAvailable(googletest)
-
-add_subdirectory(tests)
-
+    add_subdirectory(tests)
 endif()

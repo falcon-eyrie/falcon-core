@@ -19,7 +19,6 @@ set(PLATFORM_LINK_LIBRARIES rt dl)
 MESSAGE("${CMAKE_BUILD_TYPE}")
 
 add_definitions(-DG2_DYNAMIC_LOGGING)
-
 # Create a resource path
 Set(BUILD_RESOURCES_PATH ${rootproject_BINARY_DIR})
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -200,12 +199,11 @@ endif ()
 # the disruptor and utilities libraries
 
 SET(WHOLELIBS -Wl,--whole-archive logging units-static utilities options disruptor ${DATATYPE_LIBS} ${PROCESSOR_LIBS} -Wl,--no-whole-archive)
-
 list(REMOVE_ITEM sources "${falcon_SOURCE_DIR}/main.cpp")
 add_library(falconlib OBJECT ${sources})
 target_link_libraries(falconlib yaml-cpp zmq flatbuffers rt dl ${WHOLELIBS})
-target_link_libraries(falcon falconlib)
 
+target_link_libraries(falcon falconlib)
 install(TARGETS falcon CONFIGURATIONS Release RUNTIME DESTINATION bin)
 
 if (COMPILE_EXTENSIONS)
@@ -224,7 +222,6 @@ if (COMPILE_EXTENSIONS)
 
             endforeach ()
         endforeach ()
-
         # install in the installation folder
         install(DIRECTORY ${BUILD_RESOURCES_PATH}/resources
                 CONFIGURATIONS Release 

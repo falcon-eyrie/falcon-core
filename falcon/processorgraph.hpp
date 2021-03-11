@@ -46,6 +46,7 @@
  *@return documentation
  */
 YAML::Node LoadProcessorDoc(std::string processor);
+
 std::vector<std::string> expandProcessorName(std::string s);
 void ParseConnectionRules(const YAML::Node &node,
                           StreamConnections &connections);

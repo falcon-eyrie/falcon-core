@@ -29,7 +29,6 @@ TEST(expandProcessorName, DefaultName) {
   std::vector<std::string> result = expandProcessorName("processor");
   EXPECT_EQ(result[0], "processor");
   EXPECT_EQ(result.size(), 1);
-
   result = expandProcessorName("processor1");
   EXPECT_EQ(result.size(), 1);
   EXPECT_EQ(result[0], "processor1");
@@ -40,7 +39,6 @@ TEST(expandProcessorName, PartNameWithUnderscore) {
   std::vector<std::string> result = expandProcessorName("processor_name");
   EXPECT_EQ(result[0], "processor_name");
   EXPECT_EQ(result.size(), 1);
-   
   result = expandProcessorName("processor_name (1-2)");
   EXPECT_EQ(result.size(), 2);
   EXPECT_EQ(result[0], "processor_name1");

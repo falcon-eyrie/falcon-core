@@ -50,8 +50,6 @@ int main(int argc, char** argv) {
       worker->addSink(std::make_unique<ScreenSink>(),
                       &ScreenSink::ReceiveLogMessage);
   }
-
-
   return RUN_ALL_TESTS();
 
 }

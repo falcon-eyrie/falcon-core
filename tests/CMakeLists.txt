@@ -18,3 +18,4 @@ target_link_libraries(core_test gmain falconlib)
         
 add_test(NAME core_test COMMAND core_test)
 
+
