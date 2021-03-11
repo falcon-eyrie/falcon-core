@@ -11,6 +11,8 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
 project (rootproject)
 
+message(STATUS ${CMAKE_INSTALL_PREFIX}) 
+
 set(_build_version "unknown")
 find_package(Git)
 if(GIT_FOUND)
@@ -143,8 +145,7 @@ include_directories(BEFORE SYSTEM "${g3log_SOURCE_DIR}/src")
 include_directories(BEFORE SYSTEM "${g3log_BINARY_DIR}/include")
 target_link_libraries(${LOGGER} g3logger)
 
-
-## External extensions ##
+## External extensions ## 
 
 SET(EXTENSION_PATHS "")
 SET(INSTALLED_EXTENSIONS "")
@@ -152,7 +153,7 @@ SET(INSTALLED_EXTENSIONS "")
 message(STATUS "Checking for extensions.")
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extensions.txt")
-
+	
 	message(STATUS "Found extensions.txt")
 
 	file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/extensions.txt" extensions)
@@ -165,7 +166,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extensions.txt")
 	message(STATUS "Found ${nextensions} extensions.")
 
 	foreach(ext ${extensions})
-
+		
 		# convert from comma separated string to list
 		string(REPLACE " " "" ext ${ext})
 		string(REPLACE "," ";" ext ${ext})
@@ -191,12 +192,10 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extensions.txt")
 				string(TOUPPER ${ext_name} ext_name_upper)
 				SET(FETCHCONTENT_SOURCE_DIR_${ext_name_upper} ${ext_path})
 				message(STATUS "Adding ${ext_name} in development mode.")
-
-
 			endif()
 
 			# check if optional version is given
-			if (nitems GREATER_EQUAL 4)
+			if (nitems GREATER_EQUAL 4)	
 				list(GET ext 3 ext_version)
 				FetchContent_Declare(
 					${ext_name}
@@ -205,7 +204,6 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extensions.txt")
 					GIT_TAG ${ext_version}
 				)
 				message(STATUS "Declared ${ext_name} (version ${ext_version}) at ${ext_path}.")
-
 			else()
 				FetchContent_Declare(
 					${ext_name}
@@ -215,7 +213,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extensions.txt")
 				message(STATUS "Declared ${ext_name} at ${ext_path}.")
 				set(ext_version "master-branch")
 			endif()
-
+			
 			# populate
 			FetchContent_GetProperties(${ext_name})
 			if(NOT ${ext_name}_POPULATED)
@@ -224,21 +222,21 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/extensions.txt")
 				add_subdirectory(${${ext_name}_SOURCE_DIR} ${${ext_name}_BINARY_DIR})
 				message(STATUS "Done.")
 			endif()
-			include_directories(BEFORE SYSTEM "${$ext_name}_SOURCE_DIR}" ${${ext_name}_BINARY_DIR}/include)
+
+			include_directories(BEFORE SYSTEM "${${ext_name}_SOURCE_DIR}" ${${ext_name}_BINARY_DIR}/include)
 
 			if(ext_enabled STREQUAL "dev")
 				list(APPEND _extension_names "${ext_name} - ${ext_path} - dev")
 			else()
 				list(APPEND _extension_names "${ext_name} - ${ext_path} - ${ext_version}")
 			endif()
-
-
+			
 			# add to list of extensions
 			list(APPEND EXTENSION_PATHS ${${ext_name}_SOURCE_DIR})
 
 			# add to installed extensions
 			list(APPEND INSTALLED_EXTENSIONS ${ext_name})
-
+		
 		else()
 			message(STATUS "Extension ${ext_name} is not enabled. Skipped.")
 		endif()
@@ -248,8 +246,22 @@ else()
 	message(STATUS "No extensions found.")
 endif()
 
-option(COMPILE_EXTENSIONS "compile all extensions" ON)
 
-## External extensions ##
 add_subdirectory(lib)
 add_subdirectory(falcon)
+
+MESSAGE("Build TEST")
+include(CTest)
+enable_testing()
+
+FetchContent_Declare(
+		googletest
+		GIT_REPOSITORY https://github.com/google/googletest.git
+		GIT_TAG        release-1.10.0
+)
+
+FetchContent_MakeAvailable(googletest)
+
+add_subdirectory(tests)
+
+

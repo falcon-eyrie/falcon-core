@@ -48,6 +48,7 @@
 YAML::Node LoadProcessorDoc(std::string processor);
 
 
+std::vector<std::string> expandProcessorName(std::string s);
 
 namespace graph {
 
@@ -104,8 +105,8 @@ class ProcessorGraph {
    * Construct processors listed in the graph yaml description.
    *
    * Looping through the graph description to find every processor, expanded
-   *their name, create their instance and run the internal configuration for
-   *each.
+   * their name, create their instance and run the internal configuration for
+   * each.
    *
    *@param node graph description
    */

@@ -20,7 +20,7 @@ MESSAGE("${CMAKE_BUILD_TYPE}")
 
 add_definitions(-DG2_DYNAMIC_LOGGING)
 
-
+# Create a resource path
 Set(BUILD_RESOURCES_PATH ${rootproject_BINARY_DIR})
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     Set(RESOURCES_PATH ${rootproject_BINARY_DIR} CACHE STRING "")
@@ -28,12 +28,11 @@ else()
     Set(RESOURCES_PATH ${CMAKE_INSTALL_PREFIX}/share CACHE STRING "")
 endif()
 
-mark_as_advanced(RESOURCES_PATH)
 configure_file(configuration.hpp.in configuration.hpp)
 
 
 # list of source files
-file(GLOB sources *.cpp)
+
 include_directories("../resources")
 include_directories("../lib")
 include_directories(".")
@@ -45,6 +44,12 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/datatype_generated.h
 )
 
 add_custom_target(datatypebuffer DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/datatype_generated.h)
+
+set(_processor_doc_path ${CMAKE_CURRENT_BINARY_DIR}/processors/)
+configure_file(buildconstant.hpp.in buildconstant.hpp @ONLY)
+file(GLOB sources *.cpp)
+
+add_executable(falcon "main.cpp")
 
 set(DATATYPE_LIBS)
 set(PROCESSOR_LIBS)
@@ -189,23 +194,20 @@ if (COMPILE_EXTENSIONS)
 
 endif ()
 
-set(_processor_doc_path ${CMAKE_CURRENT_BINARY_DIR}/processors/)
-configure_file(buildconstant.hpp.in buildconstant.hpp @ONLY)
-# falcon executable
-
-add_executable(falcon ${sources})
-
-target_link_libraries(falcon yaml-cpp zmq flatbuffers ${PLATFORM_LINK_LIBRARIES})
-
-
 # here we have to use --whole-archive linker option, otherwise the data type and processor libs are not
 # linked at all because none of their exported symbols are explicitly used in falcon. Same is true for (part of)
 # the disruptor and utilities libraries
 
-SET(WHOLELIBS -Wl,--whole-archive g3logger logging units-static utilities options disruptor ${DATATYPE_LIBS} ${PROCESSOR_LIBS} -Wl,--no-whole-archive)
-target_link_libraries(falcon ${WHOLELIBS})
+SET(WHOLELIBS -Wl,--whole-archive logging units-static utilities options disruptor ${DATATYPE_LIBS} ${PROCESSOR_LIBS} -Wl,--no-whole-archive)
+
+
+list(REMOVE_ITEM sources "${falcon_SOURCE_DIR}/main.cpp")
+add_library(falconlib OBJECT ${sources})
+target_link_libraries(falconlib yaml-cpp zmq flatbuffers rt dl ${WHOLELIBS})
+target_link_libraries(falcon falconlib)
 
 install(TARGETS falcon CONFIGURATIONS Release RUNTIME DESTINATION bin)
+
 if (COMPILE_EXTENSIONS)
 
         foreach (FALCON_PATH ${REAL_FALCON_PATHS})
