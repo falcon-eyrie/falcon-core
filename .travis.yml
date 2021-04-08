@@ -1,0 +1,25 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: bionic
+      compiler: gcc
+      addons:
+       apt:
+         packages:
+           - libzmq3-dev
+
+install:
+    - pip install cmake
+
+script:
+    ############################################################################
+    # Build main and tests
+    ############################################################################
+     - rm extensions.txt
+     - mkdir -p build
+     - cd build
+     - cmake  .. 
+     - make
+     - ctest

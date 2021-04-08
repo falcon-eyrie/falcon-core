@@ -16,5 +16,5 @@ MESSAGE("Add test: Core_test")
 add_executable(core_test graph_parser_test.cpp )
 target_link_libraries(core_test gmain falconlib)
         
-add_test(core_test TEST COMMAND $<TARGET_FILE:core_test>)
+add_test(NAME core_test COMMAND core_test)
 
