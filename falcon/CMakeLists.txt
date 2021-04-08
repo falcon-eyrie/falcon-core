@@ -199,6 +199,7 @@ endif ()
 # the disruptor and utilities libraries
 
 SET(WHOLELIBS -Wl,--whole-archive logging units-static utilities options disruptor ${DATATYPE_LIBS} ${PROCESSOR_LIBS} -Wl,--no-whole-archive)
+
 list(REMOVE_ITEM sources "${falcon_SOURCE_DIR}/main.cpp")
 add_library(falconlib OBJECT ${sources})
 target_link_libraries(falconlib yaml-cpp zmq flatbuffers rt dl ${WHOLELIBS})
@@ -226,4 +227,4 @@ if (COMPILE_EXTENSIONS)
         install(DIRECTORY ${BUILD_RESOURCES_PATH}/resources
                 CONFIGURATIONS Release 
                 DESTINATION ${RESOURCES_PATH})
-endif()
+endif ()
