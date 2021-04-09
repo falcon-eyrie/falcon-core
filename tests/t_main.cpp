@@ -27,6 +27,9 @@
 using namespace std;
 
 int main(int argc, char** argv) {
+
+  ::testing::InitGoogleTest(&argc, argv);
+
   cmdline::parser parser;
   parser.add<string>("logpath", 'l', "logging path of the test", false, "$HOME/log");
   parser.add("noscreenlog", '\0', "disable logging to screen");
@@ -48,7 +51,7 @@ int main(int argc, char** argv) {
                       &ScreenSink::ReceiveLogMessage);
   }
 
-  ::testing::InitGoogleTest(&argc, argv);
+
   return RUN_ALL_TESTS();
 
 }

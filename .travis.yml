@@ -22,7 +22,7 @@ script:
      - cd build
      - cmake  .. 
      - make
-     - ctest
+     - ctest -V
 
 after_success:
   - coveralls -r .. -b . --exclude tests --gcov-options '\-lp'
