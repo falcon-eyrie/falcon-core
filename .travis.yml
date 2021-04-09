@@ -25,4 +25,4 @@ script:
      - ctest
 
 after_success:
-  - coveralls -r .. -b . --exclude build --exclude tests --gcov-options '\-lp'
+  - coveralls -r .. -b . --exclude tests --gcov-options '\-lp'
