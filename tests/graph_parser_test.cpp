@@ -67,11 +67,27 @@ TEST(expandProcessorName, PartNameWithDash) {
   EXPECT_EQ(result2.size(), 2);
 }
 
+TEST(ParseConnectionRules, SimpleRules) {
+  ConnectionRule rules = parseConnectionRule("upstream=downstream");
+
+  printConnectionRule(rules);
+  EXPECT_EQ(std::get<1>(rules.first[0]), "upstream");
+  EXPECT_EQ(std::get<1>(rules.second[0]), "downstream");
+  EXPECT_EQ(std::get<0>(rules.second[0]), 0);
+  EXPECT_EQ(std::get<0>(rules.first[0]), 0);
+
+  // PORT PART 
+  EXPECT_EQ(std::get<1>(rules.first[1]), "");
+  EXPECT_EQ(std::get<1>(rules.second[1]), "");
+  EXPECT_EQ(std::get<0>(rules.second[1]), 1);
+  EXPECT_EQ(std::get<0>(rules.first[1]), 1);
+}
+
+
 TEST(ParseConnectionRules, classicRule) {
   ConnectionRule rules = parseConnectionRule("source.hp.0=ripple_filter.data.1");
 
   // PROCESSOR PART 
-  printConnectionRule(rules);
   EXPECT_EQ(std::get<1>(rules.second[0]), "ripple-filter");
   EXPECT_EQ(std::get<1>(rules.first[0]), "source");
   EXPECT_EQ(std::get<0>(rules.second[0]), 0);
@@ -96,7 +112,6 @@ TEST(ParseConnectionRules, classicRule) {
 TEST(ParseConnectionRules, ExpandRule) {
   ConnectionRule rules = parseConnectionRule("source.hp = f:ripple_filter.p:data.s:1");
 
-  printConnectionRule(rules);
   EXPECT_EQ(std::get<1>(rules.second[0]), "ripple-filter");
   EXPECT_EQ(std::get<1>(rules.first[0]), "source");
   EXPECT_EQ(std::get<0>(rules.second[0]), 0);
@@ -130,8 +145,15 @@ TEST(ParseConnectionRules, DocEquivalentyRules) {
   EXPECT_EQ(std::get<0>(rules.first[1]), 1);
   EXPECT_EQ(std::get<2>(rules.first[1])[0], 1);
   EXPECT_EQ(std::get<2>(rules.first[1])[1], 2);
-}
+  
+  StreamConnections connections;
+  expandConnectionRule(rules, connections);
 
+  EXPECT_EQ(connections[0].first.string(), "upstream.out1.-1");
+  EXPECT_EQ(connections[0].second.string(), "downstream.in1.-1");
+  EXPECT_EQ(connections[1].first.string(), "upstream.out2.-1");
+  EXPECT_EQ(connections[1].second.string(), "downstream.in2.-1");
+}
 
 
 } // namespace
