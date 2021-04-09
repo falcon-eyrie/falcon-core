@@ -1,8 +1,9 @@
 cmake_minimum_required (VERSION 3.11)
 ENABLE_LANGUAGE(CXX)
 
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wunused -std=c++17 -pthread -D_GLIBCXX_USE_NANOSLEEP")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wunused -std=c++17 -pthread -D_GLIBCXX_USE_NANOSLEEP -fprofile-arcs -ftest-coverage")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wunused -std=c++17 -pthread -D_GLIBCXX_USE_NANOSLEEP")
 endif()
@@ -164,6 +165,8 @@ endif()
 add_subdirectory(lib)
 add_subdirectory(falcon)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
 MESSAGE("Build TEST")
 include(CTest)
 enable_testing()
@@ -178,4 +181,4 @@ FetchContent_MakeAvailable(googletest)
 
 add_subdirectory(tests)
 
-
+endif()

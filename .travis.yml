@@ -9,9 +9,9 @@ matrix:
        apt:
          packages:
            - libzmq3-dev
-
-install:
-    - pip install cmake
+before_install:
+  - pip install --user cpp-coveralls
+  - pip install cmake
 
 script:
     ############################################################################
@@ -23,3 +23,6 @@ script:
      - cmake  .. 
      - make
      - ctest
+
+after_success:
+  - coveralls -r .. -b . --exclude Build --exclude tests --gcov-options '\-lp'
