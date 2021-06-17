@@ -167,7 +167,6 @@ if (COMPILE_EXTENSIONS)
                         add_subdirectory(${FALCON_PATH}/datatypes/${DATATYPE} ${CMAKE_CURRENT_BINARY_DIR}/datatypes/${DATATYPE})
                         if (TARGET ${DATATYPE})
                             LIST(APPEND DATATYPE_LIBS ${DATATYPE})
-                            target_compile_definitions(${DATATYPE} PUBLIC -DTESTING)
                         endif ()
 
                     endif ()
@@ -206,7 +205,6 @@ if (COMPILE_EXTENSIONS)
                         
                         if (TARGET ${PROCESSOR})
 		             LIST(APPEND PROCESSOR_LIBS ${PROCESSOR})
-		             target_compile_definitions(${PROCESSOR} PUBLIC -DTESTING)
 		        endif ()
 		   
                         if(TARGET ${PROCESSOR}_test)

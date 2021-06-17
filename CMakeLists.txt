@@ -2,17 +2,21 @@ cmake_minimum_required (VERSION 3.11)
 ENABLE_LANGUAGE(CXX)
 
 
+project (rootproject)
+
+option(TESTING "compile extension tests" OFF)
+option(COMPILE_EXTENSIONS "compile all extensions" ON)
+
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wunused -std=c++17 -pthread -D_GLIBCXX_USE_NANOSLEEP -fprofile-arcs -ftest-coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wunused -std=c++17 -pthread -D_GLIBCXX_USE_NANOSLEEP -fprofile-arcs -ftest-coverage -DTESTING")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wunused -std=c++17 -pthread -D_GLIBCXX_USE_NANOSLEEP")
+    set(TESTING OFF)
 endif()
 
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
-project (rootproject)
-
-message(STATUS ${CMAKE_INSTALL_PREFIX}) 
 
 set(_build_version "unknown")
 find_package(Git)
@@ -161,8 +165,6 @@ else()
 	message(STATUS "No extensions found.")
 endif()
 
-option(TESTING "compile extension tests" OFF)
-option(COMPILE_EXTENSIONS "compile all extensions" ON)
 
 add_subdirectory(lib)
 

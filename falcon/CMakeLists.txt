@@ -66,8 +66,6 @@ add_library(falconlib OBJECT ${sources})
 target_compile_definitions(falconlib PUBLIC TESTING=0)
 target_link_libraries(falconlib yaml-cpp flatbuffers zmq rt dl ${WHOLELIBS})
 target_link_libraries(falcon falconlib)
-
-target_link_libraries(falcon falconlib)
 install(TARGETS falcon CONFIGURATIONS Release RUNTIME DESTINATION bin)
 
 import_resources()

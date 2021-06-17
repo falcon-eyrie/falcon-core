@@ -26,7 +26,6 @@ if(TESTING)
    add_library(falconlib OBJECT "../falcon/sharedstate.cpp" "../falcon/graphexceptions.hpp" "../falcon/streaminfo.cpp"
 		"../falcon/serializer.cpp" "../falcon/iprocessor.hpp" "../falcon/idata.hpp")
 
-   target_compile_definitions(falconlib PUBLIC -DTESTING)
    add_subdirectory(testing)
    SET(WHOLELIBS -Wl,--whole-archive logging units-static utilities options disruptor ${DATATYPE_LIBS} ${PROCESSOR_LIBS} -Wl,--no-whole-archive)
    SET(TESTLIBS -Wl,--whole-archive fakeclass  -Wl,--no-whole-archive)
