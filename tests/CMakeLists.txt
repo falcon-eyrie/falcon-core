@@ -8,12 +8,9 @@ add_definitions(-DG2_DYNAMIC_LOGGING)
 include_directories("../lib")
 include_directories("../falcon")
 include_directories(".")
-<<<<<<< HEAD
-include_directories(${CMAKE_BINARY_DIR}/falcon)
-=======
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
->>>>>>> Create a test framework
+include_directories(${CMAKE_BINARY_DIR}/falcon)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 cmake_policy(SET CMP0079 NEW)
 
 add_library(gmain t_main.cpp)
