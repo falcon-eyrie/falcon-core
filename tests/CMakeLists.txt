@@ -6,7 +6,7 @@ project(test)
 include_directories("../lib")
 include_directories("../falcon")
 include_directories(".")
-
+include_directories(${CMAKE_BINARY_DIR}/falcon)
 cmake_policy(SET CMP0079 NEW)
 
 add_library(gmain t_main.cpp)

@@ -38,25 +38,25 @@ TEST(expandProcessorName, DefaultName) {
 TEST(expandProcessorName, PartNameWithUnderscore) {
 
   std::vector<std::string> result = expandProcessorName("processor_name");
-  EXPECT_EQ(result[0], "processor-name");
+  EXPECT_EQ(result[0], "processor_name");
   EXPECT_EQ(result.size(), 1);
    
   result = expandProcessorName("processor_name (1-2)");
   EXPECT_EQ(result.size(), 2);
-  EXPECT_EQ(result[0], "processor-name1");
-  EXPECT_EQ(result[1], "processor-name2");
+  EXPECT_EQ(result[0], "processor_name1");
+  EXPECT_EQ(result[1], "processor_name2");
 }
 
 TEST(expandProcessorName, PartNameWithSpace) {
 
   std::vector<std::string> result = expandProcessorName("processor name");
   EXPECT_EQ(result.size(), 1);
-  EXPECT_EQ(result[0], "processor-name");
+  EXPECT_EQ(result[0], "processor name");
 
   result = expandProcessorName("processor name (1-2)");
   EXPECT_EQ(result.size(), 2);
-  EXPECT_EQ(result[0], "processor-name1");
-  EXPECT_EQ(result[1], "processor-name2");
+  EXPECT_EQ(result[0], "processor name1");
+  EXPECT_EQ(result[1], "processor name2");
 }
 
 TEST(expandProcessorName, PartNameWithDash) {
@@ -92,7 +92,7 @@ TEST(ParseConnectionRules, classicRule) {
   ConnectionRule rules = parseConnectionRule("source.hp.0=ripple_filter.data.1");
 
   // PROCESSOR PART 
-  EXPECT_EQ(std::get<1>(rules.second[0]), "ripple-filter");
+  EXPECT_EQ(std::get<1>(rules.second[0]), "ripple_filter");
   EXPECT_EQ(std::get<1>(rules.first[0]), "source");
   EXPECT_EQ(std::get<0>(rules.second[0]), 0);
   EXPECT_EQ(std::get<0>(rules.first[0]), 0);
@@ -115,7 +115,7 @@ TEST(ParseConnectionRules, classicRule) {
 TEST(ParseConnectionRules, ExpandPartIdentifiers) {
   ConnectionRule rules = parseConnectionRule("source.hp = f:ripple_filter.p:data.s:1");
 
-  EXPECT_EQ(std::get<1>(rules.second[0]), "ripple-filter");
+  EXPECT_EQ(std::get<1>(rules.second[0]), "ripple_filter");
   EXPECT_EQ(std::get<1>(rules.first[0]), "source");
   EXPECT_EQ(std::get<0>(rules.second[0]), 0);
   EXPECT_EQ(std::get<0>(rules.first[0]), 0);
