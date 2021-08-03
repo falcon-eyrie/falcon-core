@@ -203,6 +203,7 @@ SET(WHOLELIBS -Wl,--whole-archive logging units-static utilities options disrupt
 
 list(REMOVE_ITEM sources "${falcon_SOURCE_DIR}/main.cpp")
 add_library(falconlib OBJECT ${sources})
+add_dependencies(falconlib datatypebuffer)
 target_link_libraries(falconlib yaml-cpp zmq flatbuffers rt dl ${WHOLELIBS})
 target_link_libraries(falcon falconlib)
 
