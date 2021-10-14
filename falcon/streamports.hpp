@@ -147,17 +147,32 @@ template <typename DATATYPE> class SlotIn : public ISlotIn {
 
  public:
   SlotIn(PortIn<DATATYPE> *parent, const SlotAddress &address,
-         typename DATATYPE::Capabilities capabilities, int64_t time_out = -1,
+         typename DATATYPE::Capabilities capabilities,
          bool cache = false)
-      : ISlotIn(parent, address, time_out, cache), capabilities_(capabilities) {
+      : ISlotIn(parent, address, cache), capabilities_(capabilities) {
   }
 
   // methods called by processor implementation
   const typename DATATYPE::Data *GetDataPrototype() const;
-  bool RetrieveData(typename DATATYPE::Data *&data);
-  bool RetrieveDataN(uint64_t n, std::vector<typename DATATYPE::Data *> &data);
-  bool RetrieveDataAll(std::vector<typename DATATYPE::Data *> &data);
+  bool RetrieveData(typename DATATYPE::Data *&data, uint64_t time_out=-1);
+  bool RetrieveDataN(uint64_t n, std::vector<typename DATATYPE::Data *> &data, uint64_t time_out=-1);
+  bool RetrieveDataAll(std::vector<typename DATATYPE::Data *> &data, uint64_t time_out=-1);
 
+  bool FlushData(){
+      std::vector<typename DATATYPE::Data *> data;
+      if(!RetrieveDataAll(data, 0)){
+          return false;
+      }
+
+      auto nread = status_read();
+
+      if (nread == 0) {
+          ReleaseData();
+
+      }
+      return true;
+
+  }
   const StreamInfo<DATATYPE> &streaminfo() {
     if (!connected()) {
       throw std::runtime_error("Input slot is not connected");
