@@ -131,9 +131,9 @@ class ISlotIn {
   friend class ISlotOut;
 
  public:
-  ISlotIn(IPortIn *parent, const SlotAddress &address, int64_t time_out = -1,
+  ISlotIn(IPortIn *parent, const SlotAddress &address,
           bool cache = false)
-      : time_out_(time_out), cache_enabled_(cache), parent_(parent),
+      : cache_enabled_(cache), parent_(parent),
         address_(address) {}
 
   virtual ~ISlotIn(){}
@@ -172,7 +172,6 @@ class ISlotIn {
   void PrepareProcessing();
 
  protected:
-  int64_t time_out_;
   bool cache_enabled_;
   int64_t ncached_ = 0;
   int64_t nretrieved_ = 0;

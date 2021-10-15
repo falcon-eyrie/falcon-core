@@ -193,7 +193,7 @@ template <typename DATATYPE> void SlotIn<DATATYPE>::check_high_water_level() {
 }
 
 template <typename DATATYPE>
-bool SlotIn<DATATYPE>::RetrieveData(typename DATATYPE::Data *&data) {
+bool SlotIn<DATATYPE>::RetrieveData(typename DATATYPE::Data *&data, uint64_t time_out) {
 
   data = nullptr;
   status_.read = status_.backlog = 0;
@@ -211,7 +211,7 @@ bool SlotIn<DATATYPE>::RetrieveData(typename DATATYPE::Data *&data) {
   requested_sequence += ncached_ + 1L;
 
   try {
-    if (time_out_ < 0) {
+    if (time_out < 0) {
       int64_t available_sequence = upstream_->WaitFor(requested_sequence);
       if (available_sequence == INT64_MAX) {
         status_.alive = false;
@@ -223,7 +223,7 @@ bool SlotIn<DATATYPE>::RetrieveData(typename DATATYPE::Data *&data) {
       }
     } else {
       int64_t available_sequence =
-          upstream_->WaitFor(requested_sequence, time_out_);
+          upstream_->WaitFor(requested_sequence, time_out);
 
       if (available_sequence < requested_sequence) {
         // timed out
@@ -261,7 +261,7 @@ bool SlotIn<DATATYPE>::RetrieveData(typename DATATYPE::Data *&data) {
 
 template <typename DATATYPE>
 bool SlotIn<DATATYPE>::RetrieveDataN(
-    uint64_t n, std::vector<typename DATATYPE::Data *> &data) {
+    uint64_t n, std::vector<typename DATATYPE::Data *> &data, uint64_t time_out) {
 
   // will only cache last value, but does not return cached values when timed
   // out if n>1
@@ -283,7 +283,7 @@ bool SlotIn<DATATYPE>::RetrieveDataN(
   int64_t requested_sequence = current_sequence + n;
 
   try {
-    if (time_out_ < 0) {
+    if (time_out < 0) {
       int64_t available_sequence = upstream_->WaitFor(requested_sequence);
       if (available_sequence == INT64_MAX) {
         status_.alive = false;
@@ -297,7 +297,7 @@ bool SlotIn<DATATYPE>::RetrieveDataN(
       }
     } else {
       int64_t available_sequence =
-          upstream_->WaitFor(requested_sequence, time_out_);
+          upstream_->WaitFor(requested_sequence, time_out);
 
       if (available_sequence < requested_sequence) {
         // timed out
@@ -337,7 +337,7 @@ bool SlotIn<DATATYPE>::RetrieveDataN(
 
 template <typename DATATYPE>
 bool SlotIn<DATATYPE>::RetrieveDataAll(
-    std::vector<typename DATATYPE::Data *> &data) {
+    std::vector<typename DATATYPE::Data *> &data, uint64_t time_out) {
 
   // supports single item caching
 
@@ -358,7 +358,7 @@ bool SlotIn<DATATYPE>::RetrieveDataAll(
   int64_t requested_sequence = current_sequence + 1L;
 
   try {
-    if (time_out_ < 0) {
+    if (time_out < 0) {
       int64_t available_sequence = upstream_->WaitFor(requested_sequence);
       if (available_sequence == INT64_MAX) {
         status_.alive = false;
@@ -371,7 +371,7 @@ bool SlotIn<DATATYPE>::RetrieveDataAll(
       }
     } else {
       int64_t available_sequence =
-          upstream_->WaitFor(requested_sequence, time_out_);
+          upstream_->WaitFor(requested_sequence, time_out);
       if (available_sequence < requested_sequence) {
         // timed out
         if (cache_enabled_) {
@@ -478,8 +478,7 @@ template <typename DATATYPE> void PortIn<DATATYPE>::NewSlot(int n) {
   SlotAddress address(this->address_, 0);
   for (int k = 0; k < n; k++) {
     address.set_slot(slots_.size());
-    auto slot = std::make_unique<SlotIn<DATATYPE>>(this, address, capabilities_, policy().time_out(),
-                             policy().cache_enabled());
+    auto slot = std::make_unique<SlotIn<DATATYPE>>(this, address, capabilities_, policy().cache_enabled());
     slots_.push_back(std::move(slot));
   }
 }

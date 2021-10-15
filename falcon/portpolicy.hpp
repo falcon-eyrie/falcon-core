@@ -42,17 +42,12 @@ class PortPolicy {
 
 class PortInPolicy : public PortPolicy {
  public:
-  PortInPolicy(SlotRange slot_number_range = SlotRange(1), bool cache = false,
-               int64_t time_out = -1)
-      : PortPolicy(slot_number_range), cache_enabled_(cache),
-        time_out_(time_out) {}
+  PortInPolicy(SlotRange slot_number_range = SlotRange(1), bool cache = false)
+      : PortPolicy(slot_number_range), cache_enabled_(cache){}
 
   bool cache_enabled() const { return cache_enabled_; }
-  int64_t time_out() const { return time_out_; }
-
  protected:
   bool cache_enabled_;   // input slot only
-  int64_t time_out_;     // in microseconds, input slot only
 };
 
 class PortOutPolicy : public PortPolicy {

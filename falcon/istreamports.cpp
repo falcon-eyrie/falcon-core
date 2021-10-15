@@ -94,6 +94,5 @@ YAML::Node IPortIn::ExportYAML() const {
   node["nslots_min"] = policy().min_slot_number();
   node["nslots_max"] = policy().max_slot_number();
   node["cache"] = policy().cache_enabled();
-  node["time_out"] = policy().time_out();
   return node;
 }
