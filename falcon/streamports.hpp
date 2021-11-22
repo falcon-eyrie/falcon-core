@@ -165,21 +165,21 @@ template <typename DATATYPE> class SlotIn : public ISlotIn {
    * @param time_out time to wait for a packet in microseconds. If -1, wait for a packet to arrive
    * @return boolean if the slot is connected
    */
-  bool RetrieveData(typename DATATYPE::Data *&data, uint64_t time_out=-1);
+  bool RetrieveData(typename DATATYPE::Data *&data, int64_t time_out=-1);
   /**
    * @brief Retrieve N data packets in the ring buffer - method used from the processor implementation
    * @param data Container to load N data packets from the ring buffer
    * @param time_out time to wait for a packet in microseconds. If -1, wait for a packet to arrive
    * @return boolean if the slot is connected
    */
-  bool RetrieveDataN(uint64_t n, std::vector<typename DATATYPE::Data *> &data, uint64_t time_out=-1);
+  bool RetrieveDataN(uint64_t n, std::vector<typename DATATYPE::Data *> &data, int64_t time_out=-1);
   /**
    * @brief Retrieve all data packets in the ring buffer - method used from the processor implementation
    * @param data Container to load all data packets from the ring buffer
    * @param time_out time to wait for a packet in microseconds. If -1, wait for a packet to arrive
    * @return boolean if the slot is connected
    */
-  bool RetrieveDataAll(std::vector<typename DATATYPE::Data *> &data, uint64_t time_out=-1);
+  bool RetrieveDataAll(std::vector<typename DATATYPE::Data *> &data, int64_t time_out=-1);
 
   /**
    * @brief Flush all data already in the ring buffer without retrieve them - method used from the processor implementation

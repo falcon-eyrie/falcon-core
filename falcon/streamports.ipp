@@ -20,6 +20,7 @@
 //#include "streamports.hpp"
 //#include "g3log/src/g2log.hpp"
 
+
 template <typename DATATYPE>
 inline uint64_t SlotOut<DATATYPE>::nitems_produced() const {
 
@@ -193,7 +194,7 @@ template <typename DATATYPE> void SlotIn<DATATYPE>::check_high_water_level() {
 }
 
 template <typename DATATYPE>
-bool SlotIn<DATATYPE>::RetrieveData(typename DATATYPE::Data *&data, uint64_t time_out) {
+bool SlotIn<DATATYPE>::RetrieveData(typename DATATYPE::Data *&data, int64_t time_out) {
 
   data = nullptr;
   status_.read = status_.backlog = 0;
@@ -261,7 +262,7 @@ bool SlotIn<DATATYPE>::RetrieveData(typename DATATYPE::Data *&data, uint64_t tim
 
 template <typename DATATYPE>
 bool SlotIn<DATATYPE>::RetrieveDataN(
-    uint64_t n, std::vector<typename DATATYPE::Data *> &data, uint64_t time_out) {
+    uint64_t n, std::vector<typename DATATYPE::Data *> &data, int64_t time_out) {
 
   // will only cache last value, but does not return cached values when timed
   // out if n>1
@@ -337,7 +338,7 @@ bool SlotIn<DATATYPE>::RetrieveDataN(
 
 template <typename DATATYPE>
 bool SlotIn<DATATYPE>::RetrieveDataAll(
-    std::vector<typename DATATYPE::Data *> &data, uint64_t time_out) {
+    std::vector<typename DATATYPE::Data *> &data, int64_t time_out) {
 
   // supports single item caching
 
