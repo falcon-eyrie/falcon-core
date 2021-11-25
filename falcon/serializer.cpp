@@ -32,7 +32,7 @@ std::string Serializer::description() const { return description_; }
 std::string Serializer::extension() const { return extension_; }
 
 YAML::Node Serialization::Serializer::DataDescription(
-    const typename AnyType::Data *data) const {
+    const typename AnyType::Data &data) const {
 
   YAML::Node node;
 
@@ -43,7 +43,7 @@ YAML::Node Serialization::Serializer::DataDescription(
     node.push_back("packet uint64 (1)");
   }
 
-  data->YAMLDescription(node, format_);
+  data.YAMLDescription(node, format_);
 
   return node;
 }

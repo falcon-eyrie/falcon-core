@@ -198,7 +198,7 @@ class IProcessor {
   template <typename DATATYPE>
   PortOut<DATATYPE> *
   create_output_port(std::string name,
-                     const typename DATATYPE::Capabilities &capabilities,
+                     //const typename DATATYPE::Capabilities &capabilities,
                      const typename DATATYPE::Parameters &parameters,
                      const PortOutPolicy &policy) {
     if (name.size() == 0) {
@@ -212,7 +212,8 @@ class IProcessor {
 
     output_ports_[name] = std::move(std::unique_ptr<IPortOut>(
         (IPortOut *)new PortOut<DATATYPE>(this, PortAddress(this->name(), name),
-                                          capabilities, parameters, policy)));
+                                          //capabilities, 
+                                          parameters, policy)));
 
     return ((PortOut<DATATYPE> *)output_ports_[name].get());
   }
@@ -226,10 +227,10 @@ class IProcessor {
    */
   template <typename DATATYPE>
   PortOut<DATATYPE> *
-  create_output_port(const typename DATATYPE::Capabilities &capabilities,
+  create_output_port(//const typename DATATYPE::Capabilities &capabilities,
                      const typename DATATYPE::Parameters &parameters,
                      const PortOutPolicy &policy) {
-    return create_output_port<DATATYPE>(DATATYPE::dataname(), capabilities,
+    return create_output_port<DATATYPE>(DATATYPE::dataname(), //capabilities,
                                         parameters, policy);
   }
 
@@ -606,10 +607,9 @@ class IProcessor {
   void internal_CreatePorts();
   void internal_PrepareConnectionIn(SlotAddress &in);
   void internal_PrepareConnectionOut(SlotAddress &out);
-  void
-  internal_ConnectionCompatibilityCheck(const SlotAddress &address,
-                                        IProcessor *upstream,
-                                        const SlotAddress &upstream_address);
+//  void internal_ConnectionCompatibilityCheck(const SlotAddress &address,
+//                                        IProcessor *upstream,
+//                                        const SlotAddress &upstream_address);
   void internal_ConnectIn(const SlotAddress &address, IProcessor *upstream,
                           const SlotAddress &upstream_address);
   void internal_ConnectOut(const SlotAddress &address, IProcessor *downstream,

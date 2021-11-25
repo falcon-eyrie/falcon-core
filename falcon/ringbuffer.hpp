@@ -25,10 +25,60 @@
 #include "disruptor/ring_buffer.h"
 #include "disruptor/wait_strategy.h"
 
-template <typename DATA> using RingBuffer = disruptor::RingBuffer<DATA>;
+// template <typename DATA> using RingBuffer = disruptor::RingBuffer<DATA>;
 
-template <typename DATA>
-using IFactory = disruptor::EventFactoryInterface<DATA>;
+// template <typename DATA>
+// using IFactory = disruptor::EventFactoryInterface<DATA>;
+
+// Ring based store of reusable entries containing the data representing an
+// event beign exchanged between publisher and {@link EventProcessor}s.
+//
+// @param <T> implementation storing the data for sharing during exchange
+// or parallel coordination of an event.
+template<typename T>
+class RingBuffer : public disruptor::Sequencer {
+ public:
+    // Construct a RingBuffer with the full option set.
+    //
+    // @param event_factory to instance new entries for filling the RingBuffer.
+    // @param buffer_size of the RingBuffer, must be a power of 2.
+    // @param claim_strategy_option threading strategy for publishers claiming
+    // entries in the ring.
+    // @param wait_strategy_option waiting strategy employed by
+    // processors_to_track waiting in entries becoming available.
+    RingBuffer(const T & prototype,
+               int buffer_size,
+               disruptor::ClaimStrategyOption claim_strategy_option,
+               disruptor::WaitStrategyOption wait_strategy_option) :
+            disruptor::Sequencer(buffer_size,
+                      claim_strategy_option,
+                      wait_strategy_option),
+            buffer_size_(buffer_size),
+            mask_(buffer_size - 1),
+            events_(buffer_size, prototype) {
+    }
+
+    ~RingBuffer() {
+        //delete[] events_;
+    }
+
+    // Get the event for a given sequence in the RingBuffer.
+    //
+    // @param sequence for the event
+    // @return event pointer at the specified sequence position.
+    T* Get(const int64_t& sequence) {
+        return &events_[sequence & mask_];
+    }
+
+ private:
+    // Members
+    int buffer_size_;
+    int mask_;
+    //T* events_;
+    std::vector<T> events_;
+
+    DISALLOW_COPY_AND_ASSIGN(RingBuffer);
+};
 
 typedef disruptor::ProcessingSequenceBarrier RingBarrier;
 

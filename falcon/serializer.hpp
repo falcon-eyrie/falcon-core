@@ -44,7 +44,7 @@ class Serializer {
   Format format() const;
   void set_format(Format fmt);
 
-  YAML::Node DataDescription(const typename AnyType::Data *data) const;
+  YAML::Node DataDescription(const typename AnyType::Data &data) const;
 
   std::string description() const;
   std::string extension() const;
