@@ -25,10 +25,9 @@
 #include "disruptor/ring_buffer.h"
 #include "disruptor/wait_strategy.h"
 
-// template <typename DATA> using RingBuffer = disruptor::RingBuffer<DATA>;
 
-// template <typename DATA>
-// using IFactory = disruptor::EventFactoryInterface<DATA>;
+// this RingBuffer implementation is based onthe disruptor::RingBuffer
+// but it stores the data objects in a vector
 
 // Ring based store of reusable entries containing the data representing an
 // event beign exchanged between publisher and {@link EventProcessor}s.
@@ -40,7 +39,7 @@ class RingBuffer : public disruptor::Sequencer {
  public:
     // Construct a RingBuffer with the full option set.
     //
-    // @param event_factory to instance new entries for filling the RingBuffer.
+    // @param prototype of data object to store in ringbuffer
     // @param buffer_size of the RingBuffer, must be a power of 2.
     // @param claim_strategy_option threading strategy for publishers claiming
     // entries in the ring.
@@ -58,10 +57,6 @@ class RingBuffer : public disruptor::Sequencer {
             events_(buffer_size, prototype) {
     }
 
-    ~RingBuffer() {
-        //delete[] events_;
-    }
-
     // Get the event for a given sequence in the RingBuffer.
     //
     // @param sequence for the event
@@ -74,7 +69,6 @@ class RingBuffer : public disruptor::Sequencer {
     // Members
     int buffer_size_;
     int mask_;
-    //T* events_;
     std::vector<T> events_;
 
     DISALLOW_COPY_AND_ASSIGN(RingBuffer);

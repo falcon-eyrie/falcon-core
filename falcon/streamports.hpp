@@ -86,7 +86,6 @@ template <typename DATATYPE> class SlotOut : public ISlotOut {
   StreamInfo<DATATYPE>
       streaminfo_;   // owned by SlotOut, once finalized, the streaminfo (and
                      // datatype) are fixed for the life time of the slot(?)
-  //std::unique_ptr<DataFactory<DATATYPE>> datafactory_ = nullptr;
   std::unique_ptr<RingBuffer<typename DATATYPE::Data>> ringbuffer_ = nullptr;
 
  protected:
@@ -96,10 +95,9 @@ template <typename DATATYPE> class SlotOut : public ISlotOut {
 template <typename DATATYPE> class PortOut : public IPortOut {
  public:
   PortOut(IProcessor *parent, const PortAddress &address,
-//          const typename DATATYPE::Capabilities &capabilities,
           const typename DATATYPE::Parameters &parameters,
           const PortOutPolicy &policy)
-      : IPortOut(parent, address, policy), //capabilities_(capabilities),
+      : IPortOut(parent, address, policy),
         parameters_(parameters) {
     NewSlot(policy.min_slot_number());
   }
@@ -121,10 +119,6 @@ template <typename DATATYPE> class PortOut : public IPortOut {
 
   SlotOut<DATATYPE> *dataslot(std::size_t index) { return slots_[index].get(); }
 
-//  virtual const typename DATATYPE::Capabilities &capabilities() const {
-//    return capabilities_;
-//  }
-
  protected:
   // called by StreamOutConnector
   void Connect(int slot, ISlotIn *downstream) override;
@@ -144,7 +138,6 @@ template <typename DATATYPE> class PortOut : public IPortOut {
   }
 
  private:
-//  typename DATATYPE::Capabilities capabilities_;
   typename DATATYPE::Parameters parameters_;  // default parameters
   std::vector<std::unique_ptr<SlotOut<DATATYPE>>> slots_;
 };
@@ -228,15 +221,13 @@ template <typename DATATYPE> class SlotIn : public ISlotIn {
   void Validate() override {
     
     try {
-      //auto p = dynamic_cast<typename DATATYPE::Data&>(*prototype);
-      
       // the template keyword is necessary here for the compiler
       // to know how to interpret the code
       // see https://stackoverflow.com/a/613132
       auto prototype = this->streaminfo().template getDataPrototype<typename DATATYPE::Data>();
       capabilities_.Validate(prototype);
     } catch (const std::bad_cast &e) {
-      throw std::runtime_error("Upstream and downstream data types are incompatible (" + this->streaminfo().datatype() + " -> " + DATATYPE::datatype() + ").");
+      throw std::runtime_error("Incompatible data types (" + this->streaminfo().datatype() + " -> " + DATATYPE::datatype() + ").");
     } catch (const std::exception &e) {
       throw;
     }
@@ -295,13 +286,11 @@ template <typename DATATYPE> class PortIn : public IPortIn {
   // called by StreamInConnector
   virtual void Connect(int slot, ISlotOut *upstream);
   virtual int ReserveSlot(int slot);
-//  virtual void VerifyCompatibility(IPortOut *upstream);
 
   void UnlockSlots() override;
   void NewSlot(int n = 1);
 
  private:
-  // DATATYPE datatype_;
   typename DATATYPE::Capabilities capabilities_;
   std::vector<std::unique_ptr<SlotIn<DATATYPE>>> slots_;
 };

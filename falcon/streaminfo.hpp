@@ -40,8 +40,6 @@ class IStreamInfo {
   void set_stream_rate(const IStreamInfo &info);
   std::string datatype() const;
 
-  //virtual std::unique_ptr<typename AnyType::Data> getDataPrototype(bool initialize = true) const = 0;
-
   template <typename T = typename AnyType::Data>
   const T & getDataPrototype() const {
     // todo: throw exception when not finalized
@@ -96,14 +94,4 @@ template <typename DATATYPE> class StreamInfo : public IStreamInfo {
     set_parameters(info.parameters());
   }
 
-//  std::unique_ptr<typename AnyType::Data> getDataPrototype(bool initialize = true) const override {
-//    auto prototype = std::make_unique<typename DATATYPE::Data>();
-//    if (initialize) {
-//      prototype->Initialize(parameters_);
-//    }
-//    return prototype;
-//  }
-
- protected:
-  //typename DATATYPE::Parameters parameters_;
 };

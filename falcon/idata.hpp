@@ -36,40 +36,9 @@
 #include "flatbuffers/flatbuffers.h"
 #include "flatbuffers/flexbuffers.h"
 
-// Factory for DATATYPE::Data items with support for post-construction
-// initialization
-//template <typename DATATYPE>
-//class DataFactory : public IFactory<typename DATATYPE::Data> {
-// public:
-//  DataFactory(const typename DATATYPE::Parameters &parameters)
-//      : parameters_(parameters) {}
-
-//  typename DATATYPE::Data * NewInstance(const int &size) const final {
-//    auto items = new typename DATATYPE::Data[size];
-//    for (int k = 0; k < size; k++) {
-//      items[k].Initialize(parameters_);
-//    }
-//    return items;
-//  }
-
-// protected:
-//  typename DATATYPE::Parameters parameters_;
-//};
-
 namespace nsAnyType {
 
 struct Parameters {};
-
-class Data;
-
-class Capabilities {
- public:
-  //virtual ~Capabilities() {}
-
-//  virtual void VerifyCompatibility(const Capabilities &capabilities) const {}
-//  virtual void Validate(const Parameters &parameters) const {}
-  void Validate(const Data & prototype) const {}
-};
 
 class Data {
  public:
@@ -126,6 +95,11 @@ class Data {
   uint64_t serial_number_;
   bool end_of_stream_ = false;
 
+};
+
+class Capabilities {
+ public:
+  void Validate(const Data & prototype) const {}
 };
 
 }   // namespace nsAnyType

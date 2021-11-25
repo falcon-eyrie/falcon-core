@@ -227,20 +227,6 @@ void IProcessor::internal_PrepareConnectionOut(SlotAddress &address) {
   address.set_port_datatype(output_port(address)->datatype());
 }
 
-// void IProcessor::internal_ConnectionCompatibilityCheck(
-//     const SlotAddress &address, IProcessor *upstream,
-//     const SlotAddress &upstream_address) {
-//   try {
-//     input_port(address)->VerifyCompatibility(
-//         upstream->output_port(upstream_address));
-//   } catch (std::exception &e) {
-//     throw ProcessorInternalError(
-//         std::string("Incompatible ports ") + upstream_address.string(true) +
-//             " -> " + address.string(true) + " (" + e.what() + ")",
-//         name());
-//   }
-// }
-
 void IProcessor::internal_ConnectIn(const SlotAddress &address,
                                     IProcessor *upstream,
                                     const SlotAddress &upstream_address) {
@@ -261,8 +247,6 @@ void IProcessor::internal_NegotiateConnections() {
     for (auto &it : input_ports_) {
       for (int k = 0; k < it.second->number_of_slots(); ++k) {
         if (!it.second->slot(k)->connected()) {
-          LOG(ERROR) << name() << ": input slot \"" << it.first + "."
-                     << std::to_string(k) << "\" is not connected.";
           throw ProcessorInternalError("input slot \"" + it.first + "." +
                                            std::to_string(k) +
                                            "\" is not connected.",
@@ -272,12 +256,12 @@ void IProcessor::internal_NegotiateConnections() {
         try {
           it.second->slot(k)->Validate();
         } catch (std::exception &e) {
-          LOG(ERROR) << name() << ": Incompatible stream on slot \"" << it.first
-                     << "." << std::to_string(k) << "\" (" << e.what() << ")";
-          throw ProcessorInternalError("Incompatible stream on slot \"" +
-                                           it.first + "." + std::to_string(k) +
-                                           "\" (" + e.what() + ")",
-                                       name());
+          throw ProcessorInternalError(
+            std::string("Incompatible data stream ") + 
+            it.second->slot(k)->upstream_address().string(false) +
+            " -> " + it.second->slot(k)->address().string(false) + 
+            " (" + e.what() + ")",
+            name());
         }
       }
     }
@@ -326,8 +310,6 @@ void IProcessor::internal_PrepareProcessing() {
 void IProcessor::internal_ThreadEntry(RunContext &runcontext) {
   LOG(DEBUG) << "Entering thread for processor " << name_;
 
-  // ProcessingContext context( runcontext, name_, has_test_flag_.load() ?
-  // test_flag_.load() : runcontext.test() );
   ProcessingContext context(runcontext, name_,
                             new_test_flag_.is_null() ? runcontext.test()
                                                      : new_test_flag_());

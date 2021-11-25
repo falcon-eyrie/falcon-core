@@ -21,8 +21,6 @@
 
 bool IStreamInfo::finalized() const { return finalized_; }
 
-//void IStreamInfo::Finalize() { finalized_ = true; }
-
 double IStreamInfo::stream_rate() const { return stream_rate_; }
 
 void IStreamInfo::set_stream_rate(double stream_rate) {
