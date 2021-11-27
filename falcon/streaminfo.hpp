@@ -75,8 +75,7 @@ template <typename DATATYPE> class StreamInfo : public IStreamInfo {
   void Finalize() override {
     finalized_ = true;
 
-    auto prototype = std::make_unique<typename DATATYPE::Data>();
-    prototype->Initialize(this->parameters());
+    auto prototype = std::make_unique<typename DATATYPE::Data>(this->parameters());
 
     prototype_ = std::move(prototype);
 
