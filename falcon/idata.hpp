@@ -63,6 +63,14 @@ class Data {
   Data() : hardware_timestamp_(0), serial_number_(0) {}
   virtual ~Data() {}
 
+  /**
+  * @brief ClearData class is called each time
+  * a data packet is claimed on the output port.
+  *
+  */
+
+  virtual void ClearData() {}
+
   uint64_t serial_number() const;
   void set_serial_number(uint64_t n);
 
