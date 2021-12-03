@@ -26,25 +26,31 @@
 #include "disruptor/wait_strategy.h"
 
 
-// this RingBuffer implementation is based onthe disruptor::RingBuffer
-// but it stores the data objects in a vector
+/**
+ * this RingBuffer implementation is based onthe disruptor::RingBuffer
+ * but it stores the data objects in a vector
 
-// Ring based store of reusable entries containing the data representing an
-// event beign exchanged between publisher and {@link EventProcessor}s.
-//
-// @param <T> implementation storing the data for sharing during exchange
-// or parallel coordination of an event.
+ * Ring based store of reusable entries containing the data representing an
+ * event beign exchanged between publisher and {@link EventProcessor}s.
+ *
+ * @param <T> implementation storing the data for sharing during exchange
+ *  or parallel coordination of an event.
+ */
+
 template<typename T>
 class RingBuffer : public disruptor::Sequencer {
  public:
-    // Construct a RingBuffer with the full option set.
-    //
-    // @param prototype of data object to store in ringbuffer
-    // @param buffer_size of the RingBuffer, must be a power of 2.
-    // @param claim_strategy_option threading strategy for publishers claiming
-    // entries in the ring.
-    // @param wait_strategy_option waiting strategy employed by
-    // processors_to_track waiting in entries becoming available.
+
+    /**
+     * Construct a RingBuffer with the full option set.
+     *
+     * @param prototype of data object to store in ringbuffer
+     * @param buffer_size of the RingBuffer, must be a power of 2.
+     * @param claim_strategy_option threading strategy for publishers claiming
+     * entries in the ring.
+     * @param wait_strategy_option waiting strategy employed by
+     * processors_to_track waiting in entries becoming available.
+     */
     RingBuffer(const T & prototype,
                int buffer_size,
                disruptor::ClaimStrategyOption claim_strategy_option,
@@ -57,10 +63,13 @@ class RingBuffer : public disruptor::Sequencer {
             events_(buffer_size, prototype) {
     }
 
-    // Get the event for a given sequence in the RingBuffer.
-    //
-    // @param sequence for the event
-    // @return event pointer at the specified sequence position.
+    /**
+     * Get the event for a given sequence in the RingBuffer.
+     *
+     * @param sequence for the event
+     * @return event pointer at the specified sequence position.
+     */
+
     T* Get(const int64_t& sequence) {
         return &events_[sequence & mask_];
     }
