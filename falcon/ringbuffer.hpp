@@ -27,11 +27,11 @@
 
 
 /**
- * this RingBuffer implementation is based onthe disruptor::RingBuffer
+ * this RingBuffer implementation is based on the disruptor::RingBuffer
  * but it stores the data objects in a vector
 
  * Ring based store of reusable entries containing the data representing an
- * event beign exchanged between publisher and {@link EventProcessor}s.
+ * event being exchanged between publisher and {@link EventProcessor}s.
  *
  * @param <T> implementation storing the data for sharing during exchange
  *  or parallel coordination of an event.

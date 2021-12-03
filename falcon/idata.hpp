@@ -63,24 +63,6 @@ class Data {
   Data() : hardware_timestamp_(0), serial_number_(0) {}
   virtual ~Data() {}
 
-  /**
-   * @brief ClearData class is called each time
-   * a data packet is claimed on the output port.
-   *
-   */
-  virtual void ClearData() {}
-
-  /**
-   * @brief eos is the getter for the end of stream property
-   * @return bool if the stream is ended or not
-   */
-  bool eos() const;
-  void set_eos(bool value = true);
-  /**
-   * @brief clear_eos reset the end of stream to false
-   */
-  void clear_eos();
-
   uint64_t serial_number() const;
   void set_serial_number(uint64_t n);
 
@@ -95,15 +77,15 @@ class Data {
   void set_source_timestamp(TimePoint t);
 
   /**
-   * @brief source_timestamp getter for the source_timestamps_. This timestamps is set
-   * by the internal Falcon clock.
+   * @brief source_timestamp getter for the source_timestamp_.
+   * This timestamp is set by the internal Falcon clock.
    *
    * @return TimePoint
    */
   TimePoint source_timestamp() const;
 
   /**
-   * Compute the duration since the timestamps has been set.
+   * Compute the duration since the timestamp has been set.
    * The default unit is in microseconds but can be changed based
    * on the template.
    */
@@ -126,7 +108,7 @@ class Data {
   }
 
   /**
-   * @brief hardware_timestamp timestamps given by the hardware. The unit depends on the hardware.
+   * @brief hardware_timestamp timestamp given by the hardware. The unit depends on the hardware.
    * @return
    */
   uint64_t hardware_timestamp() const;
@@ -139,17 +121,19 @@ class Data {
   void CloneTimestamps(const Data &data);
 
   /**
-   * @brief SerializeBinary - Add the binary data specific to each datatype following the yaml header describe after.
+   * @brief SerializeBinary - Serialize data specific for the data type in binary form
+   * according to the layout described in YAMLDescription.
    * At this level, only serialize the source timestamp, hardware timestamp and serial number.
    *
-   * @param stream binary flux where to add the data
+   * @param stream binary stream where to add the data
    * @param format Compact or Full
    */
   virtual void SerializeBinary(std::ostream &stream,
                                Serialization::Format format) const;
 
   /**
-   * @brief SerializeYAML - Add the yaml data specific to each datatype following the yaml header describe after.
+   * @brief SerializeYAML - Serialize data specific for the data type in yaml form
+   * according to the layout described in YAMLDescription.
    * At this level, only serialize the source timestamp duration, hardware timestamp and serial number.
    *
    * @param node yaml node where to add the data
@@ -184,8 +168,6 @@ class Data {
   TimePoint source_timestamp_;
   uint64_t hardware_timestamp_;   // e.g. from Neuralynx
   uint64_t serial_number_;
-  bool end_of_stream_ = false;
-
 };
 
 /**
