@@ -20,12 +20,6 @@
 #include "idata.hpp"
 using namespace nsAnyType;
 
-bool Data::eos() const { return end_of_stream_; }
-
-void Data::set_eos(bool value) { end_of_stream_ = value; }
-
-void Data::clear_eos() { end_of_stream_ = false; }
-
 void Data::set_serial_number(uint64_t n) { serial_number_ = n; }
 
 uint64_t Data::serial_number() const { return serial_number_; }

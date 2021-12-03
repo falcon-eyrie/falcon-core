@@ -82,10 +82,10 @@ void SlotOut<DATATYPE>::CreateRingBuffer(int buffer_size,
 
   // make sure buffer size is power of 2 and at least 2
   buffer_size_ = buffer_size < 2 ? 2 : next_pow2(buffer_size);
-  datafactory_.reset(new DataFactory<DATATYPE>(streaminfo_.parameters()));
+  
   try {
     ringbuffer_.reset(new RingBuffer<typename DATATYPE::Data>(
-        datafactory_.get(), buffer_size_,
+        prototype(), buffer_size_,
         ClaimStrategy::kSingleThreadedStrategy, wait_strategy));
   } catch (std::runtime_error &e) {
     throw;
@@ -173,13 +173,6 @@ template <typename DATATYPE> void PortOut<DATATYPE>::NewSlot(int n) {
   }
 }
 
-template <typename DATATYPE>
-const typename DATATYPE::Data *SlotIn<DATATYPE>::GetDataPrototype() const {
-
-  const typename DATATYPE::Data *data;
-  data = (const typename DATATYPE::Data *)upstream_->DataAt(0);
-  return data;
-}
 
 template <typename DATATYPE> void SlotIn<DATATYPE>::check_high_water_level() {
   if (status_.backlog > HIGH_WATER_LEVEL * upstream_->buffer_size() and
@@ -453,26 +446,6 @@ template <typename DATATYPE> int PortIn<DATATYPE>::ReserveSlot(int slot) {
   return reserved_slot;
 }
 
-template <typename DATATYPE>
-void PortIn<DATATYPE>::VerifyCompatibility(IPortOut *upstream) {
-
-  try {
-    // the data type of upstream ports should be the same as or a more
-    // derived type than the data type of the downstream port
-    // dynamic_cast is used to test for upcast ability
-    auto cast = dynamic_cast<const typename DATATYPE::Capabilities &>(
-        upstream->capabilities());
-
-    // at this point, upstream capabilities have been cast up to the
-    // same data type as the downstream capabilities
-    // here we test further compatibility of the capabilities
-    capabilities_.VerifyCompatibility(cast);
-
-  } catch (const std::bad_cast &e) {
-    // casting failed, upstream and downstream data types are not compatible
-    throw std::runtime_error(std::string("Incompatible data types"));
-  }
-}
 
 template <typename DATATYPE> void PortIn<DATATYPE>::NewSlot(int n) {
 

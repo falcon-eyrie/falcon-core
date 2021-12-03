@@ -360,9 +360,6 @@ void ProcessorGraph::CreateConnection(SlotAddress &out, SlotAddress &in) {
   processor_out->internal_PrepareConnectionOut(out);
   processor_in->internal_PrepareConnectionIn(in);
 
-  // check compatibility
-  processor_in->internal_ConnectionCompatibilityCheck(in, processor_out, out);
-
   // connect in to out, connect out to in
   processor_in->internal_ConnectIn(in, processor_out, out);
 
@@ -499,9 +496,6 @@ void ProcessorGraph::StartProcessing(std::string run_group_id,
   // start processing only if state is READY
 
   if (state_ == GraphState::READY) {
-    // construct RunInfo object
-    // runinfo_.reset( new RunInfo( terminate_signal_, context_, run_identifier,
-    // destination, source ) );
     run_context_.reset(new RunContext(global_context_, terminate_signal_,
                                       run_group_id, run_id, template_id,
                                       test_flag));
@@ -623,8 +617,7 @@ void ProcessorGraph::Update(YAML::Node &node) {
         try {
           auto state_name = it2->first.as<std::string>();
           auto state_value = it2->second.as<std::string>();
-          // it2->second = processor->internal_UpdateState( state_name,
-          // state_value );
+
           auto pstate = processor->shared_state(state_name);
 
           // check if externally settable??
@@ -684,7 +677,7 @@ void ProcessorGraph::Retrieve(YAML::Node &node) {
            ++it2) {
         try {
           auto state_name = it2->first.as<std::string>();
-          // it2->second = processor->internal_RetrieveState( state_name );
+
           auto pstate = processor->shared_state(state_name);
           if (pstate->external_permission() != Permission::NONE) {
             it2->second = pstate->get_string();
