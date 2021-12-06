@@ -38,30 +38,38 @@
 #include "flatbuffers/flexbuffers.h"
 
 
-// base class of all data objects
+/**
+ * @brief The base class of AnyType::Data.
+ */
 class BaseData {};
 
-// base class of all data types
+/**
+ * @brief The parent data type of AnyType.
+ */
 class BaseType {
 public:
     static const bool ispure() { return true; }
     using Data = BaseData;
 };
 
-/*
-** Data type definition class, with five template arguments
-** DATA: the associated data object class
-** BASETYPE: the parent data type
-** pure: boolean argument indicating if data object
-** is pure (i.e., its members/parameters are independent from parent)
-** CAPS: the associated capabilities class
-** PARAMS: the associated parameters class
-**
-** the class defines static datatype() and dataname() methods
-** that call the corresponding static methods in the data object class
-** it also defines a static ispure method that propagates up the hierarchy
-** (i.e., a data type is pure only if itself all its (grand)parents are pure.
-*/
+/**
+ * @brief Convenient template class to define data types.
+ *
+ * There are two required and three optional template arguments:
+ * DATA: the associated data object class.
+ * BASETYPE: the parent data type.
+ * pure: optional, boolean argument indicating if data object
+ * is pure (i.e., its members/parameters are independent from parent).
+ * CAPS: optional, the capabilities class associated with the
+ * data object class. Default is DATA::Capabilities.
+ * PARAMS: optional, the parameters class associated with the
+ * data object class. Default is DATA::Parameters.
+ * 
+ * @note The class defines static datatype() and dataname() methods
+ * that call the corresponding static methods in the data object class
+ * it also defines a static ispure method that propagates up the hierarchy
+ * (i.e., a data type is pure only if itself all its (grand)parents are pure.
+ */
 template<
   typename DATA, typename BASETYPE, bool pure = false,
   typename CAPS = typename DATA::Capabilities,
@@ -80,10 +88,12 @@ public:
     using Base = BASETYPE;
 };
 
-/*
-** We use CRTP with base class injection to define virtual member functions
-** that call the static member function in the derived class
-*/
+/**
+ * @brief Base class of all data object classes.
+ *
+ * We use CRTP with base class injection to define virtual member
+ * functions that call the static member function in the derived class
+ */
 template <typename T, typename BASETYPE>
 class IData : public BASETYPE::Data {
 public:
@@ -130,11 +140,10 @@ class Data : public IData<Data, BaseType> {
   static const std::string static_dataname() { return "data"; }
 
   /**
-  * @brief ClearData class is called each time
-  * a data packet is claimed on the output port.
-  *
-  */
-
+   * @brief ClearData class is called each time
+   * a data packet is claimed on the output port.
+   *
+   */
   virtual void ClearData() {}
 
   uint64_t serial_number() const;
@@ -250,8 +259,8 @@ class Data : public IData<Data, BaseType> {
  */
 
 class Capabilities {
- public:
-    /**
+public:
+  /**
    * @brief Validate method is used to validate incoming data objects against the capabilities.
    * Capabilities are defined at the level of input ports and all slots on a port share the same capabilities.
    *
@@ -269,7 +278,15 @@ class Capabilities {
  * that are just containers for the data object class and associated parameter and capabilities classes,
  * plus static member functions for the name of the data type and a label for the data.
  *
- * And while there is an inheritance hierarchy for the data object classes,
+ * The templated DefineType class is a convenient way to define a new
+ * data type. If the Capabilities and Parameters classes are nested
+ * inside the Data object class, then the last two template arguments
+ * can be omitted.
+ *
+ * @note While there is an inheritance hierarchy for the data object classes,
  * there is no explicit hierarchy for the data type classes.
  */
- using AnyType = DefineType<nsAnyType::Data, BaseType, true, nsAnyType::Capabilities, nsAnyType::Parameters>;
+ using AnyType = DefineType<
+  nsAnyType::Data, BaseType, true,
+  nsAnyType::Capabilities, nsAnyType::Parameters
+  >;
