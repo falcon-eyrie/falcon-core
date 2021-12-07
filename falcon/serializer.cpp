@@ -96,8 +96,6 @@ bool Serialization::FlatBufferSerializer::Serialize(std::ostream &stream,
                               builder_.CreateString(GIT_REVISION), packetid, datasource,
                               builder_.CreateString(data->datatype()),
                               builder_.CreateVector(flex_builder_.GetBuffer()));
-
-  LOG(INFO)<< data->datatype();
   builder_.Finish(buffer);
   stream.write(reinterpret_cast<const char*>(builder_.GetBufferPointer()), builder_.GetSize());
 
