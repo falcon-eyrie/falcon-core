@@ -96,6 +96,11 @@ public:
  */
 template <typename T, typename BASETYPE>
 class IData : public BASETYPE::Data {
+
+public:
+    using Base=typename BASETYPE::Data;
+    using Base::Base;
+
 public:
     virtual std::string datatype() const { return T::static_datatype(); }
     virtual std::string dataname() const { return T::static_dataname(); }
