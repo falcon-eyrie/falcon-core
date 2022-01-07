@@ -43,12 +43,17 @@ class IStreamInfo {
   template <typename T = typename AnyType::Data>
   const T & getDataPrototype() const {
     // todo: throw exception when not finalized
+    if(not finalized()){
+        throw std::runtime_error("Not finalized");
+    }
     return dynamic_cast<const T &>(*prototype_);
   }
 
   template <typename T>
   const T & parameters() const {
-    return std::any_cast<const T &>(parameters_);
+
+          return std::any_cast<const T &>(parameters_);
+
   }
 
  protected:

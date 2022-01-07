@@ -511,6 +511,22 @@ class IProcessor {
     return ((ReadableState<T> *)shared_states_[state].get());
   }
 
+  template <typename T>
+  ReadableObjectState<T> *create_readable_shared_object(
+      std::string state, T default_value, Permission peers = Permission::WRITE,
+      Permission external = Permission::NONE, std::string description = "") {
+    if (shared_states_.count(state) == 1) {
+      throw ProcessorInternalError("Shared state \"" + state +
+                                       "\" is invalid or already exists.",
+                                   name());
+    }
+
+    shared_states_[state] =
+        std::move(std::unique_ptr<IState>((IState *)new ReadableObjectState<T>(
+            default_value, description, peers, external)));
+
+    return ((ReadableObjectState<T> *)shared_states_[state].get());
+  }
 
   /**
    * Create a writable shared state on the processor.

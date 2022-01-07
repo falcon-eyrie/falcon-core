@@ -331,6 +331,143 @@ class ReadableState : public StateCloneable<IState, ReadableState<T>> {
       state_;   // our own state, that may be shared with others
 };
 
+
+template <typename T>
+class ReadableObjectState : public StateCloneable<IState, ReadableObjectState<T>> {
+ public:
+  ReadableObjectState(T default_value, std::string description = "",
+                Permission peers = Permission::WRITE,
+                Permission external = Permission::NONE)
+      : StateCloneable<IState, ReadableObjectState<T>>(
+            Permissions(Permission::READ, peers, external), description),
+        default_(default_value), cache_(default_value),
+        state_(std::make_shared<T>(default_value)) {}
+
+  ReadableObjectState(const ReadableObjectState &other)
+      : StateCloneable<IState, ReadableObjectState<T>>(other.permissions_,
+                                                 other.description_),
+        default_(other.default_), cache_(other.cache_),
+        state_(std::make_shared<T>(other.state_)) {
+    // note that we are creating our own (unshared) state
+    // and that we do not share other's state
+  }
+
+  T get(bool cache = true) {
+    this->lock();
+    T val = *state_;
+    if (cache) {
+      cache_ = val;
+    }
+    this->unlock();
+
+    return val;
+  }
+
+  bool changed_get(T &val, bool cache = true) {
+    bool ret;
+    this->lock();
+    val = state_;
+    ret = cache_ == val;
+    if (cache) {
+      cache_ = val;
+    }
+    this->unlock();
+
+    return ret;
+  }
+
+  std::string get_string(bool cache = true) override {
+      T value = get(cache);
+     /* if (std::is_same_v<T, bool>) {
+          return value ? "true" : "false";
+      }*/
+      return std::to_string(value);
+  }
+
+ protected:   // for friends only
+  void set(T value, bool cache = true) {
+    this->lock();
+    *state_= value;
+    if (cache) {
+      cache_ = value;
+    }
+    this->unlock();
+  }
+
+  T exchange(T value, bool cache = true) {
+    this->lock();
+    if (cache) {
+      cache_ = value;
+    }
+    this->unlock();
+
+    return value;
+  }
+
+  bool set_string(const std::string &value, bool cache = true) override {
+    std::stringstream ss(value);
+    T result;
+    if ((std::is_same_v<T, bool> and ss >> std::boolalpha >> result)
+        or ss >> result)
+    {
+      std::cout << result;
+
+      set(result, cache);
+      return true;
+    }
+    return false;
+  }
+
+
+  void reset() { set(default_); }
+
+  void Share(const std::shared_ptr<IState> &other) override {
+    if (other.get() == this) {
+      return;
+    }
+
+    auto cast = dynamic_cast<ReadableObjectState<T> *>(other.get());
+    if (cast) {
+      this->lock();
+      this->state_ = cast->state_;
+      this->external_permission_ = cast->external_permission_;
+      this->external_permission_->add(this->permissions_.external());
+      this->shared_ = true;
+      this->unlock();
+    } else {
+      throw std::runtime_error("Cannot delegate to incompatible state.");
+    }
+  }
+
+  void UnShare() override {
+    this->lock();
+    this->state_ = std::make_shared<T>(this->state_);
+    this->external_permission_->subtract(this->permissions_.external());
+    this->external_permission_ = std::make_shared<ExternalPermissionTracker>(
+        this->permissions_.external());
+    this->shared_ = false;
+    this->unlock();
+  }
+
+  bool IsLikeMe(const std::shared_ptr<IState> &other) override {
+    try {
+      auto cast = dynamic_cast<const ReadableObjectState<T> *>(other.get());
+      if (cast) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (const std::bad_cast &e) {
+      return false;
+    }
+  }
+
+ private:
+  T default_;
+  T cache_;
+  std::shared_ptr<T> state_;   // our own state, that may be shared with others
+};
+
 template <typename T> class WritableState : public ReadableState<T> {
  public:
   WritableState(T default_value, std::string description = "",
@@ -350,6 +487,7 @@ template <typename T> class WritableState : public ReadableState<T> {
   }
   void reset() { ReadableState<T>::reset(); }
 };
+
 
 class SharedStateAlias {
  public:
