@@ -33,6 +33,8 @@ import sphinx_bootstrap_theme
 
 import subprocess, os
 
+os.makedirs("_build/doxyfile", exist_ok=True)
+
 subprocess.call('cd doxyfile; doxygen', shell=True)
 
 extensions = ['breathe', "sphinx.ext.intersphinx"]
