@@ -38,8 +38,3 @@ System overview
    internals/logging_system
    internals/graph_system
    internals/utilities
-
-Reference API - doxygen
-=======================
-
-To get to the standalone doxygen API, `click here <../doxyfile/html/annotated.html>`_ now!

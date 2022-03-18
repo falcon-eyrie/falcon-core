@@ -53,7 +53,7 @@ exhale_args = {
     # TIP: if using the sphinx-bootstrap-theme, you need
     # "treeViewIsBootstrap": True,
     "exhaleExecutesDoxygen": True,
-    "exhaleDoxygenStdin":    "INPUT = ../falcon"
+    "exhaleDoxygenStdin":    "INPUT = ../falcon ../lib"
 }
 
 

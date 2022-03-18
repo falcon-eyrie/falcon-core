@@ -10,3 +10,4 @@ Content table
     client
     dev_guide
     extending_falcon
+    api/library_root
