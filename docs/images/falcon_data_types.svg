@@ -1,0 +1,977 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg151059"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="falcon_data_types.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview151061"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:snap-bbox="true"
+     inkscape:snap-midpoints="true"
+     inkscape:zoom="1.0607991"
+     inkscape:cx="279.03493"
+     inkscape:cy="521.30512"
+     inkscape:window-width="1920"
+     inkscape:window-height="986"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs151056">
+    <marker
+       style="overflow:visible"
+       id="TriangleInM"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="TriangleInM"
+       inkscape:isstock="true">
+      <path
+         transform="scale(-0.4)"
+         style="fill-rule:evenodd;fill:context-stroke;stroke:context-stroke;stroke-width:1.0pt"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         id="path50294" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker178577"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.4)"
+         style="fill-rule:evenodd;fill:context-stroke;stroke:context-stroke;stroke-width:1.0pt"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         id="path178575" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutS"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="TriangleOutS"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.2)"
+         style="fill-rule:evenodd;fill:context-stroke;stroke:context-stroke;stroke-width:1.0pt"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         id="path50306" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="TriangleOutM"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.4)"
+         style="fill-rule:evenodd;fill:context-stroke;stroke:context-stroke;stroke-width:1.0pt"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         id="path50303" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker178577-2"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.4)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path178575-4" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker187127"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.4)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path187125" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker187131"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="TriangleOutM"
+       inkscape:isstock="true">
+      <path
+         transform="scale(0.4)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path187129" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151142"
+       width="77.953682"
+       height="15.872922"
+       x="82.674919"
+       y="16.196289"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#f2f2f2;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151142-9"
+       width="77.953682"
+       height="15.872922"
+       x="82.674919"
+       y="76.51339"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#f1cefc;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151274"
+       width="28.394894"
+       height="8.2891922"
+       x="82.674919"
+       y="32.06921"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#a3f5b3;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151274-2"
+       width="28.394894"
+       height="8.2891922"
+       x="82.674919"
+       y="68.224197"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#a3f5b3;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151274-9"
+       width="28.394894"
+       height="8.2891922"
+       x="132.23369"
+       y="68.224197"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#f1cefc;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151274-8"
+       width="28.394894"
+       height="8.2891922"
+       x="132.23369"
+       y="32.06921"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#47eb63;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151480"
+       width="9.5237522"
+       height="2.1163895"
+       x="83.733253"
+       y="66.107811"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#47eb63;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151480-0"
+       width="9.5237522"
+       height="2.1163895"
+       x="100.48772"
+       y="66.107811"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#47eb63;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151480-5"
+       width="9.5237522"
+       height="2.1163895"
+       x="133.29202"
+       y="66.107811"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#47eb63;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151480-0-0"
+       width="9.5237522"
+       height="2.1163895"
+       x="150.04651"
+       y="66.107811"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#e69dfb;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151480-9"
+       width="9.5237522"
+       height="2.1163895"
+       x="83.733253"
+       y="40.358402"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#e69dfb;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151480-3"
+       width="9.5237522"
+       height="2.1163895"
+       x="100.48772"
+       y="40.358402"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#e69dfb;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151480-9-5"
+       width="9.5237522"
+       height="2.1163895"
+       x="133.29202"
+       y="40.358402"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#e69dfb;fill-opacity:1;stroke:none;stroke-width:0.264999"
+       id="rect151480-3-2"
+       width="9.5237522"
+       height="2.1163895"
+       x="150.04651"
+       y="40.358402"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="121.36495"
+       y="26.249134"
+       id="text154832"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan154830"
+         style="font-size:4.93889px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="121.36495"
+         y="26.249134">upstream</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="121.36495"
+       y="86.918961"
+       id="text154832-0"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan154830-7"
+         style="font-size:4.93889px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="121.36495"
+         y="86.918961">downstream</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="169.09435"
+       y="25.014572"
+       id="text163688"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan163686"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
+         x="169.09435"
+         y="25.014572">processor</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="169.09435"
+       y="37.183811"
+       id="text163688-9"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan163686-9"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
+         x="169.09435"
+         y="37.183811">ports</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="169.09435"
+       y="43.180248"
+       id="text163688-9-5"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan163686-9-5"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
+         x="169.09435"
+         y="43.180248">slots</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="88.138878"
+       y="37.712914"
+       id="text170244"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan170242"
+         style="font-size:4.93889px;stroke-width:0.264583"
+         x="88.138878"
+         y="37.712914">type_A</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="41.674858"
+       y="64.785057"
+       id="text170244-0"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan170242-1"
+         style="font-size:4.93889px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="41.674858"
+         y="64.785057">type_A</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="41.674858"
+       y="86.213501"
+       id="text170244-0-43"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan170242-1-0"
+         style="font-size:4.93889px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="41.674858"
+         y="86.213501">AnyType</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="41.713444"
+       y="43.356621"
+       id="text170244-0-4"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan170242-1-5"
+         style="font-size:4.93889px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="41.713444"
+         y="43.356621">type_B</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;text-align:center;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="41.713444"
+       y="21.134529"
+       id="text170244-0-4-8"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan170242-1-5-8"
+         style="font-size:4.93889px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="41.713444"
+         y="21.134529">type</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:4.93889px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="41.713444"
+         y="27.30814"
+         id="tspan183903">hierarchy</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="89.729546"
+       y="74.220627"
+       id="text170244-6"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan170242-4"
+         style="font-size:4.93889px;stroke-width:0.264583"
+         x="89.729546"
+         y="74.220627">type_A</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="137.75914"
+       y="37.712914"
+       id="text170244-9"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan170242-7"
+         style="font-size:4.93889px;stroke-width:0.264583"
+         x="137.75914"
+         y="37.712914">type_B</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="137.75914"
+       y="74.220627"
+       id="text170244-6-8"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan170242-4-6"
+         style="font-size:4.93889px;stroke-width:0.264583"
+         x="137.75914"
+         y="74.220627">type_B</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleOutM)"
+       d="m 88.49513,42.474792 0,23.633019"
+       id="path176256"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect151480-9"
+       inkscape:connection-end="#rect151480"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleOutM)"
+       d="M 154.80838,42.474792 V 66.107811"
+       id="path176264"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect151480-3-2"
+       inkscape:connection-end="#rect151480-0-0"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 106.59772,66.107813 -1.34813,1.058193"
+       id="path177635"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-end="#rect151480-0"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker178577)"
+       d="m 161.86316,23.780015 h 5.29097"
+       id="path178450"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker178577)"
+       d="m 161.86316,35.772889 h 5.29097"
+       id="path178450-9"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker178577)"
+       d="m 161.86316,41.416595 h 5.29097"
+       id="path178450-1"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="169.09435"
+       y="85.331673"
+       id="text163688-4"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan163686-98"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
+         x="169.09435"
+         y="85.331673">processor</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="169.09435"
+       y="74.397064"
+       id="text163688-9-4"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan163686-9-8"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
+         x="169.09435"
+         y="74.397064">ports</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.93889px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="169.09435"
+       y="68.929649"
+       id="text163688-9-5-5"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan163686-9-5-5"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
+         x="169.09435"
+         y="68.929649">slots</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker178577-2)"
+       d="m 161.86316,84.097116 h 5.29097"
+       id="path178450-4"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker178577-2)"
+       d="m 161.86316,72.986146 h 5.29097"
+       id="path178450-9-1"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.265;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker178577-2)"
+       d="m 161.86316,67.166 h 5.29097"
+       id="path178450-1-4"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#cccccc;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker178577)"
+       d="m 105.2496,42.47479 c 0.1752,11.791158 32.62474,13.14532 32.80431,23.633023"
+       id="path178891"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker178577)"
+       d="M 138.05391,42.47479 C 138.04591,54.460203 105.241,55.709573 105.2496,66.107813"
+       id="path178893"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#TriangleInM)"
+       d="M 40.347123,57.985475 V 45.287137"
+       id="path182646"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 40.347123,57.985475 c 0,-9.716324 -9.022231,-4.744949 -11.640142,-9.171021"
+       id="path182761"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 40.347123,57.985475 c 0,-9.716324 9.022231,-4.744949 11.640142,-9.171021"
+       id="path182761-3"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 40.347123,79.061372 c 0,-9.716324 -9.022231,-4.744949 -11.640142,-9.171021"
+       id="path182761-7"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 40.347123,79.061372 c 0,-9.716324 9.022231,-4.744949 11.640142,-9.171021"
+       id="path182761-3-4"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#TriangleInM)"
+       d="M 40.347123,79.061372 V 66.363034"
+       id="path182646-0"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.156457;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect183510"
+       width="45.250736"
+       height="60.757084"
+       x="19.440855"
+       y="32.340672"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <g
+       id="g196295"
+       transform="matrix(0.75986874,0,0,0.75986874,54.997381,-34.134979)"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_data_types.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <path
+         style="fill:none;stroke:#ff0c0c;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 104.40855,119.57601 -6.790083,6.79008"
+         id="path196149" />
+      <path
+         style="fill:none;stroke:#ff0c0c;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 97.618467,119.57601 6.790083,6.79008"
+         id="path196149-8" />
+    </g>
+    <rect
+       style="fill:#4b4b4b;fill-opacity:1;stroke:none;stroke-width:1.27661;stroke-linecap:round"
+       id="rect15625"
+       width="37.911671"
+       height="15.147064"
+       x="35.108803"
+       y="131.31906"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#4b4b4b;fill-opacity:1;stroke:none;stroke-width:0.818523;stroke-linecap:round"
+       id="rect15625-95"
+       width="15.585415"
+       height="15.147064"
+       x="108.06652"
+       y="131.25833"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#4b4b4b;fill-opacity:1;stroke:none;stroke-width:0.818523;stroke-linecap:round"
+       id="rect15625-95-9"
+       width="15.585415"
+       height="15.147064"
+       x="134.79222"
+       y="131.25833"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#a7a7a7;fill-opacity:1;stroke:none;stroke-width:1.05704;stroke-linecap:round"
+       id="rect15625-9"
+       width="37.911671"
+       height="10.384628"
+       x="35.108803"
+       y="146.46613"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#a7a7a7;fill-opacity:1;stroke:none;stroke-width:0.677742;stroke-linecap:round"
+       id="rect15625-9-3"
+       width="15.585415"
+       height="10.384628"
+       x="108.06652"
+       y="146.4054"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#f2f2f2;stroke:none;stroke-width:1.05704;stroke-linecap:round"
+       id="rect15625-9-2"
+       width="37.911671"
+       height="10.384628"
+       x="35.108803"
+       y="156.85075"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:#f2f2f2;stroke:none;stroke-width:0.677742;stroke-linecap:round"
+       id="rect15625-9-2-4"
+       width="15.585423"
+       height="10.384628"
+       x="161.5179"
+       y="156.91147"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.175px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="37.699486"
+       y="136.06175"
+       id="text18723"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         style="font-size:3.175px;fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+         x="37.699486"
+         y="136.06175"
+         id="tspan22048">source timestamp</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:3.175px;fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+         x="37.699486"
+         y="140.0305"
+         id="tspan51401">hardware timestamp</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:3.175px;fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+         x="37.699486"
+         y="143.99925"
+         id="tspan51403">serial number</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.175px;line-height:1.25;font-family:sans-serif;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="37.589417"
+       y="152.55296"
+       id="text18723-9"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         style="font-size:3.175px;fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+         x="37.589417"
+         y="152.55296"
+         id="tspan22048-3">(data type specific)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:3.175px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="37.589417"
+       y="162.93759"
+       id="text18723-9-9"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         style="font-size:3.175px;fill:#000000;fill-opacity:1;stroke-width:0.264583"
+         x="37.589417"
+         y="162.93759"
+         id="tspan22048-3-5">(data type specific)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;text-align:end;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="33.394905"
+       y="137.70094"
+       id="text23232"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan23230"
+         style="font-size:4.23333px;text-align:end;text-anchor:end;stroke-width:0.264583"
+         x="33.394905"
+         y="137.70094">stream</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:4.23333px;text-align:end;text-anchor:end;stroke-width:0.264583"
+         x="33.394905"
+         y="142.9926"
+         id="tspan56807">header</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;text-align:end;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="33.399036"
+       y="150.58875"
+       id="text23232-7"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan23230-4"
+         style="font-size:4.23333px;text-align:end;text-anchor:end;stroke-width:0.264583"
+         x="33.399036"
+         y="150.58875">data</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:4.23333px;text-align:end;text-anchor:end;stroke-width:0.264583"
+         x="33.399036"
+         y="155.8804"
+         id="tspan58381">header</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;text-align:end;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="33.399036"
+       y="162.82545"
+       id="text23232-7-5"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan23230-4-7"
+         style="font-size:4.23333px;text-align:end;text-anchor:end;stroke-width:0.264583"
+         x="33.399036"
+         y="162.82545">data</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="48.733696"
+       y="174.59322"
+       id="text38257"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan38255"
+         style="font-size:4.23333px;stroke-width:0.264583"
+         x="48.733696"
+         y="174.59322">FULL</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="82.873466"
+       y="174.59322"
+       id="text38257-0"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan38255-3"
+         style="font-size:4.23333px;stroke-width:0.264583"
+         x="82.873466"
+         y="174.59322">NONE</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="169.19176"
+       y="174.59322"
+       id="text38257-4"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan38255-4"
+         style="font-size:4.23333px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="169.19176"
+         y="174.59322">COMPACT</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="115.64426"
+       y="174.52914"
+       id="text38257-2"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan38255-7"
+         style="font-size:4.23333px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="115.64426"
+         y="174.52914">HEADER</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:4.23333px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="115.64426"
+         y="179.8208"
+         id="tspan61603">ONLY</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="142.42575"
+       y="174.52914"
+       id="text38257-2-5"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300"><tspan
+         sodipodi:role="line"
+         id="tspan38255-7-7"
+         style="font-size:4.23333px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="142.42575"
+         y="174.52914">STREAM</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:4.23333px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="142.42575"
+         y="179.8208"
+         id="tspan66429">HEADER</tspan></text>
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect39882"
+       width="37.911671"
+       height="35.916321"
+       x="35.108803"
+       y="131.31906"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect39882-8"
+       width="15.585421"
+       height="36.037769"
+       x="81.340836"
+       y="131.25833"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect39882-8-7"
+       width="15.585421"
+       height="36.037769"
+       x="161.5179"
+       y="131.25833"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect39882-8-5"
+       width="15.585421"
+       height="36.037769"
+       x="108.06652"
+       y="131.25833"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.3;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect39882-8-8"
+       width="15.585421"
+       height="36.037769"
+       x="134.79221"
+       y="131.25833"
+       inkscape:export-filename="C:\Users\klooster\OneDrive - imec\Documents\falcon_serialization_formats.png"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300" />
+  </g>
+</svg>

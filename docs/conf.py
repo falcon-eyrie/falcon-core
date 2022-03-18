@@ -30,9 +30,14 @@ import sphinx_bootstrap_theme
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+
+import subprocess, os
+
+subprocess.call('cd doxyfile; doxygen', shell=True)
+
 extensions = ['breathe', "sphinx.ext.intersphinx"]
 
-breathe_projects = {'falcon': 'doxyfile/xml'}
+breathe_projects = {'falcon': '_build/doxyfile/xml'}
 breathe_default_project = 'falcon'
 
 # Add any paths that contain templates here, relative to this directory.
@@ -51,8 +56,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Falcon'
-copyright = u'2017, Fabian Kloosterman, Davide Ciliberti'
-author = u'Fabian Kloosterman, Davide Ciliberti'
+copyright = u'2017, Fabian Kloosterman, Davide Ciliberti, Marine Chaput'
+author = u'Fabian Kloosterman, Davide Ciliberti, Marine Chaput'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
