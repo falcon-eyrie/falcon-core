@@ -21,8 +21,8 @@
             }
 
             .column3  {
-                padding-left: 20px;
-                padding-right: 16px;
+                padding-left: 16px;
+                padding-right: 10px;
                 float: left;
                 width: 30%;
             }
@@ -191,3 +191,4 @@ Indices and tables
     client
     dev_guide
     extending_falcon
+    api/library_root

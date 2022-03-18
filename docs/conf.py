@@ -47,13 +47,14 @@ exhale_args = {
     "rootFileName":          "library_root.rst",
     "doxygenStripFromPath":  "..",
     # Heavily encouraged optional argument (see docs)
-    "rootFileTitle":         "Library API",
+    "rootFileTitle":         "Falcon API",
+    "minifyTreeView": False,
     # Suggested optional arguments
     "createTreeView":        True,
     # TIP: if using the sphinx-bootstrap-theme, you need
-    # "treeViewIsBootstrap": True,
+    "treeViewIsBootstrap": False,
     "exhaleExecutesDoxygen": True,
-    "exhaleDoxygenStdin":    "INPUT = ../falcon ../lib"
+    "exhaleDoxygenStdin":    "INPUT = ../falcon ../lib/options ../lib/utilities ../lib/logging ../lib/factory "
 }
 
 
