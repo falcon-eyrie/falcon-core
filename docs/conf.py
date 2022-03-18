@@ -33,14 +33,29 @@ import sphinx_bootstrap_theme
 
 import subprocess, os
 
-os.makedirs("_build/doxyfile", exist_ok=True)
+#subprocess.call('cd doxyfile; doxygen', shell=True)
 
-subprocess.call('cd doxyfile; doxygen', shell=True)
+extensions = ['breathe', "sphinx.ext.intersphinx",'exhale']
 
-extensions = ['breathe', "sphinx.ext.intersphinx"]
-
-breathe_projects = {'falcon': '_build/doxyfile/xml'}
+breathe_projects = {'falcon': os.path.join('_doxygen/xml')}
 breathe_default_project = 'falcon'
+
+# Setup the exhale extension
+exhale_args = {
+    # These arguments are required
+    "containmentFolder":     "./api",
+    "rootFileName":          "library_root.rst",
+    "doxygenStripFromPath":  "..",
+    # Heavily encouraged optional argument (see docs)
+    "rootFileTitle":         "Library API",
+    # Suggested optional arguments
+    "createTreeView":        True,
+    # TIP: if using the sphinx-bootstrap-theme, you need
+    # "treeViewIsBootstrap": True,
+    "exhaleExecutesDoxygen": True,
+    "exhaleDoxygenStdin":    "INPUT = ../falcon"
+}
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

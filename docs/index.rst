@@ -151,7 +151,7 @@ Falcon can be extended with new set of processors and datatype. See how you can 
 
 .. rst-class:: column column3
 
-`Reference API  <../doxyfile/html/annotated.html>`_
+`Reference API  <api/library_root.html>`_
 ---------------------------------------------------
 
 Doxygen documentation automatically generated from the code.
