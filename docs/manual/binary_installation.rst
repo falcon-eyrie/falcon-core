@@ -12,7 +12,7 @@ In parallel, we developed a cmake-client python gui to automatically create an i
 
     conda env create KloostermanLab/falcon
     conda activate falcon
-    fklab-build --path https://bitbucket.org/kloostermannerflab/falcon-core.git --version alpha
+    fklab-build --path https://bitbucket.org/kloostermannerflab/falcon-core.git --version 1.3.0
 
 You can read the readme file in the `fklab-cmake-gui <https://bitbucket.org/kloostermannerflab/fklab-cmake-gui>`_
 repository for more information on how the gui is working.
@@ -20,7 +20,9 @@ repository for more information on how the gui is working.
 Information specific to the build of falcon asked in the app :
 
 - repository path: https://bitbucket.org/kloostermannerflab/falcon-core.git (the ssh path is also possible)
-- (last) version : beta   => See the changelog to see other available versions.
+- (latest) version :
+    + 1.3.0 => latest stable version merged on the master branch
+    + 1.4.0-alpha   => Contains the processors extensions to work with neuropixels data
 
 A grid with available extensions will be display. You can add your own extensions if needed but note that falcon-core does
 not contains any extensions.
