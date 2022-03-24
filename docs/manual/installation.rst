@@ -69,15 +69,13 @@ The CmakeList.txt will read the extensions.txt file described below :
 
 (latest) version for the falcon-fklab-extensions (followed the falcon-core release tag) :
 
-- 1.3.0 => latest stable version merged on the master branch
-- 1.4.0-alpha   => Contains the processors extensions to work with neuropixels data
-
+- 1.3.0 => latest stable version
+- develop
 
 Enable can be 3 different values : 0 (not build)/ 1 (build)/ dev (develop mode)
 
 The build mode will import the repository in the commit state (when not specified, the commit is the last one on the master head).
 The dev mode will build the repository in its actual local state.
-
 
 Command line build
 ..................
@@ -86,7 +84,7 @@ Command line build
 .. code-block:: console
 
     git checkout 1.3.0 # latest stable version merged on the master branch
-    git checkout 1.4.0-alpha # Contains the processors extensions to work with neuropixels data
+    git checkout develop # Contains the processors extensions to work with neuropixels data
     git checkout develop # Contains latest development of falcon-core
 
 #. Verify your extensions file.

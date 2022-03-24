@@ -21,8 +21,8 @@ Information specific to the build of falcon asked in the app :
 
 - repository path: https://bitbucket.org/kloostermannerflab/falcon-core.git (the ssh path is also possible)
 - (latest) version :
-    + 1.3.0 => latest stable version merged on the master branch
-    + 1.4.0-alpha   => Contains the processors extensions to work with neuropixels data
+    + 1.3.0 => latest stable version
+    + develop
 
 A grid with available extensions will be display. You can add your own extensions if needed but note that falcon-core does
 not contains any extensions.
