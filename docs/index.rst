@@ -21,8 +21,8 @@
             }
 
             .column3  {
-                padding-left: 20px;
-                padding-right: 16px;
+                padding-left: 16px;
+                padding-right: 10px;
                 float: left;
                 width: 30%;
             }
@@ -118,7 +118,7 @@ Develop Falcon
 
 .. rst-class:: clearfix row
 
-.. rst-class:: column column2
+.. rst-class:: column column3
 
 `Developer's guide <dev_guide.html>`_
 -------------------------------------
@@ -127,19 +127,37 @@ Overview of every components of Falcon-core:
 
 - `command  <internals/command_system.html>`_ and `logging system <internals/logging_system.html>`_
 - `configuration system  <internals/config_system.html>`_
-- `graph system  <internals/graph_system.html>`_ and `thread management  <internals/thread_management.html>`_
+- `graph system  <internals/graph_system.html>`_
 - `utilities  <internals/utilities.html>`_
 
-
-.. rst-class:: column column2
+.. rst-class:: column column3
 
 `Extending Falcon  <extending_falcon.html>`_
 --------------------------------------------
 
-Falcon can be extend with new set of processors and datatype. See what you can `add  <extensions/existing_extensions.html>`_
-and how you can `create your own  <extensions/extend_processor.html>`_.
+Falcon can be extended with new set of processors and datatype. See how you can `create your own <extensions/extend_processor.html>`_.
+
+
+.. table:: Existing extensions
+   :widths: auto
+
+   =============================================================== ==================================================================================== ============
+              Name (readthedoc documentation)                                               Repository                                                     Public
+   =============================================================== ==================================================================================== ============
+   `fklab <https://falcon-fklab-extensions.readthedocs.io>`_       `source code <https://bitbucket.org/kloostermannerflab/falcon-fklab-extensions>`_    True
+   `behavior <https://falcon-behavior-extensions.readthedocs.io>`_ `source code <https://bitbucket.org/kloostermannerflab/falcon-behavior-extensions>`_ False
+   `decoding <https://falcon-decoding-extensions.readthedocs.io>`_ `source code <https://bitbucket.org/kloostermannerflab/falcon-decoding-extensions>`_ False (soon)
+   =============================================================== ==================================================================================== ============
+
+.. rst-class:: column column3
+
+`Reference API  <api/library_root.html>`_
+---------------------------------------------------
+
+Doxygen documentation automatically generated from the code.
 
 .. rst-class:: clearfix row
+
 
 Indices and tables
 ..................
@@ -173,3 +191,4 @@ Indices and tables
     client
     dev_guide
     extending_falcon
+    api/library_root

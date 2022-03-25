@@ -65,35 +65,69 @@ The CmakeList.txt will read the extensions.txt file described below :
 .. code-block::
 
     enable , extension name , extension path , extension version (optional)
-    1 , extensions , https://bitbucket.org/kloostermannerflab/falcon-fklab-extensions
+    1 , extensions , https://bitbucket.org/kloostermannerflab/falcon-fklab-extensions, 1.3.0
+
+(latest) version for the falcon-fklab-extensions (followed the falcon-core release tag) :
+
+- 1.3.0 => latest stable version
+- develop
 
 Enable can be 3 different values : 0 (not build)/ 1 (build)/ dev (develop mode)
 
 The build mode will import the repository in the commit state (when not specified, the commit is the last one on the master head).
 The dev mode will build the repository in its actual local state.
 
-
 Command line build
 ..................
 
-So, to compile issue the following commands while in the falcon root directory:
-
+#. Select first the falcon-core version
 .. code-block:: console
 
-    mkdir build
-    cd build
-    cmake ..
-    make install
+    git checkout 1.3.0 # latest stable version merged on the master branch
+    git checkout develop # Contains the processors extensions to work with neuropixels data
+    git checkout develop # Contains latest development of falcon-core
 
-For more information on how to integrate third party extension to the build, refer to the build system documentation.
+#. Verify your extensions file.
+   It should contains at least the falcon-fklab-extensions with the matching version chosen in falcon-core
+   For more information on how to integrate third party extension to the build, refer to the build system documentation.
+
+#. Choose your build type :
+    - Debug build
+        .. code-block:: console
+
+            mkdir build
+            cd build
+            cmake .. -DCMAKE_BUILD_TYPE=Debug  # set the resource folder in the build folder + activate debug mode
+            make
+
+            cd falcon
+            sudo setcap 'cap_sys_nice=pe' ./falcon
+
+        Check that you can run falcon correctly
+
+        .. code-block:: console
+
+            ./falcon --help  # Show the help mode
+            ./falcon         # Display all processors available in this build and wait to send a graph from cloud command
+            ./falcon [graph_file] # Build the graph and wait a command to run
 
 
-Installation instructions
--------------------------
+    - Installation build
+        .. code-block:: console
 
-.. code-block:: console
+            mkdir build
+            cd build
+            cmake .. -DCMAKE_INSTALL_PREFIX="$HOME/opt/falcon-core"  # set the install and the resource folder in the path of your choice
+            make install
 
-    cd falcon
-    sudo setcap 'cap_sys_nice=pe' ./falcon
+            # Add the installation path in your $PATH if not already the case
+            sudo setcap 'cap_sys_nice=pe' falcon # The last step is optional and will allow falcon to more finely control CPU core utilization.
 
-The last step is optional and will allow falcon to more finely control CPU core utilization.
+        Check that you can run falcon correctly
+
+        .. code-block:: console
+
+            falcon --help  # Show the help mode
+            falcon         # Display all processors available in this build and wait to send a graph from cloud command
+            falcon [graph_file] # Build the graph and wait a command to run
+

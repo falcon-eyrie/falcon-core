@@ -10,8 +10,8 @@ The falcon folder is containing core code to create and run the graph.
 
 The lib folder is serving as an interface between external processors and falcon:
 
-- cmdline
-- disruptor
+- cmdline - imported external lib
+- disruptor - imported external lib
 - factory
 - logging
 - options
@@ -24,18 +24,17 @@ Style guide
 
 When developing Falcon, thanks to enforce the cpplint coding style.
 
+
 System overview
 ===============
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :glob:
 
-   internals/processing_graph
-   internals/logging_system
    internals/command_system
    internals/config_system
-   internals/thread_management
+   internals/logging_system
    internals/graph_system
    internals/utilities

@@ -23,7 +23,7 @@ their own format and usage pattern as listed below:
 The actual implementation is in the falcon lib logging with the custom sinks and new logging levels.
 To log messages in the code, one needs to include the *logging/log.hpp* header file and then do for example:
 
-.. code-block:: c++
+.. code-block:: cpp
 
     LOG(INFO) << "my informative message";
 
@@ -75,3 +75,23 @@ Here is an example in Python how to receive log messages broadcast to port 5556 
         print(event)
 
 
+**Logging library**
+
+
+The logging library in the lib folder is used to configurate the g3log lib used in background.
+It is separated in two config parts :
+
+- custom Log levels: STATE, UPDATE and ERRORS
+- custom sinks
+
+-----
+
+.. doxygenclass:: ZMQSink
+   :undoc-members:
+   :members:
+
+.. doxygenclass:: ScreenSink
+   :undoc-members:
+   :members:
+
+-----

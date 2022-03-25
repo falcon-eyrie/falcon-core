@@ -44,6 +44,7 @@ t   start processing in test mode
 s   stop processing graph
 k   stop processing and quit (kill)
 y   display the current graph in yaml format
+d   request documentation
 === ========================================
 
 Falcon-client gui
@@ -51,3 +52,4 @@ Falcon-client gui
 
 The graph is also controllable from a (remote) client. See this section for more details : :ref:`generic_client`
 Commands are send from the client via zmq communication. See :ref:`zmq_command`
+

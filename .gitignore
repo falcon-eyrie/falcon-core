@@ -3,3 +3,5 @@ build/
 _build/
 .idea
 
+docs/_doxygen/*
+docs/api/*

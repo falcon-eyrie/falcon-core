@@ -1,4 +1,4 @@
-![Falcon version](https://img.shields.io/badge/Falcon-v1.0.0-blue)
+![Falcon version](https://img.shields.io/badge/Falcon-v1.3.0-blue)
 
 # Falcon core
 
