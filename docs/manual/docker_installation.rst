@@ -12,7 +12,7 @@ to handle correctly the multithread.
 - https://docs.docker.com/desktop/install/windows-install/
 - https://learn.microsoft.com/fr-fr/windows/wsl/
 
-.. codeblock::
+.. code-block:: console
 
     docker pull marinechaput/falcon:develop # for develop version with open ephys reader (for neuropixels)
     docker run -v /local/path:/root/log  -p 3335:3335 -p 5993:5993 -p 5555:5555 -p 5556:5556 -p 7777:7777  marinechaput/falcon:develop

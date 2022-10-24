@@ -80,6 +80,7 @@ The dev mode will build the repository in its actual local state.
 Command line build
 ..................
 
+
 #. Select first the falcon-core version
 
 .. code-block:: console
@@ -92,6 +93,7 @@ Command line build
    For more information on how to integrate third party extensions to the build, refer to the build system documentation.
 
 #. Choose your build type :
+
     - Debug build
 
         .. code-block:: console
