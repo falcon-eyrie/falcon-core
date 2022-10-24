@@ -81,18 +81,19 @@ Command line build
 ..................
 
 #. Select first the falcon-core version
+
 .. code-block:: console
 
     git checkout 1.3.0 # latest stable version merged on the master branch
     git checkout develop # Contains the processors extensions to work with neuropixels data
-    git checkout develop # Contains latest development of falcon-core
 
 #. Verify your extensions file.
    It should contains at least the falcon-fklab-extensions with the matching version chosen in falcon-core
-   For more information on how to integrate third party extension to the build, refer to the build system documentation.
+   For more information on how to integrate third party extensions to the build, refer to the build system documentation.
 
 #. Choose your build type :
     - Debug build
+
         .. code-block:: console
 
             mkdir build
@@ -113,6 +114,7 @@ Command line build
 
 
     - Installation build
+
         .. code-block:: console
 
             mkdir build

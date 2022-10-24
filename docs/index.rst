@@ -91,7 +91,7 @@ Work with Falcon
 `Install Falcon <installation.html>`_
 -------------------------------------
 
-Installation guides for a `user  <manual/binary_installation.html>`_
+Installation guides for a `user  <manual/binary_installation.html>`_ , a `docker installation <manual/docker_installation.html>`_
 or for a `developer <manual/installation.html>`_ of Falcon.
 
 .. rst-class:: column column3
