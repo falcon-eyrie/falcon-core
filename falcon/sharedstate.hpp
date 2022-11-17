@@ -238,11 +238,15 @@ class ReadableState : public StateCloneable<IState, ReadableState<T>> {
   }
 
   std::string get_string(bool cache = true) override {
-      T value = get(cache);
-      if (std::is_same_v<T, bool>) {
-          return value ? "true" : "false";
+      if constexpr(std::is_convertible_v<T, std::string>){
+          T value = get(cache);
+          if (std::is_same_v<T, bool>) {
+              return value ? "true" : "false";
+          }
+          return std::to_string(value);
       }
-      return std::to_string(value);
+       throw std::runtime_error("This state should not have external permission to be read "
+                                "because it cannot be serialized via string transformation.");
   }
 
  protected:   // for friends only
@@ -267,15 +271,15 @@ class ReadableState : public StateCloneable<IState, ReadableState<T>> {
   }
 
   bool set_string(const std::string &value, bool cache = true) override {
-    std::stringstream ss(value);
-    T result;
-    if ((std::is_same_v<T, bool> and ss >> std::boolalpha >> result)
-        or  ss >> result)
-    {
-      std::cout << result;
-
-      set(result, cache);
-      return true;
+    if constexpr(std::is_convertible_v<T, std::string>){
+        std::stringstream ss(value);
+        T result;
+        if ((std::is_same_v<T, bool> and ss >> std::boolalpha >> result)
+            or  ss >> result)
+        {
+          set(result, cache);
+          return true;
+        }
     }
     return false;
   }
