@@ -1,0 +1,28 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: bionic
+      compiler: gcc
+      addons:
+       apt:
+         packages:
+           - libzmq3-dev
+before_install:
+  - pip install --user cpp-coveralls
+  - pip install cmake
+
+script:
+    ############################################################################
+    # Build main and tests
+    ############################################################################
+     - rm extensions.txt
+     - mkdir -p build
+     - cd build
+     - cmake  .. 
+     - make
+     - ctest -V
+
+after_success:
+  - coveralls -r .. -b . --exclude tests --gcov-options '\-lp'
