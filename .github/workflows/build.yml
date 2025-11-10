@@ -1,46 +1,42 @@
-name: Build Falcon Core
-
+name: Format and Compile
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [develop]
 
 jobs:
   build-linux:
+    name: Format and Compile
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          cmake \
-          build-essential \
-          libzmq3-dev \
-          pkg-config \
-          git \
-          clang-format
-
-    - name: Run format check
-      run: |
-        sh scripts/format.sh
-
-        # Check for any changes caused by formatting
-        if [[ -n "$(git status --porcelain)" ]]; then
-          echo "Code is not properly formatted. Please run './scripts/format.sh' locally and commit the changes."
-          git --no-pager diff
-          exit 1
-        fi
-
-    - name: Configure CMake
-      run: |
-        mkdir -p build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Debug
-
-    - name: Build project
-      run: |
-        cd build
-        make -j$(nproc)
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            build-essential \
+            libzmq3-dev \
+            pkg-config \
+            git \
+            clang-format
+      - name: Run format check
+        run: |
+          sh scripts/format.sh
+          # Check for any changes caused by formatting
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "Code is not properly formatted. Please run './scripts/format.sh' locally and commit the changes."
+            git --no-pager diff
+            exit 1
+          fi
+      - name: Configure CMake
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Debug
+      - name: Build project
+        run: |
+          cd build
+          make -j$(nproc)
