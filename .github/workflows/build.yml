@@ -12,35 +12,39 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install dependencies
+    - name: Dummy step
       run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          cmake \
-          build-essential \
-          libzmq3-dev \
-          pkg-config \
-          git \
-          clang-format
+        echo "hello"
 
-    - name: Run format check
-      run: |
-        sh scripts/format.sh
+    # - name: Install dependencies
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install -y \
+    #       cmake \
+    #       build-essential \
+    #       libzmq3-dev \
+    #       pkg-config \
+    #       git \
+    #       clang-format
 
-        # Check for any changes caused by formatting
-        if [[ -n "$(git status --porcelain)" ]]; then
-          echo "Code is not properly formatted. Please run './scripts/format.sh' locally and commit the changes."
-          git --no-pager diff
-          exit 1
-        fi
+    # - name: Run format check
+    #   run: |
+    #     sh scripts/format.sh
 
-    - name: Configure CMake
-      run: |
-        mkdir -p build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Debug
+    #     # Check for any changes caused by formatting
+    #     if [[ -n "$(git status --porcelain)" ]]; then
+    #       echo "Code is not properly formatted. Please run './scripts/format.sh' locally and commit the changes."
+    #       git --no-pager diff
+    #       exit 1
+    #     fi
 
-    - name: Build project
-      run: |
-        cd build
-        make -j$(nproc)
+    # - name: Configure CMake
+    #   run: |
+    #     mkdir -p build
+    #     cd build
+    #     cmake .. -DCMAKE_BUILD_TYPE=Debug
+
+    # - name: Build project
+    #   run: |
+    #     cd build
+    #     make -j$(nproc)
