@@ -12,10 +12,10 @@
 //       names of its contributors may be used to endorse or promote products
 //       derived from this software without specific prior written permission.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL FRANÇOIS SAINT-JACQUES BE LIABLE FOR ANY
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL FRANÇOIS SAINT-JACQUES BE LIABLE FOR ANY
 // DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 // (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 // LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -33,36 +33,33 @@
 
 namespace disruptor {
 
-enum ClaimStrategyOption {
-    kSingleThreadedStrategy,
-    kMultiThreadedStrategy
-};
+enum ClaimStrategyOption { kSingleThreadedStrategy, kMultiThreadedStrategy };
 
 // Optimised strategy can be used when there is a single publisher thread
 // claiming {@link AbstractEvent}s.
-class SingleThreadedStrategy :  public ClaimStrategyInterface {
- public:
-    SingleThreadedStrategy(const int& buffer_size) :
-        buffer_size_(buffer_size),
-        sequence_(kInitialCursorValue),
-        min_gating_sequence_(kInitialCursorValue) {}
+class SingleThreadedStrategy : public ClaimStrategyInterface {
+  public:
+    SingleThreadedStrategy(const int &buffer_size)
+        : buffer_size_(buffer_size), sequence_(kInitialCursorValue),
+          min_gating_sequence_(kInitialCursorValue) {}
 
-    virtual int64_t IncrementAndGet(
-            const std::vector<Sequence*>& dependent_sequences) {
+    virtual int64_t
+    IncrementAndGet(const std::vector<Sequence *> &dependent_sequences) {
         int64_t next_sequence = sequence_.IncrementAndGet(1L);
         WaitForFreeSlotAt(next_sequence, dependent_sequences);
         return next_sequence;
     }
 
-    virtual int64_t IncrementAndGet(const int& delta,
-            const std::vector<Sequence*>& dependent_sequences) {
+    virtual int64_t
+    IncrementAndGet(const int &delta,
+                    const std::vector<Sequence *> &dependent_sequences) {
         int64_t next_sequence = sequence_.IncrementAndGet(delta);
         WaitForFreeSlotAt(next_sequence, dependent_sequences);
         return next_sequence;
     }
 
-    virtual bool HasAvalaibleCapacity(
-            const std::vector<Sequence*>& dependent_sequences) {
+    virtual bool
+    HasAvalaibleCapacity(const std::vector<Sequence *> &dependent_sequences) {
         int64_t wrap_point = sequence_.sequence() + 1L - buffer_size_;
         if (wrap_point > min_gating_sequence_.sequence()) {
             int64_t min_sequence = GetMinimumSequence(dependent_sequences);
@@ -73,25 +70,27 @@ class SingleThreadedStrategy :  public ClaimStrategyInterface {
         return true;
     }
 
-    virtual void SetSequence(const int64_t& sequence,
-            const std::vector<Sequence*>& dependent_sequences) {
+    virtual void
+    SetSequence(const int64_t &sequence,
+                const std::vector<Sequence *> &dependent_sequences) {
         sequence_.set_sequence(sequence);
         WaitForFreeSlotAt(sequence, dependent_sequences);
     }
 
-    virtual void SerialisePublishing(const int64_t& sequence,
-                                     const Sequence& cursor,
-                                     const int64_t& batch_size) {}
+    virtual void SerialisePublishing(const int64_t &sequence,
+                                     const Sequence &cursor,
+                                     const int64_t &batch_size) {}
 
- private:
+  private:
     SingleThreadedStrategy();
 
-    void WaitForFreeSlotAt(const int64_t& sequence,
-            const std::vector<Sequence*>& dependent_sequences) {
+    void WaitForFreeSlotAt(const int64_t &sequence,
+                           const std::vector<Sequence *> &dependent_sequences) {
         int64_t wrap_point = sequence - buffer_size_;
         if (wrap_point > min_gating_sequence_.sequence()) {
             int64_t min_sequence;
-            while (wrap_point > (min_sequence = GetMinimumSequence(dependent_sequences))) {
+            while (wrap_point >
+                   (min_sequence = GetMinimumSequence(dependent_sequences))) {
                 std::this_thread::yield();
             }
         }
@@ -174,8 +173,9 @@ class MultiThreadedStrategy :  public ClaimStrategyInterface {
         if (wrap_point > min_gating_sequence.sequence()) {
             int counter = retries;
             int64_t min_sequence;
-            while (wrap_point > (min_sequence = GetMinimumSequence(dependent_sequences))) {
-                counter = ApplyBackPressure(counter);
+            while (wrap_point > (min_sequence =
+GetMinimumSequence(dependent_sequences))) { counter =
+ApplyBackPressure(counter);
             }
             min_gating_sequence.set_sequence(min_sequence);
         }
@@ -187,8 +187,8 @@ class MultiThreadedStrategy :  public ClaimStrategyInterface {
         const int64_t wrap_point = sequence - buffer_size_;
         if (wrap_point > min_gating_sequence.sequence()) {
             int64_t min_sequence;
-            while (wrap_point > (min_sequence = GetMinimumSequence(dependent_sequences))) {
-                std::this_thread::yield();
+            while (wrap_point > (min_sequence =
+GetMinimumSequence(dependent_sequences))) { std::this_thread::yield();
             }
             min_gating_sequence.set_sequence(min_sequence);
         }
@@ -215,9 +215,9 @@ class MultiThreadedStrategy :  public ClaimStrategyInterface {
 };
 */
 
-ClaimStrategyInterface* CreateClaimStrategy(ClaimStrategyOption option,
-                                            const int& buffer_size);
+ClaimStrategyInterface *CreateClaimStrategy(ClaimStrategyOption option,
+                                            const int &buffer_size);
 
-};  // namespace disruptor
+}; // namespace disruptor
 
 #endif // DISRUPTOR_CLAIM_STRATEGY_H_ NOLINT

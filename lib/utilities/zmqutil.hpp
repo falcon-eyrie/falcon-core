@@ -27,14 +27,14 @@
 typedef std::deque<std::string> zmq_frames;
 
 // Convert string to 0MQ string and send to socket
-bool s_send(zmq::socket_t &socket, const std::string &string, int more=0);
+bool s_send(zmq::socket_t &socket, const std::string &string, int more = 0);
 // Send multi-part message
 bool s_send_multi(zmq::socket_t &socket, const zmq_frames &frames);
 // helper function to check if more message parts are available
 // Receive 0MQ string from socket and convert into string
-bool s_recv(zmq::socket_t &socket, std::string &s_message, int more=0);
+bool s_recv(zmq::socket_t &socket, std::string &s_message, int more = 0);
 // Non-blocking receive string
-//bool s_nonblocking_recv(zmq::socket_t &socket, std::string &s_message);
+// bool s_nonblocking_recv(zmq::socket_t &socket, std::string &s_message);
 bool sockopt_rcvmore(zmq::socket_t &socket);
 // Receive multipart message
 zmq_frames s_blocking_recv_multi(zmq::socket_t &socket);

@@ -23,17 +23,16 @@
 #include <exception>
 #include <map>
 #include <memory>
-#include <utility>
 #include <string>
+#include <utility>
 #include <vector>
 
-#include "yaml-cpp/yaml.h"
-#include "logging/log.hpp"
-#include "iprocessor.hpp"
-#include "graphexceptions.hpp"
 #include "connectionparser.hpp"
+#include "graphexceptions.hpp"
 #include "iprocessor.hpp"
+#include "logging/log.hpp"
 #include "runinfo.hpp"
+#include "yaml-cpp/yaml.h"
 
 /**
  * Get processor's documentation.
@@ -47,143 +46,141 @@
  */
 YAML::Node LoadProcessorDoc(std::string processor);
 
-
-
 namespace graph {
 
 enum class GraphState {
-  NOGRAPH,
-  CONSTRUCTING,
-  PREPARING,
-  READY,
-  STARTING,
-  PROCESSING,
-  STOPPING,
-  ERROR
+    NOGRAPH,
+    CONSTRUCTING,
+    PREPARING,
+    READY,
+    STARTING,
+    PROCESSING,
+    STOPPING,
+    ERROR
 };
 
 class ProcessorGraph {
- public:
-  ProcessorGraph(GlobalContext &context);
+  public:
+    ProcessorGraph(GlobalContext &context);
 
-  bool terminated() { return terminate_signal_.load(); }
+    bool terminated() { return terminate_signal_.load(); }
 
-  bool done() {
-    // graph is done, if it has terminated or PROCESSING and no processor is
-    // running
-    if (state_ != GraphState::PROCESSING) {
-      return false;
+    bool done() {
+        // graph is done, if it has terminated or PROCESSING and no processor is
+        // running
+        if (state_ != GraphState::PROCESSING) {
+            return false;
+        }
+
+        if (terminated()) {
+            LOG(DEBUG) << "done: terminated=true.";
+            return true;
+        }
+
+        return !any_processor_running();
     }
 
-    if (terminated()) {
-      LOG(DEBUG) << "done: terminated=true.";
-      return true;
-    }
-
-    return !any_processor_running();
-  }
-
-  bool all_processors_running() {
-    for (auto &it : processors_) {
-      if (!it.second.second->running()) {
-        return false;
-      }
-    }
-    return true;
-  }
-  bool any_processor_running() {
-    for (auto &it : processors_) {
-      if (it.second.second->running()) {
+    bool all_processors_running() {
+        for (auto &it : processors_) {
+            if (!it.second.second->running()) {
+                return false;
+            }
+        }
         return true;
-      }
     }
-    return false;
-  }
+    bool any_processor_running() {
+        for (auto &it : processors_) {
+            if (it.second.second->running()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-  /**
-   * Construct processors listed in the graph yaml description.
-   *
-   * Looping through the graph description to find every processor, expanded
-   *their name, create their instance and run the internal configuration for
-   *each.
-   *
-   *@param node graph description
-   */
-  void ConstructProcessorEngines(const YAML::Node &node);
+    /**
+     * Construct processors listed in the graph yaml description.
+     *
+     * Looping through the graph description to find every processor, expanded
+     *their name, create their instance and run the internal configuration for
+     *each.
+     *
+     *@param node graph description
+     */
+    void ConstructProcessorEngines(const YAML::Node &node);
 
-  /**
-   * Give the documentation of either all registered processor or only
-   * processors used in the running graph
-   */
-  YAML::Node GetProcessorDocumentation();
+    /**
+     * Give the documentation of either all registered processor or only
+     * processors used in the running graph
+     */
+    YAML::Node GetProcessorDocumentation();
 
-  /**
-   * Build the graph
-   *
-   *Construct all processors, parse and create connections between them and
-   *create shared state.
-   *@param node graph description
-   */
-  void Build(const YAML::Node &node);
-  void Destroy();
-  void StartProcessing(std::string run_group_id, std::string run_id,
-                       std::string template_id, bool test_flag);
-  void StopProcessing();
-  /**
-   *Update processor's shared state with input from the user
-   *
-   *@param node graph description
-   */
-  void Update(YAML::Node &node);
-  /**
-   *Retrieve the state value for all shared state name given in the yaml node.
-   *
-   *@param node shared state description
-   */
-  void Retrieve(YAML::Node &node);
-  /**
-   *Apply exposed methods with parameters given in the yaml node
-   *
-   *@param node exposed method description
-   */
-  void Apply(YAML::Node &node);
+    /**
+     * Build the graph
+     *
+     *Construct all processors, parse and create connections between them and
+     *create shared state.
+     *@param node graph description
+     */
+    void Build(const YAML::Node &node);
+    void Destroy();
+    void StartProcessing(std::string run_group_id, std::string run_id,
+                         std::string template_id, bool test_flag);
+    void StopProcessing();
+    /**
+     *Update processor's shared state with input from the user
+     *
+     *@param node graph description
+     */
+    void Update(YAML::Node &node);
+    /**
+     *Retrieve the state value for all shared state name given in the yaml node.
+     *
+     *@param node shared state description
+     */
+    void Retrieve(YAML::Node &node);
+    /**
+     *Apply exposed methods with parameters given in the yaml node
+     *
+     *@param node exposed method description
+     */
+    void Apply(YAML::Node &node);
 
-  std::string ExportYAML();
+    std::string ExportYAML();
 
-  const GraphState state() const { return state_; }
-  std::string state_string() const;
-  void set_state(GraphState state) {
-    state_ = state;
-    LOG(STATE) << state_string();
-  }
+    const GraphState state() const { return state_; }
+    std::string state_string() const;
+    void set_state(GraphState state) {
+        state_ = state;
+        LOG(STATE) << state_string();
+    }
 
-  const ProcessorMap &processors() const { return processors_; }
-  const StreamConnections &connections() const { return connections_; }
+    const ProcessorMap &processors() const { return processors_; }
+    const StreamConnections &connections() const { return connections_; }
 
-  IProcessor *LookUpProcessor(std::string name);
-  std::vector<std::pair<std::string, std::shared_ptr<IState>>>
-  LookUpStates(std::vector<std::string> state_addresses);
+    IProcessor *LookUpProcessor(std::string name);
+    std::vector<std::pair<std::string, std::shared_ptr<IState>>>
+    LookUpStates(std::vector<std::string> state_addresses);
 
-  void BuildSharedStates(const YAML::Node &node);
+    void BuildSharedStates(const YAML::Node &node);
 
- protected:
-  void CreateConnection(SlotAddress &out, SlotAddress &in);
+  protected:
+    void CreateConnection(SlotAddress &out, SlotAddress &in);
 
- private:
-  YAML::Node yaml_;
-  YAML::Node documentation_;
+  private:
+    YAML::Node yaml_;
+    YAML::Node documentation_;
 
-  GlobalContext &global_context_;
+    GlobalContext &global_context_;
 
-  ProcessorMap processors_;
-  StreamConnections connections_;
+    ProcessorMap processors_;
+    StreamConnections connections_;
 
-  SharedStateMap shared_state_map_;
+    SharedStateMap shared_state_map_;
 
-  GraphState state_ = GraphState::NOGRAPH;
+    GraphState state_ = GraphState::NOGRAPH;
 
-  std::unique_ptr<RunContext> run_context_;
-  std::atomic<bool> terminate_signal_;
+    std::unique_ptr<RunContext> run_context_;
+    std::atomic<bool> terminate_signal_;
 };
 
-}  // namespace graph
+} // namespace graph

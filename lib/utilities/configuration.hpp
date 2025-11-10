@@ -24,16 +24,16 @@
 #include "../options/options.hpp"
 
 class Configuration {
- public:
-  void load(std::string filename);
-  void save(std::string filename);
+  public:
+    void load(std::string filename);
+    void save(std::string filename);
 
-  template <typename TValue>
-  void add_option(std::string name, TValue &value, std::string description = "",
-                  bool required = false) {
-    options_.add(name, value, description, required);
-  }
+    template <typename TValue>
+    void add_option(std::string name, TValue &value,
+                    std::string description = "", bool required = false) {
+        options_.add(name, value, description, required);
+    }
 
- protected:
-  options::OptionList options_;
+  protected:
+    options::OptionList options_;
 };

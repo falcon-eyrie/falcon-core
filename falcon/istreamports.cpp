@@ -21,78 +21,79 @@
 #include <utility>
 #include <vector>
 
-#include "istreamports.hpp"
 #include "iprocessor.hpp"
+#include "istreamports.hpp"
 
 void ISlotOut::Connect(ISlotIn *downstream) {
-  if (downstream_slots_.count(downstream) == 0) {
-    downstream_slots_.insert(downstream);
-  } else {
-    throw std::runtime_error("Attempting to connect input slot twice.");
-  }
+    if (downstream_slots_.count(downstream) == 0) {
+        downstream_slots_.insert(downstream);
+    } else {
+        throw std::runtime_error("Attempting to connect input slot twice.");
+    }
 }
 
 std::vector<RingSequence *> ISlotOut::gating_sequences() {
-  std::vector<RingSequence *> v;
-  for (auto &it : downstream_slots_) {
-    v.push_back(it->sequence());
-  }
-  return v;
+    std::vector<RingSequence *> v;
+    for (auto &it : downstream_slots_) {
+        v.push_back(it->sequence());
+    }
+    return v;
 }
 
 void ISlotIn::ReleaseData() {
-  if (nretrieved_ > 0) {
-    int64_t value = sequence_.IncrementAndGet(nretrieved_);
-    nretrieved_ = 0;
+    if (nretrieved_ > 0) {
+        int64_t value = sequence_.IncrementAndGet(nretrieved_);
+        nretrieved_ = 0;
 
-    if (value + 1 < 0) {
-      sequence_.set_sequence(INT64_MAX);
+        if (value + 1 < 0) {
+            sequence_.set_sequence(INT64_MAX);
+        }
     }
-  }
 }
 
 void ISlotIn::Connect(ISlotOut *upstream) {
-  if (connected()) {
-    throw std::runtime_error("Error connecting to slot (already connected)");
-  }
+    if (connected()) {
+        throw std::runtime_error(
+            "Error connecting to slot (already connected)");
+    }
 
-  upstream_ = upstream;
+    upstream_ = upstream;
 }
 
 void ISlotIn::NegotiateUpstream() {
-  upstream_->parent()->parent()->internal_NegotiateConnections();
+    upstream_->parent()->parent()->internal_NegotiateConnections();
 }
 
 void ISlotIn::PrepareProcessing() {
-  sequence_.set_sequence(-1L);
-  ncached_ = 0;
-  cache_ = nullptr;
-  nretrieved_ = 0;
+    sequence_.set_sequence(-1L);
+    ncached_ = 0;
+    cache_ = nullptr;
+    nretrieved_ = 0;
 }
 
 YAML::Node IPortOut::ExportYAML() const {
-  YAML::Node node;
-  node["datatype"] = datatype();
-  node["nslots_min"] = policy().min_slot_number();
-  node["nslots_max"] = policy().max_slot_number();
-  node["buffer_size"] = policy().buffer_size();
-  if (policy().wait_strategy() == WaitStrategy::kBlockingStrategy) {
-    node["wait_strategy"] = "blocking";
-  } else if (policy().wait_strategy() == WaitStrategy::kSleepingStrategy) {
-    node["wait_strategy"] = "sleeping";
-  } else if (policy().wait_strategy() == WaitStrategy::kYieldingStrategy) {
-    node["wait_strategy"] = "yielding";
-  } else {
-    node["wait_strategy"] = "busy spin";
-  }
-  return node;
+    YAML::Node node;
+    node["datatype"] = datatype();
+    node["nslots_min"] = policy().min_slot_number();
+    node["nslots_max"] = policy().max_slot_number();
+    node["buffer_size"] = policy().buffer_size();
+    if (policy().wait_strategy() == WaitStrategy::kBlockingStrategy) {
+        node["wait_strategy"] = "blocking";
+    } else if (policy().wait_strategy() == WaitStrategy::kSleepingStrategy) {
+        node["wait_strategy"] = "sleeping";
+    } else if (policy().wait_strategy() == WaitStrategy::kYieldingStrategy) {
+        node["wait_strategy"] = "yielding";
+    } else {
+        node["wait_strategy"] = "busy spin";
+    }
+    return node;
 }
 
 YAML::Node IPortIn::ExportYAML() const {
-  YAML::Node node;
-  node["datatype"] = datatype();
-  node["nslots_min"] = policy().min_slot_number();
-  node["nslots_max"] = policy().max_slot_number();
-  node["cache"] = policy().cache_enabled();
-  return node;
+    YAML::Node node;
+    node["datatype"] = datatype();
+    node["nslots_min"] = policy().min_slot_number();
+    node["nslots_max"] = policy().max_slot_number();
+    node["cache"] = policy().cache_enabled();
+    return node;
 }

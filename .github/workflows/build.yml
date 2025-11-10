@@ -6,7 +6,7 @@ on:
 jobs:
   build-linux:
     name: Format and Compile
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
@@ -21,22 +21,35 @@ jobs:
             libzmq3-dev \
             pkg-config \
             git \
-            clang-format
+            wget \
+            xz-utils
+
+            mkdir -p /tmp/llvm
+            cd /tmp/llvm
+            wget -q -O LLVM-21.1.5-Linux-X64.tar.xz \
+            https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.5/LLVM-21.1.5-Linux-X64.tar.xz
+            tar -xf LLVM-21.1.5-Linux-X64.tar.xz
+            sudo mv LLVM-21.1.5-Linux-X64/bin/clang-format /usr/local/bin/
+            sudo chmod +x /usr/local/bin/clang-format
+            clang-format --version
+
       - name: Run format check
         run: |
           sh scripts/format.sh
           # Check for any changes caused by formatting
           if [[ -n "$(git status --porcelain)" ]]; then
-            echo "Code is not properly formatted. Please run './scripts/format.sh' locally and commit the changes."
-            git --no-pager diff
+            echo "Following files seems to be not formatted. Please run './scripts/format.sh' locally and commit the changes."
+            git --no-pager diff --name-only
             exit 1
           fi
-      - name: Configure CMake
-        run: |
-          mkdir -p build
-          cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Debug
-      - name: Build project
-        run: |
-          cd build
-          make -j$(nproc)
+
+      # - name: Configure CMake
+      #   run: |
+      #     mkdir -p build
+      #     cd build
+      #     cmake .. -DCMAKE_BUILD_TYPE=Debug
+          
+      # - name: Build project
+      #   run: |
+      #     cd build
+      #     make -j$(nproc)

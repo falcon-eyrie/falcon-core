@@ -35,58 +35,57 @@ uint64_t Data::hardware_timestamp() const { return hardware_timestamp_; }
 void Data::set_hardware_timestamp(uint64_t t) { hardware_timestamp_ = t; }
 
 void Data::CloneTimestamps(const Data &data) {
-  source_timestamp_ = data.source_timestamp_;
-  hardware_timestamp_ = data.hardware_timestamp_;
+    source_timestamp_ = data.source_timestamp_;
+    hardware_timestamp_ = data.hardware_timestamp_;
 }
 
 void Data::SerializeBinary(std::ostream &stream,
                            Serialization::Format format) const {
-  if (format == Serialization::Format::FULL ||
-      format == Serialization::Format::HEADERONLY) {
-    uint64_t t = std::chrono::duration_cast<std::chrono::microseconds>(
-                     source_timestamp_.time_since_epoch())
-                     .count();
-    stream.write(reinterpret_cast<const char *>(&t), sizeof(t));
-    stream.write(reinterpret_cast<const char *>(&hardware_timestamp_),
-                 sizeof(hardware_timestamp_));
-    stream.write(reinterpret_cast<const char *>(&serial_number_),
-                 sizeof(serial_number_));
-  }
+    if (format == Serialization::Format::FULL ||
+        format == Serialization::Format::HEADERONLY) {
+        uint64_t t = std::chrono::duration_cast<std::chrono::microseconds>(
+                         source_timestamp_.time_since_epoch())
+                         .count();
+        stream.write(reinterpret_cast<const char *>(&t), sizeof(t));
+        stream.write(reinterpret_cast<const char *>(&hardware_timestamp_),
+                     sizeof(hardware_timestamp_));
+        stream.write(reinterpret_cast<const char *>(&serial_number_),
+                     sizeof(serial_number_));
+    }
 }
 
 void Data::SerializeYAML(YAML::Node &node, Serialization::Format format) const {
-  // FULL, HEADERONLY : add timestamps
-  // otherwise: do nothing
-  if (format == Serialization::Format::FULL ||
-      format == Serialization::Format::HEADERONLY) {
-    node["source_ts"] = static_cast<uint64_t>(
-        std::chrono::duration_cast<std::chrono::microseconds>(
-            source_timestamp_.time_since_epoch())
-            .count());
-    node["hardware_ts"] = hardware_timestamp_;
-    node["serial_number"] = serial_number_;
-  }
+    // FULL, HEADERONLY : add timestamps
+    // otherwise: do nothing
+    if (format == Serialization::Format::FULL ||
+        format == Serialization::Format::HEADERONLY) {
+        node["source_ts"] = static_cast<uint64_t>(
+            std::chrono::duration_cast<std::chrono::microseconds>(
+                source_timestamp_.time_since_epoch())
+                .count());
+        node["hardware_ts"] = hardware_timestamp_;
+        node["serial_number"] = serial_number_;
+    }
 }
 
 void Data::YAMLDescription(YAML::Node &node,
                            Serialization::Format format) const {
-  // FULL, HEADERONLY : add timestamps
-  // otherwise: do nothing
-  if (format == Serialization::Format::FULL ||
-      format == Serialization::Format::HEADERONLY) {
-    node.push_back("source_ts uint64 (1)");
-    node.push_back("hardware_ts uint64 (1)");
-    node.push_back("serial_number uint64 (1)");
-  }
+    // FULL, HEADERONLY : add timestamps
+    // otherwise: do nothing
+    if (format == Serialization::Format::FULL ||
+        format == Serialization::Format::HEADERONLY) {
+        node.push_back("source_ts uint64 (1)");
+        node.push_back("hardware_ts uint64 (1)");
+        node.push_back("serial_number uint64 (1)");
+    }
 }
 
-void Data::SerializeFlatBuffer(flexbuffers::Builder& flex_builder){
-    auto ts =  static_cast<uint64_t>(
-                std::chrono::duration_cast<std::chrono::microseconds>(
-                    source_timestamp().time_since_epoch())
-                    .count());
+void Data::SerializeFlatBuffer(flexbuffers::Builder &flex_builder) {
+    auto ts = static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::microseconds>(
+            source_timestamp().time_since_epoch())
+            .count());
     flex_builder.UInt("source_ts", ts);
     flex_builder.UInt("hardware_ts", hardware_timestamp());
     flex_builder.UInt("serial_number", serial_number_);
 }
-

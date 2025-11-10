@@ -34,125 +34,114 @@ std::string Serializer::extension() const { return extension_; }
 YAML::Node Serialization::Serializer::DataDescription(
     const typename AnyType::Data &data) const {
 
-  YAML::Node node;
+    YAML::Node node;
 
-  if (format_ == Serialization::Format::FULL ||
-      format_ == Serialization::Format::HEADERONLY ||
-      format_ == Serialization::Format::STREAMHEADER) {
-    node.push_back("stream uint16 (1)");
-    node.push_back("packet uint64 (1)");
-  }
-
-  data.YAMLDescription(node, format_);
-
-  return node;
-}
-
-bool Serialization::BinarySerializer::Serialize(std::ostream &stream,
-                                                typename AnyType::Data *data,
-                                                uint16_t streamid,
-                                                uint64_t packetid,
-                                                std::string processor,
-                                                std::string port,
-                                                uint8_t slot){
-  if (format_ == Serialization::Format::NONE) {
-    return true;
-  }
-
-  if (format_ == Serialization::Format::COMPACT) {
-    data->SerializeBinary(stream, format_);
-  } else {
-    stream.write(reinterpret_cast<const char *>(&streamid), sizeof(streamid));
-    stream.write(reinterpret_cast<const char *>(&packetid), sizeof(packetid));
-    data->SerializeBinary(stream, format_);
-  }
-
-  return true;
-}
-
-bool Serialization::FlatBufferSerializer::Serialize(std::ostream &stream,
-                                                typename AnyType::Data *data,
-                                                uint16_t streamid,
-                                                uint64_t packetid,
-                                                std::string processor,
-                                                std::string port,
-                                                uint8_t slot){
-  if (format_ == Serialization::Format::NONE) {
-    return true;
-  }
-
-
-  auto datasource = CreateDataSource(builder_, builder_.CreateString(processor),
-                                              builder_.CreateString(port),
-                                              slot,
-                                              streamid);
-  auto startMap = flex_builder_.StartMap();
-
-  data->SerializeFlatBuffer(flex_builder_);
-  flex_builder_.EndMap(startMap);
-  flex_builder_.Finish();
-
-  auto buffer = CreateRootMsg(builder_,
-                              builder_.CreateString(GIT_REVISION), packetid, datasource,
-                              builder_.CreateString(data->datatype()),
-                              builder_.CreateVector(flex_builder_.GetBuffer()));
-  builder_.Finish(buffer);
-  stream.write(reinterpret_cast<const char*>(builder_.GetBufferPointer()), builder_.GetSize());
-
-  flex_builder_.Clear();
-  builder_.Clear();
-  return true;
-}
-
-bool Serialization::YAMLSerializer::Serialize(std::ostream &stream,
-                                              typename AnyType::Data *data,
-                                              uint16_t streamid,
-                                              uint64_t packetid,
-                                              std::string processor,
-                                              std::string port,
-                                              uint8_t slot){
-  if (format_ == Serialization::Format::NONE) {
-    return true;
-  }
-
-  YAML::Emitter emit(stream);
-  YAML::Node node;
-
-  if (format_ == Serialization::Format::COMPACT) {
-    data->SerializeYAML(node, format_);
-    emit << YAML::BeginSeq;
-    emit << YAML::Flow << node;
-    emit << YAML::EndSeq;
-    stream << std::endl;
-  } else {
-    emit << YAML::BeginSeq << YAML::BeginMap;
-    emit << YAML::Key << "stream" << YAML::Value << streamid;
-    emit << YAML::Key << "packet" << YAML::Value << packetid;
-    if (format_ != Serialization::Format::STREAMHEADER) {
-      data->SerializeYAML(node, format_);
-      emit << YAML::Key << "data" << YAML::Value << node;
+    if (format_ == Serialization::Format::FULL ||
+        format_ == Serialization::Format::HEADERONLY ||
+        format_ == Serialization::Format::STREAMHEADER) {
+        node.push_back("stream uint16 (1)");
+        node.push_back("packet uint64 (1)");
     }
-    emit << YAML::EndMap << YAML::EndSeq;
-    stream << std::endl;
-  }
 
-  return true;
+    data.YAMLDescription(node, format_);
+
+    return node;
+}
+
+bool Serialization::BinarySerializer::Serialize(
+    std::ostream &stream, typename AnyType::Data *data, uint16_t streamid,
+    uint64_t packetid, std::string processor, std::string port, uint8_t slot) {
+    if (format_ == Serialization::Format::NONE) {
+        return true;
+    }
+
+    if (format_ == Serialization::Format::COMPACT) {
+        data->SerializeBinary(stream, format_);
+    } else {
+        stream.write(reinterpret_cast<const char *>(&streamid),
+                     sizeof(streamid));
+        stream.write(reinterpret_cast<const char *>(&packetid),
+                     sizeof(packetid));
+        data->SerializeBinary(stream, format_);
+    }
+
+    return true;
+}
+
+bool Serialization::FlatBufferSerializer::Serialize(
+    std::ostream &stream, typename AnyType::Data *data, uint16_t streamid,
+    uint64_t packetid, std::string processor, std::string port, uint8_t slot) {
+    if (format_ == Serialization::Format::NONE) {
+        return true;
+    }
+
+    auto datasource =
+        CreateDataSource(builder_, builder_.CreateString(processor),
+                         builder_.CreateString(port), slot, streamid);
+    auto startMap = flex_builder_.StartMap();
+
+    data->SerializeFlatBuffer(flex_builder_);
+    flex_builder_.EndMap(startMap);
+    flex_builder_.Finish();
+
+    auto buffer =
+        CreateRootMsg(builder_, builder_.CreateString(GIT_REVISION), packetid,
+                      datasource, builder_.CreateString(data->datatype()),
+                      builder_.CreateVector(flex_builder_.GetBuffer()));
+    builder_.Finish(buffer);
+    stream.write(reinterpret_cast<const char *>(builder_.GetBufferPointer()),
+                 builder_.GetSize());
+
+    flex_builder_.Clear();
+    builder_.Clear();
+    return true;
+}
+
+bool Serialization::YAMLSerializer::Serialize(
+    std::ostream &stream, typename AnyType::Data *data, uint16_t streamid,
+    uint64_t packetid, std::string processor, std::string port, uint8_t slot) {
+    if (format_ == Serialization::Format::NONE) {
+        return true;
+    }
+
+    YAML::Emitter emit(stream);
+    YAML::Node node;
+
+    if (format_ == Serialization::Format::COMPACT) {
+        data->SerializeYAML(node, format_);
+        emit << YAML::BeginSeq;
+        emit << YAML::Flow << node;
+        emit << YAML::EndSeq;
+        stream << std::endl;
+    } else {
+        emit << YAML::BeginSeq << YAML::BeginMap;
+        emit << YAML::Key << "stream" << YAML::Value << streamid;
+        emit << YAML::Key << "packet" << YAML::Value << packetid;
+        if (format_ != Serialization::Format::STREAMHEADER) {
+            data->SerializeYAML(node, format_);
+            emit << YAML::Key << "data" << YAML::Value << node;
+        }
+        emit << YAML::EndMap << YAML::EndSeq;
+        stream << std::endl;
+    }
+
+    return true;
 }
 
 Serializer *serializer_from_string(std::string s, Serialization::Format fmt) {
-  return serializer(Serialization::string_to_encoding(s), fmt);
+    return serializer(Serialization::string_to_encoding(s), fmt);
 }
 
 Serializer *serializer(Serialization::Encoding enc, Serialization::Format fmt) {
-  if (enc == Serialization::Encoding::BINARY) {
-    return new Serialization::BinarySerializer(fmt);
-  }
-  if (enc == Serialization::Encoding::YAML) {
-    return new Serialization::YAMLSerializer(fmt);
-  }
-  if (enc == Serialization::Encoding::FLATBUFFER) {
-    return new Serialization::FlatBufferSerializer(fmt);
-  }
-  throw std::runtime_error("Unknown serializer.");
+    if (enc == Serialization::Encoding::BINARY) {
+        return new Serialization::BinarySerializer(fmt);
+    }
+    if (enc == Serialization::Encoding::YAML) {
+        return new Serialization::YAMLSerializer(fmt);
+    }
+    if (enc == Serialization::Encoding::FLATBUFFER) {
+        return new Serialization::FlatBufferSerializer(fmt);
+    }
+    throw std::runtime_error("Unknown serializer.");
 }
-}  // namespace Serialization
+} // namespace Serialization
