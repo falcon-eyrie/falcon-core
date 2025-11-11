@@ -22,47 +22,47 @@
 #include <string>
 
 class PortAddress {
- public:
-  PortAddress(std::string processor, std::string port)
-      : processor_name_(processor), port_name_(port), processor_class_("?"),
-        port_datatype_("?") {}
+  public:
+    PortAddress(std::string processor, std::string port)
+        : processor_name_(processor), port_name_(port), processor_class_("?"),
+          port_datatype_("?") {}
 
-  const std::string processor() const { return processor_name_; }
-  const std::string port() const { return port_name_; }
+    const std::string processor() const { return processor_name_; }
+    const std::string port() const { return port_name_; }
 
-  const std::string processor_class() const { return processor_class_; }
-  const std::string port_datatype() const { return port_datatype_; }
+    const std::string processor_class() const { return processor_class_; }
+    const std::string port_datatype() const { return port_datatype_; }
 
-  void set_port(std::string port, std::string port_datatype = "?") {
-    port_name_ = port;
-    port_datatype_ = port_datatype;
-  }
+    void set_port(std::string port, std::string port_datatype = "?") {
+        port_name_ = port;
+        port_datatype_ = port_datatype;
+    }
 
-  void set_port_datatype(std::string datatype) { port_datatype_ = datatype; }
-  void set_processor_class(std::string klass) { processor_class_ = klass; }
-  const std::string string(bool full = false) const;
+    void set_port_datatype(std::string datatype) { port_datatype_ = datatype; }
+    void set_processor_class(std::string klass) { processor_class_ = klass; }
+    const std::string string(bool full = false) const;
 
- protected:
-  std::string processor_name_;
-  std::string port_name_;
-  std::string processor_class_;
-  std::string port_datatype_;
+  protected:
+    std::string processor_name_;
+    std::string port_name_;
+    std::string processor_class_;
+    std::string port_datatype_;
 };
 
 class SlotAddress : public PortAddress {
- public:
-  SlotAddress(std::string processor, std::string port, int slot)
-      : PortAddress(processor, port), slot_(slot) {}
+  public:
+    SlotAddress(std::string processor, std::string port, int slot)
+        : PortAddress(processor, port), slot_(slot) {}
 
-  SlotAddress(const PortAddress &port, int slot)
-      : PortAddress(port), slot_(slot) {}
+    SlotAddress(const PortAddress &port, int slot)
+        : PortAddress(port), slot_(slot) {}
 
-  int slot() const { return slot_; }
+    int slot() const { return slot_; }
 
-  void set_slot(int slot) { slot_ = slot; }
+    void set_slot(int slot) { slot_ = slot; }
 
-  const std::string string(bool full = false) const;
+    const std::string string(bool full = false) const;
 
- protected:
-  int slot_;
+  protected:
+    int slot_;
 };

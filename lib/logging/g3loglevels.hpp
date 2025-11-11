@@ -25,12 +25,11 @@
 // all values with a + 1 higher than their closest equivalent
 // they could really have the same value as well.
 
-
 // Graph state level info
-const LEVELS STATE {INFO.value + 1, {"STATE"}};
+const LEVELS STATE{INFO.value + 1, {"STATE"}};
 // Graph update of processors level info
-const LEVELS UPDATE {STATE.value + 1, {"UPDATE"}};
+const LEVELS UPDATE{STATE.value + 1, {"UPDATE"}};
 // Error in relation with the graph
-const LEVELS ERROR {WARNING.value + 1, {"ERROR"}};
+const LEVELS ERROR{WARNING.value + 1, {"ERROR"}};
 
 #endif

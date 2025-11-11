@@ -20,8 +20,8 @@
 #pragma once
 
 #include <deque>
-#include <thread>
 #include <string>
+#include <thread>
 
 #include "context.hpp"
 #include "processorgraph.hpp"
@@ -29,32 +29,32 @@
 namespace graph {
 
 class GraphManager {
- public:
-  GraphManager(GlobalContext &context);
-  ~GraphManager() { stop(); }
+  public:
+    GraphManager(GlobalContext &context);
+    ~GraphManager() { stop(); }
 
-  void stop() {
-    terminate_ = true;
-    thread_.join();
-  }
+    void stop() {
+        terminate_ = true;
+        thread_.join();
+    }
 
-  void start() {
-    terminate_ = false;
-    thread_ = std::thread(&GraphManager::Run, this);
-  }
-  bool terminated() const { return terminate_; }
+    void start() {
+        terminate_ = false;
+        thread_ = std::thread(&GraphManager::Run, this);
+    }
+    bool terminated() const { return terminate_; }
 
- private:
-  std::thread thread_;
+  private:
+    std::thread thread_;
 
-  void Run();
-  bool terminate_ = false;
-  GlobalContext *global_context_;
+    void Run();
+    bool terminate_ = false;
+    GlobalContext *global_context_;
 
-  void HandleCommand(std::string command, std::deque<std::string> &extra,
-                     std::deque<std::string> &reply);
-  void ParseGraph(YAML::Node &node);
+    void HandleCommand(std::string command, std::deque<std::string> &extra,
+                       std::deque<std::string> &reply);
+    void ParseGraph(YAML::Node &node);
 
-  ProcessorGraph graph_;
+    ProcessorGraph graph_;
 };
-}  // namespace graph
+} // namespace graph

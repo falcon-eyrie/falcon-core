@@ -12,10 +12,10 @@
 //       names of its contributors may be used to endorse or promote products
 //       derived from this software without specific prior written permission.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL FRANÇOIS SAINT-JACQUES BE LIABLE FOR ANY
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL FRANÇOIS SAINT-JACQUES BE LIABLE FOR ANY
 // DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 // (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 // LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -35,30 +35,25 @@
 namespace disruptor {
 
 class ProcessingSequenceBarrier : SequenceBarrierInterface {
- public:
-    ProcessingSequenceBarrier(WaitStrategyInterface* wait_strategy,
-                              Sequence* sequence,
-                              const std::vector<Sequence*>& sequences) :
-        cursor_(sequence),
-        wait_strategy_(wait_strategy),
-        dependent_sequences_(sequences),
-        alerted_(false) {
-    }
+  public:
+    ProcessingSequenceBarrier(WaitStrategyInterface *wait_strategy,
+                              Sequence *sequence,
+                              const std::vector<Sequence *> &sequences)
+        : cursor_(sequence), wait_strategy_(wait_strategy),
+          dependent_sequences_(sequences), alerted_(false) {}
 
-    virtual int64_t WaitFor(const int64_t& sequence) {
+    virtual int64_t WaitFor(const int64_t &sequence) {
         return wait_strategy_->WaitFor(dependent_sequences_, *cursor_, *this,
                                        sequence);
     }
 
-    virtual int64_t WaitFor(const int64_t& sequence,
-                            const int64_t& timeout_micros) {
+    virtual int64_t WaitFor(const int64_t &sequence,
+                            const int64_t &timeout_micros) {
         return wait_strategy_->WaitFor(dependent_sequences_, *cursor_, *this,
                                        sequence, timeout_micros);
     }
 
-    virtual int64_t GetCursor() const {
-        return cursor_->sequence();
-    }
+    virtual int64_t GetCursor() const { return cursor_->sequence(); }
 
     virtual bool IsAlerted() const {
         return alerted_.load(std::memory_order::memory_order_acquire);
@@ -77,13 +72,13 @@ class ProcessingSequenceBarrier : SequenceBarrierInterface {
             throw AlertException();
     }
 
- private:
-    Sequence* cursor_;
-    WaitStrategyInterface* wait_strategy_;
-    std::vector<Sequence*> dependent_sequences_;
+  private:
+    Sequence *cursor_;
+    WaitStrategyInterface *wait_strategy_;
+    std::vector<Sequence *> dependent_sequences_;
     std::atomic<bool> alerted_;
 };
 
-};  // namespace disruptor
+}; // namespace disruptor
 
 #endif // DISRUPTOR_DEPENDENCY_BARRIER_H_ NOLINT

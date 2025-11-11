@@ -25,63 +25,63 @@
 namespace Serialization {
 
 std::string format_to_string(Format fmt) {
-  std::string s;
+    std::string s;
 #define MATCH(p)                                                               \
-  case (Serialization::Format::p):                                             \
-    s = #p;                                                                    \
-    break;
-  switch (fmt) {
+    case (Serialization::Format::p):                                           \
+        s = #p;                                                                \
+        break;
+    switch (fmt) {
+        MATCH(NONE)
+        MATCH(FULL);
+        MATCH(COMPACT);
+        MATCH(HEADERONLY);
+        MATCH(STREAMHEADER);
+    }
+#undef MATCH
+    return s;
+}
+
+Format string_to_format(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(), (int (*)(int))std::toupper);
+#define MATCH(p)                                                               \
+    if (s == #p) {                                                             \
+        return Serialization::Format::p;                                       \
+    }
     MATCH(NONE)
     MATCH(FULL);
     MATCH(COMPACT);
     MATCH(HEADERONLY);
     MATCH(STREAMHEADER);
-  }
-#undef MATCH
-  return s;
-}
-
-Format string_to_format(std::string s) {
-  std::transform(s.begin(), s.end(), s.begin(), (int (*)(int))std::toupper);
-#define MATCH(p)                                                               \
-  if (s == #p) {                                                               \
-    return Serialization::Format::p;                                           \
-  }
-  MATCH(NONE)
-  MATCH(FULL);
-  MATCH(COMPACT);
-  MATCH(HEADERONLY);
-  MATCH(STREAMHEADER);
-  throw std::runtime_error("Invalid Serialization::Format value.");
+    throw std::runtime_error("Invalid Serialization::Format value.");
 #undef MATCH
 }
 
 std::string encoding_to_string(Encoding enc) {
-  std::string s;
+    std::string s;
 #define MATCH(p)                                                               \
-  case (Serialization::Encoding::p):                                           \
-    s = #p;                                                                    \
-    break;
-  switch (enc) {
-    MATCH(BINARY)
-    MATCH(YAML)
-    MATCH(FLATBUFFER);
-  }
+    case (Serialization::Encoding::p):                                         \
+        s = #p;                                                                \
+        break;
+    switch (enc) {
+        MATCH(BINARY)
+        MATCH(YAML)
+        MATCH(FLATBUFFER);
+    }
 #undef MATCH
-  return s;
+    return s;
 }
 
 Encoding string_to_encoding(std::string s) {
-  std::transform(s.begin(), s.end(), s.begin(), (int (*)(int))std::toupper);
+    std::transform(s.begin(), s.end(), s.begin(), (int (*)(int))std::toupper);
 #define MATCH(p)                                                               \
-  if (s == #p) {                                                               \
-    return Serialization::Encoding::p;                                         \
-  }
-  MATCH(BINARY)
-  MATCH(YAML)
-  MATCH(FLATBUFFER);
-  throw std::runtime_error("Invalid Serialization::Encoding value.");
+    if (s == #p) {                                                             \
+        return Serialization::Encoding::p;                                     \
+    }
+    MATCH(BINARY)
+    MATCH(YAML)
+    MATCH(FLATBUFFER);
+    throw std::runtime_error("Invalid Serialization::Encoding value.");
 #undef MATCH
 }
 
-}  // namespace Serialization
+} // namespace Serialization

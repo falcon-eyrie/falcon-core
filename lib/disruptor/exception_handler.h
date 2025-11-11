@@ -12,10 +12,10 @@
 //       names of its contributors may be used to endorse or promote products
 //       derived from this software without specific prior written permission.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL FRANÇOIS SAINT-JACQUES BE LIABLE FOR ANY
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL FRANÇOIS SAINT-JACQUES BE LIABLE FOR ANY
 // DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 // (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 // LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_EXCEPTION_HANDLER_H_  // NOLINT
-#define DISRUPTOR_EXCEPTION_HANDLER_H_  // NOLINT
+#ifndef DISRUPTOR_EXCEPTION_HANDLER_H_ // NOLINT
+#define DISRUPTOR_EXCEPTION_HANDLER_H_ // NOLINT
 
 #include <exception>
 
@@ -32,28 +32,26 @@
 
 namespace disruptor {
 
-template<typename T>
-class IgnoreExceptionHandler: public ExceptionHandlerInterface<T> {
- public:
-    virtual void Handle(const std::exception& exception,
-                         const int64_t& sequence,
-                         T* event) {
+template <typename T>
+class IgnoreExceptionHandler : public ExceptionHandlerInterface<T> {
+  public:
+    virtual void Handle(const std::exception &exception,
+                        const int64_t &sequence, T *event) {
         // do nothing with the exception.
         ;
     }
 };
 
-template<typename T>
-class FatalExceptionHandler: public ExceptionHandlerInterface<T> {
- public:
-    virtual void Handle(const std::exception& exception,
-                         const int64_t& sequence,
-                         T* event) {
+template <typename T>
+class FatalExceptionHandler : public ExceptionHandlerInterface<T> {
+  public:
+    virtual void Handle(const std::exception &exception,
+                        const int64_t &sequence, T *event) {
         // rethrow the exception
         throw exception;
     }
 };
 
-};  // namespace disruptor
+}; // namespace disruptor
 
 #endif // DISRUPTOR_EXCEPTION_HANDLER_H_  NOLINT

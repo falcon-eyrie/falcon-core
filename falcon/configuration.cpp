@@ -19,18 +19,18 @@
 #include "configuration.hpp"
 
 FalconConfiguration::FalconConfiguration() : Configuration() {
-  add_option("graph/file", graph_file, "");
-  add_option("graph/autostart", graph_autostart, "");
-  add_option("debug/enabled", debug_enabled, "");
-  add_option("testing/enabled", testing_enabled, "");
-  add_option("network/port", network_port, "");
-  add_option("logging/path", logging_path, "");
-  add_option("logging/screen/enabled", logging_screen_enabled, "");
-  add_option("logging/cloud/enabled", logging_cloud_enabled, "");
-  add_option("logging/cloud/port", logging_cloud_port, "");
-  add_option("server_side_storage/environment", server_side_storage_environment,
-             "");
-  add_option("server_side_storage/resources", server_side_storage_resources,
-             "");
-  add_option("server_side_storage/custom", server_side_storage_custom, "");
+    add_option("graph/file", graph_file, "");
+    add_option("graph/autostart", graph_autostart, "");
+    add_option("debug/enabled", debug_enabled, "");
+    add_option("testing/enabled", testing_enabled, "");
+    add_option("network/port", network_port, "");
+    add_option("logging/path", logging_path, "");
+    add_option("logging/screen/enabled", logging_screen_enabled, "");
+    add_option("logging/cloud/enabled", logging_cloud_enabled, "");
+    add_option("logging/cloud/port", logging_cloud_port, "");
+    add_option("server_side_storage/environment",
+               server_side_storage_environment, "");
+    add_option("server_side_storage/resources", server_side_storage_resources,
+               "");
+    add_option("server_side_storage/custom", server_side_storage_custom, "");
 }

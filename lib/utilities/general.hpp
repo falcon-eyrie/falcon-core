@@ -29,19 +29,19 @@ typedef Range<unsigned int> ChannelRange;
 
 // basic event counter
 struct EventCounter {
-  uint64_t all_received = 0;
-  uint64_t target = 0;
-  uint64_t non_target = 0;
+    uint64_t all_received = 0;
+    uint64_t target = 0;
+    uint64_t non_target = 0;
 
-  inline bool consistent_counters() {
-    return all_received == (target + non_target);
-  }
+    inline bool consistent_counters() {
+        return all_received == (target + non_target);
+    }
 
-  void reset();
+    void reset();
 };
 
 template <typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args &&... args);
+std::unique_ptr<T> make_unique(Args &&...args);
 
 template <class T, class A> T join(const A &begin, const A &end, const T &t);
 
@@ -64,4 +64,3 @@ const double MAX_N_HOURS_TEST = 1.5;
 constexpr std::size_t MAX_TEST_SAMPLING_FREQUENCY = 32000;
 
 #include "general.ipp"
-
