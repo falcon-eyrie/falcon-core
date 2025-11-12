@@ -12,10 +12,10 @@
 //       names of its contributors may be used to endorse or promote products
 //       derived from this software without specific prior written permission.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL FRANÇOIS SAINT-JACQUES BE LIABLE FOR ANY
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL FRANÇOIS SAINT-JACQUES BE LIABLE FOR ANY
 // DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 // (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 // LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -34,37 +34,32 @@ namespace disruptor {
 
 template <typename T>
 class NoOpEventProcessor : public EventProcessorInterface<T> {
- public:
-    NoOpEventProcessor(RingBuffer<T>* ring_buffer) :
-        ring_buffer_(ring_buffer) { }
+  public:
+    NoOpEventProcessor(RingBuffer<T> *ring_buffer)
+        : ring_buffer_(ring_buffer) {}
 
-    virtual Sequence* GetSequence() {
-        return ring_buffer_->GetSequencePtr();
-    }
+    virtual Sequence *GetSequence() { return ring_buffer_->GetSequencePtr(); }
 
     virtual void Halt() {}
 
     virtual void Run() {}
 
- private:
-    RingBuffer<T>* ring_buffer_;
+  private:
+    RingBuffer<T> *ring_buffer_;
 };
 
 template <typename T>
 class BatchEventProcessor : public EventProcessorInterface<T> {
- public:
-    BatchEventProcessor(RingBuffer<T>* ring_buffer,
-                        SequenceBarrierInterface* sequence_barrier,
-                        EventHandlerInterface<T>* event_handler,
-                        ExceptionHandlerInterface<T>* exception_handler) :
-            running_(false),
-            ring_buffer_(ring_buffer),
-            sequence_barrier_(sequence_barrier),
-            event_handler_(event_handler),
-            exception_handler_(exception_handler) {}
+  public:
+    BatchEventProcessor(RingBuffer<T> *ring_buffer,
+                        SequenceBarrierInterface *sequence_barrier,
+                        EventHandlerInterface<T> *event_handler,
+                        ExceptionHandlerInterface<T> *exception_handler)
+        : running_(false), ring_buffer_(ring_buffer),
+          sequence_barrier_(sequence_barrier), event_handler_(event_handler),
+          exception_handler_(exception_handler) {}
 
-
-    virtual Sequence* GetSequence() { return &sequence_; }
+    virtual Sequence *GetSequence() { return &sequence_; }
 
     virtual void Halt() {
         running_.store(false);
@@ -79,26 +74,27 @@ class BatchEventProcessor : public EventProcessorInterface<T> {
         sequence_barrier_->ClearAlert();
         event_handler_->OnStart();
 
-        T* event = NULL;
+        T *event = NULL;
         int64_t next_sequence = sequence_.sequence() + 1L;
 
         while (true) {
             try {
-                int64_t avalaible_sequence = \
+                int64_t avalaible_sequence =
                     sequence_barrier_->WaitFor(next_sequence);
 
                 while (next_sequence <= avalaible_sequence) {
                     event = ring_buffer_->Get(next_sequence);
                     event_handler_->OnEvent(next_sequence,
-                            next_sequence == avalaible_sequence, event);
+                                            next_sequence == avalaible_sequence,
+                                            event);
                     next_sequence++;
                 }
 
                 sequence_.set_sequence(next_sequence - 1L);
-            } catch(const AlertException& e) {
+            } catch (const AlertException &e) {
                 if (!running_.load())
                     break;
-            } catch(const std::exception& e) {
+            } catch (const std::exception &e) {
                 exception_handler_->Handle(e, next_sequence, event);
                 sequence_.set_sequence(next_sequence);
                 next_sequence++;
@@ -111,19 +107,18 @@ class BatchEventProcessor : public EventProcessorInterface<T> {
 
     void operator()() { Run(); }
 
- private:
+  private:
     std::atomic<bool> running_;
     Sequence sequence_;
 
-    RingBuffer<T>* ring_buffer_;
-    SequenceBarrierInterface* sequence_barrier_;
-    EventHandlerInterface<T>* event_handler_;
-    ExceptionHandlerInterface<T>* exception_handler_;
+    RingBuffer<T> *ring_buffer_;
+    SequenceBarrierInterface *sequence_barrier_;
+    EventHandlerInterface<T> *event_handler_;
+    ExceptionHandlerInterface<T> *exception_handler_;
 
     DISALLOW_COPY_AND_ASSIGN(BatchEventProcessor);
 };
 
-
-};  // namespace disruptor
+}; // namespace disruptor
 
 #endif // DISRUPTOR_EVENT_PROCESSOR_H_ NOLINT

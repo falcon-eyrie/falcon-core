@@ -26,5 +26,5 @@ namespace precise {
 constexpr precise_unit sample_units(1., count);
 constexpr precise_unit spike_units(1., count);
 
-}  // namespace precise
-}  // namespace units
+} // namespace precise
+} // namespace units

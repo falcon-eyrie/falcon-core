@@ -18,12 +18,11 @@
 // ---------------------------------------------------------------------
 
 #pragma once
-#include <string>
 #include <deque>
+#include <string>
 #include <zmq.hpp>
 
 #include "g3log/g3log.hpp"
 #include "g3log/logmessage.hpp"
-#include "logging/g3loglevels.hpp"
 #include "g3log/logworker.hpp"
-
+#include "logging/g3loglevels.hpp"

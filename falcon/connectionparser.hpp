@@ -20,10 +20,10 @@
 #pragma once
 
 #include <memory>
-#include <tuple>
-#include <vector>
 #include <string>
+#include <tuple>
 #include <utility>
+#include <vector>
 
 #include "connections.hpp"
 #include "utilities/general.hpp"

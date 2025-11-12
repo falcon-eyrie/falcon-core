@@ -43,11 +43,10 @@ template <typename T> constexpr double samples2time(T nsamples, double rate);
 double compute_delta_ts(uint64_t t1, uint64_t t2);
 
 struct TimestampRegister {
-  uint64_t hw;
-  TimePoint source;
+    uint64_t hw;
+    TimePoint source;
 
-  void reset();
+    void reset();
 };
 
 #include "time.ipp"
-

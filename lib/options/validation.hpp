@@ -18,12 +18,12 @@
 // ---------------------------------------------------------------------
 #pragma once
 
+#include <algorithm>
 #include <limits>
 #include <regex>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 #include "units/units.hpp"
 
@@ -32,177 +32,177 @@
 namespace options {
 
 class ValidationError : public std::runtime_error {
- public:
-  ValidationError(std::string msg) : std::runtime_error(msg) {}
+  public:
+    ValidationError(std::string msg) : std::runtime_error(msg) {}
 };
 
 class ConversionError : public std::runtime_error {
- public:
-  ConversionError(std::string msg) : std::runtime_error(msg) {}
+  public:
+    ConversionError(std::string msg) : std::runtime_error(msg) {}
 };
 
 template <typename T> using ValidatorFunc = std::function<T(const T &)>;
 
 template <typename T>
 ValidatorFunc<T> compose(ValidatorFunc<T> f, ValidatorFunc<T> g) {
-  return [f, g](T x) { return f(g(x)); };
+    return [f, g](T x) { return f(g(x)); };
 }
 
 template <typename T> class validator {
- public:
-  friend auto operator+(const ValidatorFunc<T> &lhs,
-                        const ValidatorFunc<T> &rhs) {
-    return compose<T>(rhs, lhs);
-  }
+  public:
+    friend auto operator+(const ValidatorFunc<T> &lhs,
+                          const ValidatorFunc<T> &rhs) {
+        return compose<T>(rhs, lhs);
+    }
 };
 
 template <typename T> class inrange : public validator<T> {
-  static_assert(std::is_arithmetic<T>::value,
-                "inrange validator only supports numerical types.");
+    static_assert(std::is_arithmetic<T>::value,
+                  "inrange validator only supports numerical types.");
 
- public:
-  using value_type = T;
+  public:
+    using value_type = T;
 
- public:
-  inrange(T min, T max) : min_(min), max_(max) {}
+  public:
+    inrange(T min, T max) : min_(min), max_(max) {}
 
-  T operator()(const T &x) const {
-    if (x < min_ || x > max_) {
-      throw ValidationError("Value out of range.");
+    T operator()(const T &x) const {
+        if (x < min_ || x > max_) {
+            throw ValidationError("Value out of range.");
+        }
+        return x;
     }
-    return x;
-  }
 
- protected:
-  T min_;
-  T max_;
+  protected:
+    T min_;
+    T max_;
 };
 
 template <typename T> class clamped : public validator<T> {
-  static_assert(std::is_arithmetic<T>::value,
-                "clamped validator only supports numerical types.");
+    static_assert(std::is_arithmetic<T>::value,
+                  "clamped validator only supports numerical types.");
 
- public:
-  using value_type = T;
+  public:
+    using value_type = T;
 
- public:
-  clamped(T min, T max) : min_(min), max_(max) {}
+  public:
+    clamped(T min, T max) : min_(min), max_(max) {}
 
-  T operator()(const T &x) const {
-    T y = x;
-    std::clamp(y, min_, max_);
-    return y;
-  }
+    T operator()(const T &x) const {
+        T y = x;
+        std::clamp(y, min_, max_);
+        return y;
+    }
 
- protected:
-  T min_;
-  T max_;
+  protected:
+    T min_;
+    T max_;
 };
 
 template <typename T> class squared : public validator<T> {
-  static_assert(std::is_arithmetic<T>::value,
-                "squared validator only supports numerical types.");
+    static_assert(std::is_arithmetic<T>::value,
+                  "squared validator only supports numerical types.");
 
- public:
-  T operator()(const T &x) const { return x * x; }
+  public:
+    T operator()(const T &x) const { return x * x; }
 };
 
 template <typename T> class multiplied : public validator<T> {
-  static_assert(std::is_arithmetic<T>::value,
-                "multiplier validator only supports numerical types.");
+    static_assert(std::is_arithmetic<T>::value,
+                  "multiplier validator only supports numerical types.");
 
- public:
-  multiplied(T multiplier) : multiplier_(multiplier) {}
+  public:
+    multiplied(T multiplier) : multiplier_(multiplier) {}
 
-  T operator()(const T &x) const { return multiplier_ * x; }
+    T operator()(const T &x) const { return multiplier_ * x; }
 
- protected:
-  T multiplier_;
+  protected:
+    T multiplier_;
 };
 
 class invert : public validator<bool> {
- public:
-  bool operator()(const bool &x) const { return !x; }
+  public:
+    bool operator()(const bool &x) const { return !x; }
 };
 
 template <typename T> class zeroismax : public validator<T> {
- public:
-  T operator()(const T &x) {
-    if (x == 0) {
-      return std::numeric_limits<T>::max();
-    } else {
-      return x;
+  public:
+    T operator()(const T &x) {
+        if (x == 0) {
+            return std::numeric_limits<T>::max();
+        } else {
+            return x;
+        }
     }
-  }
 };
 
 template <typename T> class notempty : public validator<T> {
- public:
-  T operator()(const T &x) {
-    if (x.size() == 0) {
-      throw ValidationError("Container or value cannot be empty.");
+  public:
+    T operator()(const T &x) {
+        if (x.size() == 0) {
+            throw ValidationError("Container or value cannot be empty.");
+        }
+        return x;
     }
-    return x;
-  }
 };
 
 template <typename T> class each : public validator<std::vector<T>> {
- public:
-  each(ValidatorFunc<T> validator) : validator_(validator) {}
+  public:
+    each(ValidatorFunc<T> validator) : validator_(validator) {}
 
-  std::vector<T> operator()(const std::vector<T> &x) {
-    std::vector<T> y = x;
-    std::transform(x.begin(), x.end(), y.begin(), validator_);
-    return x;
-  }
+    std::vector<T> operator()(const std::vector<T> &x) {
+        std::vector<T> y = x;
+        std::transform(x.begin(), x.end(), y.begin(), validator_);
+        return x;
+    }
 
- protected:
-  ValidatorFunc<T> validator_;
+  protected:
+    ValidatorFunc<T> validator_;
 };
 
 template <typename T> class positive : public validator<T> {
- public:
-  positive(bool strict = false) : strict_(strict) {}
+  public:
+    positive(bool strict = false) : strict_(strict) {}
 
-  T operator()(const T &x) const {
-    if ((strict_ && x <= 0) || x < 0) {
-      if (strict_) {
-        throw ValidationError("Value cannot be negative or zero.");
-      } else {
-        throw ValidationError("Value cannot be negative.");
-      }
+    T operator()(const T &x) const {
+        if ((strict_ && x <= 0) || x < 0) {
+            if (strict_) {
+                throw ValidationError("Value cannot be negative or zero.");
+            } else {
+                throw ValidationError("Value cannot be negative.");
+            }
+        }
+        return x;
     }
-    return x;
-  }
 
- protected:
-  bool strict_;
+  protected:
+    bool strict_;
 };
 
 class isfile : public validator<std::string> {
- public:
-  isfile(bool exists = false) : exists_(exists) {}
+  public:
+    isfile(bool exists = false) : exists_(exists) {}
 
-  std::string operator()(const std::string &x) const {
-    return parse_file(x, exists_).string();
-  }
+    std::string operator()(const std::string &x) const {
+        return parse_file(x, exists_).string();
+    }
 
- protected:
-  bool exists_;
+  protected:
+    bool exists_;
 };
 
 class isdir : public validator<std::string> {
- public:
-  isdir(bool exists = true, bool create = false)
-      : exists_(exists), create_(create) {}
+  public:
+    isdir(bool exists = true, bool create = false)
+        : exists_(exists), create_(create) {}
 
-  std::string operator()(const std::string &x) const {
-    return parse_directory(x, exists_, create_).string();
-  }
+    std::string operator()(const std::string &x) const {
+        return parse_directory(x, exists_, create_).string();
+    }
 
- protected:
-  bool exists_;
-  bool create_;
+  protected:
+    bool exists_;
+    bool create_;
 };
 
-}  // namespace options
+} // namespace options

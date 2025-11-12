@@ -12,10 +12,10 @@
 //       names of its contributors may be used to endorse or promote products
 //       derived from this software without specific prior written permission.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL FRANÇOIS SAINT-JACQUES BE LIABLE FOR ANY
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL FRANÇOIS SAINT-JACQUES BE LIABLE FOR ANY
 // DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 // (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 // LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -31,11 +31,11 @@
 #include <mutex>
 #include <vector>
 
-#include "interface.h"
 #include "claim_strategy.h"
-#include "wait_strategy.h"
-#include "sequencer.h"
+#include "interface.h"
 #include "sequence_barrier.h"
+#include "sequencer.h"
+#include "wait_strategy.h"
 
 namespace disruptor {
 
@@ -44,9 +44,8 @@ namespace disruptor {
 //
 // @param <T> implementation storing the data for sharing during exchange
 // or parallel coordination of an event.
-template<typename T>
-class RingBuffer : public Sequencer {
- public:
+template <typename T> class RingBuffer : public Sequencer {
+  public:
     // Construct a RingBuffer with the full option set.
     //
     // @param event_factory to instance new entries for filling the RingBuffer.
@@ -55,39 +54,30 @@ class RingBuffer : public Sequencer {
     // entries in the ring.
     // @param wait_strategy_option waiting strategy employed by
     // processors_to_track waiting in entries becoming available.
-    RingBuffer(EventFactoryInterface<T>* event_factory,
-               int buffer_size,
+    RingBuffer(EventFactoryInterface<T> *event_factory, int buffer_size,
                ClaimStrategyOption claim_strategy_option,
-               WaitStrategyOption wait_strategy_option) :
-            Sequencer(buffer_size,
-                      claim_strategy_option,
-                      wait_strategy_option),
-            buffer_size_(buffer_size),
-            mask_(buffer_size - 1),
-            events_(event_factory->NewInstance(buffer_size)) {
-    }
+               WaitStrategyOption wait_strategy_option)
+        : Sequencer(buffer_size, claim_strategy_option, wait_strategy_option),
+          buffer_size_(buffer_size), mask_(buffer_size - 1),
+          events_(event_factory->NewInstance(buffer_size)) {}
 
-    ~RingBuffer() {
-        delete[] events_;
-    }
+    ~RingBuffer() { delete[] events_; }
 
     // Get the event for a given sequence in the RingBuffer.
     //
     // @param sequence for the event
     // @return event pointer at the specified sequence position.
-    T* Get(const int64_t& sequence) {
-        return &events_[sequence & mask_];
-    }
+    T *Get(const int64_t &sequence) { return &events_[sequence & mask_]; }
 
- private:
+  private:
     // Members
     int buffer_size_;
     int mask_;
-    T* events_;
+    T *events_;
 
     DISALLOW_COPY_AND_ASSIGN(RingBuffer);
 };
 
-};  // namespace disruptor
+}; // namespace disruptor
 
 #endif // DISRUPTOR_RING_BUFFER_H_ NOLINT
