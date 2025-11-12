@@ -1,4 +1,5 @@
 name: Format and Compile
+
 on:
   pull_request:
     branches: [develop]
@@ -6,7 +7,7 @@ on:
 jobs:
   build-linux:
     name: Format and Compile
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
@@ -16,26 +17,33 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            cmake \
             build-essential \
             libzmq3-dev \
             pkg-config \
             git \
-            clang-format
+            wget \
+            xz-utils
+
+          sh scripts/setup/install_cmake.sh
+          sh scripts/setup/install_clang_format.sh
+
+
       - name: Run format check
         run: |
           sh scripts/format.sh
           # Check for any changes caused by formatting
           if [[ -n "$(git status --porcelain)" ]]; then
-            echo "Code is not properly formatted. Please run './scripts/format.sh' locally and commit the changes."
-            git --no-pager diff
+            echo "Following files seems to be not formatted. Please run './scripts/format.sh' locally and commit the changes."
+            git --no-pager diff --name-only
             exit 1
           fi
+
       - name: Configure CMake
         run: |
           mkdir -p build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Debug
+          cmake .. -DCMAKE_BUILD_TYPE=Debug -DIGNORE_EXTENSIONS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+
       - name: Build project
         run: |
           cd build

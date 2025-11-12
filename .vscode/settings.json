@@ -1,0 +1,9 @@
+{
+    "search.useIgnoreFiles": false,
+    "cmake.configureOnOpen": false,
+    "[cpp]": {
+        "editor.defaultFormatter": "xaver.clang-format",
+        "editor.formatOnSave": true
+    },
+    "C_Cpp.autoAddFileAssociations": false,
+}

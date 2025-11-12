@@ -194,6 +194,7 @@ configure_file(buildconstant.hpp.in buildconstant.hpp @ONLY)
 # falcon executable
 
 add_executable(falcon ${sources})
+add_dependencies(falcon datatypebuffer)
 
 target_link_libraries(falcon yaml-cpp zmq flatbuffers ${PLATFORM_LINK_LIBRARIES})
 
@@ -225,6 +226,6 @@ if (COMPILE_EXTENSIONS)
 
         # install in the installation folder
         install(DIRECTORY ${BUILD_RESOURCES_PATH}/resources
-                CONFIGURATIONS Release 
+                CONFIGURATIONS Release
                 DESTINATION ${RESOURCES_PATH})
 endif()
