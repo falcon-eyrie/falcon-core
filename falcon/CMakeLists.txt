@@ -58,6 +58,11 @@ if (COMPILE_EXTENSIONS)
     SET(REAL_FALCON_PATHS, "")
 
     foreach (FALCON_PATH ${EXTENSION_PATHS})
+        # Make relative extension paths absolute, using project root instead of `falcon/`
+        if(NOT IS_ABSOLUTE ${FALCON_PATH})
+            set(FALCON_PATH "${CMAKE_SOURCE_DIR}/${FALCON_PATH}")
+        endif()
+
         get_filename_component(FALCON_PATH ${FALCON_PATH} REALPATH)
         LIST(APPEND REAL_FALCON_PATHS ${FALCON_PATH})
     endforeach ()
