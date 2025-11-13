@@ -1,4 +1,5 @@
 name: Format and Compile
+
 on:
   pull_request:
     branches: [develop]
@@ -16,7 +17,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            cmake \
             build-essential \
             libzmq3-dev \
             pkg-config \
@@ -24,14 +24,9 @@ jobs:
             wget \
             xz-utils
 
-            mkdir -p /tmp/llvm
-            cd /tmp/llvm
-            wget -q -O LLVM-21.1.5-Linux-X64.tar.xz \
-            https://github.com/llvm/llvm-project/releases/download/llvmorg-21.1.5/LLVM-21.1.5-Linux-X64.tar.xz
-            tar -xf LLVM-21.1.5-Linux-X64.tar.xz
-            sudo mv LLVM-21.1.5-Linux-X64/bin/clang-format /usr/local/bin/
-            sudo chmod +x /usr/local/bin/clang-format
-            clang-format --version
+          sh scripts/setup/install_cmake.sh
+          sh scripts/setup/install_clang_format.sh
+
 
       - name: Run format check
         run: |
@@ -43,13 +38,13 @@ jobs:
             exit 1
           fi
 
-      # - name: Configure CMake
-      #   run: |
-      #     mkdir -p build
-      #     cd build
-      #     cmake .. -DCMAKE_BUILD_TYPE=Debug
-          
-      # - name: Build project
-      #   run: |
-      #     cd build
-      #     make -j$(nproc)
+      - name: Configure CMake
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Debug -DIGNORE_EXTENSIONS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+
+      - name: Build project
+        run: |
+          cd build
+          make -j$(nproc)

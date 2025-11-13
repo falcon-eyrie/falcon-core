@@ -1,0 +1,35 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "cmake",
+			"type": "shell",
+			"command": "sh",
+			"args": [
+				"${workspaceFolder}/scripts/cmake.sh"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "make",
+			"type": "shell",
+			"command": "sh",
+			"args": [
+				"${workspaceFolder}/scripts/make.sh"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "format",
+			"type": "shell",
+			"command": "sh",
+			"args": [
+				"${workspaceFolder}/scripts/format.sh"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+	]
+}
