@@ -7,7 +7,10 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/debug/falcon",
             "args": [
-                "neuralynx/nlx_test_save.yaml"
+                // Replace with your graph.
+                // While debugging, graphs are located under build/resources/
+                // In the case below, falcon will try to load build/resources/my_graph.yaml
+                "my_graph.yaml"
             ],
             "cwd": "${workspaceFolder}/build/debug",
             "MIMode": "gdb",
