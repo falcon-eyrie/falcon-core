@@ -1,0 +1,29 @@
+# This YAML file is used to configure the extensions for Falcon.
+# You can specify each extension as either a remote repository (via remote_location)
+# or a local path (via local_path). Extensions can be fetched from remote repositories
+# or linked locally for development.
+#
+# - To use a remote repository, specify the `remote_location` and optionally `git_tag`
+#   for the desired version. `git_tag` can be a commit hash, tag name, or branch name.
+#   If omitted, the default branch will be fetched.
+# - To work with a local copy of an extension for development, specify the `local_path`
+#   pointing to the directory. The recommended way is to clone or copy the repository
+#   into the `extensions/` directory in the project root.
+# - Lines starting with '#' are treated as comments and will be ignored.
+#   This can be used to easily enable/disable extensions without permanently removing them.
+
+extensions:
+  # decoding:
+  #   remote_location: https://github.com/falcon-eyrie/falcon-decoding-extensions
+  #   git_tag: 415460c8d1e3900521bdade24fc320043ec96c88
+
+  # behavior:
+  #   remote_location: https://github.com/falcon-eyrie/falcon-behavior-extensions
+  #   git_tag: 1.0.0
+
+  core:
+    remote_location: https://github.com/falcon-eyrie/falcon-fklab-extensions
+    git_tag: develop
+
+  # core:
+  #   local_path: extensions/falcon-fklab-extensions

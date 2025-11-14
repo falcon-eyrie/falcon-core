@@ -1,4 +1,0 @@
-enable , extension name , extension path , extension version (optional)
-0 , decoding , https://github.com/falcon-eyrie/falcon-decoding-extensions
-0 , behavior , https://github.com/falcon-eyrie/falcon-behavior-extensions, develop
-1 , core , https://github.com/falcon-eyrie/falcon-fklab-extensions, develop

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.26)
 ENABLE_LANGUAGE(CXX)
 
 MACRO(SUBDIRLIST result curdir)
