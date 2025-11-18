@@ -5,3 +5,6 @@ _build/
 
 docs/_doxygen/*
 docs/api/*
+
+# Extensions in development
+extensions/*
