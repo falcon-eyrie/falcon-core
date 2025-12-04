@@ -41,6 +41,8 @@ void GraphManager::HandleCommand(std::string command,
         if (!node.IsMap()) {
             std::string file = node.as<std::string>();
             file = global_context_->resolve_path(file, "graphs");
+            std::cout << "Loading graph definition from file: " << file
+                      << std::endl;
             try {
                 node = YAML::LoadFile(file);
             } catch (YAML::BadFile &e) {
