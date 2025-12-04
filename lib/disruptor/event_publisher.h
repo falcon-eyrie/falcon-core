@@ -30,18 +30,19 @@
 
 namespace disruptor {
 
-template <typename T> class EventPublisher {
-  public:
-    EventPublisher(RingBuffer<T> *ring_buffer) : ring_buffer_(ring_buffer) {}
+template <typename T>
+class EventPublisher {
+   public:
+    EventPublisher(RingBuffer<T>* ring_buffer) : ring_buffer_(ring_buffer) {}
 
-    void PublishEvent(EventTranslatorInterface<T> *translator) {
+    void PublishEvent(EventTranslatorInterface<T>* translator) {
         int64_t sequence = ring_buffer_->Next();
         translator->TranslateTo(sequence, ring_buffer_->Get(sequence));
         ring_buffer_->Publish(sequence);
     }
 
-  private:
-    RingBuffer<T> *ring_buffer_;
+   private:
+    RingBuffer<T>* ring_buffer_;
 };
 
 }; // namespace disruptor

@@ -41,7 +41,7 @@ std::string time_to_string(std::time_t t, std::string fmt) {
 }
 
 double compute_delta_ts(uint64_t t1, uint64_t t2) {
-    int sign = 1;
+    int      sign = 1;
     uint64_t diff;
 
     if (t1 > t2) {
@@ -55,6 +55,6 @@ double compute_delta_ts(uint64_t t1, uint64_t t2) {
 }
 
 void TimestampRegister::reset() {
-    hw = std::numeric_limits<uint64_t>::min();
+    hw     = std::numeric_limits<uint64_t>::min();
     source = TimePoint::min();
 }

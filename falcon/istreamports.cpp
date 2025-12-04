@@ -24,7 +24,7 @@
 #include "iprocessor.hpp"
 #include "istreamports.hpp"
 
-void ISlotOut::Connect(ISlotIn *downstream) {
+void ISlotOut::Connect(ISlotIn* downstream) {
     if (downstream_slots_.count(downstream) == 0) {
         downstream_slots_.insert(downstream);
     } else {
@@ -32,9 +32,9 @@ void ISlotOut::Connect(ISlotIn *downstream) {
     }
 }
 
-std::vector<RingSequence *> ISlotOut::gating_sequences() {
-    std::vector<RingSequence *> v;
-    for (auto &it : downstream_slots_) {
+std::vector<RingSequence*> ISlotOut::gating_sequences() {
+    std::vector<RingSequence*> v;
+    for (auto& it : downstream_slots_) {
         v.push_back(it->sequence());
     }
     return v;
@@ -43,7 +43,7 @@ std::vector<RingSequence *> ISlotOut::gating_sequences() {
 void ISlotIn::ReleaseData() {
     if (nretrieved_ > 0) {
         int64_t value = sequence_.IncrementAndGet(nretrieved_);
-        nretrieved_ = 0;
+        nretrieved_   = 0;
 
         if (value + 1 < 0) {
             sequence_.set_sequence(INT64_MAX);
@@ -51,10 +51,9 @@ void ISlotIn::ReleaseData() {
     }
 }
 
-void ISlotIn::Connect(ISlotOut *upstream) {
+void ISlotIn::Connect(ISlotOut* upstream) {
     if (connected()) {
-        throw std::runtime_error(
-            "Error connecting to slot (already connected)");
+        throw std::runtime_error("Error connecting to slot (already connected)");
     }
 
     upstream_ = upstream;
@@ -66,16 +65,16 @@ void ISlotIn::NegotiateUpstream() {
 
 void ISlotIn::PrepareProcessing() {
     sequence_.set_sequence(-1L);
-    ncached_ = 0;
-    cache_ = nullptr;
+    ncached_    = 0;
+    cache_      = nullptr;
     nretrieved_ = 0;
 }
 
 YAML::Node IPortOut::ExportYAML() const {
     YAML::Node node;
-    node["datatype"] = datatype();
-    node["nslots_min"] = policy().min_slot_number();
-    node["nslots_max"] = policy().max_slot_number();
+    node["datatype"]    = datatype();
+    node["nslots_min"]  = policy().min_slot_number();
+    node["nslots_max"]  = policy().max_slot_number();
     node["buffer_size"] = policy().buffer_size();
     if (policy().wait_strategy() == WaitStrategy::kBlockingStrategy) {
         node["wait_strategy"] = "blocking";
@@ -91,9 +90,9 @@ YAML::Node IPortOut::ExportYAML() const {
 
 YAML::Node IPortIn::ExportYAML() const {
     YAML::Node node;
-    node["datatype"] = datatype();
+    node["datatype"]   = datatype();
     node["nslots_min"] = policy().min_slot_number();
     node["nslots_max"] = policy().max_slot_number();
-    node["cache"] = policy().cache_enabled();
+    node["cache"]      = policy().cache_enabled();
     return node;
 }

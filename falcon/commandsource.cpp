@@ -18,12 +18,12 @@
 // ---------------------------------------------------------------------
 
 #include "commandsource.hpp"
-#include "utilities/general.hpp"
-#include "utilities/keyboard.hpp"
-#include "utilities/zmqutil.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include "utilities/general.hpp"
+#include "utilities/keyboard.hpp"
+#include "utilities/zmqutil.hpp"
 
 using namespace commands;
 
@@ -31,7 +31,7 @@ void CommandLineCommands::AddCommand(std::deque<std::string> command) {
     queued_commands_.push_back(command);
 }
 
-bool CommandLineCommands::getcommand(std::deque<std::string> &command) {
+bool CommandLineCommands::getcommand(std::deque<std::string>& command) {
     if (queued_commands_.size() == 0) {
         return false;
     }
@@ -41,22 +41,20 @@ bool CommandLineCommands::getcommand(std::deque<std::string> &command) {
 
     std::cout << "\ncommand line command: ";
 
-    for (auto &it : command) {
+    for (auto& it : command) {
         std::cout << it << " ";
     }
 
     return true;
 }
 
-bool CommandLineCommands::sendreply(const std::deque<std::string> &command,
-                                    std::deque<std::string> &reply) {
+bool CommandLineCommands::sendreply(const std::deque<std::string>& command,
+                                    std::deque<std::string>&       reply) {
     if (reply.size() == 0 || reply[0] == "OK") {
         return true;
     }
 
-    std::cout << std::endl
-              << join(reply.begin(), reply.end(), std::string(" "))
-              << std::flush;
+    std::cout << std::endl << join(reply.begin(), reply.end(), std::string(" ")) << std::flush;
 
     return true;
 }
@@ -66,10 +64,12 @@ KeyboardCommands::KeyboardCommands() {
     nonblock(1);
 }
 
-KeyboardCommands::~KeyboardCommands() { nonblock(0); }
+KeyboardCommands::~KeyboardCommands() {
+    nonblock(0);
+}
 
-bool KeyboardCommands::getcommand(std::deque<std::string> &command) {
-    int hit;
+bool KeyboardCommands::getcommand(std::deque<std::string>& command) {
+    int  hit;
     char c;
 
     hit = kbhit();
@@ -110,7 +110,7 @@ bool KeyboardCommands::getcommand(std::deque<std::string> &command) {
         }
         std::cout << "\nkey command: ";
 
-        for (auto &it : command) {
+        for (auto& it : command) {
             std::cout << it << " ";
         }
         return true;
@@ -118,33 +118,33 @@ bool KeyboardCommands::getcommand(std::deque<std::string> &command) {
     return false;
 }
 
-bool KeyboardCommands::sendreply(const std::deque<std::string> &command,
-                                 std::deque<std::string> &reply) {
+bool KeyboardCommands::sendreply(const std::deque<std::string>& command,
+                                 std::deque<std::string>&       reply) {
     if (reply.size() == 0 || reply[0] == "OK") {
         return true;
     }
 
-    std::cout << std::endl
-              << join(reply.begin(), reply.end(), std::string(" "))
-              << std::flush;
+    std::cout << std::endl << join(reply.begin(), reply.end(), std::string(" ")) << std::flush;
 
     return true;
 }
 
-ZMQCommands::ZMQCommands(zmq::context_t &context, int port) {
+ZMQCommands::ZMQCommands(zmq::context_t& context, int port) {
     socket = new zmq::socket_t(context, ZMQ_REP);
     char buffer[15];
     snprintf(buffer, 14, "tcp://*:%d", port);
     socket->bind(buffer);
 }
 
-ZMQCommands::~ZMQCommands() { delete socket; }
+ZMQCommands::~ZMQCommands() {
+    delete socket;
+}
 
-bool ZMQCommands::getcommand(std::deque<std::string> &command) {
+bool ZMQCommands::getcommand(std::deque<std::string>& command) {
     return s_nonblocking_recv_multi(*socket, command);
 }
 
-bool ZMQCommands::sendreply(const std::deque<std::string> &command,
-                            std::deque<std::string> &reply) {
+bool ZMQCommands::sendreply(const std::deque<std::string>& command,
+                            std::deque<std::string>&       reply) {
     return s_send_multi(*socket, reply);
 }

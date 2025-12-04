@@ -19,7 +19,7 @@
 
 #pragma once
 
-int kbhit();
+int  kbhit();
 void nonblock(int state);
 
 extern int s_interrupted;

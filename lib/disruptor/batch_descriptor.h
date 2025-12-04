@@ -32,7 +32,7 @@ namespace disruptor {
 
 // Used to record the batch of sequences claimed via {@link Sequencer}.
 class BatchDescriptor {
-  public:
+   public:
     // Create a holder for tracking a batch of claimed sequences in a
     // {@link Sequencer}
     //
@@ -62,8 +62,8 @@ class BatchDescriptor {
     // @return starting sequence in the batch.
     int64_t Start() const { return end_ - size_ + 1L; }
 
-  private:
-    int size_;
+   private:
+    int     size_;
     int64_t end_;
 };
 

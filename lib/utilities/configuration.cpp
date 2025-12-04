@@ -34,22 +34,20 @@ void Configuration::load(std::string filename) {
         YAML::Node node;
         node = YAML::LoadFile(p.string());
         options_.from_yaml(node, {}, false);
-        std::cout << "Default configuration loaded from " << p.string()
-                  << std::endl;
-    } catch (YAML::BadFile
-                 &e) { // config file does not exist, save default configuration
+        std::cout << "Default configuration loaded from " << p.string() << std::endl;
+    } catch (YAML::BadFile& e) { // config file does not exist, save default configuration
         try {
             // create parent path if it doesn't exist
             parse_directory(p.parent_path().string(), true, true);
             // save default config
             save(p.string());
-            std::cout << "Default configuration saved to " << p.string() << "."
-                      << std::endl;
-        } catch (std::runtime_error &e) {
-            std::cout << "Warning: could not save configuration file: "
-                      << e.what() << std::endl;
+            std::cout << "Default configuration saved to " << p.string() << "." << std::endl;
+        } catch (std::runtime_error& e) {
+            std::cout << "Warning: could not save configuration file: " << e.what() << std::endl;
         }
     }
 }
 
-void Configuration::save(std::string filename) { options_.save_yaml(filename); }
+void Configuration::save(std::string filename) {
+    options_.save_yaml(filename);
+}

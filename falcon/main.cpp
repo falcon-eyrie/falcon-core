@@ -38,8 +38,7 @@
 
 using namespace std;
 
-int main(int argc, char **argv) {
-
+int main(int argc, char** argv) {
     // create a parser
     cmdline::parser parser;
 
@@ -88,7 +87,7 @@ int main(int argc, char **argv) {
     // load configuration file
     try {
         config.load(parser.get<std::string>("config"));
-    } catch (std::runtime_error &e) {
+    } catch (std::runtime_error& e) {
         std::cout << e.what() << std::endl;
         std::cout << "Falcon terminated." << std::endl;
         return EXIT_FAILURE;
@@ -112,25 +111,22 @@ int main(int argc, char **argv) {
     }
 
     // add default URIs
-    config.server_side_storage_custom["resources"] =
-        config.server_side_storage_resources();
+    config.server_side_storage_custom["resources"] = config.server_side_storage_resources();
     config.server_side_storage_custom["graphs"] =
         config.server_side_storage_resources() + "/graphs";
     config.server_side_storage_custom["filters"] =
         config.server_side_storage_resources() + "/filters";
-    config.server_side_storage_custom["runroot"] =
-        config.server_side_storage_environment();
+    config.server_side_storage_custom["runroot"] = config.server_side_storage_environment();
 
-    GlobalContext context(config.testing_enabled(),
-                          config.server_side_storage_custom());
+    GlobalContext context(config.testing_enabled(), config.server_side_storage_custom());
 
     // set up loggers
     // file logger
-    char *home = getenv("HOME");
-    std::regex re("(\\$HOME|~)");
+    char*       home = getenv("HOME");
+    std::regex  re("(\\$HOME|~)");
     std::string logpath = std::regex_replace(config.logging_path(), re, home);
 
-    auto worker = g3::LogWorker::createLogWorker();
+    auto worker         = g3::LogWorker::createLogWorker();
     auto defaultHandler = worker->addDefaultLogger("falcon", logpath);
 
     // initialize logging before creating additional loggers
@@ -148,31 +144,26 @@ int main(int argc, char **argv) {
 
     // screen logger
     if (config.logging_screen_enabled()) {
-        worker->addSink(std::make_unique<ScreenSink>(),
-                        &ScreenSink::ReceiveLogMessage);
+        worker->addSink(std::make_unique<ScreenSink>(), &ScreenSink::ReceiveLogMessage);
         LOG(INFO) << "Enabled logging to screen.";
     }
     // cloud logger
     if (config.logging_cloud_enabled()) {
-        worker->addSink(std::make_unique<ZMQSink>(context.zmq(),
-                                                  config.logging_cloud_port()),
+        worker->addSink(std::make_unique<ZMQSink>(context.zmq(), config.logging_cloud_port()),
                         &ZMQSink::ReceiveLogMessage);
         // wait so that any existing subscriber has a change to connect before
         // we send out first messages
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        LOG(INFO) << "Enabled logging to cloud on port "
-                  << config.logging_cloud_port();
+        LOG(INFO) << "Enabled logging to cloud on port " << config.logging_cloud_port();
     }
 
     LOG(INFO) << "Logging initialized. Log file saved to " << logpath;
 
     // Check clock used for internal timing
-    LOG_IF(WARNING, not Clock::is_steady)
-        << "The clock used for timing is not steady.";
+    LOG_IF(WARNING, not Clock::is_steady) << "The clock used for timing is not steady.";
 
     LOG(INFO) << "Resolution of clock used for timing is "
-              << 10e6 * static_cast<double>(Clock::period::num) /
-                     Clock::period::den
+              << 10e6 * static_cast<double>(Clock::period::num) / Clock::period::den
               << " microseconds.";
 
     // create and start GraphManager in separate thread
@@ -194,7 +185,6 @@ int main(int argc, char **argv) {
 
     std::deque<std::string> command;
     if (graph_file.size() > 0) {
-
         command.push_back("graph");
         command.push_back("build");
         command.push_back(graph_file);

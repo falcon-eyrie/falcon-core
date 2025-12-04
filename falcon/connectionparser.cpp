@@ -34,17 +34,18 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
     // id is either: number or list of ranges (e.g. [1, 4-8, 10])
 
     static const int type_specifier = 1;
-    static const int name_group = 2;
-    static const int range_group = 3;
+    static const int name_group     = 2;
+    static const int range_group    = 3;
     static const int first_range_id = 1;
-    static const int end_range_id = 2;
+    static const int end_range_id   = 2;
 
-    ConnectionRule rule;
+    ConnectionRule       rule;
     SingleConnectionRule single_rules[2];
 
-    std::string expr("^(?:(f|p|s)\\:)?([a-zA-Z]*(?:[ -_][a-zA-Z]+)*)[ "
-                     "]*((?:\\d+)|(?:\\([\\d,\\-]+\\)))?$");
-    std::regex re(expr);
+    std::string expr(
+        "^(?:(f|p|s)\\:)?([a-zA-Z]*(?:[ -_][a-zA-Z]+)*)[ "
+        "]*((?:\\d+)|(?:\\([\\d,\\-]+\\)))?$");
+    std::regex  re(expr);
     std::smatch match;
 
     int startid;
@@ -55,16 +56,14 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
     // split on "="
     auto rule_parts = split(rulestring, '=');
 
-    if (rule_parts.size() != 2 || rule_parts[0].length() == 0 ||
-        rule_parts[1].length() == 0) {
+    if (rule_parts.size() != 2 || rule_parts[0].length() == 0 || rule_parts[1].length() == 0) {
         throw std::runtime_error(
             "Error parsing connection rule. Use the following pattern: "
             "[upstream] = [downstream].");
     }
 
-    for (auto &rule_part : rule_parts) {
-        rule_part = std::regex_replace(rule_part, std::regex("^ +| +$"),
-                                       std::string(""));
+    for (auto& rule_part : rule_parts) {
+        rule_part = std::regex_replace(rule_part, std::regex("^ +| +$"), std::string(""));
         // split on "."
         auto connection_parts = split(rule_part, '.');
 
@@ -79,19 +78,19 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
         current_connection_part = 0;
 
         std::list<NodePart> available_specifiers{PROCESSOR, PORT, SLOT};
-        NodePart specifier;
+        NodePart            specifier;
 
-        for (auto &connection_part : connection_parts) {
+        for (auto& connection_part : connection_parts) {
             // match regular expression
             if (!std::regex_match(connection_part, match, re)) {
-                throw std::runtime_error("Error parsing connection rule. "
-                                         "Cannot parse part of address: " +
-                                         connection_part + ".");
+                throw std::runtime_error(
+                    "Error parsing connection rule. "
+                    "Cannot parse part of address: " +
+                    connection_part + ".");
             }
             // parse part specifier
 
             if (!match[type_specifier].matched) {
-
                 // get next available specifier
                 specifier = available_specifiers.front();
 
@@ -109,11 +108,12 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
                     specifier = SLOT;
                 }
 
-                auto it = std::find(available_specifiers.begin(),
-                                    available_specifiers.end(), specifier);
+                auto it =
+                    std::find(available_specifiers.begin(), available_specifiers.end(), specifier);
                 if (it == available_specifiers.end()) {
-                    throw std::runtime_error("Error parsing connection rule. "
-                                             "Duplicate address specifier.");
+                    throw std::runtime_error(
+                        "Error parsing connection rule. "
+                        "Duplicate address specifier.");
                 }
 
                 available_specifiers.remove(specifier);
@@ -122,9 +122,10 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
             // parse part name
 
             if (!match[name_group].matched && specifier != SLOT) {
-                throw std::runtime_error("Error parsing connection rule. "
-                                         "Invalid processor or port name: " +
-                                         connection_part + ".");
+                throw std::runtime_error(
+                    "Error parsing connection rule. "
+                    "Invalid processor or port name: " +
+                    connection_part + ".");
             }
 
             std::string name = match[name_group].str();
@@ -146,20 +147,18 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
                     // remove brackets and spaces
                     range.erase(std::remove_if(range.begin(), range.end(),
                                                [](char x) {
-                                                   return (x == '(' ||
-                                                           x == ')' ||
-                                                           std::isspace(x));
+                                                   return (x == '(' || x == ')' || std::isspace(x));
                                                }),
                                 range.end());
 
                     // split on comma
                     auto id_range = split(range, ',');
 
-                    std::regex re_range("(\\d+)(?:\\-(\\d+))?");
+                    std::regex  re_range("(\\d+)(?:\\-(\\d+))?");
                     std::smatch match_range;
 
                     // match start and end id of ranges
-                    for (const auto &q : id_range) {
+                    for (const auto& q : id_range) {
                         if (std::regex_match(q, match_range, re_range)) {
                             startid = stoi(match_range[first_range_id].str());
                             if (match_range[end_range_id].matched) {
@@ -181,7 +180,7 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
                     // try to convert to int
                     try {
                         identifiers.push_back(stoi(range));
-                    } catch (std::invalid_argument &e) {
+                    } catch (std::invalid_argument& e) {
                         throw std::runtime_error(
                             "Error parsing connection rule. "
                             "Cannot parse range: " +
@@ -202,18 +201,17 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
 
         // TODO: complete missing ConnectionParts of SingleConnectionRule
         // go through available specifiers
-        for (auto &k : available_specifiers) {
+        for (auto& k : available_specifiers) {
             if (k == PROCESSOR) {
-                throw std::runtime_error("Error parsing connection rule. "
-                                         "No processor specified");
+                throw std::runtime_error(
+                    "Error parsing connection rule. "
+                    "No processor specified");
             } else if (k == PORT) {
                 single_rules[current_rule_part][current_connection_part] =
-                    std::make_tuple(PORT, std::string(""),
-                                    std::vector<int>(1, MATCH_NONE));
+                    std::make_tuple(PORT, std::string(""), std::vector<int>(1, MATCH_NONE));
             } else if (k == SLOT) {
                 single_rules[current_rule_part][current_connection_part] =
-                    std::make_tuple(SLOT, std::string(""),
-                                    std::vector<int>(1, -1));
+                    std::make_tuple(SLOT, std::string(""), std::vector<int>(1, -1));
             }
             current_connection_part++;
         }
@@ -227,18 +225,18 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
 }
 
 std::vector<SlotAddress> expandSingleConnectionRule(SingleConnectionRule rule) {
-    std::array<int, 3> index;
+    std::array<int, 3>         index;
     std::array<std::string, 3> names;
-    int idx;
-    std::array<int, 3> tmp;
-    std::string processor;
-    std::string port;
-    int slot = -1;
+    int                        idx;
+    std::array<int, 3>         tmp;
+    std::string                processor;
+    std::string                port;
+    int                        slot = -1;
 
     std::vector<SlotAddress> cpoints;
 
     for (int i = 0; i < 3; i++) {
-        idx = std::get<0>(rule[i]);
+        idx      = std::get<0>(rule[i]);
         index[i] = idx;
         names[i] = std::get<1>(rule[i]);
     }
@@ -251,7 +249,6 @@ std::vector<SlotAddress> expandSingleConnectionRule(SingleConnectionRule rule) {
                 tmp[2] = c;
 
                 for (int d = 0; d < 3; d++) {
-
                     if (index[d] == 0) { // processor
                         if (tmp[d] == MATCH_NONE) {
                             processor = names[d];
@@ -276,13 +273,13 @@ std::vector<SlotAddress> expandSingleConnectionRule(SingleConnectionRule rule) {
     return cpoints;
 }
 
-void expandConnectionRule(ConnectionRule rule, StreamConnections &connections) {
+void expandConnectionRule(ConnectionRule rule, StreamConnections& connections) {
     // for output SingleConnectionRule
-    auto out = rule.first;
+    auto out        = rule.first;
     auto out_points = expandSingleConnectionRule(out);
 
     // for input SingleConnectionRule
-    auto in = rule.second;
+    auto in        = rule.second;
     auto in_points = expandSingleConnectionRule(in);
 
     if (out_points.size() != 1 && out_points.size() != in_points.size()) {
@@ -292,17 +289,17 @@ void expandConnectionRule(ConnectionRule rule, StreamConnections &connections) {
     }
 
     if (out_points.size() == 1) {
-        for (int i = 0; i < (int)in_points.size(); i++) {
+        for (int i = 0; i < (int) in_points.size(); i++) {
             connections.push_back(std::make_pair(out_points[0], in_points[i]));
         }
     } else {
-        for (int i = 0; i < (int)out_points.size(); i++) {
+        for (int i = 0; i < (int) out_points.size(); i++) {
             connections.push_back(std::make_pair(out_points[i], in_points[i]));
         }
     }
 }
 
-void printConnectionPart(const ConnectionPart &part) {
+void printConnectionPart(const ConnectionPart& part) {
     std::cout << std::get<0>(part);
     std::cout << std::get<1>(part);
 
@@ -310,14 +307,14 @@ void printConnectionPart(const ConnectionPart &part) {
 
     if (v.size() > 0 && v[0] >= 0) {
         std::cout << "[";
-        for (auto &it : v) {
+        for (auto& it : v) {
             std::cout << it << ", ";
         }
         std::cout << "]";
     }
 }
 
-void printSingleConnectionRule(const SingleConnectionRule &rule) {
+void printSingleConnectionRule(const SingleConnectionRule& rule) {
     for (int i = 0; i < 3; i++) {
         printConnectionPart(rule[i]);
         if (i < 2) {
@@ -326,16 +323,15 @@ void printSingleConnectionRule(const SingleConnectionRule &rule) {
     }
 }
 
-void printConnectionRule(const ConnectionRule &rule) {
+void printConnectionRule(const ConnectionRule& rule) {
     printSingleConnectionRule(rule.first);
     std::cout << " = ";
     printSingleConnectionRule(rule.second);
     std::cout << std::endl;
 }
 
-void printConnectionList(const StreamConnections &connections) {
-    for (auto &it : connections) {
-        std::cout << it.first.string() << "=" << it.second.string()
-                  << std::endl;
+void printConnectionList(const StreamConnections& connections) {
+    for (auto& it : connections) {
+        std::cout << it.first.string() << "=" << it.second.string() << std::endl;
     }
 }

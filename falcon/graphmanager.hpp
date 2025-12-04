@@ -29,8 +29,8 @@
 namespace graph {
 
 class GraphManager {
-  public:
-    GraphManager(GlobalContext &context);
+   public:
+    GraphManager(GlobalContext& context);
     ~GraphManager() { stop(); }
 
     void stop() {
@@ -40,20 +40,20 @@ class GraphManager {
 
     void start() {
         terminate_ = false;
-        thread_ = std::thread(&GraphManager::Run, this);
+        thread_    = std::thread(&GraphManager::Run, this);
     }
     bool terminated() const { return terminate_; }
 
-  private:
+   private:
     std::thread thread_;
 
-    void Run();
-    bool terminate_ = false;
-    GlobalContext *global_context_;
+    void           Run();
+    bool           terminate_ = false;
+    GlobalContext* global_context_;
 
-    void HandleCommand(std::string command, std::deque<std::string> &extra,
-                       std::deque<std::string> &reply);
-    void ParseGraph(YAML::Node &node);
+    void HandleCommand(std::string command, std::deque<std::string>& extra,
+                       std::deque<std::string>& reply);
+    void ParseGraph(YAML::Node& node);
 
     ProcessorGraph graph_;
 };

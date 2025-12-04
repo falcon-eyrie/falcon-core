@@ -37,55 +37,50 @@ namespace disruptor {
 // Strategies employed for claiming the sequence of events in the
 // {@link Seqencer} by publishers.
 class ClaimStrategyInterface {
-  public:
+   public:
     virtual ~ClaimStrategyInterface() {}
 
     // Is there available capacity in the buffer for the requested sequence.
     //
     // @param dependent_sequences to be checked for range.
     // @return true if the buffer has capacity for the requested sequence.
-    virtual bool HasAvalaibleCapacity(
-        const std::vector<Sequence *> &dependent_sequences) = 0;
+    virtual bool HasAvalaibleCapacity(const std::vector<Sequence*>& dependent_sequences) = 0;
 
     // Claim the next sequence in the {@link Sequencer}.
     //
     // @param dependent_sequences to be checked for range.
     // @return the index to be used for the publishing.
-    virtual int64_t
-    IncrementAndGet(const std::vector<Sequence *> &dependent_sequences) = 0;
+    virtual int64_t IncrementAndGet(const std::vector<Sequence*>& dependent_sequences) = 0;
 
     // Claim the next sequence in the {@link Sequencer}.
     //
     // @param delta to increment by.
     // @param dependent_sequences to be checked for range.
     // @return the index to be used for the publishing.
-    virtual int64_t
-    IncrementAndGet(const int &delta,
-                    const std::vector<Sequence *> &dependent_sequences) = 0;
+    virtual int64_t IncrementAndGet(const int&                    delta,
+                                    const std::vector<Sequence*>& dependent_sequences) = 0;
 
     // Set the current sequence value for claiming an event in the
     // {@link Sequencer}.
     //
     // @param sequence to be set as the current value.
     // @param dependent_sequences to be checked for range.
-    virtual void
-    SetSequence(const int64_t &sequence,
-                const std::vector<Sequence *> &dependent_sequences) = 0;
+    virtual void SetSequence(const int64_t&                sequence,
+                             const std::vector<Sequence*>& dependent_sequences) = 0;
 
     // Serialise publishing in sequence.
     //
     // @param sequence to be applied.
     // @param cursor to be serialise against.
     // @param batch_size of the sequence.
-    virtual void SerialisePublishing(const int64_t &sequence,
-                                     const Sequence &cursor,
-                                     const int64_t &batch_size) = 0;
+    virtual void SerialisePublishing(const int64_t& sequence, const Sequence& cursor,
+                                     const int64_t& batch_size) = 0;
 };
 
 // Coordination barrier for tracking the cursor for publishers and sequence of
 // dependent {@link EventProcessor}s for processing a data structure.
 class SequenceBarrierInterface {
-  public:
+   public:
     // Wait for the given sequence to be available for consumption.
     //
     // @param sequence to wait for.
@@ -93,7 +88,7 @@ class SequenceBarrierInterface {
     //
     // @throws AlertException if a status change has occurred for the
     // Disruptor.
-    virtual int64_t WaitFor(const int64_t &sequence) = 0;
+    virtual int64_t WaitFor(const int64_t& sequence) = 0;
 
     // Wait for the given sequence to be available for consumption with a
     // time out.
@@ -104,8 +99,7 @@ class SequenceBarrierInterface {
     //
     // @throws AlertException if a status change has occurred for the
     // Disruptor.
-    virtual int64_t WaitFor(const int64_t &sequence,
-                            const int64_t &timeout_micro) = 0;
+    virtual int64_t WaitFor(const int64_t& sequence, const int64_t& timeout_micro) = 0;
 
     // Delegate a call to the {@link Sequencer#getCursor()}
     //
@@ -135,9 +129,10 @@ class SequenceBarrierInterface {
 //
 // @param <T> event implementation storing the data for sharing during exchange
 // or parallel coordination of an event.
-template <typename T> class EventFactoryInterface {
-  public:
-    virtual T *NewInstance(const int &size) const = 0;
+template <typename T>
+class EventFactoryInterface {
+   public:
+    virtual T* NewInstance(const int& size) const = 0;
 };
 
 // Callback interface to be implemented for processing events as they become
@@ -145,8 +140,9 @@ template <typename T> class EventFactoryInterface {
 //
 // @param <T> event implementation storing the data for sharing during exchange
 // or parallel coordination of an event.
-template <typename T> class EventHandlerInterface {
-  public:
+template <typename T>
+class EventHandlerInterface {
+   public:
     // Called when a publisher has published an event to the {@link RingBuffer}
     //
     // @param event published to the {@link RingBuffer}
@@ -156,8 +152,7 @@ template <typename T> class EventHandlerInterface {
     //
     // @throws Exception if the EventHandler would like the exception handled
     // further up the chain.
-    virtual void OnEvent(const int64_t &sequence, const bool &end_of_batch,
-                         T *event) = 0;
+    virtual void OnEvent(const int64_t& sequence, const bool& end_of_batch, T* event) = 0;
 
     // Called once on thread start before processing the first event.
     virtual void OnStart() = 0;
@@ -171,14 +166,15 @@ template <typename T> class EventHandlerInterface {
 //
 // @param <T> event implementation storing the data for sharing during exchange
 // or parallel coordination of an event.
-template <typename T> class EventTranslatorInterface {
-  public:
+template <typename T>
+class EventTranslatorInterface {
+   public:
     // Translate a data representation into fields set in given event
     //
     // @param event into which the data should be translated.
     // @param sequence that is assigned to events.
     // @return the resulting event after it has been translated.
-    virtual T *TranslateTo(const int64_t &sequence, T *event) = 0;
+    virtual T* TranslateTo(const int64_t& sequence, T* event) = 0;
 };
 
 // EventProcessors wait for events to become available for consumption from
@@ -187,14 +183,15 @@ template <typename T> class EventTranslatorInterface {
 //
 // @param <T> event implementation storing the data for sharing during exchange
 // or parallel coordination of an event.
-template <typename T> class EventProcessorInterface {
-  public:
+template <typename T>
+class EventProcessorInterface {
+   public:
     // Get a pointer to the {@link Sequence} being used by this
     // {@link EventProcessor}.
     //
     // @return pointer to the {@link Sequence} for this
     // {@link EventProcessor}
-    virtual Sequence *GetSequence() = 0;
+    virtual Sequence* GetSequence() = 0;
 
     // Signal that this EventProcessor should stop when it has finished
     // consuming at the next clean break.
@@ -207,8 +204,9 @@ template <typename T> class EventProcessorInterface {
 // of the {@link BatchEventProcessor}.
 //
 // @param <T> event type stored in the {@link RingBuffer}.
-template <typename T> class ExceptionHandlerInterface {
-  public:
+template <typename T>
+class ExceptionHandlerInterface {
+   public:
     // Strategy for handling uncaught exceptions when processing an event.
     // If the strategy wishes to suspend further processing by the
     // {@link BatchEventProcessor} then it should throw a std::runtime_error.
@@ -216,14 +214,13 @@ template <typename T> class ExceptionHandlerInterface {
     // @param exception that propagated from the {@link EventHandler}.
     // @param sequence of the event which caused the exception.
     // @param event being processed when the exception occured.
-    virtual void Handle(const std::exception &exception,
-                        const int64_t &sequence, T *event) = 0;
+    virtual void Handle(const std::exception& exception, const int64_t& sequence, T* event) = 0;
 };
 
 // Strategy employed for making {@link EventProcessor}s wait on a cursor
 // {@link Sequence}.
 class WaitStrategyInterface {
-  public:
+   public:
     virtual ~WaitStrategyInterface() {}
 
     //  Wait for the given sequence to be available for consumption.
@@ -236,10 +233,8 @@ class WaitStrategyInterface {
     //  requested sequence.
     //
     //  @throws AlertException if the status of the Disruptor has changed.
-    virtual int64_t WaitFor(const std::vector<Sequence *> &dependents,
-                            const Sequence &cursor,
-                            const SequenceBarrierInterface &barrier,
-                            const int64_t &sequence) = 0;
+    virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
+                            const SequenceBarrierInterface& barrier, const int64_t& sequence) = 0;
 
     //  Wait for the given sequence to be available for consumption in a
     //  {@link RingBuffer} with a timeout specified.
@@ -254,11 +249,9 @@ class WaitStrategyInterface {
     //
     //  @throws AlertException if the status of the Disruptor has changed.
     //  @throws InterruptedException if the thread is interrupted.
-    virtual int64_t WaitFor(const std::vector<Sequence *> &dependents,
-                            const Sequence &cursor,
-                            const SequenceBarrierInterface &barrier,
-                            const int64_t &sequence,
-                            const int64_t &timeout_micros) = 0;
+    virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
+                            const SequenceBarrierInterface& barrier, const int64_t& sequence,
+                            const int64_t& timeout_micros) = 0;
 
     // Signal those waiting that the cursor has advanced.
     virtual void SignalAllWhenBlocking() = 0;

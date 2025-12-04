@@ -34,9 +34,8 @@ namespace disruptor {
 
 template <typename T>
 class IgnoreExceptionHandler : public ExceptionHandlerInterface<T> {
-  public:
-    virtual void Handle(const std::exception &exception,
-                        const int64_t &sequence, T *event) {
+   public:
+    virtual void Handle(const std::exception& exception, const int64_t& sequence, T* event) {
         // do nothing with the exception.
         ;
     }
@@ -44,9 +43,8 @@ class IgnoreExceptionHandler : public ExceptionHandlerInterface<T> {
 
 template <typename T>
 class FatalExceptionHandler : public ExceptionHandlerInterface<T> {
-  public:
-    virtual void Handle(const std::exception &exception,
-                        const int64_t &sequence, T *event) {
+   public:
+    virtual void Handle(const std::exception& exception, const int64_t& sequence, T* event) {
         // rethrow the exception
         throw exception;
     }

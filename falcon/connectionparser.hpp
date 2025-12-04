@@ -34,16 +34,16 @@ typedef std::vector<std::pair<SlotAddress, SlotAddress>> StreamConnections;
 
 enum NodePart { PROCESSOR = 0, PORT, SLOT };
 
-typedef std::tuple<NodePart, std::string, std::vector<int>> ConnectionPart;
-typedef std::array<ConnectionPart, 3> SingleConnectionRule;
+typedef std::tuple<NodePart, std::string, std::vector<int>>   ConnectionPart;
+typedef std::array<ConnectionPart, 3>                         SingleConnectionRule;
 typedef std::pair<SingleConnectionRule, SingleConnectionRule> ConnectionRule;
-typedef std::vector<ConnectionRule> ConnectionRules;
+typedef std::vector<ConnectionRule>                           ConnectionRules;
 
-ConnectionRule parseConnectionRule(std::string rulestring);
+ConnectionRule           parseConnectionRule(std::string rulestring);
 std::vector<SlotAddress> expandSingleConnectionRule(SingleConnectionRule rule);
-void expandConnectionRule(ConnectionRule rule, StreamConnections &connections);
+void                     expandConnectionRule(ConnectionRule rule, StreamConnections& connections);
 
-void printConnectionPart(const ConnectionPart &part);
-void printSingleConnectionRule(const SingleConnectionRule &rule);
-void printConnectionRule(const ConnectionRule &rule);
-void printConnectionList(const StreamConnections &connections);
+void printConnectionPart(const ConnectionPart& part);
+void printSingleConnectionRule(const SingleConnectionRule& rule);
+void printConnectionRule(const ConnectionRule& rule);
+void printConnectionList(const StreamConnections& connections);

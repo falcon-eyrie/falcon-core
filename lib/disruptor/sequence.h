@@ -26,8 +26,7 @@
 #ifndef CACHE_LINE_SIZE_IN_BYTES    // NOLINT
 #define CACHE_LINE_SIZE_IN_BYTES 64 // NOLINT
 #endif                              // NOLINT
-#define ATOMIC_SEQUENCE_PADDING_LENGTH                                         \
-    (CACHE_LINE_SIZE_IN_BYTES - sizeof(std::atomic<int64_t>)) / 8
+#define ATOMIC_SEQUENCE_PADDING_LENGTH (CACHE_LINE_SIZE_IN_BYTES - sizeof(std::atomic<int64_t>)) / 8
 #define SEQUENCE_PADDING_LENGTH (CACHE_LINE_SIZE_IN_BYTES - sizeof(int64_t)) / 8
 
 #ifndef DISRUPTOR_SEQUENCE_H_ // NOLINT
@@ -45,19 +44,16 @@ const int64_t kInitialCursorValue = -1L;
 
 // Sequence counter.
 class Sequence {
-  public:
+   public:
     // Construct a sequence counter that can be tracked across threads.
     //
     // @param initial_value for the counter.
-    Sequence(int64_t initial_value = kInitialCursorValue)
-        : value_(initial_value) {}
+    Sequence(int64_t initial_value = kInitialCursorValue) : value_(initial_value) {}
 
     // Get the current value of the {@link Sequence}.
     //
     // @return the current value.
-    int64_t sequence() const {
-        return value_.load(std::memory_order::memory_order_acquire);
-    }
+    int64_t sequence() const { return value_.load(std::memory_order::memory_order_acquire); }
 
     // Set the current value of the {@link Sequence}.
     //
@@ -70,13 +66,11 @@ class Sequence {
     //
     // @param increment the {@link Sequence}.
     // @return the new value incremented.
-    int64_t IncrementAndGet(const int64_t &increment) {
-        return value_.fetch_add(increment,
-                                std::memory_order::memory_order_release) +
-               increment;
+    int64_t IncrementAndGet(const int64_t& increment) {
+        return value_.fetch_add(increment, std::memory_order::memory_order_release) + increment;
     }
 
-  private:
+   private:
     // members
     std::atomic<int64_t> value_;
 
@@ -88,11 +82,10 @@ class Sequence {
 // Can be used across threads without worrying about false sharing if a
 // located adjacent to another counter in memory.
 class PaddedSequence : public Sequence {
-  public:
-    PaddedSequence(int64_t initial_value = kInitialCursorValue)
-        : Sequence(initial_value) {}
+   public:
+    PaddedSequence(int64_t initial_value = kInitialCursorValue) : Sequence(initial_value) {}
 
-  private:
+   private:
     // padding
     int64_t padding_[ATOMIC_SEQUENCE_PADDING_LENGTH];
 
@@ -103,20 +96,19 @@ class PaddedSequence : public Sequence {
 //
 // This counter is not thread safe.
 class MutableLong {
-  public:
-    MutableLong(int64_t initial_value = kInitialCursorValue)
-        : sequence_(initial_value) {}
+   public:
+    MutableLong(int64_t initial_value = kInitialCursorValue) : sequence_(initial_value) {}
 
     int64_t sequence() const { return sequence_; }
 
-    void set_sequence(const int64_t &sequence) { sequence_ = sequence; };
+    void set_sequence(const int64_t& sequence) { sequence_ = sequence; };
 
-    int64_t IncrementAndGet(const int64_t &delta) {
+    int64_t IncrementAndGet(const int64_t& delta) {
         sequence_ += delta;
         return sequence_;
     }
 
-  private:
+   private:
     volatile int64_t sequence_;
 };
 
@@ -124,15 +116,14 @@ class MutableLong {
 //
 // This counter is not thread safe.
 class PaddedLong : public MutableLong {
-  public:
-    PaddedLong(int64_t initial_value = kInitialCursorValue)
-        : MutableLong(initial_value) {}
+   public:
+    PaddedLong(int64_t initial_value = kInitialCursorValue) : MutableLong(initial_value) {}
 
-  private:
+   private:
     int64_t padding_[SEQUENCE_PADDING_LENGTH];
 };
 
-int64_t GetMinimumSequence(const std::vector<Sequence *> &sequences);
+int64_t GetMinimumSequence(const std::vector<Sequence*>& sequences);
 
 }; // namespace disruptor
 

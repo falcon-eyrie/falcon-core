@@ -16,9 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with falcon-core. If not, see <http://www.gnu.org/licenses/>.
 // ---------------------------------------------------------------------
+#include <unistd.h>
 #include <deque>
 #include <regex>
-#include <unistd.h>
 
 #include "buildconstant.hpp"
 #include "commandhandler.hpp"
@@ -28,8 +28,8 @@
 
 using namespace commands;
 
-bool CommandHandler::DelegateGraphCommand(std::deque<std::string> &command,
-                                          std::deque<std::string> &reply) {
+bool CommandHandler::DelegateGraphCommand(std::deque<std::string>& command,
+                                          std::deque<std::string>& reply) {
     // delegate
     s_send_multi(*graph_socket_, command);
     // get reply
@@ -38,45 +38,40 @@ bool CommandHandler::DelegateGraphCommand(std::deque<std::string> &command,
     return false;
 }
 
-bool CommandHandler::DelegateResourcesCommand(std::deque<std::string> &command,
-                                              std::deque<std::string> &reply) {
-
+bool CommandHandler::DelegateResourcesCommand(std::deque<std::string>& command,
+                                              std::deque<std::string>& reply) {
     std::string resources_type;
 
     if (command[0] == "list") {
-
         if (command.size() == 2)
             resources_type = command[1] + "://";
         else
             resources_type = "resources://";
 
         try {
-            std::string resource_path =
-                global_context_->resolve_path(resources_type);
-            std::vector<std::string> list_files =
-                getAllFilesInDir(resource_path);
-            for (auto const &file : list_files) {
-                reply.push_back(std::regex_replace(
-                    file, std::regex(resource_path), resources_type));
+            std::string              resource_path = global_context_->resolve_path(resources_type);
+            std::vector<std::string> list_files    = getAllFilesInDir(resource_path);
+            for (auto const& file : list_files) {
+                reply.push_back(
+                    std::regex_replace(file, std::regex(resource_path), resources_type));
             }
 
-        } catch (YAML::BadFile &e) {
+        } catch (YAML::BadFile& e) {
             reply.push_back("ERR");
-            reply.push_back("Unknown resources type requested \"" +
-                            resources_type + "\".");
+            reply.push_back("Unknown resources type requested \"" + resources_type + "\".");
             return false;
         }
 
     } else if (command[0] == "graphs") {
         try {
             std::string graph_path = global_context_->resolve_path(command[1]);
-            YAML::Node node;
+            YAML::Node  node;
             node["falcon"]["version"] = "1.0.0";
-            node["graph"] = YAML::LoadFile(graph_path);
+            node["graph"]             = YAML::LoadFile(graph_path);
             YAML::Emitter out;
             out << node;
             reply.push_back(std::string(out.c_str()));
-        } catch (YAML::BadFile &e) {
+        } catch (YAML::BadFile& e) {
             reply.push_back("ERR");
             reply.push_back("Invalid graph file");
         }
@@ -88,8 +83,8 @@ bool CommandHandler::DelegateResourcesCommand(std::deque<std::string> &command,
     return false;
 }
 
-bool CommandHandler::HandleCommand(std::deque<std::string> &command,
-                                   std::deque<std::string> &reply) {
+bool CommandHandler::HandleCommand(std::deque<std::string>& command,
+                                   std::deque<std::string>& reply) {
     bool finished = false;
 
     std::deque<std::string> local_command;
@@ -155,8 +150,7 @@ bool CommandHandler::HandleCommand(std::deque<std::string> &command,
         out << YAML::Key << "resource_root" << YAML::Value
             << global_context_->storage_context("resources");
         out << YAML::Key << "graph_state" << YAML::Value << local_reply[0];
-        out << YAML::Key << "default_test_flag" << YAML::Value
-            << global_context_->test();
+        out << YAML::Key << "default_test_flag" << YAML::Value << global_context_->test();
 
         reply.push_back(std::string(out.c_str()));
     } else {
@@ -181,7 +175,7 @@ void CommandHandler::start() {
     // save pointer to socket, so that DelegateGraphCommand can use it
     graph_socket_ = &socket;
 
-    bool finished = false;
+    bool                    finished = false;
     std::deque<std::string> command;
     std::deque<std::string> reply;
 
@@ -189,7 +183,7 @@ void CommandHandler::start() {
         usleep(100000); // 0.1 second
 
         // iterate through sources
-        for (auto &it : sources_) {
+        for (auto& it : sources_) {
             // retrieve command
             command.clear();
 
