@@ -42,7 +42,7 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Debug -DIGNORE_EXTENSIONS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+          cmake .. -DCMAKE_BUILD_TYPE=Debug -DIGNORE_EXTENSIONS=ON
 
       - name: Build project
         run: |

@@ -8,4 +8,4 @@ if ! command -v cmake >/dev/null 2>&1; then
 fi
 
 mkdir -p build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+cmake .. -DCMAKE_BUILD_TYPE=Debug
