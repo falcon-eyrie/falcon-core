@@ -1,4 +1,39 @@
-BasedOnStyle: LLVM
+BasedOnStyle: Google
+
+# Indentation / spacing (clean, modern, Java-like)
 IndentWidth: 4
-ColumnLimit: 80
-BreakBeforeBraces: Attach
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+SpaceBeforeParens: ControlStatements
+PointerAlignment: Left
+DerivePointerAlignment: false
+SpaceAfterCStyleCast: true
+Cpp11BracedListStyle: true
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
+# Modern readability
+AllowShortFunctionsOnASingleLine: InlineOnly
+ReflowComments: true
+AlignTrailingComments: true
+
+# Avoid legacy-C++ visual alignment
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: false
+AlignConsecutiveBitFields: false
+
+# Include handling
+SortIncludes: true
+IncludeBlocks: Preserve
+
+# Consistent indentation rules
+IndentCaseLabels: true
+IndentGotoLabels: true
+
+# Extra modern preferences
+BreakBeforeBraces: Attach        # matches Java/Rust/JS
+SpacesInParentheses: false
+SpacesInAngles: false
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceAroundPointerQualifiers: Default

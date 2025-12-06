@@ -23,21 +23,26 @@
 
 namespace Serialization {
 
-Format Serializer::format() const { return format_; }
+Format Serializer::format() const {
+    return format_;
+}
 
-void Serializer::set_format(Format fmt) { format_ = fmt; }
+void Serializer::set_format(Format fmt) {
+    format_ = fmt;
+}
 
-std::string Serializer::description() const { return description_; }
+std::string Serializer::description() const {
+    return description_;
+}
 
-std::string Serializer::extension() const { return extension_; }
+std::string Serializer::extension() const {
+    return extension_;
+}
 
-YAML::Node Serialization::Serializer::DataDescription(
-    const typename AnyType::Data &data) const {
-
+YAML::Node Serialization::Serializer::DataDescription(const typename AnyType::Data& data) const {
     YAML::Node node;
 
-    if (format_ == Serialization::Format::FULL ||
-        format_ == Serialization::Format::HEADERONLY ||
+    if (format_ == Serialization::Format::FULL || format_ == Serialization::Format::HEADERONLY ||
         format_ == Serialization::Format::STREAMHEADER) {
         node.push_back("stream uint16 (1)");
         node.push_back("packet uint64 (1)");
@@ -48,9 +53,10 @@ YAML::Node Serialization::Serializer::DataDescription(
     return node;
 }
 
-bool Serialization::BinarySerializer::Serialize(
-    std::ostream &stream, typename AnyType::Data *data, uint16_t streamid,
-    uint64_t packetid, std::string processor, std::string port, uint8_t slot) {
+bool Serialization::BinarySerializer::Serialize(std::ostream& stream, typename AnyType::Data* data,
+                                                uint16_t streamid, uint64_t packetid,
+                                                std::string processor, std::string port,
+                                                uint8_t slot) {
     if (format_ == Serialization::Format::NONE) {
         return true;
     }
@@ -58,48 +64,45 @@ bool Serialization::BinarySerializer::Serialize(
     if (format_ == Serialization::Format::COMPACT) {
         data->SerializeBinary(stream, format_);
     } else {
-        stream.write(reinterpret_cast<const char *>(&streamid),
-                     sizeof(streamid));
-        stream.write(reinterpret_cast<const char *>(&packetid),
-                     sizeof(packetid));
+        stream.write(reinterpret_cast<const char*>(&streamid), sizeof(streamid));
+        stream.write(reinterpret_cast<const char*>(&packetid), sizeof(packetid));
         data->SerializeBinary(stream, format_);
     }
 
     return true;
 }
 
-bool Serialization::FlatBufferSerializer::Serialize(
-    std::ostream &stream, typename AnyType::Data *data, uint16_t streamid,
-    uint64_t packetid, std::string processor, std::string port, uint8_t slot) {
+bool Serialization::FlatBufferSerializer::Serialize(std::ostream& stream,
+                                                    typename AnyType::Data* data, uint16_t streamid,
+                                                    uint64_t packetid, std::string processor,
+                                                    std::string port, uint8_t slot) {
     if (format_ == Serialization::Format::NONE) {
         return true;
     }
 
-    auto datasource =
-        CreateDataSource(builder_, builder_.CreateString(processor),
-                         builder_.CreateString(port), slot, streamid);
+    auto datasource = CreateDataSource(builder_, builder_.CreateString(processor),
+                                       builder_.CreateString(port), slot, streamid);
     auto startMap = flex_builder_.StartMap();
 
     data->SerializeFlatBuffer(flex_builder_);
     flex_builder_.EndMap(startMap);
     flex_builder_.Finish();
 
-    auto buffer =
-        CreateRootMsg(builder_, builder_.CreateString(GIT_REVISION), packetid,
-                      datasource, builder_.CreateString(data->datatype()),
-                      builder_.CreateVector(flex_builder_.GetBuffer()));
+    auto buffer = CreateRootMsg(builder_, builder_.CreateString(GIT_REVISION), packetid, datasource,
+                                builder_.CreateString(data->datatype()),
+                                builder_.CreateVector(flex_builder_.GetBuffer()));
     builder_.Finish(buffer);
-    stream.write(reinterpret_cast<const char *>(builder_.GetBufferPointer()),
-                 builder_.GetSize());
+    stream.write(reinterpret_cast<const char*>(builder_.GetBufferPointer()), builder_.GetSize());
 
     flex_builder_.Clear();
     builder_.Clear();
     return true;
 }
 
-bool Serialization::YAMLSerializer::Serialize(
-    std::ostream &stream, typename AnyType::Data *data, uint16_t streamid,
-    uint64_t packetid, std::string processor, std::string port, uint8_t slot) {
+bool Serialization::YAMLSerializer::Serialize(std::ostream& stream, typename AnyType::Data* data,
+                                              uint16_t streamid, uint64_t packetid,
+                                              std::string processor, std::string port,
+                                              uint8_t slot) {
     if (format_ == Serialization::Format::NONE) {
         return true;
     }
@@ -128,11 +131,11 @@ bool Serialization::YAMLSerializer::Serialize(
     return true;
 }
 
-Serializer *serializer_from_string(std::string s, Serialization::Format fmt) {
+Serializer* serializer_from_string(std::string s, Serialization::Format fmt) {
     return serializer(Serialization::string_to_encoding(s), fmt);
 }
 
-Serializer *serializer(Serialization::Encoding enc, Serialization::Format fmt) {
+Serializer* serializer(Serialization::Encoding enc, Serialization::Format fmt) {
     if (enc == Serialization::Encoding::BINARY) {
         return new Serialization::BinarySerializer(fmt);
     }
@@ -144,4 +147,4 @@ Serializer *serializer(Serialization::Encoding enc, Serialization::Format fmt) {
     }
     throw std::runtime_error("Unknown serializer.");
 }
-} // namespace Serialization
+}  // namespace Serialization

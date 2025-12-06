@@ -46,7 +46,7 @@ class BaseData {};
  * @brief The parent data type of AnyType.
  */
 class BaseType {
-  public:
+   public:
     static const bool ispure() { return true; }
     using Data = BaseData;
 };
@@ -70,10 +70,9 @@ class BaseType {
  * (i.e., a data type is pure only if itself all its (grand)parents are pure.
  */
 template <typename DATA, typename BASETYPE, bool pure = false,
-          typename CAPS = typename DATA::Capabilities,
-          typename PARAMS = typename DATA::Parameters>
+          typename CAPS = typename DATA::Capabilities, typename PARAMS = typename DATA::Parameters>
 class DefineType {
-  public:
+   public:
     static const std::string datatype() { return DATA::static_datatype(); }
     static const std::string dataname() { return DATA::static_dataname(); }
 
@@ -91,13 +90,13 @@ class DefineType {
  * We use CRTP with base class injection to define virtual member
  * functions that call the static member function in the derived class
  */
-template <typename T, typename BASETYPE> class IData : public BASETYPE::Data {
-
-  public:
+template <typename T, typename BASETYPE>
+class IData : public BASETYPE::Data {
+   public:
     using Base = typename BASETYPE::Data;
     using Base::Base;
 
-  public:
+   public:
     virtual std::string datatype() const { return T::static_datatype(); }
     virtual std::string dataname() const { return T::static_dataname(); }
 };
@@ -127,7 +126,7 @@ struct Parameters {};
  * @property serial_number_ serial number of the data object
  */
 class Data : public IData<Data, BaseType> {
-  public:
+   public:
     Data() : hardware_timestamp_(0), serial_number_(0) {}
     virtual ~Data() {}
 
@@ -178,8 +177,7 @@ class Data : public IData<Data, BaseType> {
      */
     template <typename DURATION = std::chrono::microseconds>
     DURATION time_passed() const {
-        return std::chrono::duration_cast<DURATION>(Clock::now() -
-                                                    source_timestamp_);
+        return std::chrono::duration_cast<DURATION>(Clock::now() - source_timestamp_);
     }
 
     /**
@@ -206,7 +204,7 @@ class Data : public IData<Data, BaseType> {
      * @brief CloneTimestamps - copy timestamps from one packet to the other
      * @param data
      */
-    void CloneTimestamps(const Data &data);
+    void CloneTimestamps(const Data& data);
 
     /**
      * @brief SerializeBinary - Serialize data specific for the data type in
@@ -217,8 +215,7 @@ class Data : public IData<Data, BaseType> {
      * @param stream binary stream where to add the data
      * @param format Compact or Full
      */
-    virtual void SerializeBinary(std::ostream &stream,
-                                 Serialization::Format format) const;
+    virtual void SerializeBinary(std::ostream& stream, Serialization::Format format) const;
 
     /**
      * @brief SerializeYAML - Serialize data specific for the data type in yaml
@@ -229,8 +226,7 @@ class Data : public IData<Data, BaseType> {
      * @param node yaml node where to add the data
      * @param format compact or full
      */
-    virtual void SerializeYAML(YAML::Node &node,
-                               Serialization::Format format) const;
+    virtual void SerializeYAML(YAML::Node& node, Serialization::Format format) const;
 
     /**
      * @brief YAMLDescription - Add the datatype metadata (list of data with
@@ -243,8 +239,7 @@ class Data : public IData<Data, BaseType> {
      * and the size
      * @param format compact or full
      */
-    virtual void YAMLDescription(YAML::Node &node,
-                                 Serialization::Format format) const;
+    virtual void YAMLDescription(YAML::Node& node, Serialization::Format format) const;
 
     /**
      * @brief SerializeFlatBuffer - Serialize with a flexbuffer the data
@@ -255,11 +250,11 @@ class Data : public IData<Data, BaseType> {
      *
      * @param flex_builder flexbuffer builder
      */
-    virtual void SerializeFlatBuffer(flexbuffers::Builder &flex_builder);
+    virtual void SerializeFlatBuffer(flexbuffers::Builder& flex_builder);
 
-  protected:
+   protected:
     TimePoint source_timestamp_;
-    uint64_t hardware_timestamp_; // e.g. from Neuralynx
+    uint64_t hardware_timestamp_;  // e.g. from Neuralynx
     uint64_t serial_number_;
 };
 
@@ -269,7 +264,7 @@ class Data : public IData<Data, BaseType> {
  */
 
 class Capabilities {
-  public:
+   public:
     /**
      * @brief Validate method is used to validate incoming data objects against
      * the capabilities. Capabilities are defined at the level of input ports
@@ -277,10 +272,10 @@ class Capabilities {
      *
      * @param prototype
      */
-    void Validate(const Data &prototype) const {}
+    void Validate(const Data& prototype) const {}
 };
 
-} // namespace nsAnyType
+}  // namespace nsAnyType
 
 /**
  * @brief The generic AnyType is the base of the datatype hierarchy.
@@ -298,5 +293,5 @@ class Capabilities {
  * @note While there is an inheritance hierarchy for the data object classes,
  * there is no explicit hierarchy for the data type classes.
  */
-using AnyType = DefineType<nsAnyType::Data, BaseType, true,
-                           nsAnyType::Capabilities, nsAnyType::Parameters>;
+using AnyType =
+    DefineType<nsAnyType::Data, BaseType, true, nsAnyType::Capabilities, nsAnyType::Parameters>;

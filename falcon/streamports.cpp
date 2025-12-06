@@ -19,8 +19,8 @@
 
 #include "streamports.hpp"
 
-int IdentifyNextSlot(int slot_request, int connected_slot_number,
-                     bool allow_multi_connect, const PortPolicy &policy) {
+int IdentifyNextSlot(int slot_request, int connected_slot_number, bool allow_multi_connect,
+                     const PortPolicy& policy) {
     if (slot_request >= policy.max_slot_number()) {
         return -1;
     }
@@ -49,8 +49,7 @@ int IdentifyNextSlot(int slot_request, int connected_slot_number,
         return slot_request;
     }
 
-    if (slot_request >= policy.min_slot_number() &&
-        slot_request == connected_slot_number) {
+    if (slot_request >= policy.min_slot_number() && slot_request == connected_slot_number) {
         return slot_request;
     }
 

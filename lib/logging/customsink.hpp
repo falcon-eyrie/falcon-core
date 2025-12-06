@@ -30,8 +30,8 @@
  *  Custom logger sending message through network with zmq
  */
 class ZMQSink {
-  public:
-    ZMQSink(zmq::context_t &context, int port);
+   public:
+    ZMQSink(zmq::context_t& context, int port);
 
     virtual ~ZMQSink();
 
@@ -44,7 +44,7 @@ class ZMQSink {
      * @param msg message format delivered by g3log lib
      * @return the new message format as a list of string
      */
-    std::deque<std::string> FormatMessage(g3::LogMessage &msg);
+    std::deque<std::string> FormatMessage(g3::LogMessage& msg);
 
     /**
      * Format the message + send through the network
@@ -52,16 +52,16 @@ class ZMQSink {
      */
     void ReceiveLogMessage(g3::LogMessageMover message);
 
-  private:
-    zmq::socket_t *publisher;
+   private:
+    zmq::socket_t* publisher;
 
-    ZMQSink &operator=(const ZMQSink &) = delete;
+    ZMQSink& operator=(const ZMQSink&) = delete;
 
-    ZMQSink(const ZMQSink &other) = delete;
+    ZMQSink(const ZMQSink& other) = delete;
 };
 
 class ScreenSink {
-  public:
+   public:
     ScreenSink() {};
 
     virtual ~ScreenSink() {};
@@ -84,7 +84,7 @@ class ScreenSink {
      * @param msg message format delivered by g3log lib
      * @return the new message format as a string
      */
-    std::string FormatMessage(const LEVELS level, g3::LogMessage &msg);
+    std::string FormatMessage(const LEVELS level, g3::LogMessage& msg);
 
     /**
      * Format the message + display on the screen
@@ -92,10 +92,10 @@ class ScreenSink {
      */
     void ReceiveLogMessage(g3::LogMessageMover message);
 
-  private:
-    ScreenSink &operator=(const ScreenSink &) = delete;
+   private:
+    ScreenSink& operator=(const ScreenSink&) = delete;
 
-    ScreenSink(const ScreenSink &other) = delete;
+    ScreenSink(const ScreenSink& other) = delete;
 };
 
 #endif

@@ -23,27 +23,28 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_EVENT_PUBLISHER_H_ // NOLINT
-#define DISRUPTOR_EVENT_PUBLISHER_H_ // NOLINT
+#ifndef DISRUPTOR_EVENT_PUBLISHER_H_  // NOLINT
+#define DISRUPTOR_EVENT_PUBLISHER_H_  // NOLINT
 
 #include "ring_buffer.h"
 
 namespace disruptor {
 
-template <typename T> class EventPublisher {
-  public:
-    EventPublisher(RingBuffer<T> *ring_buffer) : ring_buffer_(ring_buffer) {}
+template <typename T>
+class EventPublisher {
+   public:
+    EventPublisher(RingBuffer<T>* ring_buffer) : ring_buffer_(ring_buffer) {}
 
-    void PublishEvent(EventTranslatorInterface<T> *translator) {
+    void PublishEvent(EventTranslatorInterface<T>* translator) {
         int64_t sequence = ring_buffer_->Next();
         translator->TranslateTo(sequence, ring_buffer_->Get(sequence));
         ring_buffer_->Publish(sequence);
     }
 
-  private:
-    RingBuffer<T> *ring_buffer_;
+   private:
+    RingBuffer<T>* ring_buffer_;
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
 #endif

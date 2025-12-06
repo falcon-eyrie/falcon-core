@@ -22,19 +22,18 @@
 #include "../utilities/zmqutil.hpp"
 #include "customsink.hpp"
 
-std::string ScreenSink::FormatMessage(const LEVELS level, g3::LogMessage &msg) {
+std::string ScreenSink::FormatMessage(const LEVELS level, g3::LogMessage& msg) {
     if (level.value == DEBUG.value or level.value >= WARNING.value) {
         std::string out;
-        out.append("\n" + msg.timestamp() + "\t" + msg.level() + " [" +
-                   msg.file() + " L: " + msg.line() + "]\t");
+        out.append("\n" + msg.timestamp() + "\t" + msg.level() + " [" + msg.file() +
+                   " L: " + msg.line() + "]\t");
         out.append(msg.message());
         return out;
     } else if (msg.wasFatal()) {
         return msg.message();
     } else {
         std::string out;
-        out.append("\n" + msg.timestamp() + "\t" + msg.level() + "\t" +
-                   msg.message());
+        out.append("\n" + msg.timestamp() + "\t" + msg.level() + "\t" + msg.message());
         return out;
     }
 }
@@ -56,12 +55,11 @@ ScreenSink::FG_Color ScreenSink::GetColor(const LEVELS level) const {
 void ScreenSink::ReceiveLogMessage(g3::LogMessageMover message) {
     ScreenSink::FG_Color color;
     color = GetColor(message.get()._level);
-    std::cout << "\033[" << color << "m"
-              << FormatMessage(message.get()._level, message.get()) << "\033[m"
-              << std::flush;
+    std::cout << "\033[" << color << "m" << FormatMessage(message.get()._level, message.get())
+              << "\033[m" << std::flush;
 }
 
-ZMQSink::ZMQSink(zmq::context_t &context, int port) {
+ZMQSink::ZMQSink(zmq::context_t& context, int port) {
     // set up PUB
     publisher = new zmq::socket_t(context, ZMQ_PUB);
 
@@ -75,7 +73,7 @@ ZMQSink::~ZMQSink() {
     delete publisher;
 }
 
-std::deque<std::string> ZMQSink::FormatMessage(g3::LogMessage &msg) {
+std::deque<std::string> ZMQSink::FormatMessage(g3::LogMessage& msg) {
     std::deque<std::string> out;
     out.push_back(msg.level());
     out.push_back(msg.timestamp());

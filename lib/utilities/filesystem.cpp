@@ -22,8 +22,8 @@
 #include <iostream>
 #include <regex>
 
-std::string expand_home(const std::string &x) {
-    char *home = getenv("HOME");
+std::string expand_home(const std::string& x) {
+    char* home = getenv("HOME");
     if (home != NULL) {
         std::regex re("(\\$HOME|~)");
         auto y = std::regex_replace(x, re, home);
@@ -33,7 +33,7 @@ std::string expand_home(const std::string &x) {
     }
 }
 
-fs::path parse_directory(const std::string &x, bool exists, bool create) {
+fs::path parse_directory(const std::string& x, bool exists, bool create) {
     fs::path p{expand_home(x)};
     // p = fs::absolute(p);
 
@@ -44,8 +44,7 @@ fs::path parse_directory(const std::string &x, bool exists, bool create) {
     } else if (exists) {
         if (create) {
             if (!fs::create_directories(p)) {
-                throw std::runtime_error("Could not create directory: " +
-                                         p.string());
+                throw std::runtime_error("Could not create directory: " + p.string());
             }
         } else {
             throw std::runtime_error("Directory does not exist: " + p.string());
@@ -54,7 +53,7 @@ fs::path parse_directory(const std::string &x, bool exists, bool create) {
     return p;
 }
 
-fs::path parse_file(const std::string &x, bool exists) {
+fs::path parse_file(const std::string& x, bool exists) {
     fs::path p{expand_home(x)};
     // p = fs::absolute(p);
 
@@ -68,27 +67,22 @@ fs::path parse_file(const std::string &x, bool exists) {
     return p;
 }
 
-std::vector<std::string> getAllFilesInDir(const std::string &dirPath) {
-
+std::vector<std::string> getAllFilesInDir(const std::string& dirPath) {
     std::vector<std::string> listOfFiles;
 
     if (fs::exists(dirPath) && fs::is_directory(dirPath)) {
-
         fs::recursive_directory_iterator iter(dirPath);
         fs::recursive_directory_iterator end;
 
         while (iter != end) {
-
             if (fs::is_regular_file(iter->path())) {
-
                 listOfFiles.push_back(iter->path().string());
             }
             std::error_code ec;
             iter.increment(ec);
             if (ec) {
-                throw std::runtime_error(
-                    "Error While Accessing : " + iter->path().string() +
-                    " :: " + ec.message());
+                throw std::runtime_error("Error While Accessing : " + iter->path().string() +
+                                         " :: " + ec.message());
             }
         }
     }

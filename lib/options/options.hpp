@@ -42,28 +42,25 @@ enum class OptionError {
 };
 
 class SkipError : public std::runtime_error {
-  public:
+   public:
     SkipError(std::string msg = "") : std::runtime_error(msg) {}
 };
 
-bool get_nested_yaml_node(const YAML::Node &root,
-                          const std::vector<std::string> &path,
-                          YAML::Node &out);
+bool get_nested_yaml_node(const YAML::Node& root, const std::vector<std::string>& path,
+                          YAML::Node& out);
 
-void set_nested_yaml_node(YAML::Node &root,
-                          const std::vector<std::string> &path,
-                          const YAML::Node &value);
+void set_nested_yaml_node(YAML::Node& root, const std::vector<std::string>& path,
+                          const YAML::Node& value);
 
 class OptionBase {
-  public:
-    OptionBase(std::string name, ValueBase &value, std::string description = "",
+   public:
+    OptionBase(std::string name, ValueBase& value, std::string description = "",
                bool required = false);
 
-    OptionBase(const OptionBase &other)
-        : OptionBase(other.name_, other.value_, other.description_,
-                     other.required_) {}
+    OptionBase(const OptionBase& other)
+        : OptionBase(other.name_, other.value_, other.description_, other.required_) {}
 
-    OptionBase &operator=(const options::OptionBase &other) {
+    OptionBase& operator=(const options::OptionBase& other) {
         name_ = other.name_;
         path_ = other.path_;
         description_ = other.description_;
@@ -76,113 +73,104 @@ class OptionBase {
 
     std::string description() const;
 
-    const std::vector<std::string> &path() const;
+    const std::vector<std::string>& path() const;
 
     bool is_required() const;
 
-    void from_yaml(const YAML::Node &node);
+    void from_yaml(const YAML::Node& node);
 
     typename YAML::Node to_yaml() const;
 
-    OptionBase &required();
+    OptionBase& required();
 
-    OptionBase &optional();
+    OptionBase& optional();
 
-    OptionBase &describe(std::string description);
+    OptionBase& describe(std::string description);
 
-    OptionBase &set_null();
+    OptionBase& set_null();
 
     bool is_null() const;
 
     bool is_nullable() const;
 
-  protected:
+   protected:
     std::string name_;
     std::string description_;
     std::vector<std::string> path_;
     bool required_ = false;
-    ValueBase &value_;
+    ValueBase& value_;
 };
 
-template <typename T> class Option : public OptionBase {
+template <typename T>
+class Option : public OptionBase {
     static_assert(std::is_base_of<ValueBase, T>::value,
                   "Option requires a Value derived from ValueBase.");
 
-  public:
-    Option(std::string name, T &value, std::string description = "",
-           bool required = false)
+   public:
+    Option(std::string name, T& value, std::string description = "", bool required = false)
         : OptionBase(name, value, description, required) {}
 
-    Option<T> &init(const typename T::ValueType &value) {
-        static_cast<T &>(this->value_).set_value(value);
+    Option<T>& init(const typename T::ValueType& value) {
+        static_cast<T&>(this->value_).set_value(value);
         return *(this);
     }
 
-    Option<T> &
-    validate(std::function<typename T::ValueType(typename T::ValueType)>
-                 validator = {}) {
-        static_cast<T &>(this->value_).set_validator(validator);
+    Option<T>& validate(
+        std::function<typename T::ValueType(typename T::ValueType)> validator = {}) {
+        static_cast<T&>(this->value_).set_validator(validator);
         return *(this);
     }
 
-    template <typename... Args> Option<T> &dependencies(const Args &&...args) {
-        static_cast<T &>(this->value_)
-            .set_dependencies(std::forward<const Args>(args)...);
+    template <typename... Args>
+    Option<T>& dependencies(const Args&&... args) {
+        static_cast<T&>(this->value_).set_dependencies(std::forward<const Args>(args)...);
         return *(this);
     }
 
-    Option<T> &required() {
-        return static_cast<Option<T> &>(OptionBase::required());
+    Option<T>& required() { return static_cast<Option<T>&>(OptionBase::required()); }
+
+    Option<T>& optional() { return static_cast<Option<T>&>(OptionBase::optional()); }
+
+    Option<T>& describe(std::string description) {
+        return static_cast<Option<T>&>(OptionBase::describe(description));
     }
 
-    Option<T> &optional() {
-        return static_cast<Option<T> &>(OptionBase::optional());
+    Option<T>& set_null() { return static_cast<Option<T>&>(OptionBase::set_null()); }
+
+    const typename T::ValueType& get_value() const {
+        return static_cast<T&>(this->value_).operator()();
     }
 
-    Option<T> &describe(std::string description) {
-        return static_cast<Option<T> &>(OptionBase::describe(description));
+    void set_value(const typename T::ValueType& value) {
+        static_cast<T&>(this->value_).set_value(value);
     }
 
-    Option<T> &set_null() {
-        return static_cast<Option<T> &>(OptionBase::set_null());
-    }
+    void operator=(const typename T::ValueType& value) { set_value(value); }
 
-    const typename T::ValueType &get_value() const {
-        return static_cast<T &>(this->value_).operator()();
-    }
-
-    void set_value(const typename T::ValueType &value) {
-        static_cast<T &>(this->value_).set_value(value);
-    }
-
-    void operator=(const typename T::ValueType &value) { set_value(value); }
-
-    const typename T::ValueType &operator()() const { return get_value(); }
+    const typename T::ValueType& operator()() const { return get_value(); }
 };
 
-typedef std::function<bool(std::string name, bool required, OptionError error,
-                           std::string msg)>
+typedef std::function<bool(std::string name, bool required, OptionError error, std::string msg)>
     option_error_handler;
 
 class OptionList {
-  public:
+   public:
     template <typename TValue>
-    void add(std::string name, TValue &value, std::string description = "",
-             bool required = false) {
+    void add(std::string name, TValue& value, std::string description = "", bool required = false) {
         // name = std::regex_replace(name, std::regex("[ _]"), "-");
         add(Option<TValue>(name, value, description, required));
     }
 
-    template <typename TValue> void add(const Option<TValue> &value) {
+    template <typename TValue>
+    void add(const Option<TValue>& value) {
         if (!has_option(value.name())) {
             options_.push_back(value);
         } else {
-            throw std::runtime_error("Option with same name " + value.name() +
-                                     " already exists.");
+            throw std::runtime_error("Option with same name " + value.name() + " already exists.");
         }
     }
 
-    OptionBase &operator[](std::string key);
+    OptionBase& operator[](std::string key);
 
     void remove(std::string key);
 
@@ -192,26 +180,24 @@ class OptionList {
 
     bool has_option(std::string name) const noexcept;
 
-    void from_yaml(const YAML::Node &node,
-                   const option_error_handler &handler = {}, bool check = true);
+    void from_yaml(const YAML::Node& node, const option_error_handler& handler = {},
+                   bool check = true);
 
-    YAML::Node to_yaml(const option_error_handler &handler = {}) const;
+    YAML::Node to_yaml(const option_error_handler& handler = {}) const;
 
-    void load_yaml(std::string filename,
-                   const option_error_handler &handler = {});
+    void load_yaml(std::string filename, const option_error_handler& handler = {});
 
-    void save_yaml(std::string filename,
-                   const option_error_handler &handler = {}) const;
+    void save_yaml(std::string filename, const option_error_handler& handler = {}) const;
 
     std::string list_options() {
         std::string name;
-        for (auto &option : options_) {
+        for (auto& option : options_) {
             name += option.name() + ", ";
         }
         return name;
     };
 
-  protected:
+   protected:
     std::list<OptionBase> options_;
 };
-} // namespace options
+}  // namespace options

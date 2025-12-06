@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_WAITSTRATEGY_H_ // NOLINT
-#define DISRUPTOR_WAITSTRATEGY_H_ // NOLINT
+#ifndef DISRUPTOR_WAITSTRATEGY_H_  // NOLINT
+#define DISRUPTOR_WAITSTRATEGY_H_  // NOLINT
 
 #include <sys/time.h>
 
@@ -64,13 +64,11 @@ enum WaitStrategyOption {
 // This strategy should be used when performance and low-latency are not as
 // important as CPU resource.
 class BlockingStrategy : public WaitStrategyInterface {
-  public:
+   public:
     BlockingStrategy() {}
 
-    virtual int64_t WaitFor(const std::vector<Sequence *> &dependents,
-                            const Sequence &cursor,
-                            const SequenceBarrierInterface &barrier,
-                            const int64_t &sequence) {
+    virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
+                            const SequenceBarrierInterface& barrier, const int64_t& sequence) {
         int64_t available_sequence = 0;
         // We need to wait.
         if ((available_sequence = cursor.sequence()) < sequence) {
@@ -80,11 +78,10 @@ class BlockingStrategy : public WaitStrategyInterface {
                 barrier.CheckAlert();
                 consumer_notify_condition_.wait(ulock);
             }
-        } // unlock happens here, on ulock destruction.
+        }  // unlock happens here, on ulock destruction.
 
         if (0 != dependents.size()) {
-            while ((available_sequence = GetMinimumSequence(dependents)) <
-                   sequence) {
+            while ((available_sequence = GetMinimumSequence(dependents)) < sequence) {
                 barrier.CheckAlert();
             }
         }
@@ -92,28 +89,24 @@ class BlockingStrategy : public WaitStrategyInterface {
         return available_sequence;
     }
 
-    virtual int64_t WaitFor(const std::vector<Sequence *> &dependents,
-                            const Sequence &cursor,
-                            const SequenceBarrierInterface &barrier,
-                            const int64_t &sequence,
-                            const int64_t &timeout_micros) {
+    virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
+                            const SequenceBarrierInterface& barrier, const int64_t& sequence,
+                            const int64_t& timeout_micros) {
         int64_t available_sequence = 0;
         // We have to wait
-        if ((available_sequence = cursor.sequence()) < sequence &&
-            timeout_micros > 0) {
+        if ((available_sequence = cursor.sequence()) < sequence && timeout_micros > 0) {
             std::unique_lock<std::recursive_mutex> ulock(mutex_);
             while ((available_sequence = cursor.sequence()) < sequence) {
                 barrier.CheckAlert();
                 if (std::cv_status::timeout ==
-                    consumer_notify_condition_.wait_for(
-                        ulock, std::chrono::microseconds(timeout_micros)))
+                    consumer_notify_condition_.wait_for(ulock,
+                                                        std::chrono::microseconds(timeout_micros)))
                     break;
             }
-        } // unlock happens here, on ulock destruction
+        }  // unlock happens here, on ulock destruction
 
         if (0 != dependents.size()) {
-            while ((available_sequence = GetMinimumSequence(dependents)) <
-                   sequence) {
+            while ((available_sequence = GetMinimumSequence(dependents)) < sequence) {
                 barrier.CheckAlert();
             }
         }
@@ -126,7 +119,7 @@ class BlockingStrategy : public WaitStrategyInterface {
         consumer_notify_condition_.notify_all();
     }
 
-  private:
+   private:
     std::recursive_mutex mutex_;
     std::condition_variable_any consumer_notify_condition_;
 
@@ -135,13 +128,11 @@ class BlockingStrategy : public WaitStrategyInterface {
 
 // Sleeping strategy
 class SleepingStrategy : public WaitStrategyInterface {
-  public:
+   public:
     SleepingStrategy() {}
 
-    virtual int64_t WaitFor(const std::vector<Sequence *> &dependents,
-                            const Sequence &cursor,
-                            const SequenceBarrierInterface &barrier,
-                            const int64_t &sequence) {
+    virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
+                            const SequenceBarrierInterface& barrier, const int64_t& sequence) {
         int64_t available_sequence = 0;
         int counter = kRetries;
 
@@ -150,8 +141,7 @@ class SleepingStrategy : public WaitStrategyInterface {
                 counter = ApplyWaitMethod(barrier, counter);
             }
         } else {
-            while ((available_sequence = GetMinimumSequence(dependents)) <
-                   sequence) {
+            while ((available_sequence = GetMinimumSequence(dependents)) < sequence) {
                 counter = ApplyWaitMethod(barrier, counter);
             }
         }
@@ -159,11 +149,9 @@ class SleepingStrategy : public WaitStrategyInterface {
         return available_sequence;
     }
 
-    virtual int64_t WaitFor(const std::vector<Sequence *> &dependents,
-                            const Sequence &cursor,
-                            const SequenceBarrierInterface &barrier,
-                            const int64_t &sequence,
-                            const int64_t &timeout_micros) {
+    virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
+                            const SequenceBarrierInterface& barrier, const int64_t& sequence,
+                            const int64_t& timeout_micros) {
         // timing
         struct timeval start_time, end_time;
         gettimeofday(&start_time, NULL);
@@ -173,25 +161,19 @@ class SleepingStrategy : public WaitStrategyInterface {
         int counter = kRetries;
 
         if (0 == dependents.size()) {
-            while ((available_sequence = cursor.sequence()) < sequence &&
-                   timeout_micros > 0) {
+            while ((available_sequence = cursor.sequence()) < sequence && timeout_micros > 0) {
                 counter = ApplyWaitMethod(barrier, counter);
                 gettimeofday(&end_time, NULL);
-                int64_t end_micro =
-                    end_time.tv_sec * 1000000 + end_time.tv_usec;
-                if (timeout_micros < (end_micro - start_micro))
-                    break;
+                int64_t end_micro = end_time.tv_sec * 1000000 + end_time.tv_usec;
+                if (timeout_micros < (end_micro - start_micro)) break;
             }
         } else {
-            while ((available_sequence = GetMinimumSequence(dependents)) <
-                       sequence &&
+            while ((available_sequence = GetMinimumSequence(dependents)) < sequence &&
                    timeout_micros > 0) {
                 counter = ApplyWaitMethod(barrier, counter);
                 gettimeofday(&end_time, NULL);
-                int64_t end_micro =
-                    end_time.tv_sec * 1000000 + end_time.tv_usec;
-                if (timeout_micros < (end_micro - start_micro))
-                    break;
+                int64_t end_micro = end_time.tv_sec * 1000000 + end_time.tv_usec;
+                if (timeout_micros < (end_micro - start_micro)) break;
             }
         }
 
@@ -202,8 +184,8 @@ class SleepingStrategy : public WaitStrategyInterface {
 
     static const int kRetries = 200;
 
-  private:
-    int ApplyWaitMethod(const SequenceBarrierInterface &barrier, int counter) {
+   private:
+    int ApplyWaitMethod(const SequenceBarrierInterface& barrier, int counter) {
         barrier.CheckAlert();
         if (counter > 100) {
             counter--;
@@ -224,13 +206,11 @@ class SleepingStrategy : public WaitStrategyInterface {
 // on a barrier. This strategy is a good compromise between performance and
 // CPU resource.
 class YieldingStrategy : public WaitStrategyInterface {
-  public:
+   public:
     YieldingStrategy() {}
 
-    virtual int64_t WaitFor(const std::vector<Sequence *> &dependents,
-                            const Sequence &cursor,
-                            const SequenceBarrierInterface &barrier,
-                            const int64_t &sequence) {
+    virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
+                            const SequenceBarrierInterface& barrier, const int64_t& sequence) {
         int64_t available_sequence = 0;
         int counter = kSpinTries;
 
@@ -239,8 +219,7 @@ class YieldingStrategy : public WaitStrategyInterface {
                 counter = ApplyWaitMethod(barrier, counter);
             }
         } else {
-            while ((available_sequence = GetMinimumSequence(dependents)) <
-                   sequence) {
+            while ((available_sequence = GetMinimumSequence(dependents)) < sequence) {
                 counter = ApplyWaitMethod(barrier, counter);
             }
         }
@@ -248,11 +227,9 @@ class YieldingStrategy : public WaitStrategyInterface {
         return available_sequence;
     }
 
-    virtual int64_t WaitFor(const std::vector<Sequence *> &dependents,
-                            const Sequence &cursor,
-                            const SequenceBarrierInterface &barrier,
-                            const int64_t &sequence,
-                            const int64_t &timeout_micros) {
+    virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
+                            const SequenceBarrierInterface& barrier, const int64_t& sequence,
+                            const int64_t& timeout_micros) {
         struct timeval start_time, end_time;
         gettimeofday(&start_time, NULL);
         int64_t start_micro = start_time.tv_sec * 1000000 + start_time.tv_usec;
@@ -261,25 +238,19 @@ class YieldingStrategy : public WaitStrategyInterface {
         int counter = kSpinTries;
 
         if (0 == dependents.size()) {
-            while ((available_sequence = cursor.sequence()) < sequence &&
-                   timeout_micros > 0) {
+            while ((available_sequence = cursor.sequence()) < sequence && timeout_micros > 0) {
                 counter = ApplyWaitMethod(barrier, counter);
                 gettimeofday(&end_time, NULL);
-                int64_t end_micro =
-                    end_time.tv_sec * 1000000 + end_time.tv_usec;
-                if (timeout_micros < (end_micro - start_micro))
-                    break;
+                int64_t end_micro = end_time.tv_sec * 1000000 + end_time.tv_usec;
+                if (timeout_micros < (end_micro - start_micro)) break;
             }
         } else {
-            while ((available_sequence = GetMinimumSequence(dependents)) <
-                       sequence &&
+            while ((available_sequence = GetMinimumSequence(dependents)) < sequence &&
                    timeout_micros > 0) {
                 counter = ApplyWaitMethod(barrier, counter);
                 gettimeofday(&end_time, NULL);
-                int64_t end_micro =
-                    end_time.tv_sec * 1000000 + end_time.tv_usec;
-                if (timeout_micros < (end_micro - start_micro))
-                    break;
+                int64_t end_micro = end_time.tv_sec * 1000000 + end_time.tv_usec;
+                if (timeout_micros < (end_micro - start_micro)) break;
             }
         }
 
@@ -290,8 +261,8 @@ class YieldingStrategy : public WaitStrategyInterface {
 
     static const int kSpinTries = 100;
 
-  private:
-    int ApplyWaitMethod(const SequenceBarrierInterface &barrier, int counter) {
+   private:
+    int ApplyWaitMethod(const SequenceBarrierInterface& barrier, int counter) {
         barrier.CheckAlert();
         if (counter == 0) {
             std::this_thread::yield();
@@ -311,21 +282,18 @@ class YieldingStrategy : public WaitStrategyInterface {
 // latency jitter.  It is best used when threads can be bound to specific
 // CPU cores.
 class BusySpinStrategy : public WaitStrategyInterface {
-  public:
+   public:
     BusySpinStrategy() {}
 
-    virtual int64_t WaitFor(const std::vector<Sequence *> &dependents,
-                            const Sequence &cursor,
-                            const SequenceBarrierInterface &barrier,
-                            const int64_t &sequence) {
+    virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
+                            const SequenceBarrierInterface& barrier, const int64_t& sequence) {
         int64_t available_sequence = 0;
         if (0 == dependents.size()) {
             while ((available_sequence = cursor.sequence()) < sequence) {
                 barrier.CheckAlert();
             }
         } else {
-            while ((available_sequence = GetMinimumSequence(dependents)) <
-                   sequence) {
+            while ((available_sequence = GetMinimumSequence(dependents)) < sequence) {
                 barrier.CheckAlert();
             }
         }
@@ -333,36 +301,28 @@ class BusySpinStrategy : public WaitStrategyInterface {
         return available_sequence;
     }
 
-    virtual int64_t WaitFor(const std::vector<Sequence *> &dependents,
-                            const Sequence &cursor,
-                            const SequenceBarrierInterface &barrier,
-                            const int64_t &sequence,
-                            const int64_t &timeout_micros) {
+    virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
+                            const SequenceBarrierInterface& barrier, const int64_t& sequence,
+                            const int64_t& timeout_micros) {
         struct timeval start_time, end_time;
         gettimeofday(&start_time, NULL);
         int64_t start_micro = start_time.tv_sec * 1000000 + start_time.tv_usec;
         int64_t available_sequence = 0;
 
         if (0 == dependents.size()) {
-            while ((available_sequence = cursor.sequence()) < sequence &&
-                   timeout_micros > 0) {
+            while ((available_sequence = cursor.sequence()) < sequence && timeout_micros > 0) {
                 barrier.CheckAlert();
                 gettimeofday(&end_time, NULL);
-                int64_t end_micro =
-                    end_time.tv_sec * 1000000 + end_time.tv_usec;
-                if (timeout_micros < (end_micro - start_micro))
-                    break;
+                int64_t end_micro = end_time.tv_sec * 1000000 + end_time.tv_usec;
+                if (timeout_micros < (end_micro - start_micro)) break;
             }
         } else {
-            while ((available_sequence = GetMinimumSequence(dependents)) <
-                       sequence &&
+            while ((available_sequence = GetMinimumSequence(dependents)) < sequence &&
                    timeout_micros > 0) {
                 barrier.CheckAlert();
                 gettimeofday(&end_time, NULL);
-                int64_t end_micro =
-                    end_time.tv_sec * 1000000 + end_time.tv_usec;
-                if (timeout_micros < (end_micro - start_micro))
-                    break;
+                int64_t end_micro = end_time.tv_sec * 1000000 + end_time.tv_usec;
+                if (timeout_micros < (end_micro - start_micro)) break;
             }
         }
 
@@ -374,8 +334,8 @@ class BusySpinStrategy : public WaitStrategyInterface {
     DISALLOW_COPY_AND_ASSIGN(BusySpinStrategy);
 };
 
-WaitStrategyInterface *CreateWaitStrategy(WaitStrategyOption wait_option);
+WaitStrategyInterface* CreateWaitStrategy(WaitStrategyOption wait_option);
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_WAITSTRATEGY_H_  NOLINT
+#endif  // DISRUPTOR_WAITSTRATEGY_H_  NOLINT

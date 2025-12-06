@@ -29,8 +29,8 @@
 namespace commands {
 
 class CommandHandler {
-  public:
-    CommandHandler(GlobalContext &context) { global_context_ = &context; }
+   public:
+    CommandHandler(GlobalContext& context) { global_context_ = &context; }
 
     /**
      * Add a source to receive commands from it (example: cloud/zmq, command
@@ -39,7 +39,7 @@ class CommandHandler {
      * @param source class defining the source of commands derived from
      * CommandSource
      */
-    void addSource(CommandSource &source) { sources_.push_back(&source); }
+    void addSource(CommandSource& source) { sources_.push_back(&source); }
 
     /**
      * Receive commands and delegate to the graph thread in case of a graph
@@ -49,8 +49,7 @@ class CommandHandler {
      * @param reply  buffer for the answer from the graph socket
      * @return if falcon should be safely (closing all threads) terminated
      */
-    bool HandleCommand(std::deque<std::string> &command,
-                       std::deque<std::string> &reply);
+    bool HandleCommand(std::deque<std::string>& command, std::deque<std::string>& reply);
     /**
      * Send commands to the graph thread via it graph socket
      *
@@ -59,8 +58,7 @@ class CommandHandler {
      * @return always false - no command to the graph can terminate the main
      * thread
      */
-    bool DelegateGraphCommand(std::deque<std::string> &command,
-                              std::deque<std::string> &reply);
+    bool DelegateGraphCommand(std::deque<std::string>& command, std::deque<std::string>& reply);
 
     /**
      * Manage sub-command for the resources command
@@ -69,8 +67,7 @@ class CommandHandler {
      * @param reply  buffer for the answer from the graph socket
      * @return always false - no resources command can terminate the main thread
      */
-    bool DelegateResourcesCommand(std::deque<std::string> &command,
-                                  std::deque<std::string> &reply);
+    bool DelegateResourcesCommand(std::deque<std::string>& command, std::deque<std::string>& reply);
 
     /**
      * Once start is launched the main thread is busy only listening, processing
@@ -78,10 +75,10 @@ class CommandHandler {
      */
     void start();
 
-  private:
-    typedef std::vector<CommandSource *> VectSources;
+   private:
+    typedef std::vector<CommandSource*> VectSources;
     VectSources sources_;
-    GlobalContext *global_context_;
-    zmq::socket_t *graph_socket_;
+    GlobalContext* global_context_;
+    zmq::socket_t* graph_socket_;
 };
-} // namespace commands
+}  // namespace commands

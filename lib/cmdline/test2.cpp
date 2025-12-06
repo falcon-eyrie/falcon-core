@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 using namespace std;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     cmdline::parser a;
     a.add<string>("host", 'h', "host name", true, "");
     a.add<int>("port", 'p', "port number", false, 80, cmdline::range(1, 65535));
@@ -54,8 +54,7 @@ int main(int argc, char *argv[]) {
 
     cout << a.get<string>("host") << ":" << a.get<int>("port") << endl;
 
-    for (size_t i = 0; i < a.rest().size(); i++)
-        cout << "- " << a.rest()[i] << endl;
+    for (size_t i = 0; i < a.rest().size(); i++) cout << "- " << a.rest()[i] << endl;
 
     return 0;
 }
