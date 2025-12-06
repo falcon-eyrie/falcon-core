@@ -1,37 +1,26 @@
 #!/usr/bin/env sh
 set -e
 
-# TODO(ben): Install the whole clang instead
-
 VERSION=21.1.7
-TMP_DIR=/tmp/llvm
-BIN_DIR=/usr/bin
 
-TOOLS="clang-format clang-tidy clang-query clang-apply-replacements run-clang-tidy"
+cd /tmp
 
-echo "Setting up temporary directory..."
-mkdir -p "$TMP_DIR"
-cd "$TMP_DIR"
+ARCHIVE="LLVM-${VERSION}.tar.xz"
+URL="https://github.com/llvm/llvm-project/releases/download/llvmorg-${VERSION}/LLVM-${VERSION}-Linux-X64.tar.xz"
 
-for TOOL in $TOOLS; do
-    ARCHIVE="${TOOL}-$VERSION-linux-x64.tar.gz"
-    URL="https://github.com/benfgit/clang-tools-binaries/releases/download/v$VERSION/$ARCHIVE"
+echo "Downloading LLVM $VERSION..."
+curl -fsSL -o "$ARCHIVE" "$URL"
 
-    echo "Downloading $TOOL $VERSION..."
-    curl -fsSL -o "$ARCHIVE" "$URL"
+mkdir -p llvm-extract
+tar -xf "$ARCHIVE" -C llvm-extract --strip-components=1
 
-    echo "Extracting $TOOL..."
-    tar -xf "$ARCHIVE"
+echo "Extracted LLVM archive into llvm-extract/"
 
-    echo "Installing $TOOL to $BIN_DIR..."
-    sudo mv "$TOOL" "$BIN_DIR/"
-    sudo chmod +x "$BIN_DIR/$TOOL"
+echo "Moving to /opt/llvm-${VERSION} ..."
+sudo mv llvm-extract "/opt/llvm-${VERSION}"
 
-    echo "Cleaning up $ARCHIVE..."
-    rm -f "$ARCHIVE"
+echo "Cleaning up $ARCHIVE..."
+rm -f "$ARCHIVE"
 
-    echo "✅ $TOOL installed successfully."
-    echo "----------------------------------"
-done
-
-echo "All tools installed."
+echo "LLVM-${VERSION} installed successfully."
+echo "----------------------------------"

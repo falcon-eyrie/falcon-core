@@ -3,10 +3,9 @@ Checks: >
   #bugprone-*,
   #modernize-*,
   #performance-*,
-  readability-*,
-  -modernize-use-trailing-return-type
-  -bugprone-easily-swappable-parameters
-WarningsAsErrors: ''
+  #readability-*,
+  performance-for-range-copy
+WarningsAsErrors: '*'
 HeaderFilterRegex: ''
 CheckOptions:
   - key: readability-identifier-naming.TypedefCase
