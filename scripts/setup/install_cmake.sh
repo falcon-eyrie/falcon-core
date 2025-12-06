@@ -13,7 +13,7 @@ echo "Making installer executable..."
 chmod +x "$TMP_DIR/$INSTALLER"
 
 echo "Installing CMake system-wide..."
-sudo "$TMP_DIR/$INSTALLER" --prefix=/usr --skip-license
+sudo "$TMP_DIR/$INSTALLER" --prefix=/usr/local --skip-license
 
 echo "Cleaning up..."
 rm -f "$TMP_DIR/$INSTALLER"
