@@ -1,7 +1,4 @@
 {
-    "C_Cpp.codeAnalysis.exclude": {
-        "**/build/": true,
-    },
     "search.exclude": {
         "**/build/": true,
     },
@@ -15,10 +12,16 @@
         "editor.formatOnSave": true
     },
     "C_Cpp.autoAddFileAssociations": false,
-    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "C_Cpp.default.compileCommands": "build/compile_commands.json",
     "C_Cpp.clang_format_path": "/opt/llvm-21.1.7/bin/clang-format",
+    "C_Cpp.clang_format_sortIncludes": true,
     "C_Cpp.codeAnalysis.clangTidy.path": "/opt/llvm-21.1.7/bin/clang-tidy",
     "C_Cpp.codeAnalysis.clangTidy.enabled": true,
     "C_Cpp.codeAnalysis.runAutomatically": true,
+    "C_Cpp.codeAnalysis.clangTidy.codeAction.formatFixes": true,
     "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
+    "C_Cpp.codeAnalysis.exclude": {
+        "build/": true,
+        "extensions/": true,
+    },
 }
