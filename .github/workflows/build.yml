@@ -55,4 +55,4 @@ jobs:
 
       - name: Run clang-tidy
         run: |
-          sh scripts/format.sh
+          sh scripts/tidy.sh
