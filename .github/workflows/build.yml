@@ -28,7 +28,7 @@ jobs:
           sh scripts/setup/install_llvm.sh
 
 
-      - name: Run format check
+      - name: Run clang-format
         run: |
           sh scripts/format.sh
           # Check for any changes caused by formatting
@@ -45,8 +45,8 @@ jobs:
           cmake .. \
             -DCMAKE_BUILD_TYPE=Debug \
             -DIGNORE_EXTENSIONS=ON \
-            -DCMAKE_C_COMPILER=/opt/llvm-21.1.7/bin/clang \
-            -DCMAKE_CXX_COMPILER=/opt/llvm-21.1.7/bin/clang++
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++
 
       - name: Build project
         run: |
