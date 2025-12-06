@@ -30,7 +30,7 @@ bool path_exists(const std::string& name) {
 
 std::vector<std::string>& split(const std::string& s, char delim, std::vector<std::string>& elems) {
     std::stringstream ss(s);
-    std::string       item;
+    std::string item;
     while (std::getline(ss, item, delim)) {
         if (item.length() > 0) {
             elems.push_back(item);
@@ -49,11 +49,11 @@ std::string resolve_server_path(std::string p, const std::map<std::string, std::
                                 std::string default_context) {
     // regular expression: "^(\w+)://+([/_[:alnum:]])$"
     std::string expr("^(\\w+)://+([/_.[:alnum:]]*)$");
-    std::regex  re(expr);
+    std::regex re(expr);
     std::smatch match;
 
     if (p.size() > 0 &&
-        (p[0] == '/' || p[0] == '.')) { // absolute path or realtive to current directory
+        (p[0] == '/' || p[0] == '.')) {  // absolute path or realtive to current directory
         return p;
     }
 
@@ -92,7 +92,7 @@ std::string extract_path_to_folder(std::string path_to_file) {
     // pix_folder = repo://tests/data/bifurcated_maze/encoding_models/TT_I_
     while (path_to_folder.back() != '/') {
         path_to_folder.pop_back();
-    } // pix_folder = repo://tests/data/bifurcated_maze/encoding_models/
+    }  // pix_folder = repo://tests/data/bifurcated_maze/encoding_models/
     return path_to_folder;
 }
 

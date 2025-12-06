@@ -87,7 +87,7 @@ class RunContext : public StorageContext {
         if (run_id.empty()) {
             char buffer[20];
 
-            time_t     rawtime;
+            time_t rawtime;
             struct tm* timeinfo;
 
             time(&rawtime);
@@ -194,23 +194,23 @@ class RunContext : public StorageContext {
     bool test() const { return default_test_flag_.load(); }
 
    protected:
-    std::mutex              mutex;
+    std::mutex mutex;
     std::condition_variable go_condition;
-    bool                    go_signal = false;
+    bool go_signal = false;
 
    private:
     GlobalContext& global_context_;
 
    protected:
-    TimePoint          start_time_;
-    TimePoint          stop_time_;
+    TimePoint start_time_;
+    TimePoint stop_time_;
     std::atomic<bool>& terminate_signal_;
-    std::string        error_message_;
+    std::string error_message_;
 
    private:
-    std::string       run_group_id_;
-    std::string       run_id_;
-    std::string       template_id_;
+    std::string run_group_id_;
+    std::string run_id_;
+    std::string template_id_;
     std::atomic<bool> default_test_flag_;
 };
 
@@ -265,8 +265,8 @@ class ProcessingContext : public StorageContext {
     }
 
    private:
-    RunContext&                        run_context_;
-    std::string                        processor_name_;
-    std::atomic<bool>                  test_flag_;
+    RunContext& run_context_;
+    std::string processor_name_;
+    std::atomic<bool> test_flag_;
     std::map<std::string, std::string> storage_map_;
 };

@@ -51,13 +51,13 @@ std::string graph_state_string(GraphState state) {
 }
 
 std::vector<std::string> expandProcessorName(std::string s) {
-    static const int name_group     = 1;
-    static const int range_group    = 2;
+    static const int name_group = 1;
+    static const int range_group = 2;
     static const int first_range_id = 1;
-    static const int end_range_id   = 2;
+    static const int end_range_id = 2;
 
     std::vector<std::string> result;
-    int                      startid, endid;
+    int startid, endid;
 
     // name# or name[#, #-#]
     std::regex re("^([a-zA-Z]+(?:[ -_][a-zA-Z]+)*)[ ]*((?:\\d+)|(?:\\([\\d,\\-]+\\)))?$");
@@ -85,7 +85,7 @@ std::vector<std::string> expandProcessorName(std::string s) {
     if (!match[range_group].matched) {
         result.push_back(name);
     } else {
-        std::string range = match[range_group].str(); // Example: (1-2)
+        std::string range = match[range_group].str();  // Example: (1-2)
         // remove trimming spaces
         range = std::regex_replace(range, std::regex("^ +| +$"), std::string(""));
 
@@ -100,7 +100,7 @@ std::vector<std::string> expandProcessorName(std::string s) {
             // split on comma
             auto id_range = split(range, ',');
 
-            std::regex  re_range("(\\d+)(?:\\-(\\d+))?");
+            std::regex re_range("(\\d+)(?:\\-(\\d+))?");
             std::smatch match_range;
 
             // match start and end id of ranges
@@ -134,9 +134,9 @@ std::vector<std::string> expandProcessorName(std::string s) {
 }
 
 void ProcessorGraph::ConstructProcessorEngines(const YAML::Node& node) {
-    std::vector<std::string>    processor_name_list;
-    std::string                 processor_name;
-    std::string                 processor_class;
+    std::vector<std::string> processor_name_list;
+    std::string processor_name;
+    std::string processor_class;
     std::unique_ptr<IProcessor> processor;
 
     // loop through all processors defined in YAML document
@@ -159,7 +159,7 @@ void ProcessorGraph::ConstructProcessorEngines(const YAML::Node& node) {
                 // does processor already exist?
                 auto it2 = processors_.find(processor_name);
 
-                if (it2 == processors_.end()) { // no processor with this name known
+                if (it2 == processors_.end()) {  // no processor with this name known
                     try {
                         processor.reset(ProcessorFactory::instance().create(processor_class));
                     } catch (factory::UnknownClass& e) {
@@ -181,7 +181,7 @@ void ProcessorGraph::ConstructProcessorEngines(const YAML::Node& node) {
                     LOG(DEBUG) << "Configured processor " << processor_name << " ("
                                << processor_class << ")";
 
-                } else { // processor with this name, but different class found
+                } else {  // processor with this name, but different class found
                     throw InvalidProcessorError("Processor " + processor_name +
                                                 " of different class (" + it2->second.first +
                                                 ") already exists.");
@@ -218,7 +218,7 @@ ProcessorGraph::ProcessorGraph(GlobalContext& context)
 YAML::Node LoadProcessorDoc(std::string processor) {
     std::transform(processor.begin(), processor.end(), processor.begin(), ::tolower);
     std::string filename = DOC_PATH + processor + "/doc.yaml";
-    YAML::Node  node;
+    YAML::Node node;
     try {
         return YAML::LoadFile(filename);
     } catch (YAML::BadFile& e) {
@@ -261,7 +261,7 @@ std::vector<std::pair<std::string, std::shared_ptr<IState>>> ProcessorGraph::Loo
 
         for (auto& itv : expanded_processor) {
             IProcessor* processor = LookUpProcessor(itv);
-            auto state = processor->shared_state(address[1]); // fix error message when this fails
+            auto state = processor->shared_state(address[1]);  // fix error message when this fails
 
             states.push_back(std::make_pair(itv + "." + address[1], state));
         }
@@ -279,28 +279,28 @@ void ProcessorGraph::BuildSharedStates(const YAML::Node& node) {
     //     - group-name: [...]
 
     std::vector<std::pair<std::string, std::shared_ptr<IState>>> states;
-    std::string                                                  alias;
-    Permission                                                   permission;
-    std::string                                                  description;
-    int                                                          group_index = 0;
+    std::string alias;
+    Permission permission;
+    std::string description;
+    int group_index = 0;
 
     // loop through items in sequence:
     for (YAML::const_iterator link = node.begin(); link != node.end(); ++link) {
         ++group_index;
 
         description = "";
-        permission  = Permission::WRITE;
+        permission = Permission::WRITE;
 
         if (link->IsSequence()) {
-            alias  = "alias_" + std::to_string(group_index);
+            alias = "alias_" + std::to_string(group_index);
             states = LookUpStates(link->as<std::vector<std::string>>());
         } else if (link->IsMap() && link->size() == 1 && link->begin()->second.IsSequence()) {
-            alias  = link->begin()->first.as<std::string>();
+            alias = link->begin()->first.as<std::string>();
             states = LookUpStates(link->begin()->second.as<std::vector<std::string>>());
         } else if (link->IsMap() && link->size() == 1 && link->begin()->second.IsMap()) {
-            alias       = link->begin()->first.as<std::string>();
+            alias = link->begin()->first.as<std::string>();
             description = link->begin()->second["description"].as<std::string>("");
-            permission  = permission_from_string(
+            permission = permission_from_string(
                 link->begin()->second["permission"].as<std::string>("unspecified"));
             states = LookUpStates(link->begin()->second["states"].as<std::vector<std::string>>());
         } else {
@@ -459,9 +459,9 @@ void ProcessorGraph::Destroy() {
     }
 
     // destroy connections and processors
-    shared_state_map_.clear(); // will unlink all states and remove groups
+    shared_state_map_.clear();  // will unlink all states and remove groups
     connections_.clear();
-    processors_.clear(); // will destroy processors and all their ports/states
+    processors_.clear();  // will destroy processors and all their ports/states
 
     yaml_ = YAML::Null;
     LOG(INFO) << "Graph has been destroyed.";
@@ -556,8 +556,8 @@ void ProcessorGraph::StopProcessing() {
     } else if (state_ == GraphState::NOGRAPH || state_ == GraphState::CONSTRUCTING ||
                state_ == GraphState::PREPARING) {
         throw InvalidStateError("Graph is not yet assembled.");
-    } else { // READY, STOPPING
-             // pass
+    } else {  // READY, STOPPING
+              // pass
     }
 }
 
@@ -587,7 +587,7 @@ void ProcessorGraph::Update(YAML::Node& node) {
             // loop through states
             for (YAML::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
                 try {
-                    auto state_name  = it2->first.as<std::string>();
+                    auto state_name = it2->first.as<std::string>();
                     auto state_value = it2->second.as<std::string>();
 
                     auto pstate = processor->shared_state(state_name);
@@ -607,10 +607,10 @@ void ProcessorGraph::Update(YAML::Node& node) {
                     LOG(ERROR) << "Unable to update state value: " << e.what();
                 }
             }
-        } else { // key points to shared state alias
+        } else {  // key points to shared state alias
             try {
                 auto state_value = it->second.as<std::string>();
-                it->second       = shared_state_map_.UpdateAlias(key, state_value);
+                it->second = shared_state_map_.UpdateAlias(key, state_value);
                 LOG(UPDATE) << "Alias state " << key << " set to " << state_value;
             } catch (std::exception& e) {
                 it->second = false;
@@ -660,7 +660,7 @@ void ProcessorGraph::Retrieve(YAML::Node& node) {
                     LOG(ERROR) << "Unable to retrieve state value: " << e.what();
                 }
             }
-        } else { // key points to shared state alias
+        } else {  // key points to shared state alias
             try {
                 it->second = shared_state_map_.RetrieveAlias(key);
             } catch (std::exception& e) {
@@ -713,8 +713,8 @@ void ProcessorGraph::Apply(YAML::Node& node) {
 }
 
 std::string ProcessorGraph::ExportYAML() {
-    std::string   s = "";
-    YAML::Node    node;
+    std::string s = "";
+    YAML::Node node;
     YAML::Emitter out;
     node["falcon"]["version"] = 1.0;
     if (state_ != GraphState::NOGRAPH) {

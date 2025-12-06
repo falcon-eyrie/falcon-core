@@ -26,7 +26,7 @@
 
 // define clock for performance measurements
 typedef std::chrono::steady_clock Clock;
-typedef Clock::time_point         TimePoint;
+typedef Clock::time_point TimePoint;
 
 void custom_sleep_for(uint64_t microseconds);
 
@@ -44,7 +44,7 @@ constexpr double samples2time(T nsamples, double rate);
 double compute_delta_ts(uint64_t t1, uint64_t t2);
 
 struct TimestampRegister {
-    uint64_t  hw;
+    uint64_t hw;
     TimePoint source;
 
     void reset();

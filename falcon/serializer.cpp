@@ -72,7 +72,7 @@ bool Serialization::BinarySerializer::Serialize(std::ostream& stream, typename A
     return true;
 }
 
-bool Serialization::FlatBufferSerializer::Serialize(std::ostream&           stream,
+bool Serialization::FlatBufferSerializer::Serialize(std::ostream& stream,
                                                     typename AnyType::Data* data, uint16_t streamid,
                                                     uint64_t packetid, std::string processor,
                                                     std::string port, uint8_t slot) {
@@ -82,7 +82,7 @@ bool Serialization::FlatBufferSerializer::Serialize(std::ostream&           stre
 
     auto datasource = CreateDataSource(builder_, builder_.CreateString(processor),
                                        builder_.CreateString(port), slot, streamid);
-    auto startMap   = flex_builder_.StartMap();
+    auto startMap = flex_builder_.StartMap();
 
     data->SerializeFlatBuffer(flex_builder_);
     flex_builder_.EndMap(startMap);
@@ -108,7 +108,7 @@ bool Serialization::YAMLSerializer::Serialize(std::ostream& stream, typename Any
     }
 
     YAML::Emitter emit(stream);
-    YAML::Node    node;
+    YAML::Node node;
 
     if (format_ == Serialization::Format::COMPACT) {
         data->SerializeYAML(node, format_);
@@ -147,4 +147,4 @@ Serializer* serializer(Serialization::Encoding enc, Serialization::Format fmt) {
     }
     throw std::runtime_error("Unknown serializer.");
 }
-} // namespace Serialization
+}  // namespace Serialization

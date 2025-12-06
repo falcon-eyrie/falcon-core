@@ -49,7 +49,7 @@ bool CommandLineCommands::getcommand(std::deque<std::string>& command) {
 }
 
 bool CommandLineCommands::sendreply(const std::deque<std::string>& command,
-                                    std::deque<std::string>&       reply) {
+                                    std::deque<std::string>& reply) {
     if (reply.size() == 0 || reply[0] == "OK") {
         return true;
     }
@@ -60,7 +60,7 @@ bool CommandLineCommands::sendreply(const std::deque<std::string>& command,
 }
 
 KeyboardCommands::KeyboardCommands() {
-    s_catch_sigint_signal(); // Install Ctrl-C signal handler
+    s_catch_sigint_signal();  // Install Ctrl-C signal handler
     nonblock(1);
 }
 
@@ -69,7 +69,7 @@ KeyboardCommands::~KeyboardCommands() {
 }
 
 bool KeyboardCommands::getcommand(std::deque<std::string>& command) {
-    int  hit;
+    int hit;
     char c;
 
     hit = kbhit();
@@ -119,7 +119,7 @@ bool KeyboardCommands::getcommand(std::deque<std::string>& command) {
 }
 
 bool KeyboardCommands::sendreply(const std::deque<std::string>& command,
-                                 std::deque<std::string>&       reply) {
+                                 std::deque<std::string>& reply) {
     if (reply.size() == 0 || reply[0] == "OK") {
         return true;
     }
@@ -145,6 +145,6 @@ bool ZMQCommands::getcommand(std::deque<std::string>& command) {
 }
 
 bool ZMQCommands::sendreply(const std::deque<std::string>& command,
-                            std::deque<std::string>&       reply) {
+                            std::deque<std::string>& reply) {
     return s_send_multi(*socket, reply);
 }

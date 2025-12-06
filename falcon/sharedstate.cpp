@@ -119,7 +119,7 @@ bool IState::IsCompatible(const Permissions& permissions) {
 
 const Permissions& IState::permissions() const {
     return permissions_;
-} // read-only
+}  // read-only
 
 Permission IState::external_permission() {
     return external_permission_->permission();

@@ -25,12 +25,12 @@
 template <class Iter_T>
 class stride_iter {
    public:
-    typedef typename std::iterator_traits<Iter_T>::value_type      value_type;
-    typedef typename std::iterator_traits<Iter_T>::reference       reference;
+    typedef typename std::iterator_traits<Iter_T>::value_type value_type;
+    typedef typename std::iterator_traits<Iter_T>::reference reference;
     typedef typename std::iterator_traits<Iter_T>::difference_type difference_type;
-    typedef typename std::iterator_traits<Iter_T>::pointer         pointer;
-    typedef std::random_access_iterator_tag                        iterator_category;
-    typedef stride_iter                                            self;
+    typedef typename std::iterator_traits<Iter_T>::pointer pointer;
+    typedef std::random_access_iterator_tag iterator_category;
+    typedef stride_iter self;
 
     // constructors
     stride_iter() : m(NULL), step(0) {}
@@ -95,6 +95,6 @@ class stride_iter {
     }
 
    private:
-    Iter_T          m;
+    Iter_T m;
     difference_type step;
 };

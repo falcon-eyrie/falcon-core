@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_BATCH_DESCRIPTOR_H_ // NOLINT
-#define DISRUPTOR_BATCH_DESCRIPTOR_H_ // NOLINT
+#ifndef DISRUPTOR_BATCH_DESCRIPTOR_H_  // NOLINT
+#define DISRUPTOR_BATCH_DESCRIPTOR_H_  // NOLINT
 
 #include "sequence.h"
 
@@ -63,10 +63,10 @@ class BatchDescriptor {
     int64_t Start() const { return end_ - size_ + 1L; }
 
    private:
-    int     size_;
+    int size_;
     int64_t end_;
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_SEQUENCE_BATCH_H_  NOLINT
+#endif  // DISRUPTOR_SEQUENCE_BATCH_H_  NOLINT

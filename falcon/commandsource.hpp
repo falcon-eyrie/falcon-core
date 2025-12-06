@@ -64,4 +64,4 @@ class ZMQCommands : public CommandSource {
     bool getcommand(std::deque<std::string>& command);
     bool sendreply(const std::deque<std::string>& command, std::deque<std::string>& reply);
 };
-} // namespace commands
+}  // namespace commands

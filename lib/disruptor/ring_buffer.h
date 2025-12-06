@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_RING_BUFFER_H_ // NOLINT
-#define DISRUPTOR_RING_BUFFER_H_ // NOLINT
+#ifndef DISRUPTOR_RING_BUFFER_H_  // NOLINT
+#define DISRUPTOR_RING_BUFFER_H_  // NOLINT
 
 #include <array>
 #include <condition_variable>
@@ -74,11 +74,11 @@ class RingBuffer : public Sequencer {
     // Members
     int buffer_size_;
     int mask_;
-    T*  events_;
+    T* events_;
 
     DISALLOW_COPY_AND_ASSIGN(RingBuffer);
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_RING_BUFFER_H_ NOLINT
+#endif  // DISRUPTOR_RING_BUFFER_H_ NOLINT

@@ -61,7 +61,7 @@
 #endif
 
 // Not on Visual Studio. Let's use the normal version
-#else // #ifdef _MSC_VER
+#else  // #ifdef _MSC_VER
 #define INCLUDE_STD_FILESYSTEM_EXPERIMENTAL 0
 #endif
 
@@ -90,7 +90,7 @@ namespace fs = std::experimental::filesystem;
 namespace fs = std::filesystem;
 #endif
 
-#endif // #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
+#endif  // #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
 
 #include <string>
 

@@ -49,7 +49,7 @@ void Data::set_hardware_timestamp(uint64_t t) {
 }
 
 void Data::CloneTimestamps(const Data& data) {
-    source_timestamp_   = data.source_timestamp_;
+    source_timestamp_ = data.source_timestamp_;
     hardware_timestamp_ = data.hardware_timestamp_;
 }
 
@@ -73,7 +73,7 @@ void Data::SerializeYAML(YAML::Node& node, Serialization::Format format) const {
             static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::microseconds>(
                                       source_timestamp_.time_since_epoch())
                                       .count());
-        node["hardware_ts"]   = hardware_timestamp_;
+        node["hardware_ts"] = hardware_timestamp_;
         node["serial_number"] = serial_number_;
     }
 }

@@ -30,8 +30,8 @@ typedef Range<unsigned int> ChannelRange;
 // basic event counter
 struct EventCounter {
     uint64_t all_received = 0;
-    uint64_t target       = 0;
-    uint64_t non_target   = 0;
+    uint64_t target = 0;
+    uint64_t non_target = 0;
 
     inline bool consistent_counters() { return all_received == (target + non_target); }
 
@@ -58,7 +58,7 @@ T join(const A& begin, const A& end, const T& t);
 void check_buffer_sizes_and_log(double incoming, double& outgoing, bool strict_check, size_t& n,
                                 std::string processor_name);
 
-const double          MAX_N_HOURS_TEST            = 1.5;
+const double MAX_N_HOURS_TEST = 1.5;
 constexpr std::size_t MAX_TEST_SAMPLING_FREQUENCY = 32000;
 
 #include "general.ipp"

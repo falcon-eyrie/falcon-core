@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_EXCEPTIONS_H_ // NOLINT
-#define DISRUPTOR_EXCEPTIONS_H_ // NOLINT
+#ifndef DISRUPTOR_EXCEPTIONS_H_  // NOLINT
+#define DISRUPTOR_EXCEPTIONS_H_  // NOLINT
 
 #include <exception>
 
@@ -32,6 +32,6 @@ namespace disruptor {
 
 class AlertException : public std::exception {};
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_EXCEPTIONS_H_  NOLINT
+#endif  // DISRUPTOR_EXCEPTIONS_H_  NOLINT

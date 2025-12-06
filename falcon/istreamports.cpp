@@ -43,7 +43,7 @@ std::vector<RingSequence*> ISlotOut::gating_sequences() {
 void ISlotIn::ReleaseData() {
     if (nretrieved_ > 0) {
         int64_t value = sequence_.IncrementAndGet(nretrieved_);
-        nretrieved_   = 0;
+        nretrieved_ = 0;
 
         if (value + 1 < 0) {
             sequence_.set_sequence(INT64_MAX);
@@ -65,16 +65,16 @@ void ISlotIn::NegotiateUpstream() {
 
 void ISlotIn::PrepareProcessing() {
     sequence_.set_sequence(-1L);
-    ncached_    = 0;
-    cache_      = nullptr;
+    ncached_ = 0;
+    cache_ = nullptr;
     nretrieved_ = 0;
 }
 
 YAML::Node IPortOut::ExportYAML() const {
     YAML::Node node;
-    node["datatype"]    = datatype();
-    node["nslots_min"]  = policy().min_slot_number();
-    node["nslots_max"]  = policy().max_slot_number();
+    node["datatype"] = datatype();
+    node["nslots_min"] = policy().min_slot_number();
+    node["nslots_max"] = policy().max_slot_number();
     node["buffer_size"] = policy().buffer_size();
     if (policy().wait_strategy() == WaitStrategy::kBlockingStrategy) {
         node["wait_strategy"] = "blocking";
@@ -90,9 +90,9 @@ YAML::Node IPortOut::ExportYAML() const {
 
 YAML::Node IPortIn::ExportYAML() const {
     YAML::Node node;
-    node["datatype"]   = datatype();
+    node["datatype"] = datatype();
     node["nslots_min"] = policy().min_slot_number();
     node["nslots_max"] = policy().max_slot_number();
-    node["cache"]      = policy().cache_enabled();
+    node["cache"] = policy().cache_enabled();
     return node;
 }

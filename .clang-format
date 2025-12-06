@@ -1,21 +1,39 @@
 BasedOnStyle: Google
+
+# Indentation / spacing (clean, modern, Java-like)
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
-AllowShortFunctionsOnASingleLine: InlineOnly
 ColumnLimit: 100
-AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: true
-AlignTrailingComments: true
-SortIncludes: true
-IncludeBlocks: Preserve
-SpacesBeforeTrailingComments: 1
 SpaceBeforeParens: ControlStatements
 PointerAlignment: Left
 DerivePointerAlignment: false
 SpaceAfterCStyleCast: true
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
-ReflowComments: true
 Cpp11BracedListStyle: true
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
+# Modern readability
+AllowShortFunctionsOnASingleLine: InlineOnly
+ReflowComments: true
+AlignTrailingComments: true
+
+# Avoid legacy-C++ visual alignment
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: false
+AlignConsecutiveBitFields: false
+
+# Include handling
+SortIncludes: true
+IncludeBlocks: Preserve
+
+# Consistent indentation rules
 IndentCaseLabels: true
 IndentGotoLabels: true
+
+# Extra modern preferences
+BreakBeforeBraces: Attach        # matches Java/Rust/JS
+SpacesInParentheses: false
+SpacesInAngles: false
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceAroundPointerQualifiers: Default

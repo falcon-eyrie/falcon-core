@@ -28,11 +28,11 @@ int s_interrupted = 0;
 
 int kbhit() {
     struct timeval tv;
-    fd_set         fds;
-    tv.tv_sec  = 0;
+    fd_set fds;
+    tv.tv_sec = 0;
     tv.tv_usec = 0;
     FD_ZERO(&fds);
-    FD_SET(STDIN_FILENO, &fds); // STDIN_FILENO is 0
+    FD_SET(STDIN_FILENO, &fds);  // STDIN_FILENO is 0
     select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv);
     return FD_ISSET(STDIN_FILENO, &fds);
 }
@@ -67,7 +67,7 @@ void s_signal_handler(int signal_value) {
 void s_catch_sigint_signal(void) {
     struct sigaction action;
     action.sa_handler = s_signal_handler;
-    action.sa_flags   = 0;
+    action.sa_flags = 0;
     sigemptyset(&action.sa_mask);
     sigaction(SIGINT, &action, NULL);
 }

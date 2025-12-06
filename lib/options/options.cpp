@@ -166,7 +166,7 @@ void OptionList::from_yaml(const YAML::Node& node, const option_error_handler& h
     if (check) {
         for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
             std::string basename = it->first.as<std::string>();
-            bool        exist    = has_option(basename);
+            bool exist = has_option(basename);
             if (it->second.IsMap() and !exist) {
                 for (YAML::const_iterator it2 = it->second.begin(); it2 != it->second.end();
                      ++it2) {

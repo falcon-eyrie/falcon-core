@@ -53,9 +53,9 @@
 //   global-state: value
 //   processor: {state: value}
 
-enum class Permission { NONE = 0, READ, WRITE }; // in order of least permissive to most permissive
+enum class Permission { NONE = 0, READ, WRITE };  // in order of least permissive to most permissive
 
-Permission  permission_from_string(std::string s);
+Permission permission_from_string(std::string s);
 std::string permission_to_string(Permission p, bool shorthand = false);
 
 class ExternalPermissionTracker {
@@ -118,7 +118,7 @@ class Permissions {
     void set_external(const Permission p);
 
     std::string to_string(bool shorthand = true) const;
-    bool        IsCompatible(const Permissions& p);
+    bool IsCompatible(const Permissions& p);
 
    protected:
     Permission self_;
@@ -141,18 +141,18 @@ class IState {
     virtual ~IState() {}
     virtual IState* clone() const = 0;
 
-    bool               IsCompatible(const Permissions& permissions);
+    bool IsCompatible(const Permissions& permissions);
     const Permissions& permissions() const;
-    Permission         external_permission();
+    Permission external_permission();
 
-    std::string         description();
+    std::string description();
     virtual std::string get_string(bool cache = true) = 0;
 
-   protected: // for friends only
+   protected:  // for friends only
     virtual bool IsLikeMe(const std::shared_ptr<IState>& other) = 0;
 
     virtual void Share(const std::shared_ptr<IState>& other) = 0;
-    virtual void UnShare()                                   = 0;
+    virtual void UnShare() = 0;
 
     virtual bool IsShared();
 
@@ -167,9 +167,9 @@ class IState {
     void unlock();
 
    protected:
-    Permissions                                permissions_;
-    std::string                                description_;
-    bool                                       shared_;
+    Permissions permissions_;
+    std::string description_;
+    bool shared_;
     std::shared_ptr<ExternalPermissionTracker> external_permission_;
 
    private:
@@ -242,7 +242,7 @@ class ReadableState : public StateCloneable<IState, ReadableState<T>> {
             "because it cannot be serialized via string transformation.");
     }
 
-   protected: // for friends only
+   protected:  // for friends only
     void set(T value, bool cache = true) {
         this->lock();
         state_->store(value);
@@ -266,7 +266,7 @@ class ReadableState : public StateCloneable<IState, ReadableState<T>> {
     bool set_string(const std::string& value, bool cache = true) override {
         if constexpr (std::is_convertible_v<T, std::string>) {
             std::stringstream ss(value);
-            T                 result;
+            T result;
             if ((std::is_same_v<T, bool> and ss >> std::boolalpha >> result) or ss >> result) {
                 set(result, cache);
                 return true;
@@ -285,7 +285,7 @@ class ReadableState : public StateCloneable<IState, ReadableState<T>> {
         auto cast = dynamic_cast<ReadableState<T>*>(other.get());
         if (cast) {
             this->lock();
-            this->state_               = cast->state_;
+            this->state_ = cast->state_;
             this->external_permission_ = cast->external_permission_;
             this->external_permission_->add(this->permissions_.external());
             this->shared_ = true;
@@ -319,9 +319,9 @@ class ReadableState : public StateCloneable<IState, ReadableState<T>> {
     }
 
    private:
-    T                               default_;
-    T                               cache_;
-    std::shared_ptr<std::atomic<T>> state_; // our own state, that may be shared with others
+    T default_;
+    T cache_;
+    std::shared_ptr<std::atomic<T>> state_;  // our own state, that may be shared with others
 };
 
 template <typename T>
@@ -335,7 +335,7 @@ class WritableState : public ReadableState<T> {
 
     // make set methods publicly available
     void set(T value, bool cache = true) { ReadableState<T>::set(value, cache); }
-    T    exchange(T value, bool cache = true) { return ReadableState<T>::exchange(value, cache); }
+    T exchange(T value, bool cache = true) { return ReadableState<T>::exchange(value, cache); }
     bool set_string(const std::string& value, bool cache = true) override {
         return ReadableState<T>::set_string(value, cache);
     }
@@ -346,17 +346,17 @@ class SharedStateAlias {
    public:
     SharedStateAlias(Permission external = Permission::WRITE, std::string description = "");
     ~SharedStateAlias();
-    void        AddState(std::string name, const std::shared_ptr<IState>& dependent);
-    void        RemoveState(std::string name);
-    void        RemoveAllStates();
-    bool        Update(std::string value);
+    void AddState(std::string name, const std::shared_ptr<IState>& dependent);
+    void RemoveState(std::string name);
+    void RemoveAllStates();
+    bool Update(std::string value);
     std::string Retrieve();
-    YAML::Node  ExportYAML();
+    YAML::Node ExportYAML();
 
    private:
-    Permission                                     external_;
-    std::string                                    description_;
-    std::shared_ptr<IState>                        master_;
+    Permission external_;
+    std::string description_;
+    std::shared_ptr<IState> master_;
     std::map<std::string, std::shared_ptr<IState>> dependents_;
 };
 
@@ -382,11 +382,11 @@ class SharedStateMap {
     void clear();
     bool IsShared(std::string name);
     std::vector<std::string> ListSharedStates(std::string alias);
-    bool                     UpdateAlias(std::string alias, std::string value);
-    std::string              RetrieveAlias(std::string alias);
-    YAML::Node               ExportYAML();
+    bool UpdateAlias(std::string alias, std::string value);
+    std::string RetrieveAlias(std::string alias);
+    YAML::Node ExportYAML();
 
    protected:
     std::map<std::string, SharedStateAlias> aliases_;
-    std::map<std::string, std::string>      shared_states_;
+    std::map<std::string, std::string> shared_states_;
 };

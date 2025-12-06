@@ -22,10 +22,10 @@
 
 typedef int16_t ThreadPriority;
 
-const ThreadPriority PRIORITY_NONE   = -1;
-const ThreadPriority PRIORITY_LOW    = 0;
+const ThreadPriority PRIORITY_NONE = -1;
+const ThreadPriority PRIORITY_LOW = 0;
 const ThreadPriority PRIORITY_MEDIUM = 50;
-const ThreadPriority PRIORITY_HIGH   = 100;
+const ThreadPriority PRIORITY_HIGH = 100;
 
 typedef int ThreadCore;
 

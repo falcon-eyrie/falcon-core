@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_EXCEPTION_HANDLER_H_ // NOLINT
-#define DISRUPTOR_EXCEPTION_HANDLER_H_ // NOLINT
+#ifndef DISRUPTOR_EXCEPTION_HANDLER_H_  // NOLINT
+#define DISRUPTOR_EXCEPTION_HANDLER_H_  // NOLINT
 
 #include <exception>
 
@@ -50,6 +50,6 @@ class FatalExceptionHandler : public ExceptionHandlerInterface<T> {
     }
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_EXCEPTION_HANDLER_H_  NOLINT
+#endif  // DISRUPTOR_EXCEPTION_HANDLER_H_  NOLINT

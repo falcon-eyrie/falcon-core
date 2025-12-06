@@ -23,14 +23,14 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef CACHE_LINE_SIZE_IN_BYTES    // NOLINT
-#define CACHE_LINE_SIZE_IN_BYTES 64 // NOLINT
-#endif                              // NOLINT
+#ifndef CACHE_LINE_SIZE_IN_BYTES     // NOLINT
+#define CACHE_LINE_SIZE_IN_BYTES 64  // NOLINT
+#endif                               // NOLINT
 #define ATOMIC_SEQUENCE_PADDING_LENGTH (CACHE_LINE_SIZE_IN_BYTES - sizeof(std::atomic<int64_t>)) / 8
 #define SEQUENCE_PADDING_LENGTH (CACHE_LINE_SIZE_IN_BYTES - sizeof(int64_t)) / 8
 
-#ifndef DISRUPTOR_SEQUENCE_H_ // NOLINT
-#define DISRUPTOR_SEQUENCE_H_ // NOLINT
+#ifndef DISRUPTOR_SEQUENCE_H_  // NOLINT
+#define DISRUPTOR_SEQUENCE_H_  // NOLINT
 
 #include <atomic>
 #include <climits>
@@ -125,6 +125,6 @@ class PaddedLong : public MutableLong {
 
 int64_t GetMinimumSequence(const std::vector<Sequence*>& sequences);
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_SEQUENCE_H_ NOLINT
+#endif  // DISRUPTOR_SEQUENCE_H_ NOLINT

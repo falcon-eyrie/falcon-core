@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_SEQUENCER_H_ // NOLINT
-#define DISRUPTOR_SEQUENCER_H_ // NOLINT
+#ifndef DISRUPTOR_SEQUENCER_H_  // NOLINT
+#define DISRUPTOR_SEQUENCER_H_  // NOLINT
 
 #include <condition_variable>
 #include <mutex>
@@ -166,15 +166,15 @@ class Sequencer {
     // Members
     const int buffer_size_;
 
-    PaddedSequence         cursor_;
+    PaddedSequence cursor_;
     std::vector<Sequence*> gating_sequences_;
 
     ClaimStrategyInterface* claim_strategy_;
-    WaitStrategyInterface*  wait_strategy_;
+    WaitStrategyInterface* wait_strategy_;
 
     DISALLOW_COPY_AND_ASSIGN(Sequencer);
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_RING_BUFFER_H_ NOLINT
+#endif  // DISRUPTOR_RING_BUFFER_H_ NOLINT

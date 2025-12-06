@@ -49,8 +49,8 @@ bool CommandHandler::DelegateResourcesCommand(std::deque<std::string>& command,
             resources_type = "resources://";
 
         try {
-            std::string              resource_path = global_context_->resolve_path(resources_type);
-            std::vector<std::string> list_files    = getAllFilesInDir(resource_path);
+            std::string resource_path = global_context_->resolve_path(resources_type);
+            std::vector<std::string> list_files = getAllFilesInDir(resource_path);
             for (auto const& file : list_files) {
                 reply.push_back(
                     std::regex_replace(file, std::regex(resource_path), resources_type));
@@ -65,9 +65,9 @@ bool CommandHandler::DelegateResourcesCommand(std::deque<std::string>& command,
     } else if (command[0] == "graphs") {
         try {
             std::string graph_path = global_context_->resolve_path(command[1]);
-            YAML::Node  node;
+            YAML::Node node;
             node["falcon"]["version"] = "1.0.0";
-            node["graph"]             = YAML::LoadFile(graph_path);
+            node["graph"] = YAML::LoadFile(graph_path);
             YAML::Emitter out;
             out << node;
             reply.push_back(std::string(out.c_str()));
@@ -175,12 +175,12 @@ void CommandHandler::start() {
     // save pointer to socket, so that DelegateGraphCommand can use it
     graph_socket_ = &socket;
 
-    bool                    finished = false;
+    bool finished = false;
     std::deque<std::string> command;
     std::deque<std::string> reply;
 
     while (!finished) {
-        usleep(100000); // 0.1 second
+        usleep(100000);  // 0.1 second
 
         // iterate through sources
         for (auto& it : sources_) {

@@ -26,7 +26,7 @@ std::string expand_home(const std::string& x) {
     char* home = getenv("HOME");
     if (home != NULL) {
         std::regex re("(\\$HOME|~)");
-        auto       y = std::regex_replace(x, re, home);
+        auto y = std::regex_replace(x, re, home);
         return y;
     } else {
         return x;

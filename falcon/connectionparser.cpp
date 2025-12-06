@@ -34,18 +34,18 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
     // id is either: number or list of ranges (e.g. [1, 4-8, 10])
 
     static const int type_specifier = 1;
-    static const int name_group     = 2;
-    static const int range_group    = 3;
+    static const int name_group = 2;
+    static const int range_group = 3;
     static const int first_range_id = 1;
-    static const int end_range_id   = 2;
+    static const int end_range_id = 2;
 
-    ConnectionRule       rule;
+    ConnectionRule rule;
     SingleConnectionRule single_rules[2];
 
     std::string expr(
         "^(?:(f|p|s)\\:)?([a-zA-Z]*(?:[ -_][a-zA-Z]+)*)[ "
         "]*((?:\\d+)|(?:\\([\\d,\\-]+\\)))?$");
-    std::regex  re(expr);
+    std::regex re(expr);
     std::smatch match;
 
     int startid;
@@ -78,7 +78,7 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
         current_connection_part = 0;
 
         std::list<NodePart> available_specifiers{PROCESSOR, PORT, SLOT};
-        NodePart            specifier;
+        NodePart specifier;
 
         for (auto& connection_part : connection_parts) {
             // match regular expression
@@ -154,7 +154,7 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
                     // split on comma
                     auto id_range = split(range, ',');
 
-                    std::regex  re_range("(\\d+)(?:\\-(\\d+))?");
+                    std::regex re_range("(\\d+)(?:\\-(\\d+))?");
                     std::smatch match_range;
 
                     // match start and end id of ranges
@@ -225,18 +225,18 @@ ConnectionRule parseConnectionRule(std::string rulestring) {
 }
 
 std::vector<SlotAddress> expandSingleConnectionRule(SingleConnectionRule rule) {
-    std::array<int, 3>         index;
+    std::array<int, 3> index;
     std::array<std::string, 3> names;
-    int                        idx;
-    std::array<int, 3>         tmp;
-    std::string                processor;
-    std::string                port;
-    int                        slot = -1;
+    int idx;
+    std::array<int, 3> tmp;
+    std::string processor;
+    std::string port;
+    int slot = -1;
 
     std::vector<SlotAddress> cpoints;
 
     for (int i = 0; i < 3; i++) {
-        idx      = std::get<0>(rule[i]);
+        idx = std::get<0>(rule[i]);
         index[i] = idx;
         names[i] = std::get<1>(rule[i]);
     }
@@ -249,19 +249,19 @@ std::vector<SlotAddress> expandSingleConnectionRule(SingleConnectionRule rule) {
                 tmp[2] = c;
 
                 for (int d = 0; d < 3; d++) {
-                    if (index[d] == 0) { // processor
+                    if (index[d] == 0) {  // processor
                         if (tmp[d] == MATCH_NONE) {
                             processor = names[d];
                         } else {
                             processor = names[d] + std::to_string(tmp[d]);
                         }
-                    } else if (index[d] == 1) { // port
+                    } else if (index[d] == 1) {  // port
                         if (tmp[d] == MATCH_NONE) {
                             port = names[d];
                         } else {
                             port = names[d] + std::to_string(tmp[d]);
                         }
-                    } else { // slot
+                    } else {  // slot
                         slot = tmp[d];
                     }
                 }
@@ -275,11 +275,11 @@ std::vector<SlotAddress> expandSingleConnectionRule(SingleConnectionRule rule) {
 
 void expandConnectionRule(ConnectionRule rule, StreamConnections& connections) {
     // for output SingleConnectionRule
-    auto out        = rule.first;
+    auto out = rule.first;
     auto out_points = expandSingleConnectionRule(out);
 
     // for input SingleConnectionRule
-    auto in        = rule.second;
+    auto in = rule.second;
     auto in_points = expandSingleConnectionRule(in);
 
     if (out_points.size() != 1 && out_points.size() != in_points.size()) {

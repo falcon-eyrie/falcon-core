@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_SEQUENCE_BARRIER_H_ // NOLINT
-#define DISRUPTOR_SEQUENCE_BARRIER_H_ // NOLINT
+#ifndef DISRUPTOR_SEQUENCE_BARRIER_H_  // NOLINT
+#define DISRUPTOR_SEQUENCE_BARRIER_H_  // NOLINT
 
 #include <memory>
 #include <vector>
@@ -67,12 +67,12 @@ class ProcessingSequenceBarrier : SequenceBarrierInterface {
     }
 
    private:
-    Sequence*              cursor_;
+    Sequence* cursor_;
     WaitStrategyInterface* wait_strategy_;
     std::vector<Sequence*> dependent_sequences_;
-    std::atomic<bool>      alerted_;
+    std::atomic<bool> alerted_;
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_DEPENDENCY_BARRIER_H_ NOLINT
+#endif  // DISRUPTOR_DEPENDENCY_BARRIER_H_ NOLINT

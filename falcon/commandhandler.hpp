@@ -77,8 +77,8 @@ class CommandHandler {
 
    private:
     typedef std::vector<CommandSource*> VectSources;
-    VectSources                         sources_;
-    GlobalContext*                      global_context_;
-    zmq::socket_t*                      graph_socket_;
+    VectSources sources_;
+    GlobalContext* global_context_;
+    zmq::socket_t* graph_socket_;
 };
-} // namespace commands
+}  // namespace commands

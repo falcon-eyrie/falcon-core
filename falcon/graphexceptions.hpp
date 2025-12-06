@@ -27,7 +27,7 @@ class GraphException : public std::runtime_error {
     GraphException(std::string const& error, std::string const& source = "")
         : std::runtime_error(source == "" ? error : source + ": " + error) {}
     virtual std::string gettype() const { return std::string("None"); }
-    virtual bool        isFatal() const { return true; }
+    virtual bool isFatal() const { return true; }
 };
 
 #define GRAPHEXCEPTION(TYPE, FATAL)                                    \

@@ -30,7 +30,7 @@
 struct RingBufferStatus {
     uint64_t read;
     uint64_t backlog;
-    bool     alive;
+    bool alive;
 };
 
 // forward declarations
@@ -53,11 +53,11 @@ class SlotOut : public ISlotOut {
         : ISlotOut(parent, address), streaminfo_(parameters), ringbuffer_serial_number_(0) {}
 
     // public interface
-    typename DATATYPE::Data*              ClaimData(bool clear);
+    typename DATATYPE::Data* ClaimData(bool clear);
     std::vector<typename DATATYPE::Data*> ClaimDataN(uint64_t n, bool clear);
-    void                                  PublishData();
+    void PublishData();
 
-    virtual StreamInfo<DATATYPE>&  streaminfo() { return streaminfo_; }
+    virtual StreamInfo<DATATYPE>& streaminfo() { return streaminfo_; }
     const typename DATATYPE::Data& prototype() const {
         return streaminfo_.template getDataPrototype<typename DATATYPE::Data>();
     }
@@ -86,8 +86,8 @@ class SlotOut : public ISlotOut {
     }
 
    public:
-    StreamInfo<DATATYPE> streaminfo_; // owned by SlotOut, once finalized, the streaminfo (and
-                                      // datatype) are fixed for the life time of the slot(?)
+    StreamInfo<DATATYPE> streaminfo_;  // owned by SlotOut, once finalized, the streaminfo (and
+                                       // datatype) are fixed for the life time of the slot(?)
     std::unique_ptr<RingBuffer<typename DATATYPE::Data>> ringbuffer_ = nullptr;
 
    protected:
@@ -103,7 +103,7 @@ class PortOut : public IPortOut {
         NewSlot(policy.min_slot_number());
     }
 
-    SlotType    number_of_slots() const override { return slots_.size(); }
+    SlotType number_of_slots() const override { return slots_.size(); }
     std::string datatype() const override { return DATATYPE::datatype(); }
 
     StreamInfo<DATATYPE>& streaminfo(std::size_t index) { return slots_[index]->streaminfo(); }
@@ -119,7 +119,7 @@ class PortOut : public IPortOut {
    protected:
     // called by StreamOutConnector
     void Connect(int slot, ISlotIn* downstream) override;
-    int  ReserveSlot(int slot) override;
+    int ReserveSlot(int slot) override;
 
     // called by IPortOut
     void CreateRingBuffers() override;
@@ -135,7 +135,7 @@ class PortOut : public IPortOut {
     }
 
    private:
-    typename DATATYPE::Parameters                   parameters_; // default parameters
+    typename DATATYPE::Parameters parameters_;  // default parameters
     std::vector<std::unique_ptr<SlotOut<DATATYPE>>> slots_;
 };
 
@@ -216,7 +216,7 @@ class SlotIn : public ISlotIn {
         return streaminfo().template getDataPrototype<typename DATATYPE::Data>();
     }
 
-    bool     status_alive() const { return status_.alive; }
+    bool status_alive() const { return status_.alive; }
     uint64_t status_read() const { return status_.read; }
     uint64_t status_backlog() const { return status_.backlog; }
 
@@ -242,8 +242,8 @@ class SlotIn : public ISlotIn {
 
     RingBufferStatus status_;
 
-    const double       HIGH_WATER_LEVEL = 0.85;
-    unsigned int       n_messages_;
+    const double HIGH_WATER_LEVEL = 0.85;
+    unsigned int n_messages_;
     const unsigned int MAX_N_MESSAGES = 20;
 
     typename DATATYPE::Capabilities capabilities_;
@@ -264,7 +264,7 @@ class PortIn : public IPortIn {
     SlotType number_of_slots() const override { return slots_.size(); }
 
     virtual SlotIn<DATATYPE>* slot(std::size_t index) { return slots_[index].get(); }
-    SlotIn<DATATYPE>*         dataslot(std::size_t index) { return slots_[index].get(); }
+    SlotIn<DATATYPE>* dataslot(std::size_t index) { return slots_[index].get(); }
 
     std::string datatype() const override { return DATATYPE::datatype(); }
 
@@ -283,13 +283,13 @@ class PortIn : public IPortIn {
    protected:
     // called by StreamInConnector
     virtual void Connect(int slot, ISlotOut* upstream);
-    virtual int  ReserveSlot(int slot);
+    virtual int ReserveSlot(int slot);
 
     void UnlockSlots() override;
     void NewSlot(int n = 1);
 
    private:
-    typename DATATYPE::Capabilities                capabilities_;
+    typename DATATYPE::Capabilities capabilities_;
     std::vector<std::unique_ptr<SlotIn<DATATYPE>>> slots_;
 };
 

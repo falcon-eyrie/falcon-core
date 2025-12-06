@@ -23,8 +23,8 @@
 
 void EventCounter::reset() {
     all_received = 0;
-    target       = 0;
-    non_target   = 0;
+    target = 0;
+    non_target = 0;
 }
 
 static int check_buffer_sizes(
@@ -33,22 +33,22 @@ static int check_buffer_sizes(
     // -1: loose check passed, but required strict check failed;
     //  1: loose checked passed (strict check not required))
     //  2: both checks passed (independent of the request required)
-    double  incoming,
-    double& outgoing, // can be changed inside if no strict check is present
-    bool    strict_check,
-    size_t& n); // number of incoming/upstream buffer-size that must be
-                // integrated to obtain one outgoing/downstream buffer-size
+    double incoming,
+    double& outgoing,  // can be changed inside if no strict check is present
+    bool strict_check,
+    size_t& n);  // number of incoming/upstream buffer-size that must be
+                 // integrated to obtain one outgoing/downstream buffer-size
 
 int check_buffer_sizes(double incoming, double& outgoing, bool strict_check, size_t& n) {
     if (incoming > outgoing) {
         outgoing = incoming;
-        n        = 1;
+        n = 1;
         return -2;
     }
 
-    if (!compare_doubles(remainder(outgoing, incoming))) { // check remainder is zero
+    if (!compare_doubles(remainder(outgoing, incoming))) {  // check remainder is zero
         if (!strict_check) {
-            n        = round(outgoing / incoming);
+            n = round(outgoing / incoming);
             outgoing = n * incoming;
             return 1;
         }

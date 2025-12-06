@@ -17,4 +17,4 @@ WaitStrategyInterface* CreateWaitStrategy(WaitStrategyOption wait_option) {
     }
 }
 
-}; // namespace disruptor
+};  // namespace disruptor

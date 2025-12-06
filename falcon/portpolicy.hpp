@@ -22,7 +22,7 @@
 #include "ringbuffer.hpp"
 #include "utilities/math_numeric.hpp"
 
-typedef uint16_t        SlotType;
+typedef uint16_t SlotType;
 typedef Range<SlotType> SlotRange;
 
 class PortPolicy {
@@ -31,8 +31,8 @@ class PortPolicy {
         : slot_number_range_(slot_number_range) {}
 
     const SlotRange& slot_number_range() const { return slot_number_range_; }
-    SlotType         min_slot_number() const { return slot_number_range_.lower(); }
-    SlotType         max_slot_number() const { return slot_number_range_.upper(); }
+    SlotType min_slot_number() const { return slot_number_range_.lower(); }
+    SlotType max_slot_number() const { return slot_number_range_.upper(); }
 
     bool isdynamic() const { return max_slot_number() > min_slot_number(); }
 
@@ -48,7 +48,7 @@ class PortInPolicy : public PortPolicy {
     bool cache_enabled() const { return cache_enabled_; }
 
    protected:
-    bool cache_enabled_; // input slot only
+    bool cache_enabled_;  // input slot only
 };
 
 class PortOutPolicy : public PortPolicy {
@@ -57,12 +57,12 @@ class PortOutPolicy : public PortPolicy {
                   WaitStrategy wait = WaitStrategy::kBlockingStrategy)
         : PortPolicy(slot_number_range), buffer_size_(buffer_size), wait_strategy_(wait) {}
 
-    int          buffer_size() const { return buffer_size_; }
+    int buffer_size() const { return buffer_size_; }
     WaitStrategy wait_strategy() const { return wait_strategy_; }
 
     void set_buffer_size(int sz) { buffer_size_ = sz; }
 
    protected:
-    int          buffer_size_;   // output slot only
-    WaitStrategy wait_strategy_; // ouput slot only
+    int buffer_size_;             // output slot only
+    WaitStrategy wait_strategy_;  // ouput slot only
 };

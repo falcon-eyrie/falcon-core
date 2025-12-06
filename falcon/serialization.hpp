@@ -33,14 +33,14 @@ enum class Format { NONE = -1, FULL, COMPACT, HEADERONLY, STREAMHEADER };
 // COMPACT: data only
 
 std::string format_to_string(Format fmt);
-Format      string_to_format(std::string s);
+Format string_to_format(std::string s);
 
 enum class Encoding { BINARY = 0, YAML, FLATBUFFER };
 
 std::string encoding_to_string(Encoding fmt);
-Encoding    string_to_encoding(std::string s);
+Encoding string_to_encoding(std::string s);
 
-} // namespace Serialization
+}  // namespace Serialization
 
 namespace YAML {
 
@@ -71,4 +71,4 @@ struct convert<Serialization::Encoding> {
         return true;
     }
 };
-} // namespace YAML
+}  // namespace YAML

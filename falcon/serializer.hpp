@@ -40,8 +40,8 @@ class Serializer {
     virtual bool Serialize(std::ostream& stream, typename AnyType::Data* data, uint16_t streamid,
                            uint64_t packetid, std::string processor, std::string port,
                            uint8_t slot) = 0;
-    Format       format() const;
-    void         set_format(Format fmt);
+    Format format() const;
+    void set_format(Format fmt);
 
     YAML::Node DataDescription(const typename AnyType::Data& data) const;
 
@@ -49,7 +49,7 @@ class Serializer {
     std::string extension() const;
 
    protected:
-    Format      format_;
+    Format format_;
     std::string description_;
     std::string extension_;
 };
@@ -72,7 +72,7 @@ class FlatBufferSerializer : public Serializer {
 
    private:
     flatbuffers::FlatBufferBuilder builder_;
-    flexbuffers::Builder           flex_builder_;
+    flexbuffers::Builder flex_builder_;
 };
 
 class YAMLSerializer : public Serializer {
@@ -88,4 +88,4 @@ Serializer* serializer_from_string(std::string s, Serialization::Format fmt = Fo
 
 Serializer* serializer(Serialization::Encoding enc, Serialization::Format fmt = Format::FULL);
 
-} // namespace Serialization
+}  // namespace Serialization

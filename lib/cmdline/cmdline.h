@@ -50,7 +50,7 @@ template <typename Target, typename Source, bool Same>
 class lexical_cast_t {
    public:
     static Target cast(const Source& arg) {
-        Target            ret;
+        Target ret;
         std::stringstream ss;
         if (!(ss << arg && ss >> ret && ss.eof())) throw std::bad_cast();
 
@@ -78,7 +78,7 @@ template <typename Target>
 class lexical_cast_t<Target, std::string, false> {
    public:
     static Target cast(const std::string& arg) {
-        Target             ret;
+        Target ret;
         std::istringstream ss(arg);
         if (!(ss >> ret && ss.eof())) throw std::bad_cast();
         return ret;
@@ -102,8 +102,8 @@ Target lexical_cast(const Source& arg) {
 
 static inline std::string demangle(const std::string& name) {
 #if __GNUC__
-    int         status = 0;
-    char*       p      = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
+    int status = 0;
+    char* p = abi::__cxa_demangle(name.c_str(), 0, 0, &status);
     std::string ret(p);
     free(p);
     return ret;
@@ -127,7 +127,7 @@ inline std::string readable_typename<std::string>() {
     return "string";
 }
 
-} // namespace detail
+}  // namespace detail
 
 //-----
 
@@ -140,14 +140,14 @@ class exception : public std::exception {
     const char* what() const throw() { return errors_.begin()->c_str(); }
     const char* usage() const throw() { return usage_.length() ? usage_.c_str() : NULL; }
     const char* name() const throw() { return name_.length() ? name_.c_str() : NULL; }
-    bool        help() const throw() { return help_; }
+    bool help() const throw() { return help_; }
     const std::vector<std::string>& errors() const throw() { return errors_; }
 
    private:
     std::vector<std::string> errors_;
-    std::string              usage_;
-    std::string              name_;
-    bool                     help_;
+    std::string usage_;
+    std::string name_;
+    bool help_;
 };
 
 class parse_error : public std::exception {
@@ -317,7 +317,7 @@ enum {
     optional = 0,
     required = 1,
     dontsave = 2,
-    hidden   = 4,
+    hidden = 4,
 };
 typedef int flags;
 
@@ -400,7 +400,7 @@ class parser {
         std::vector<std::string> args;
 
         std::string buf;
-        bool        in_quote = false;
+        bool in_quote = false;
         for (std::string::size_type i = 0; i < arg.length(); i++) {
             if (arg[i] == '\"') {
                 in_quote = !in_quote;
@@ -437,7 +437,7 @@ class parser {
     }
 
     bool parse(const std::vector<std::string>& args, bool clear = true) {
-        int                      argc = static_cast<int>(args.size());
+        int argc = static_cast<int>(args.size());
         std::vector<const char*> argv(argc);
 
         for (int i = 0; i < argc; i++) argv[i] = args[i].c_str();
@@ -680,20 +680,20 @@ class parser {
        public:
         virtual ~option_base() {}
 
-        virtual bool has_value() const             = 0;
-        virtual bool set()                         = 0;
+        virtual bool has_value() const = 0;
+        virtual bool set() = 0;
         virtual bool set(const std::string& value) = 0;
-        virtual bool has_set() const               = 0;
-        virtual int  count() const                 = 0;
-        virtual bool valid() const                 = 0;
-        virtual bool must() const                  = 0;
-        virtual bool hidden() const                = 0;
+        virtual bool has_set() const = 0;
+        virtual int count() const = 0;
+        virtual bool valid() const = 0;
+        virtual bool must() const = 0;
+        virtual bool hidden() const = 0;
 
-        virtual const std::string& name() const                       = 0;
-        virtual char               short_name() const                 = 0;
-        virtual const std::string& description() const                = 0;
-        virtual std::string        short_description() const          = 0;
-        virtual std::ostream&      operator>>(std::ostream& os) const = 0;
+        virtual const std::string& name() const = 0;
+        virtual char short_name() const = 0;
+        virtual const std::string& description() const = 0;
+        virtual std::string short_description() const = 0;
+        virtual std::ostream& operator>>(std::ostream& os) const = 0;
     };
 
     class option_without_value : public option_base {
@@ -736,10 +736,10 @@ class parser {
         }
 
        private:
-        std::string    nam;
-        char           snam;
-        std::string    desc;
-        int            cnt;
+        std::string nam;
+        char snam;
+        std::string desc;
+        int cnt;
         cmdline::flags flags;
     };
 
@@ -776,7 +776,7 @@ class parser {
                     return true;
                 }
                 actual = read_value;
-                has    = true;
+                has = true;
             } catch (const std::exception&) {
                 return false;
             }
@@ -819,16 +819,16 @@ class parser {
 
         virtual T read(const std::string& s) = 0;
 
-        std::string    nam;
-        char           snam;
+        std::string nam;
+        char snam;
         cmdline::flags flags;
-        std::string    desc;
+        std::string desc;
 
         bool has;
-        T    def;
-        T    actual;
+        T def;
+        T actual;
 
-        cmdline::parser&                parser;
+        cmdline::parser& parser;
         typename cmdline::hook<T>::type hook;
     };
 
@@ -849,13 +849,13 @@ class parser {
     };
 
     std::map<std::string, option_base*> options;
-    std::vector<option_base*>           ordered;
-    std::string                         ftr;
+    std::vector<option_base*> ordered;
+    std::string ftr;
 
-    std::string              prog_name;
+    std::string prog_name;
     std::vector<std::string> others;
 
     std::vector<std::string> errors;
 };
 
-} // namespace cmdline
+}  // namespace cmdline

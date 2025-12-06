@@ -80,7 +80,7 @@ class ObjectFactory {
 
    private:
     typedef std::map<IdentifierType, ObjectCreator<AbstractObject, Args...>> ObjectMap;
-    ObjectMap                                                                objectmap_;
+    ObjectMap objectmap_;
 };
 
 template <typename Base, typename Derived, typename... Args>
@@ -88,4 +88,4 @@ Base* createInstance(Args&&... args) {
     return new Derived(std::forward<Args>(args)...);
 }
 
-} // namespace factory
+}  // namespace factory

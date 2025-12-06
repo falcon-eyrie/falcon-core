@@ -128,26 +128,26 @@ class Linear {
         // make sure slope is not infinite
         assert(fabs(xx) != 0);
 
-        m_b     = xy / xx;
-        m_a     = ya - m_b * xa;
+        m_b = xy / xx;
+        m_a = ya - m_b * xa;
         m_coeff = (fabs(yy) == 0) ? 1 : xy / sqrt(xx * yy);
     }
 
-    double getValue(T1 x) { //! Evaluates the linear regression function at the
-                            //! given abscissa.
+    double getValue(T1 x) {  //! Evaluates the linear regression function at the
+                             //! given abscissa.
         return m_a + m_b * x;
     }
 
-    double getSlope() { //! Returns the slope of the regression line
+    double getSlope() {  //! Returns the slope of the regression line
         return m_b;
     }
 
-    double getIntercept() { //! Returns the intercept on the Y axis of the
-                            //! regression line
+    double getIntercept() {  //! Returns the intercept on the Y axis of the
+                             //! regression line
         return m_a;
     }
 
-    double getCoefficient() { //! Returns the linear regression coefficient
+    double getCoefficient() {  //! Returns the linear regression coefficient
         return m_coeff;
     }
 
@@ -204,7 +204,7 @@ class IterativePercentile {
     }
 
    private:
-    double         _percentile;
+    double _percentile;
     std::vector<T> _lower;
     std::vector<T> _upper;
 };

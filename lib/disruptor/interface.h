@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_INTERFACE_H_ // NOLINT
-#define DISRUPTOR_INTERFACE_H_ // NOLINT
+#ifndef DISRUPTOR_INTERFACE_H_  // NOLINT
+#define DISRUPTOR_INTERFACE_H_  // NOLINT
 
 #include <climits>
 #include <vector>
@@ -57,7 +57,7 @@ class ClaimStrategyInterface {
     // @param delta to increment by.
     // @param dependent_sequences to be checked for range.
     // @return the index to be used for the publishing.
-    virtual int64_t IncrementAndGet(const int&                    delta,
+    virtual int64_t IncrementAndGet(const int& delta,
                                     const std::vector<Sequence*>& dependent_sequences) = 0;
 
     // Set the current sequence value for claiming an event in the
@@ -65,7 +65,7 @@ class ClaimStrategyInterface {
     //
     // @param sequence to be set as the current value.
     // @param dependent_sequences to be checked for range.
-    virtual void SetSequence(const int64_t&                sequence,
+    virtual void SetSequence(const int64_t& sequence,
                              const std::vector<Sequence*>& dependent_sequences) = 0;
 
     // Serialise publishing in sequence.
@@ -257,6 +257,6 @@ class WaitStrategyInterface {
     virtual void SignalAllWhenBlocking() = 0;
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_INTERFACE_H_ NOLINT
+#endif  // DISRUPTOR_INTERFACE_H_ NOLINT

@@ -36,12 +36,12 @@ class PortAddress {
     const std::string port_datatype() const { return port_datatype_; }
 
     void set_port(std::string port, std::string port_datatype = "?") {
-        port_name_     = port;
+        port_name_ = port;
         port_datatype_ = port_datatype;
     }
 
-    void              set_port_datatype(std::string datatype) { port_datatype_ = datatype; }
-    void              set_processor_class(std::string klass) { processor_class_ = klass; }
+    void set_port_datatype(std::string datatype) { port_datatype_ = datatype; }
+    void set_processor_class(std::string klass) { processor_class_ = klass; }
     const std::string string(bool full = false) const;
 
    protected:

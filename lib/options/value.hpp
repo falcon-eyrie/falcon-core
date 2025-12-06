@@ -39,13 +39,13 @@ class ValueBase {
     ValueBase() {}
     virtual ~ValueBase() {}
 
-    virtual void       from_yaml(const YAML::Node& node) = 0;
-    virtual YAML::Node to_yaml() const                   = 0;
+    virtual void from_yaml(const YAML::Node& node) = 0;
+    virtual YAML::Node to_yaml() const = 0;
 
     virtual bool is_nullable() const = 0;
 
     virtual bool is_null() const = 0;
-    virtual void set_null()      = 0;
+    virtual void set_null() = 0;
 
    protected:
     virtual void unset_null() = 0;
@@ -67,7 +67,7 @@ YAML::Node generic_toyaml(const T& x) {
 template <typename T, bool Nullable = true>
 class Value : public ValueBase {
    public:
-    using ValueType     = T;
+    using ValueType = T;
     using ValidatorType = ValidatorFunc<T>;
 
     Value(const T& value, ValidatorType validator = {}) : ValueBase(), validator_(validator) {
@@ -159,21 +159,21 @@ class Value : public ValueBase {
     }
 
    private:
-    T             value_;
+    T value_;
     ValidatorType validator_;
-    bool          value_is_null_ = true;
+    bool value_is_null_ = true;
 };
 
-using Bool         = Value<bool, false>;
+using Bool = Value<bool, false>;
 using NullableBool = Value<bool, true>;
 
-using Double         = Value<double, false>;
+using Double = Value<double, false>;
 using NullableDouble = Value<double, true>;
 
-using Int         = Value<int, false>;
+using Int = Value<int, false>;
 using NullableInt = Value<int, true>;
 
-using String         = Value<std::string, false>;
+using String = Value<std::string, false>;
 using NullableString = Value<std::string, true>;
 
 template <typename T>
@@ -264,7 +264,7 @@ class ValueMap : public ValueBase {
 
    protected:
     std::map<std::string, VT> map_;
-    VT                        default_;
+    VT default_;
 };
 
 template <typename T>
@@ -291,7 +291,7 @@ class measurement_fromyaml {
 
     T operator()(const YAML::Node& node) {
         std::string s = node.as<std::string>();
-        auto        m = units::measurement_from_string(s);
+        auto m = units::measurement_from_string(s);
 
         if (!units_.has_same_base(m.units())) {
             throw std::runtime_error("Incorrect units. Not same base.");
@@ -328,7 +328,7 @@ class Measurement : public Value<T, Nullable> {
             }
         }
 
-        repr_unit_     = all_unit_[0];
+        repr_unit_ = all_unit_[0];
         repr_unit_str_ = all_unit_repr_[0];
     }
 
@@ -344,14 +344,14 @@ class Measurement : public Value<T, Nullable> {
                                      ") are not compatible with base unit (" +
                                      units::to_string(all_unit_[index_]) + ").");
         }
-        repr_unit_     = u;
+        repr_unit_ = u;
         repr_unit_str_ = s;
     }
 
     units::precise_unit unit() const { return all_unit_[index_]; }
 
     std::string to_string() const {
-        double             factor = units::convert(repr_unit_, all_unit_[index_]);
+        double factor = units::convert(repr_unit_, all_unit_[index_]);
         std::ostringstream out;
         out << T(this->get_value() / factor);
         return (out.str() + " " + repr_unit_str_);
@@ -361,15 +361,15 @@ class Measurement : public Value<T, Nullable> {
         std::string s = node.as<std::string>();
 
         // split number from unit
-        std::regex  re("^\\s*([+-]?[0-9,.]*(?:e[+-]?[0-9]*)?)\\s*(.*)?$");
+        std::regex re("^\\s*([+-]?[0-9,.]*(?:e[+-]?[0-9]*)?)\\s*(.*)?$");
         std::smatch m;
         if (!std::regex_match(s, m, re)) {
             throw std::runtime_error("Could not convert yaml to value.");
         }
 
-        size_t idx     = 0;
-        bool   matched = false;
-        double factor  = 1.;
+        size_t idx = 0;
+        bool matched = false;
+        double factor = 1.;
 
         if (m.size() > 2 && m[2].str().size() > 0) {
             auto u = units::unit_from_string(m[2].str());
@@ -410,11 +410,11 @@ class Measurement : public Value<T, Nullable> {
     }
 
    protected:
-    size_t                           index_;
-    units::precise_unit              repr_unit_;
-    std::string                      repr_unit_str_;
-    std::vector<std::string>         all_unit_repr_;
+    size_t index_;
+    units::precise_unit repr_unit_;
+    std::string repr_unit_str_;
+    std::vector<std::string> all_unit_repr_;
     std::vector<units::precise_unit> all_unit_;
 };
 
-} // namespace options
+}  // namespace options

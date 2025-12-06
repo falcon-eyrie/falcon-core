@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_EVENT_PROCESSOR_H_ // NOLINT
-#define DISRUPTOR_EVENT_PROCESSOR_H_ // NOLINT
+#ifndef DISRUPTOR_EVENT_PROCESSOR_H_  // NOLINT
+#define DISRUPTOR_EVENT_PROCESSOR_H_  // NOLINT
 
 #include <stdexcept>
 
@@ -51,7 +51,7 @@ template <typename T>
 class BatchEventProcessor : public EventProcessorInterface<T> {
    public:
     BatchEventProcessor(RingBuffer<T>* ring_buffer, SequenceBarrierInterface* sequence_barrier,
-                        EventHandlerInterface<T>*     event_handler,
+                        EventHandlerInterface<T>* event_handler,
                         ExceptionHandlerInterface<T>* exception_handler)
         : running_(false),
           ring_buffer_(ring_buffer),
@@ -73,7 +73,7 @@ class BatchEventProcessor : public EventProcessorInterface<T> {
         sequence_barrier_->ClearAlert();
         event_handler_->OnStart();
 
-        T*      event         = NULL;
+        T* event = NULL;
         int64_t next_sequence = sequence_.sequence() + 1L;
 
         while (true) {
@@ -105,16 +105,16 @@ class BatchEventProcessor : public EventProcessorInterface<T> {
 
    private:
     std::atomic<bool> running_;
-    Sequence          sequence_;
+    Sequence sequence_;
 
-    RingBuffer<T>*                ring_buffer_;
-    SequenceBarrierInterface*     sequence_barrier_;
-    EventHandlerInterface<T>*     event_handler_;
+    RingBuffer<T>* ring_buffer_;
+    SequenceBarrierInterface* sequence_barrier_;
+    EventHandlerInterface<T>* event_handler_;
     ExceptionHandlerInterface<T>* exception_handler_;
 
     DISALLOW_COPY_AND_ASSIGN(BatchEventProcessor);
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_EVENT_PROCESSOR_H_ NOLINT
+#endif  // DISRUPTOR_EVENT_PROCESSOR_H_ NOLINT

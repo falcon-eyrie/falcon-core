@@ -78,10 +78,10 @@ class DefineType {
 
     static const bool ispure() { return pure && BASETYPE::ispure(); }
 
-    using Data         = DATA;
-    using Parameters   = PARAMS;
+    using Data = DATA;
+    using Parameters = PARAMS;
     using Capabilities = CAPS;
-    using Base         = BASETYPE;
+    using Base = BASETYPE;
 };
 
 /**
@@ -149,7 +149,7 @@ class Data : public IData<Data, BaseType> {
     virtual void ClearData() {}
 
     uint64_t serial_number() const;
-    void     set_serial_number(uint64_t n);
+    void set_serial_number(uint64_t n);
 
     /**
      * @brief set_source_timestamp set the timepoint based on the internal
@@ -198,7 +198,7 @@ class Data : public IData<Data, BaseType> {
      * @return
      */
     uint64_t hardware_timestamp() const;
-    void     set_hardware_timestamp(uint64_t t);
+    void set_hardware_timestamp(uint64_t t);
 
     /**
      * @brief CloneTimestamps - copy timestamps from one packet to the other
@@ -254,8 +254,8 @@ class Data : public IData<Data, BaseType> {
 
    protected:
     TimePoint source_timestamp_;
-    uint64_t  hardware_timestamp_; // e.g. from Neuralynx
-    uint64_t  serial_number_;
+    uint64_t hardware_timestamp_;  // e.g. from Neuralynx
+    uint64_t serial_number_;
 };
 
 /**
@@ -275,7 +275,7 @@ class Capabilities {
     void Validate(const Data& prototype) const {}
 };
 
-} // namespace nsAnyType
+}  // namespace nsAnyType
 
 /**
  * @brief The generic AnyType is the base of the datatype hierarchy.

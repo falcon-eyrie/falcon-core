@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_WAITSTRATEGY_H_ // NOLINT
-#define DISRUPTOR_WAITSTRATEGY_H_ // NOLINT
+#ifndef DISRUPTOR_WAITSTRATEGY_H_  // NOLINT
+#define DISRUPTOR_WAITSTRATEGY_H_  // NOLINT
 
 #include <sys/time.h>
 
@@ -78,7 +78,7 @@ class BlockingStrategy : public WaitStrategyInterface {
                 barrier.CheckAlert();
                 consumer_notify_condition_.wait(ulock);
             }
-        } // unlock happens here, on ulock destruction.
+        }  // unlock happens here, on ulock destruction.
 
         if (0 != dependents.size()) {
             while ((available_sequence = GetMinimumSequence(dependents)) < sequence) {
@@ -103,7 +103,7 @@ class BlockingStrategy : public WaitStrategyInterface {
                                                         std::chrono::microseconds(timeout_micros)))
                     break;
             }
-        } // unlock happens here, on ulock destruction
+        }  // unlock happens here, on ulock destruction
 
         if (0 != dependents.size()) {
             while ((available_sequence = GetMinimumSequence(dependents)) < sequence) {
@@ -120,7 +120,7 @@ class BlockingStrategy : public WaitStrategyInterface {
     }
 
    private:
-    std::recursive_mutex        mutex_;
+    std::recursive_mutex mutex_;
     std::condition_variable_any consumer_notify_condition_;
 
     DISALLOW_COPY_AND_ASSIGN(BlockingStrategy);
@@ -134,7 +134,7 @@ class SleepingStrategy : public WaitStrategyInterface {
     virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
                             const SequenceBarrierInterface& barrier, const int64_t& sequence) {
         int64_t available_sequence = 0;
-        int     counter            = kRetries;
+        int counter = kRetries;
 
         if (0 == dependents.size()) {
             while ((available_sequence = cursor.sequence()) < sequence) {
@@ -158,7 +158,7 @@ class SleepingStrategy : public WaitStrategyInterface {
         int64_t start_micro = start_time.tv_sec * 1000000 + start_time.tv_usec;
 
         int64_t available_sequence = 0;
-        int     counter            = kRetries;
+        int counter = kRetries;
 
         if (0 == dependents.size()) {
             while ((available_sequence = cursor.sequence()) < sequence && timeout_micros > 0) {
@@ -212,7 +212,7 @@ class YieldingStrategy : public WaitStrategyInterface {
     virtual int64_t WaitFor(const std::vector<Sequence*>& dependents, const Sequence& cursor,
                             const SequenceBarrierInterface& barrier, const int64_t& sequence) {
         int64_t available_sequence = 0;
-        int     counter            = kSpinTries;
+        int counter = kSpinTries;
 
         if (0 == dependents.size()) {
             while ((available_sequence = cursor.sequence()) < sequence) {
@@ -235,7 +235,7 @@ class YieldingStrategy : public WaitStrategyInterface {
         int64_t start_micro = start_time.tv_sec * 1000000 + start_time.tv_usec;
 
         int64_t available_sequence = 0;
-        int     counter            = kSpinTries;
+        int counter = kSpinTries;
 
         if (0 == dependents.size()) {
             while ((available_sequence = cursor.sequence()) < sequence && timeout_micros > 0) {
@@ -306,7 +306,7 @@ class BusySpinStrategy : public WaitStrategyInterface {
                             const int64_t& timeout_micros) {
         struct timeval start_time, end_time;
         gettimeofday(&start_time, NULL);
-        int64_t start_micro        = start_time.tv_sec * 1000000 + start_time.tv_usec;
+        int64_t start_micro = start_time.tv_sec * 1000000 + start_time.tv_usec;
         int64_t available_sequence = 0;
 
         if (0 == dependents.size()) {
@@ -336,6 +336,6 @@ class BusySpinStrategy : public WaitStrategyInterface {
 
 WaitStrategyInterface* CreateWaitStrategy(WaitStrategyOption wait_option);
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_WAITSTRATEGY_H_  NOLINT
+#endif  // DISRUPTOR_WAITSTRATEGY_H_  NOLINT

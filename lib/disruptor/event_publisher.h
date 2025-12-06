@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_EVENT_PUBLISHER_H_ // NOLINT
-#define DISRUPTOR_EVENT_PUBLISHER_H_ // NOLINT
+#ifndef DISRUPTOR_EVENT_PUBLISHER_H_  // NOLINT
+#define DISRUPTOR_EVENT_PUBLISHER_H_  // NOLINT
 
 #include "ring_buffer.h"
 
@@ -45,6 +45,6 @@ class EventPublisher {
     RingBuffer<T>* ring_buffer_;
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
 #endif

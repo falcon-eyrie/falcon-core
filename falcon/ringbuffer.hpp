@@ -51,7 +51,7 @@ class RingBuffer : public disruptor::Sequencer {
      */
     RingBuffer(const T& prototype, int buffer_size,
                disruptor::ClaimStrategyOption claim_strategy_option,
-               disruptor::WaitStrategyOption  wait_strategy_option)
+               disruptor::WaitStrategyOption wait_strategy_option)
         : disruptor::Sequencer(buffer_size, claim_strategy_option, wait_strategy_option),
           buffer_size_(buffer_size),
           mask_(buffer_size - 1),
@@ -68,8 +68,8 @@ class RingBuffer : public disruptor::Sequencer {
 
    private:
     // Members
-    int            buffer_size_;
-    int            mask_;
+    int buffer_size_;
+    int mask_;
     std::vector<T> events_;
 
     DISALLOW_COPY_AND_ASSIGN(RingBuffer);
@@ -80,7 +80,7 @@ typedef disruptor::ProcessingSequenceBarrier RingBarrier;
 typedef disruptor::Sequence RingSequence;
 
 typedef disruptor::ClaimStrategyOption ClaimStrategy;
-typedef disruptor::WaitStrategyOption  WaitStrategy;
-typedef disruptor::AlertException      RingAlertException;
+typedef disruptor::WaitStrategyOption WaitStrategy;
+typedef disruptor::AlertException RingAlertException;
 
 typedef disruptor::BatchDescriptor RingBatch;

@@ -32,7 +32,7 @@ class StorageContext {
     std::map<std::string, std::string> storage_map() const { return storage_map_; }
 
     std::string default_context() const { return default_context_; }
-    void        set_default_context(std::string c) { default_context_ = c; }
+    void set_default_context(std::string c) { default_context_ = c; }
 
     std::string storage_context(const std::string& c) { return storage_map_[c]; }
 
@@ -47,7 +47,7 @@ class StorageContext {
     void add_storage_context(std::string key, std::string value) { storage_map_[key] = value; }
 
    protected:
-    std::string                        default_context_;
+    std::string default_context_;
     std::map<std::string, std::string> storage_map_;
 };
 
@@ -67,6 +67,6 @@ class GlobalContext : public StorageContext {
     void set_test(bool value) { default_test_flag_ = value; }
 
    private:
-    zmq::context_t    zmq_context_;
+    zmq::context_t zmq_context_;
     std::atomic<bool> default_test_flag_;
 };

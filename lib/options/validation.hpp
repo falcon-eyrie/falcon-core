@@ -208,4 +208,4 @@ class isdir : public validator<std::string> {
     bool create_;
 };
 
-} // namespace options
+}  // namespace options

@@ -84,4 +84,4 @@ Encoding string_to_encoding(std::string s) {
 #undef MATCH
 }
 
-} // namespace Serialization
+}  // namespace Serialization

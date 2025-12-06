@@ -33,6 +33,6 @@ const std::string PortAddress::string(bool full) const {
 
 const std::string SlotAddress::string(bool full) const {
     auto s = PortAddress::string(full);
-    s      = s + "." + std::to_string(slot());
+    s = s + "." + std::to_string(slot());
     return s;
 }

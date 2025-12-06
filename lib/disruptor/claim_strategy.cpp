@@ -14,4 +14,4 @@ ClaimStrategyInterface* CreateClaimStrategy(ClaimStrategyOption option, const in
     }
 };
 
-}; // namespace disruptor
+};  // namespace disruptor

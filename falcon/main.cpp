@@ -122,11 +122,11 @@ int main(int argc, char** argv) {
 
     // set up loggers
     // file logger
-    char*       home = getenv("HOME");
-    std::regex  re("(\\$HOME|~)");
+    char* home = getenv("HOME");
+    std::regex re("(\\$HOME|~)");
     std::string logpath = std::regex_replace(config.logging_path(), re, home);
 
-    auto worker         = g3::LogWorker::createLogWorker();
+    auto worker = g3::LogWorker::createLogWorker();
     auto defaultHandler = worker->addDefaultLogger("falcon", logpath);
 
     // initialize logging before creating additional loggers

@@ -148,16 +148,16 @@ class ProcessorGraph {
     std::string ExportYAML();
 
     const GraphState state() const { return state_; }
-    std::string      state_string() const;
-    void             set_state(GraphState state) {
+    std::string state_string() const;
+    void set_state(GraphState state) {
         state_ = state;
         LOG(STATE) << state_string();
     }
 
-    const ProcessorMap&      processors() const { return processors_; }
+    const ProcessorMap& processors() const { return processors_; }
     const StreamConnections& connections() const { return connections_; }
 
-    IProcessor*                                                  LookUpProcessor(std::string name);
+    IProcessor* LookUpProcessor(std::string name);
     std::vector<std::pair<std::string, std::shared_ptr<IState>>> LookUpStates(
         std::vector<std::string> state_addresses);
 
@@ -172,7 +172,7 @@ class ProcessorGraph {
 
     GlobalContext& global_context_;
 
-    ProcessorMap      processors_;
+    ProcessorMap processors_;
     StreamConnections connections_;
 
     SharedStateMap shared_state_map_;
@@ -180,7 +180,7 @@ class ProcessorGraph {
     GraphState state_ = GraphState::NOGRAPH;
 
     std::unique_ptr<RunContext> run_context_;
-    std::atomic<bool>           terminate_signal_;
+    std::atomic<bool> terminate_signal_;
 };
 
-} // namespace graph
+}  // namespace graph

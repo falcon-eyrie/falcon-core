@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_CLAIM_STRATEGY_H_ // NOLINT
-#define DISRUPTOR_CLAIM_STRATEGY_H_ // NOLINT
+#ifndef DISRUPTOR_CLAIM_STRATEGY_H_  // NOLINT
+#define DISRUPTOR_CLAIM_STRATEGY_H_  // NOLINT
 
 #include <thread>
 #include <vector>
@@ -50,7 +50,7 @@ class SingleThreadedStrategy : public ClaimStrategyInterface {
         return next_sequence;
     }
 
-    virtual int64_t IncrementAndGet(const int&                    delta,
+    virtual int64_t IncrementAndGet(const int& delta,
                                     const std::vector<Sequence*>& dependent_sequences) {
         int64_t next_sequence = sequence_.IncrementAndGet(delta);
         WaitForFreeSlotAt(next_sequence, dependent_sequences);
@@ -67,7 +67,7 @@ class SingleThreadedStrategy : public ClaimStrategyInterface {
         return true;
     }
 
-    virtual void SetSequence(const int64_t&                sequence,
+    virtual void SetSequence(const int64_t& sequence,
                              const std::vector<Sequence*>& dependent_sequences) {
         sequence_.set_sequence(sequence);
         WaitForFreeSlotAt(sequence, dependent_sequences);
@@ -79,7 +79,7 @@ class SingleThreadedStrategy : public ClaimStrategyInterface {
    private:
     SingleThreadedStrategy();
 
-    void WaitForFreeSlotAt(const int64_t&                sequence,
+    void WaitForFreeSlotAt(const int64_t& sequence,
                            const std::vector<Sequence*>& dependent_sequences) {
         int64_t wrap_point = sequence - buffer_size_;
         if (wrap_point > min_gating_sequence_.sequence()) {
@@ -90,7 +90,7 @@ class SingleThreadedStrategy : public ClaimStrategyInterface {
         }
     }
 
-    const int  buffer_size_;
+    const int buffer_size_;
     PaddedLong sequence_;
     PaddedLong min_gating_sequence_;
 
@@ -211,6 +211,6 @@ GetMinimumSequence(dependent_sequences))) { std::this_thread::yield();
 
 ClaimStrategyInterface* CreateClaimStrategy(ClaimStrategyOption option, const int& buffer_size);
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_CLAIM_STRATEGY_H_ NOLINT
+#endif  // DISRUPTOR_CLAIM_STRATEGY_H_ NOLINT

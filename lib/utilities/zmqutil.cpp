@@ -43,8 +43,8 @@ bool s_send_multi(zmq::socket_t& socket, const zmq_frames& frames) {
 }
 
 bool sockopt_rcvmore(zmq::socket_t& socket) {
-    int64_t rcvmore   = 0;
-    size_t  type_size = sizeof(int64_t);
+    int64_t rcvmore = 0;
+    size_t type_size = sizeof(int64_t);
     zmq_getsockopt(socket, ZMQ_RCVMORE, &rcvmore, &type_size);
     return rcvmore != 0;
 }
@@ -73,7 +73,7 @@ bool s_recv(zmq::socket_t& socket, std::string& s_message, int more) {
 zmq_msg_size(&message)); zmq_msg_close(&message); return true;
 }*/
 zmq_frames s_blocking_recv_multi(zmq::socket_t& socket) {
-    zmq_frames  frames;
+    zmq_frames frames;
     std::string message;
     do {
         s_recv(socket, message);

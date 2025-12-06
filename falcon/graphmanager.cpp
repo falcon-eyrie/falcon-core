@@ -39,7 +39,7 @@ void GraphManager::HandleCommand(std::string command, std::deque<std::string>& e
 
         if (!node.IsMap()) {
             std::string file = node.as<std::string>();
-            file             = global_context_->resolve_path(file, "graphs");
+            file = global_context_->resolve_path(file, "graphs");
             std::cout << "Loading graph definition from file: " << file << std::endl;
             try {
                 node = YAML::LoadFile(file);
@@ -56,9 +56,9 @@ void GraphManager::HandleCommand(std::string command, std::deque<std::string>& e
     } else if (command == "destroy") {
         graph_.Destroy();
     } else if (command == "start" || command == "test") {
-        std::string run_env     = extra.size() > 0 ? extra[0] : "";
+        std::string run_env = extra.size() > 0 ? extra[0] : "";
         std::string destination = extra.size() > 1 ? extra[1] : "";
-        std::string source      = extra.size() > 2 ? extra[2] : "";
+        std::string source = extra.size() > 2 ? extra[2] : "";
         graph_.StartProcessing(run_env, destination, source,
                                command == "test" || global_context_->test());
     } else if (command == "stop") {
@@ -90,7 +90,7 @@ void GraphManager::HandleCommand(std::string command, std::deque<std::string>& e
             reply.push_back(std::string(out.c_str()));
         }
     } else if (command == "documentation") {
-        YAML::Node    docs = graph_.GetProcessorDocumentation();
+        YAML::Node docs = graph_.GetProcessorDocumentation();
         YAML::Emitter out;
         out << docs;
         reply.push_back(std::string(out.c_str()));
@@ -180,7 +180,7 @@ void GraphManager::Run() {
 
     while (!terminated()) {
         // sleep a bit, since we are continuously polling
-        usleep(1000); // 1 msec
+        usleep(1000);  // 1 msec
 
         // process commands
         request.clear();

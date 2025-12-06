@@ -34,16 +34,16 @@ class IStreamInfo {
                 std::string stream_name = "data")
         : stream_rate_(stream_rate), datatype_(datatype), stream_name_(stream_name) {}
 
-    bool         finalized() const;
+    bool finalized() const;
     virtual void Finalize() = 0;
-    double       stream_rate() const;
-    void         set_stream_rate(double stream_rate);
-    void         set_stream_rate(const IStreamInfo& info);
-    std::string  datatype() const;
+    double stream_rate() const;
+    void set_stream_rate(double stream_rate);
+    void set_stream_rate(const IStreamInfo& info);
+    std::string datatype() const;
 
     std::string stream_name() const { return stream_name_; };
-    void        set_stream_name(std::string stream_name);
-    void        set_stream_name(const IStreamInfo& info);
+    void set_stream_name(std::string stream_name);
+    void set_stream_name(const IStreamInfo& info);
 
     void set_stream_parameters(const IStreamInfo& info);
     void set_stream_parameters(double stream_rate, std::string stream_name);
@@ -60,12 +60,12 @@ class IStreamInfo {
     }
 
    protected:
-    double                         stream_rate_ = 1.0;
-    std::string                    datatype_    = "none";
-    std::string                    stream_name_ = "data";
-    bool                           finalized_   = false;
+    double stream_rate_ = 1.0;
+    std::string datatype_ = "none";
+    std::string stream_name_ = "data";
+    bool finalized_ = false;
     std::unique_ptr<AnyType::Data> prototype_;
-    std::any                       parameters_;
+    std::any parameters_;
 };
 
 // Data type specific implementation of stream info

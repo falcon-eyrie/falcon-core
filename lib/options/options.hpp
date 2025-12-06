@@ -61,11 +61,11 @@ class OptionBase {
         : OptionBase(other.name_, other.value_, other.description_, other.required_) {}
 
     OptionBase& operator=(const options::OptionBase& other) {
-        name_        = other.name_;
-        path_        = other.path_;
+        name_ = other.name_;
+        path_ = other.path_;
         description_ = other.description_;
-        value_       = other.value_;
-        required_    = other.required_;
+        value_ = other.value_;
+        required_ = other.required_;
         return *this;
     }
 
@@ -94,11 +94,11 @@ class OptionBase {
     bool is_nullable() const;
 
    protected:
-    std::string              name_;
-    std::string              description_;
+    std::string name_;
+    std::string description_;
     std::vector<std::string> path_;
-    bool                     required_ = false;
-    ValueBase&               value_;
+    bool required_ = false;
+    ValueBase& value_;
 };
 
 template <typename T>
@@ -200,4 +200,4 @@ class OptionList {
    protected:
     std::list<OptionBase> options_;
 };
-} // namespace options
+}  // namespace options

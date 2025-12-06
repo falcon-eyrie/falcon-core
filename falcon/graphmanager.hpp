@@ -40,15 +40,15 @@ class GraphManager {
 
     void start() {
         terminate_ = false;
-        thread_    = std::thread(&GraphManager::Run, this);
+        thread_ = std::thread(&GraphManager::Run, this);
     }
     bool terminated() const { return terminate_; }
 
    private:
     std::thread thread_;
 
-    void           Run();
-    bool           terminate_ = false;
+    void Run();
+    bool terminate_ = false;
     GlobalContext* global_context_;
 
     void HandleCommand(std::string command, std::deque<std::string>& extra,
@@ -57,4 +57,4 @@ class GraphManager {
 
     ProcessorGraph graph_;
 };
-} // namespace graph
+}  // namespace graph

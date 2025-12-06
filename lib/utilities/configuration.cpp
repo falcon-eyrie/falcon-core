@@ -35,7 +35,7 @@ void Configuration::load(std::string filename) {
         node = YAML::LoadFile(p.string());
         options_.from_yaml(node, {}, false);
         std::cout << "Default configuration loaded from " << p.string() << std::endl;
-    } catch (YAML::BadFile& e) { // config file does not exist, save default configuration
+    } catch (YAML::BadFile& e) {  // config file does not exist, save default configuration
         try {
             // create parent path if it doesn't exist
             parse_directory(p.parent_path().string(), true, true);

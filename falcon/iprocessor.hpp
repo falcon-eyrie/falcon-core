@@ -56,7 +56,7 @@ class IProcessor {
     friend class ISlotIn;
     friend class graph::ProcessorGraph;
 
-   public: // called by anyone
+   public:  // called by anyone
     IProcessor(ThreadPriority priority = PRIORITY_NONE) : running_(false), thread_() {
         // add test option
         add_option("test", new_test_flag_);
@@ -125,7 +125,7 @@ class IProcessor {
     virtual bool isautonomous() const { return (issource() && issink()); }
 
     ThreadPriority thread_priority() const { return thread_priority_(); }
-    ThreadCore     thread_core() const { return thread_core_(); }
+    ThreadCore thread_core() const { return thread_core_(); }
 
     bool running() const { return running_.load(); }
 
@@ -133,7 +133,7 @@ class IProcessor {
 
    protected:
     std::map<std::string, std::shared_ptr<std::ostream>> streams_;
-    std::vector<TimePoint>                               test_source_timestamps_;
+    std::vector<TimePoint> test_source_timestamps_;
 
     /* this methods creates a file whose access key is filename and whose
     fullpath is prefix.filename.extension*/
@@ -142,7 +142,7 @@ class IProcessor {
     void prepare_latency_test(ProcessingContext& context);
     void save_source_timestamps_to_disk(std::uint64_t n_timestamps);
 
-   protected: // callable by derived processors, but not others
+   protected:  // callable by derived processors, but not others
     /**
      * Add an option to the processor.
      *
@@ -189,9 +189,9 @@ class IProcessor {
      * @returns An observing pointer to the output port.
      */
     template <typename DATATYPE>
-    PortOut<DATATYPE>* create_output_port(std::string                          name,
+    PortOut<DATATYPE>* create_output_port(std::string name,
                                           const typename DATATYPE::Parameters& parameters,
-                                          const PortOutPolicy&                 policy) {
+                                          const PortOutPolicy& policy) {
         if (name.size() == 0) {
             name = DATATYPE::dataname();
         }
@@ -216,7 +216,7 @@ class IProcessor {
      */
     template <typename DATATYPE>
     PortOut<DATATYPE>* create_output_port(const typename DATATYPE::Parameters& parameters,
-                                          const PortOutPolicy&                 policy) {
+                                          const PortOutPolicy& policy) {
         return create_output_port<DATATYPE>(DATATYPE::dataname(), parameters, policy);
     }
 
@@ -232,9 +232,9 @@ class IProcessor {
      */
     template <typename DATATYPE>
 
-    PortIn<DATATYPE>* create_input_port(std::string                            name,
+    PortIn<DATATYPE>* create_input_port(std::string name,
                                         const typename DATATYPE::Capabilities& capabilities,
-                                        const PortInPolicy&                    policy) {
+                                        const PortInPolicy& policy) {
         if (name.size() == 0) {
             name = DATATYPE::dataname();
         }
@@ -259,7 +259,7 @@ class IProcessor {
      */
     template <typename DATATYPE>
     PortIn<DATATYPE>* create_input_port(const typename DATATYPE::Capabilities& capabilities,
-                                        const PortInPolicy&                    policy) {
+                                        const PortInPolicy& policy) {
         return create_input_port<DATATYPE>(DATATYPE::dataname(), capabilities, policy);
     }
 
@@ -357,7 +357,7 @@ class IProcessor {
      */
     template <typename T>
     StaticState<T>* create_static_state(std::string state, T default_value, bool shared = true,
-                                        Permission  external    = Permission::WRITE,
+                                        Permission external = Permission::WRITE,
                                         std::string description = "") {
         if (shared) {
             return ((StaticState<T>*) create_readable_shared_state<T>(
@@ -391,8 +391,8 @@ class IProcessor {
      */
     template <typename T>
     ProducerState<T>* create_producer_state(std::string state, T default_value,
-                                            bool        cooperative = false,
-                                            Permission  external    = Permission::READ,
+                                            bool cooperative = false,
+                                            Permission external = Permission::READ,
                                             std::string description = "") {
         if (cooperative) {
             return ((ProducerState<T>*) create_writable_shared_state<T>(
@@ -423,7 +423,7 @@ class IProcessor {
      */
     template <typename T>
     BroadcasterState<T>* create_broadcaster_state(std::string state, T default_value,
-                                                  Permission  external    = Permission::NONE,
+                                                  Permission external = Permission::NONE,
                                                   std::string description = "") {
         return ((BroadcasterState<T>*) create_writable_shared_state<T>(
             state, default_value, Permission::READ, external, description));
@@ -450,7 +450,7 @@ class IProcessor {
      */
     template <typename T>
     FollowerState<T>* create_follower_state(std::string state, T default_value,
-                                            Permission  external    = Permission::NONE,
+                                            Permission external = Permission::NONE,
                                             std::string description = "") {
         return ((FollowerState<T>*) create_readable_shared_state<T>(
             state, default_value, Permission::WRITE, external, description));
@@ -476,8 +476,8 @@ class IProcessor {
      */
     template <typename T>
     ReadableState<T>* create_readable_shared_state(std::string state, T default_value,
-                                                   Permission  peers       = Permission::WRITE,
-                                                   Permission  external    = Permission::NONE,
+                                                   Permission peers = Permission::WRITE,
+                                                   Permission external = Permission::NONE,
                                                    std::string description = "") {
         if (shared_states_.count(state) == 1) {
             throw ProcessorInternalError(
@@ -510,8 +510,8 @@ class IProcessor {
      */
     template <typename T>
     WritableState<T>* create_writable_shared_state(std::string state, T default_value,
-                                                   Permission  peers       = Permission::READ,
-                                                   Permission  external    = Permission::NONE,
+                                                   Permission peers = Permission::READ,
+                                                   Permission external = Permission::NONE,
                                                    std::string description = "") {
         if (shared_states_.count(state) == 1) {
             throw ProcessorInternalError(
@@ -553,11 +553,11 @@ class IProcessor {
         return exposed_methods_[method];
     }
 
-   protected: // to be overridden and callable by derived processors
+   protected:  // to be overridden and callable by derived processors
     virtual std::string default_input_port() const;
     virtual std::string default_output_port() const;
 
-   private: // to be overridden by derived processors, callable internally
+   private:  // to be overridden by derived processors, callable internally
     virtual void Configure(const GlobalContext& context) {}
     virtual void CreatePorts() = 0;
     virtual void Preprocess(ProcessingContext& context) {}
@@ -569,9 +569,9 @@ class IProcessor {
     virtual void TestPrepare(ProcessingContext& context) {}
     virtual void TestFinalize(ProcessingContext& context) {}
 
-   private: // callable internally only
-    void internal_Configure(const YAML::Node&    node,
-                            const GlobalContext& context); // from engine
+   private:  // callable internally only
+    void internal_Configure(const YAML::Node& node,
+                            const GlobalContext& context);  // from engine
     void internal_CreatePorts();
     void internal_PrepareConnectionIn(SlotAddress& in);
     void internal_PrepareConnectionOut(SlotAddress& out);
@@ -609,14 +609,14 @@ class IProcessor {
     std::string name_;
     std::string type_;
 
-    std::map<std::string, std::unique_ptr<IPortIn>>  input_ports_;
+    std::map<std::string, std::unique_ptr<IPortIn>> input_ports_;
     std::map<std::string, std::unique_ptr<IPortOut>> output_ports_;
 
     std::map<std::string, std::function<YAML::Node(const YAML::Node&)>> exposed_methods_;
-    std::map<std::string, std::shared_ptr<IState>>                      shared_states_;
+    std::map<std::string, std::shared_ptr<IState>> shared_states_;
 
     bool negotiated_ = false;
-    bool prepared_   = false;
+    bool prepared_ = false;
 
     std::atomic<bool> running_;
 
@@ -629,7 +629,7 @@ class IProcessor {
         CORE_NOT_PINNED, options::inrange<ThreadCore>(
                              CORE_NOT_PINNED, (ThreadCore) sysconf(_SC_NPROCESSORS_ONLN) - 1)};
 
-    options::NullableBool                      new_test_flag_;
+    options::NullableBool new_test_flag_;
     options::Value<std::map<std::string, int>> requested_buffer_sizes_{};
 
    protected:
