@@ -1,3 +1,10 @@
+#!/bin/sh
+set -e
+
+which run-clang-tidy
+which clang-tidy
+clang-tidy --version
+
 EXTS="
 *.c
 *.cc

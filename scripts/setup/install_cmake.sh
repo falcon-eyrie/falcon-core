@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 set -e
 
 VERSION=4.1.2
@@ -7,7 +7,7 @@ INSTALLER=cmake-$VERSION-linux-x86_64.sh
 URL="https://github.com/Kitware/CMake/releases/download/v$VERSION/$INSTALLER"
 
 echo "Downloading CMake $VERSION..."
-wget -q -O "$TMP_DIR/$INSTALLER" "$URL"
+curl --fail --silent --show-error --location -o "$TMP_DIR/$INSTALLER" "$URL"
 
 echo "Making installer executable..."
 chmod +x "$TMP_DIR/$INSTALLER"
@@ -19,4 +19,5 @@ echo "Cleaning up..."
 rm -f "$TMP_DIR/$INSTALLER"
 
 echo "Done! Installed version:"
+which cmake
 cmake --version
