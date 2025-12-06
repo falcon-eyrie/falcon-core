@@ -6,25 +6,9 @@ ENABLE_LANGUAGE(CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wunused -std=c++17 -pthread -D_GLIBCXX_USE_NANOSLEEP")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wextra -Wunused -std=c++17 -pthread")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wunused -std=c++17 -pthread -D_GLIBCXX_USE_NANOSLEEP")
-endif()
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message(STATUS "Detected GCC version ${CMAKE_CXX_COMPILER_VERSION}")
-
-	if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0)
-        message(FATAL_ERROR "GCC >= 11.0 required, found ${CMAKE_CXX_COMPILER_VERSION}")
-    endif()
-
-	if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.0
-        OR CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 13.999)
-        message(WARNING "Falcon is tested only with GCC 13.x — found GCC ${CMAKE_CXX_COMPILER_VERSION}")
-    endif()
-
-else()
-    message(WARNING "Non-GNU compiler detected: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} but  Falcon is tested only with GCC 13.x")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Wunused -std=c++17 -pthread")
 endif()
 
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")

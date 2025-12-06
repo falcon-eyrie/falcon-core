@@ -1,4 +1,13 @@
 {
+    "C_Cpp.codeAnalysis.exclude": {
+        "**/build/": true,
+    },
+    "search.exclude": {
+        "**/build/": true,
+    },
+    "files.watcherExclude": {
+        "**/build/": true,
+    },
     "search.useIgnoreFiles": false,
     "cmake.configureOnOpen": false,
     "[cpp]": {
@@ -6,4 +15,10 @@
         "editor.formatOnSave": true
     },
     "C_Cpp.autoAddFileAssociations": false,
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "C_Cpp.clang_format_path": "/opt/llvm-21.1.7/bin/clang-format",
+    "C_Cpp.codeAnalysis.clangTidy.path": "/opt/llvm-21.1.7/bin/clang-tidy",
+    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+    "C_Cpp.codeAnalysis.runAutomatically": true,
+    "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
 }

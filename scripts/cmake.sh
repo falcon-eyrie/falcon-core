@@ -8,4 +8,4 @@ if ! command -v cmake >/dev/null 2>&1; then
 fi
 
 mkdir -p build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Debug
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/opt/llvm-21.1.7/bin/clang -DCMAKE_CXX_COMPILER=/opt/llvm-21.1.7/bin/clang++
