@@ -37,7 +37,8 @@ enum class TruncateFlag { ROUND = 0, FLOOR, CEIL };
 template <typename T>
 T time2samples(double t, double rate, TruncateFlag flag = TruncateFlag::ROUND);
 
-template <typename T> constexpr double samples2time(T nsamples, double rate);
+template <typename T>
+constexpr double samples2time(T nsamples, double rate);
 
 // returns the time difference in seconds between two timestamps
 double compute_delta_ts(uint64_t t1, uint64_t t2);

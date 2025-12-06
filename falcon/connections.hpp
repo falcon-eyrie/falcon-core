@@ -22,9 +22,11 @@
 #include <string>
 
 class PortAddress {
-  public:
+   public:
     PortAddress(std::string processor, std::string port)
-        : processor_name_(processor), port_name_(port), processor_class_("?"),
+        : processor_name_(processor),
+          port_name_(port),
+          processor_class_("?"),
           port_datatype_("?") {}
 
     const std::string processor() const { return processor_name_; }
@@ -42,7 +44,7 @@ class PortAddress {
     void set_processor_class(std::string klass) { processor_class_ = klass; }
     const std::string string(bool full = false) const;
 
-  protected:
+   protected:
     std::string processor_name_;
     std::string port_name_;
     std::string processor_class_;
@@ -50,12 +52,11 @@ class PortAddress {
 };
 
 class SlotAddress : public PortAddress {
-  public:
+   public:
     SlotAddress(std::string processor, std::string port, int slot)
         : PortAddress(processor, port), slot_(slot) {}
 
-    SlotAddress(const PortAddress &port, int slot)
-        : PortAddress(port), slot_(slot) {}
+    SlotAddress(const PortAddress& port, int slot) : PortAddress(port), slot_(slot) {}
 
     int slot() const { return slot_; }
 
@@ -63,6 +64,6 @@ class SlotAddress : public PortAddress {
 
     const std::string string(bool full = false) const;
 
-  protected:
+   protected:
     int slot_;
 };

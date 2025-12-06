@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_RING_BUFFER_H_ // NOLINT
-#define DISRUPTOR_RING_BUFFER_H_ // NOLINT
+#ifndef DISRUPTOR_RING_BUFFER_H_  // NOLINT
+#define DISRUPTOR_RING_BUFFER_H_  // NOLINT
 
 #include <array>
 #include <condition_variable>
@@ -44,8 +44,9 @@ namespace disruptor {
 //
 // @param <T> implementation storing the data for sharing during exchange
 // or parallel coordination of an event.
-template <typename T> class RingBuffer : public Sequencer {
-  public:
+template <typename T>
+class RingBuffer : public Sequencer {
+   public:
     // Construct a RingBuffer with the full option set.
     //
     // @param event_factory to instance new entries for filling the RingBuffer.
@@ -54,11 +55,11 @@ template <typename T> class RingBuffer : public Sequencer {
     // entries in the ring.
     // @param wait_strategy_option waiting strategy employed by
     // processors_to_track waiting in entries becoming available.
-    RingBuffer(EventFactoryInterface<T> *event_factory, int buffer_size,
-               ClaimStrategyOption claim_strategy_option,
-               WaitStrategyOption wait_strategy_option)
+    RingBuffer(EventFactoryInterface<T>* event_factory, int buffer_size,
+               ClaimStrategyOption claim_strategy_option, WaitStrategyOption wait_strategy_option)
         : Sequencer(buffer_size, claim_strategy_option, wait_strategy_option),
-          buffer_size_(buffer_size), mask_(buffer_size - 1),
+          buffer_size_(buffer_size),
+          mask_(buffer_size - 1),
           events_(event_factory->NewInstance(buffer_size)) {}
 
     ~RingBuffer() { delete[] events_; }
@@ -67,17 +68,17 @@ template <typename T> class RingBuffer : public Sequencer {
     //
     // @param sequence for the event
     // @return event pointer at the specified sequence position.
-    T *Get(const int64_t &sequence) { return &events_[sequence & mask_]; }
+    T* Get(const int64_t& sequence) { return &events_[sequence & mask_]; }
 
-  private:
+   private:
     // Members
     int buffer_size_;
     int mask_;
-    T *events_;
+    T* events_;
 
     DISALLOW_COPY_AND_ASSIGN(RingBuffer);
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_RING_BUFFER_H_ NOLINT
+#endif  // DISRUPTOR_RING_BUFFER_H_ NOLINT

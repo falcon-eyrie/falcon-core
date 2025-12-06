@@ -60,8 +60,8 @@ enum class GraphState {
 };
 
 class ProcessorGraph {
-  public:
-    ProcessorGraph(GlobalContext &context);
+   public:
+    ProcessorGraph(GlobalContext& context);
 
     bool terminated() { return terminate_signal_.load(); }
 
@@ -81,7 +81,7 @@ class ProcessorGraph {
     }
 
     bool all_processors_running() {
-        for (auto &it : processors_) {
+        for (auto& it : processors_) {
             if (!it.second.second->running()) {
                 return false;
             }
@@ -89,7 +89,7 @@ class ProcessorGraph {
         return true;
     }
     bool any_processor_running() {
-        for (auto &it : processors_) {
+        for (auto& it : processors_) {
             if (it.second.second->running()) {
                 return true;
             }
@@ -106,7 +106,7 @@ class ProcessorGraph {
      *
      *@param node graph description
      */
-    void ConstructProcessorEngines(const YAML::Node &node);
+    void ConstructProcessorEngines(const YAML::Node& node);
 
     /**
      * Give the documentation of either all registered processor or only
@@ -121,29 +121,29 @@ class ProcessorGraph {
      *create shared state.
      *@param node graph description
      */
-    void Build(const YAML::Node &node);
+    void Build(const YAML::Node& node);
     void Destroy();
-    void StartProcessing(std::string run_group_id, std::string run_id,
-                         std::string template_id, bool test_flag);
+    void StartProcessing(std::string run_group_id, std::string run_id, std::string template_id,
+                         bool test_flag);
     void StopProcessing();
     /**
      *Update processor's shared state with input from the user
      *
      *@param node graph description
      */
-    void Update(YAML::Node &node);
+    void Update(YAML::Node& node);
     /**
      *Retrieve the state value for all shared state name given in the yaml node.
      *
      *@param node shared state description
      */
-    void Retrieve(YAML::Node &node);
+    void Retrieve(YAML::Node& node);
     /**
      *Apply exposed methods with parameters given in the yaml node
      *
      *@param node exposed method description
      */
-    void Apply(YAML::Node &node);
+    void Apply(YAML::Node& node);
 
     std::string ExportYAML();
 
@@ -154,23 +154,23 @@ class ProcessorGraph {
         LOG(STATE) << state_string();
     }
 
-    const ProcessorMap &processors() const { return processors_; }
-    const StreamConnections &connections() const { return connections_; }
+    const ProcessorMap& processors() const { return processors_; }
+    const StreamConnections& connections() const { return connections_; }
 
-    IProcessor *LookUpProcessor(std::string name);
-    std::vector<std::pair<std::string, std::shared_ptr<IState>>>
-    LookUpStates(std::vector<std::string> state_addresses);
+    IProcessor* LookUpProcessor(std::string name);
+    std::vector<std::pair<std::string, std::shared_ptr<IState>>> LookUpStates(
+        std::vector<std::string> state_addresses);
 
-    void BuildSharedStates(const YAML::Node &node);
+    void BuildSharedStates(const YAML::Node& node);
 
-  protected:
-    void CreateConnection(SlotAddress &out, SlotAddress &in);
+   protected:
+    void CreateConnection(SlotAddress& out, SlotAddress& in);
 
-  private:
+   private:
     YAML::Node yaml_;
     YAML::Node documentation_;
 
-    GlobalContext &global_context_;
+    GlobalContext& global_context_;
 
     ProcessorMap processors_;
     StreamConnections connections_;
@@ -183,4 +183,4 @@ class ProcessorGraph {
     std::atomic<bool> terminate_signal_;
 };
 
-} // namespace graph
+}  // namespace graph

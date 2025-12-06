@@ -24,7 +24,7 @@
 #include "iprocessor.hpp"
 #include "istreamports.hpp"
 
-void ISlotOut::Connect(ISlotIn *downstream) {
+void ISlotOut::Connect(ISlotIn* downstream) {
     if (downstream_slots_.count(downstream) == 0) {
         downstream_slots_.insert(downstream);
     } else {
@@ -32,9 +32,9 @@ void ISlotOut::Connect(ISlotIn *downstream) {
     }
 }
 
-std::vector<RingSequence *> ISlotOut::gating_sequences() {
-    std::vector<RingSequence *> v;
-    for (auto &it : downstream_slots_) {
+std::vector<RingSequence*> ISlotOut::gating_sequences() {
+    std::vector<RingSequence*> v;
+    for (auto& it : downstream_slots_) {
         v.push_back(it->sequence());
     }
     return v;
@@ -51,10 +51,9 @@ void ISlotIn::ReleaseData() {
     }
 }
 
-void ISlotIn::Connect(ISlotOut *upstream) {
+void ISlotIn::Connect(ISlotOut* upstream) {
     if (connected()) {
-        throw std::runtime_error(
-            "Error connecting to slot (already connected)");
+        throw std::runtime_error("Error connecting to slot (already connected)");
     }
 
     upstream_ = upstream;

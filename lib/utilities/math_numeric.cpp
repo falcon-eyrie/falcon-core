@@ -31,8 +31,7 @@ int next_pow2(int n) {
     return n;
 }
 
-bool compare_doubles(double A, double B, double maxAbsoluteError,
-                     double maxRelativeError) {
+bool compare_doubles(double A, double B, double maxAbsoluteError, double maxRelativeError) {
     // adapted from
     // http://www.cygnus-software.com/papers/comparingfloats/Comparing%20floating%20point%20numbers.htm#_Toc135149453
 

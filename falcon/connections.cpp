@@ -23,8 +23,7 @@ const std::string PortAddress::string(bool full) const {
     std::string s;
 
     if (full) {
-        s = processor() + "[" + processor_class() + "]." + port() + "[" +
-            port_datatype() + "]";
+        s = processor() + "[" + processor_class() + "]." + port() + "[" + port_datatype() + "]";
     } else {
         s = processor() + "." + port();
     }

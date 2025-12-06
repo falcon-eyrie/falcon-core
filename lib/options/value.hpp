@@ -35,11 +35,11 @@
 namespace options {
 
 class ValueBase {
-  public:
+   public:
     ValueBase() {}
     virtual ~ValueBase() {}
 
-    virtual void from_yaml(const YAML::Node &node) = 0;
+    virtual void from_yaml(const YAML::Node& node) = 0;
     virtual YAML::Node to_yaml() const = 0;
 
     virtual bool is_nullable() const = 0;
@@ -47,28 +47,30 @@ class ValueBase {
     virtual bool is_null() const = 0;
     virtual void set_null() = 0;
 
-  protected:
+   protected:
     virtual void unset_null() = 0;
 };
 
-template <typename T> T generic_fromyaml(const YAML::Node &node) {
+template <typename T>
+T generic_fromyaml(const YAML::Node& node) {
     return node.as<T>();
 }
 
-template <typename T> YAML::Node generic_toyaml(const T &x) {
+template <typename T>
+YAML::Node generic_toyaml(const T& x) {
     YAML::Node node;
     node = x;
 
     return node;
 }
 
-template <typename T, bool Nullable = true> class Value : public ValueBase {
-  public:
+template <typename T, bool Nullable = true>
+class Value : public ValueBase {
+   public:
     using ValueType = T;
     using ValidatorType = ValidatorFunc<T>;
 
-    Value(const T &value, ValidatorType validator = {})
-        : ValueBase(), validator_(validator) {
+    Value(const T& value, ValidatorType validator = {}) : ValueBase(), validator_(validator) {
         set_value(value);
     }
 
@@ -85,9 +87,7 @@ template <typename T, bool Nullable = true> class Value : public ValueBase {
         return value;
     }
 
-    void from_yaml(const YAML::Node &node) override {
-        set_value(generic_fromyaml<T>(node));
-    }
+    void from_yaml(const YAML::Node& node) override { set_value(generic_fromyaml<T>(node)); }
 
     YAML::Node to_yaml() const override {
         YAML::Node node;
@@ -101,7 +101,7 @@ template <typename T, bool Nullable = true> class Value : public ValueBase {
         return node;
     }
 
-    const T &get_value() const {
+    const T& get_value() const {
         if constexpr (Nullable) {
             if (is_null()) {
                 throw std::runtime_error("Value has not been set.");
@@ -110,21 +110,21 @@ template <typename T, bool Nullable = true> class Value : public ValueBase {
         return value_;
     }
 
-    const T &operator()() const { return get_value(); }
+    const T& operator()() const { return get_value(); }
 
-    void set_value(const T &value) {
+    void set_value(const T& value) {
         value_ = validate(value);
         if constexpr (Nullable) {
             unset_null();
         }
     }
 
-    Value<T, Nullable> &operator=(const T &value) {
+    Value<T, Nullable>& operator=(const T& value) {
         set_value(value);
         return (*this);
     }
 
-    Value<T, Nullable> &operator=(const Value<T> &value) {
+    Value<T, Nullable>& operator=(const Value<T>& value) {
         set_value(value());
         return (*this);
     }
@@ -145,22 +145,20 @@ template <typename T, bool Nullable = true> class Value : public ValueBase {
         if constexpr (Nullable) {
             value_is_null_ = true;
         } else {
-            throw std::runtime_error(
-                "Value::set_null : value is not nullable.");
+            throw std::runtime_error("Value::set_null : value is not nullable.");
         }
     }
 
-  protected:
+   protected:
     void unset_null() final {
         if constexpr (Nullable) {
             value_is_null_ = false;
         } else {
-            throw std::runtime_error(
-                "Value::unset_null : value is not nullable.");
+            throw std::runtime_error("Value::unset_null : value is not nullable.");
         }
     }
 
-  private:
+   private:
     T value_;
     ValidatorType validator_;
     bool value_is_null_ = true;
@@ -178,7 +176,8 @@ using NullableInt = Value<int, true>;
 using String = Value<std::string, false>;
 using NullableString = Value<std::string, true>;
 
-template <typename T> std::vector<T> vector_fromyaml(const YAML::Node &node) {
+template <typename T>
+std::vector<T> vector_fromyaml(const YAML::Node& node) {
     if (node.IsSequence()) {
         return node.as<std::vector<T>>();
     } else if (node.IsNull()) {
@@ -190,22 +189,19 @@ template <typename T> std::vector<T> vector_fromyaml(const YAML::Node &node) {
 
 template <typename T, bool Nullable = false>
 class Vector : public Value<std::vector<T>, Nullable> {
-  public:
-    Vector(const std::vector<T> &value = {},
-           ValidatorFunc<std::vector<T>> validator = {})
+   public:
+    Vector(const std::vector<T>& value = {}, ValidatorFunc<std::vector<T>> validator = {})
         : Value<std::vector<T>, Nullable>(value, validator) {}
 
-    void from_yaml(const YAML::Node &node) override {
-        this->set_value(vector_fromyaml<T>(node));
-    }
+    void from_yaml(const YAML::Node& node) override { this->set_value(vector_fromyaml<T>(node)); }
 };
 
-template <typename VT> class ValueMap : public ValueBase {
-  public:
+template <typename VT>
+class ValueMap : public ValueBase {
+   public:
     using ValueType = typename VT::ValueType;
 
-    ValueMap(const VT &value = VT(),
-             const std::map<std::string, ValueType> map = {})
+    ValueMap(const VT& value = VT(), const std::map<std::string, ValueType> map = {})
         : ValueBase(), default_(value) {
         set_map(map);
     }
@@ -213,7 +209,7 @@ template <typename VT> class ValueMap : public ValueBase {
     void set_map(std::map<std::string, ValueType> m) {
         std::map<std::string, VT> tmp;
 
-        for (auto &k : m) {
+        for (auto& k : m) {
             tmp.emplace(k.first, default_);
             tmp[k.first] = k.second;
         }
@@ -221,7 +217,7 @@ template <typename VT> class ValueMap : public ValueBase {
         map_ = tmp;
     }
 
-    virtual void from_yaml(const YAML::Node &node) {
+    virtual void from_yaml(const YAML::Node& node) {
         if (!node.IsMap()) {
             throw std::runtime_error("Not a map");
         }
@@ -232,13 +228,13 @@ template <typename VT> class ValueMap : public ValueBase {
     virtual YAML::Node to_yaml() const {
         YAML::Node node = YAML::Node(YAML::NodeType::Map);
 
-        for (auto &k : map_) {
+        for (auto& k : map_) {
             node[k.first] = k.second.to_yaml();
         }
         return node;
     }
 
-    VT &operator[](const std::string &key) {
+    VT& operator[](const std::string& key) {
         // if key is not in map
         if (!map_.count(key)) {
             map_.emplace(key, default_);
@@ -249,7 +245,7 @@ template <typename VT> class ValueMap : public ValueBase {
     std::map<std::string, ValueType> get_map() const {
         std::map<std::string, ValueType> m;
 
-        for (auto &k : map_) {
+        for (auto& k : map_) {
             m[k.first] = k.second();
         }
 
@@ -263,19 +259,20 @@ template <typename VT> class ValueMap : public ValueBase {
     virtual bool is_null() const { throw std::runtime_error("Not nullable."); }
     virtual void set_null() { throw std::runtime_error("Not nullable."); }
 
-  protected:
+   protected:
     virtual void unset_null() { throw std::runtime_error("Not nullable."); }
 
-  protected:
+   protected:
     std::map<std::string, VT> map_;
     VT default_;
 };
 
-template <typename T> class measurement_toyaml {
-  public:
+template <typename T>
+class measurement_toyaml {
+   public:
     measurement_toyaml(units::precise_unit u) : units_(u) {}
 
-    YAML::Node operator()(const T &x) {
+    YAML::Node operator()(const T& x) {
         YAML::Node node;
 
         node = std::to_string(x) + " " + units::to_string(units_);
@@ -283,15 +280,16 @@ template <typename T> class measurement_toyaml {
         return node;
     }
 
-  protected:
+   protected:
     units::precise_unit units_;
 };
 
-template <typename T> class measurement_fromyaml {
-  public:
+template <typename T>
+class measurement_fromyaml {
+   public:
     measurement_fromyaml(units::precise_unit u) : units_(u) {}
 
-    T operator()(const YAML::Node &node) {
+    T operator()(const YAML::Node& node) {
         std::string s = node.as<std::string>();
         auto m = units::measurement_from_string(s);
 
@@ -308,13 +306,13 @@ template <typename T> class measurement_fromyaml {
         return T(value);
     }
 
-  protected:
+   protected:
     units::precise_unit units_;
 };
 
 template <typename T, bool Nullable = false>
 class Measurement : public Value<T, Nullable> {
-  public:
+   public:
     Measurement(T value, std::string u, ValidatorFunc<T> validator = {},
                 std::vector<std::string> alt = {})
         : Value<T, Nullable>(value, validator), index_(0) {
@@ -322,7 +320,7 @@ class Measurement : public Value<T, Nullable> {
         all_unit_repr_.push_back(u);
         all_unit_repr_.insert(all_unit_repr_.end(), alt.begin(), alt.end());
 
-        for (auto &k : all_unit_repr_) {
+        for (auto& k : all_unit_repr_) {
             if (k.size() == 0) {
                 all_unit_.push_back(units::precise::one);
             } else {
@@ -342,10 +340,9 @@ class Measurement : public Value<T, Nullable> {
         // check that it is the same base units
         auto u = units::unit_from_string(s);
         if (!u.equivalent_non_counting(all_unit_[index_])) {
-            throw std::runtime_error(
-                "Representation unit (" + units::to_string(u) +
-                ") are not compatible with base unit (" +
-                units::to_string(all_unit_[index_]) + ").");
+            throw std::runtime_error("Representation unit (" + units::to_string(u) +
+                                     ") are not compatible with base unit (" +
+                                     units::to_string(all_unit_[index_]) + ").");
         }
         repr_unit_ = u;
         repr_unit_str_ = s;
@@ -360,7 +357,7 @@ class Measurement : public Value<T, Nullable> {
         return (out.str() + " " + repr_unit_str_);
     }
 
-    void from_yaml(const YAML::Node &node) override {
+    void from_yaml(const YAML::Node& node) override {
         std::string s = node.as<std::string>();
 
         // split number from unit
@@ -385,9 +382,8 @@ class Measurement : public Value<T, Nullable> {
             }
 
             if (!matched) {
-                throw std::runtime_error(
-                    "Representation unit (" + units::to_string(u) +
-                    ") are not compatible with any permissable unit.");
+                throw std::runtime_error("Representation unit (" + units::to_string(u) +
+                                         ") are not compatible with any permissable unit.");
             }
         }
 
@@ -403,17 +399,17 @@ class Measurement : public Value<T, Nullable> {
         return node;
     }
 
-    Measurement<T, Nullable> &operator=(const T &value) {
+    Measurement<T, Nullable>& operator=(const T& value) {
         this->set_value(value);
         return (*this);
     }
 
-    Measurement<T, Nullable> &operator=(const Value<T> &value) {
+    Measurement<T, Nullable>& operator=(const Value<T>& value) {
         this->set_value(value());
         return (*this);
     }
 
-  protected:
+   protected:
     size_t index_;
     units::precise_unit repr_unit_;
     std::string repr_unit_str_;
@@ -421,4 +417,4 @@ class Measurement : public Value<T, Nullable> {
     std::vector<units::precise_unit> all_unit_;
 };
 
-} // namespace options
+}  // namespace options

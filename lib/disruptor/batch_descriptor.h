@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_BATCH_DESCRIPTOR_H_ // NOLINT
-#define DISRUPTOR_BATCH_DESCRIPTOR_H_ // NOLINT
+#ifndef DISRUPTOR_BATCH_DESCRIPTOR_H_  // NOLINT
+#define DISRUPTOR_BATCH_DESCRIPTOR_H_  // NOLINT
 
 #include "sequence.h"
 
@@ -32,7 +32,7 @@ namespace disruptor {
 
 // Used to record the batch of sequences claimed via {@link Sequencer}.
 class BatchDescriptor {
-  public:
+   public:
     // Create a holder for tracking a batch of claimed sequences in a
     // {@link Sequencer}
     //
@@ -62,11 +62,11 @@ class BatchDescriptor {
     // @return starting sequence in the batch.
     int64_t Start() const { return end_ - size_ + 1L; }
 
-  private:
+   private:
     int size_;
     int64_t end_;
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_SEQUENCE_BATCH_H_  NOLINT
+#endif  // DISRUPTOR_SEQUENCE_BATCH_H_  NOLINT

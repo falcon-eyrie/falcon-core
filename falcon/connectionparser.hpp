@@ -41,9 +41,9 @@ typedef std::vector<ConnectionRule> ConnectionRules;
 
 ConnectionRule parseConnectionRule(std::string rulestring);
 std::vector<SlotAddress> expandSingleConnectionRule(SingleConnectionRule rule);
-void expandConnectionRule(ConnectionRule rule, StreamConnections &connections);
+void expandConnectionRule(ConnectionRule rule, StreamConnections& connections);
 
-void printConnectionPart(const ConnectionPart &part);
-void printSingleConnectionRule(const SingleConnectionRule &rule);
-void printConnectionRule(const ConnectionRule &rule);
-void printConnectionList(const StreamConnections &connections);
+void printConnectionPart(const ConnectionPart& part);
+void printSingleConnectionRule(const SingleConnectionRule& rule);
+void printConnectionRule(const ConnectionRule& rule);
+void printConnectionList(const StreamConnections& connections);
