@@ -25,7 +25,7 @@ jobs:
             xz-utils
 
           sh scripts/setup/install_cmake.sh
-          sh scripts/setup/install_clang.sh
+          sh scripts/setup/install_llvm.sh
 
 
       - name: Run clang-format
