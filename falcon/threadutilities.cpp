@@ -37,8 +37,7 @@ bool set_realtime_priority(pthread_t thread, ThreadPriority priority) {
     // struct sched_param is used to store the scheduling priority
     struct sched_param params;
     // calculate priority value
-    params.sched_priority =
-        (int)(fraction * (priority_max - priority_min) + priority_min);
+    params.sched_priority = (int) (fraction * (priority_max - priority_min) + priority_min);
 
     // Attempt to set thread real-time priority to the SCHED_FIFO policy
     if (pthread_setschedparam(thread, SCHED_FIFO, &params) != 0) {

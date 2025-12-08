@@ -23,8 +23,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_EXCEPTION_HANDLER_H_ // NOLINT
-#define DISRUPTOR_EXCEPTION_HANDLER_H_ // NOLINT
+#ifndef DISRUPTOR_EXCEPTION_HANDLER_H_  // NOLINT
+#define DISRUPTOR_EXCEPTION_HANDLER_H_  // NOLINT
 
 #include <exception>
 
@@ -34,9 +34,8 @@ namespace disruptor {
 
 template <typename T>
 class IgnoreExceptionHandler : public ExceptionHandlerInterface<T> {
-  public:
-    virtual void Handle(const std::exception &exception,
-                        const int64_t &sequence, T *event) {
+   public:
+    virtual void Handle(const std::exception& exception, const int64_t& sequence, T* event) {
         // do nothing with the exception.
         ;
     }
@@ -44,14 +43,13 @@ class IgnoreExceptionHandler : public ExceptionHandlerInterface<T> {
 
 template <typename T>
 class FatalExceptionHandler : public ExceptionHandlerInterface<T> {
-  public:
-    virtual void Handle(const std::exception &exception,
-                        const int64_t &sequence, T *event) {
+   public:
+    virtual void Handle(const std::exception& exception, const int64_t& sequence, T* event) {
         // rethrow the exception
         throw exception;
     }
 };
 
-}; // namespace disruptor
+};  // namespace disruptor
 
-#endif // DISRUPTOR_EXCEPTION_HANDLER_H_  NOLINT
+#endif  // DISRUPTOR_EXCEPTION_HANDLER_H_  NOLINT

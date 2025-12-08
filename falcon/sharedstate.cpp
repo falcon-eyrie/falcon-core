@@ -58,17 +58,29 @@ std::string permission_to_string(Permission p, bool shorthand) {
     return s;
 }
 
-Permissions::Permissions(Permission self, Permission others,
-                         Permission external)
-    : self_(self), others_(others), external_(external) {}
+Permissions::Permissions(Permission self, Permission others, Permission external)
+    : self_(self), others_(others), external_(external) {
+}
 
-const Permission Permissions::self() const { return self_; }
-const Permission Permissions::others() const { return others_; }
-const Permission Permissions::external() const { return external_; }
+const Permission Permissions::self() const {
+    return self_;
+}
+const Permission Permissions::others() const {
+    return others_;
+}
+const Permission Permissions::external() const {
+    return external_;
+}
 
-void Permissions::set_self(const Permission p) { self_ = p; }
-void Permissions::set_others(const Permission p) { others_ = p; }
-void Permissions::set_external(const Permission p) { external_ = p; }
+void Permissions::set_self(const Permission p) {
+    self_ = p;
+}
+void Permissions::set_others(const Permission p) {
+    others_ = p;
+}
+void Permissions::set_external(const Permission p) {
+    external_ = p;
+}
 
 std::string Permissions::to_string(bool shorthand) const {
     std::string s;
@@ -85,38 +97,45 @@ std::string Permissions::to_string(bool shorthand) const {
     return s;
 }
 
-bool Permissions::IsCompatible(const Permissions &p) {
+bool Permissions::IsCompatible(const Permissions& p) {
     return !(others_ == Permission::NONE || p.others() == Permission::NONE ||
              (others_ == Permission::READ && p.self() != Permission::READ) ||
              (self_ != Permission::READ && p.others() == Permission::READ));
 }
 
-IState::IState(const Permissions &permissions, std::string description)
-    : permissions_(permissions), description_(description), shared_(false),
-      external_permission_(
-          std::make_shared<ExternalPermissionTracker>(permissions.external())) {
+IState::IState(const Permissions& permissions, std::string description)
+    : permissions_(permissions),
+      description_(description),
+      shared_(false),
+      external_permission_(std::make_shared<ExternalPermissionTracker>(permissions.external())) {
 }
 
-IState::IState(const IState &other)
-    : IState(other.permissions_, other.description_) {}
+IState::IState(const IState& other) : IState(other.permissions_, other.description_) {
+}
 
-bool IState::IsCompatible(const Permissions &permissions) {
+bool IState::IsCompatible(const Permissions& permissions) {
     return this->permissions_.IsCompatible(permissions);
 }
 
-const Permissions &IState::permissions() const {
+const Permissions& IState::permissions() const {
     return permissions_;
-} // read-only
+}  // read-only
 
 Permission IState::external_permission() {
     return external_permission_->permission();
 }
 
-std::string IState::description() { return description_; }
+std::string IState::description() {
+    return description_;
+}
 
-bool IState::IsShared() { return shared_; }
+bool IState::IsShared() {
+    return shared_;
+}
 
-void IState::set_description(std::string value) { description_ = value; }
+void IState::set_description(std::string value) {
+    description_ = value;
+}
 
 void IState::set_external_permission(Permission permission) {
     external_permission_->add(permission);
@@ -129,29 +148,32 @@ void IState::lock() {
     }
 }
 
-void IState::unlock() { lock_.clear(std::memory_order_release); }
+void IState::unlock() {
+    lock_.clear(std::memory_order_release);
+}
 
 SharedStateAlias::SharedStateAlias(Permission external, std::string description)
-    : external_(external), description_(description) {}
+    : external_(external), description_(description) {
+}
 
-SharedStateAlias::~SharedStateAlias() { RemoveAllStates(); }
+SharedStateAlias::~SharedStateAlias() {
+    RemoveAllStates();
+}
 
-void SharedStateAlias::AddState(std::string name,
-                                const std::shared_ptr<IState> &dependent) {
+void SharedStateAlias::AddState(std::string name, const std::shared_ptr<IState>& dependent) {
     // already part of group
     if (dependents_.count(name)) {
         return;
     }
 
     // check for compatibility against existing dependents
-    for (auto const &state : dependents_) {
+    for (auto const& state : dependents_) {
         if (!dependent->IsLikeMe(state.second) ||
             !dependent->IsCompatible(state.second->permissions())) {
-            throw std::runtime_error(
-                "New state \"" + name + "\" (" +
-                state.second->permissions().to_string() +
-                ") is not compatible with existing state (" +
-                dependent->permissions().to_string() + ")");
+            throw std::runtime_error("New state \"" + name + "\" (" +
+                                     state.second->permissions().to_string() +
+                                     ") is not compatible with existing state (" +
+                                     dependent->permissions().to_string() + ")");
         }
     }
 
@@ -176,7 +198,7 @@ void SharedStateAlias::RemoveState(std::string name) {
 }
 
 void SharedStateAlias::RemoveAllStates() {
-    for (auto const &state : dependents_) {
+    for (auto const& state : dependents_) {
         state.second->UnShare();
     }
     dependents_.clear();
@@ -200,7 +222,7 @@ std::string SharedStateAlias::Retrieve() {
 YAML::Node SharedStateAlias::ExportYAML() {
     YAML::Node alias_description;
 
-    for (auto &it : dependents_) {
+    for (auto& it : dependents_) {
         alias_description["states"].push_back(it.first);
     }
     if (external_ == Permission::READ || external_ == Permission::WRITE) {
@@ -211,10 +233,11 @@ YAML::Node SharedStateAlias::ExportYAML() {
     return alias_description;
 }
 
-SharedStateMap::~SharedStateMap() { clear(); }
+SharedStateMap::~SharedStateMap() {
+    clear();
+}
 
-void SharedStateMap::AddAlias(std::string alias, Permission permission,
-                              std::string description) {
+void SharedStateMap::AddAlias(std::string alias, Permission permission, std::string description) {
     if (aliases_.count(alias)) {
         throw std::runtime_error("Shared state alias already exists.");
     }
@@ -222,7 +245,9 @@ void SharedStateMap::AddAlias(std::string alias, Permission permission,
                      std::make_tuple(permission, description));
 }
 
-void SharedStateMap::RemoveAlias(std::string alias) { aliases_.erase(alias); }
+void SharedStateMap::RemoveAlias(std::string alias) {
+    aliases_.erase(alias);
+}
 
 void SharedStateMap::ShareState(std::string alias, std::string name,
                                 std::shared_ptr<IState> state) {
@@ -252,7 +277,7 @@ void SharedStateMap::UnShareState(std::string name) {
 }
 
 void SharedStateMap::UnShareAll() {
-    for (auto const &state : shared_states_) {
+    for (auto const& state : shared_states_) {
         aliases_[state.second].RemoveState(state.first);
     }
     shared_states_.clear();
@@ -269,7 +294,7 @@ bool SharedStateMap::IsShared(std::string name) {
 
 std::vector<std::string> SharedStateMap::ListSharedStates(std::string alias) {
     std::vector<std::string> state_list;
-    for (auto const &imap : shared_states_) {
+    for (auto const& imap : shared_states_) {
         state_list.push_back(imap.first);
     }
     return state_list;
@@ -292,7 +317,7 @@ std::string SharedStateMap::RetrieveAlias(std::string alias) {
 YAML::Node SharedStateMap::ExportYAML() {
     YAML::Node node;
 
-    for (auto &it : this->aliases_) {
+    for (auto& it : this->aliases_) {
         node[it.first] = it.second.ExportYAML();
     }
 

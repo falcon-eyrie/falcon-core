@@ -26,9 +26,9 @@ namespace Serialization {
 
 std::string format_to_string(Format fmt) {
     std::string s;
-#define MATCH(p)                                                               \
-    case (Serialization::Format::p):                                           \
-        s = #p;                                                                \
+#define MATCH(p)                     \
+    case (Serialization::Format::p): \
+        s = #p;                      \
         break;
     switch (fmt) {
         MATCH(NONE)
@@ -42,10 +42,10 @@ std::string format_to_string(Format fmt) {
 }
 
 Format string_to_format(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(), (int (*)(int))std::toupper);
-#define MATCH(p)                                                               \
-    if (s == #p) {                                                             \
-        return Serialization::Format::p;                                       \
+    std::transform(s.begin(), s.end(), s.begin(), (int (*)(int)) std::toupper);
+#define MATCH(p)                         \
+    if (s == #p) {                       \
+        return Serialization::Format::p; \
     }
     MATCH(NONE)
     MATCH(FULL);
@@ -58,9 +58,9 @@ Format string_to_format(std::string s) {
 
 std::string encoding_to_string(Encoding enc) {
     std::string s;
-#define MATCH(p)                                                               \
-    case (Serialization::Encoding::p):                                         \
-        s = #p;                                                                \
+#define MATCH(p)                       \
+    case (Serialization::Encoding::p): \
+        s = #p;                        \
         break;
     switch (enc) {
         MATCH(BINARY)
@@ -72,10 +72,10 @@ std::string encoding_to_string(Encoding enc) {
 }
 
 Encoding string_to_encoding(std::string s) {
-    std::transform(s.begin(), s.end(), s.begin(), (int (*)(int))std::toupper);
-#define MATCH(p)                                                               \
-    if (s == #p) {                                                             \
-        return Serialization::Encoding::p;                                     \
+    std::transform(s.begin(), s.end(), s.begin(), (int (*)(int)) std::toupper);
+#define MATCH(p)                           \
+    if (s == #p) {                         \
+        return Serialization::Encoding::p; \
     }
     MATCH(BINARY)
     MATCH(YAML)
@@ -84,4 +84,4 @@ Encoding string_to_encoding(std::string s) {
 #undef MATCH
 }
 
-} // namespace Serialization
+}  // namespace Serialization

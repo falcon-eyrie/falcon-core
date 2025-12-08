@@ -36,8 +36,9 @@
  *  or parallel coordination of an event.
  */
 
-template <typename T> class RingBuffer : public disruptor::Sequencer {
-  public:
+template <typename T>
+class RingBuffer : public disruptor::Sequencer {
+   public:
     /**
      * Construct a RingBuffer with the full option set.
      *
@@ -48,12 +49,12 @@ template <typename T> class RingBuffer : public disruptor::Sequencer {
      * @param wait_strategy_option waiting strategy employed by
      * processors_to_track waiting in entries becoming available.
      */
-    RingBuffer(const T &prototype, int buffer_size,
+    RingBuffer(const T& prototype, int buffer_size,
                disruptor::ClaimStrategyOption claim_strategy_option,
                disruptor::WaitStrategyOption wait_strategy_option)
-        : disruptor::Sequencer(buffer_size, claim_strategy_option,
-                               wait_strategy_option),
-          buffer_size_(buffer_size), mask_(buffer_size - 1),
+        : disruptor::Sequencer(buffer_size, claim_strategy_option, wait_strategy_option),
+          buffer_size_(buffer_size),
+          mask_(buffer_size - 1),
           events_(buffer_size, prototype) {}
 
     /**
@@ -63,9 +64,9 @@ template <typename T> class RingBuffer : public disruptor::Sequencer {
      * @return event pointer at the specified sequence position.
      */
 
-    T *Get(const int64_t &sequence) { return &events_[sequence & mask_]; }
+    T* Get(const int64_t& sequence) { return &events_[sequence & mask_]; }
 
-  private:
+   private:
     // Members
     int buffer_size_;
     int mask_;

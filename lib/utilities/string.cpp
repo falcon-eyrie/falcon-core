@@ -17,19 +17,18 @@
 // along with falcon-core. If not, see <http://www.gnu.org/licenses/>.
 // ---------------------------------------------------------------------
 
+#include <sys/stat.h>
 #include <regex>
 #include <sstream>
-#include <sys/stat.h>
 
 #include "string.hpp"
 
-bool path_exists(const std::string &name) {
+bool path_exists(const std::string& name) {
     struct stat buffer;
     return (stat(name.c_str(), &buffer) == 0);
 }
 
-std::vector<std::string> &split(const std::string &s, char delim,
-                                std::vector<std::string> &elems) {
+std::vector<std::string>& split(const std::string& s, char delim, std::vector<std::string>& elems) {
     std::stringstream ss(s);
     std::string item;
     while (std::getline(ss, item, delim)) {
@@ -40,24 +39,21 @@ std::vector<std::string> &split(const std::string &s, char delim,
     return elems;
 }
 
-std::vector<std::string> split(const std::string &s, char delim) {
+std::vector<std::string> split(const std::string& s, char delim) {
     std::vector<std::string> elems;
     split(s, delim, elems);
     return elems;
 }
 
-std::string
-resolve_server_path(std::string p,
-                    const std::map<std::string, std::string> &contexts,
-                    std::string default_context) {
+std::string resolve_server_path(std::string p, const std::map<std::string, std::string>& contexts,
+                                std::string default_context) {
     // regular expression: "^(\w+)://+([/_[:alnum:]])$"
     std::string expr("^(\\w+)://+([/_.[:alnum:]]*)$");
     std::regex re(expr);
     std::smatch match;
 
     if (p.size() > 0 &&
-        (p[0] == '/' ||
-         p[0] == '.')) { // absolute path or realtive to current directory
+        (p[0] == '/' || p[0] == '.')) {  // absolute path or realtive to current directory
         return p;
     }
 
@@ -74,8 +70,7 @@ resolve_server_path(std::string p,
         }
 
         if (contexts.count(default_context) != 1) {
-            throw std::runtime_error("No storage context \"" + default_context +
-                                     "\" exists.");
+            throw std::runtime_error("No storage context \"" + default_context + "\" exists.");
         }
 
         p = contexts.at(default_context) + "/" + p;
@@ -83,8 +78,7 @@ resolve_server_path(std::string p,
     }
 
     if (contexts.count(match[1].str()) != 1) {
-        throw std::runtime_error("No storage context \"" + match[1].str() +
-                                 "\" exists.");
+        throw std::runtime_error("No storage context \"" + match[1].str() + "\" exists.");
     }
 
     p = contexts.at(match[1].str()) + "/" + match[2].str();
@@ -98,7 +92,7 @@ std::string extract_path_to_folder(std::string path_to_file) {
     // pix_folder = repo://tests/data/bifurcated_maze/encoding_models/TT_I_
     while (path_to_folder.back() != '/') {
         path_to_folder.pop_back();
-    } // pix_folder = repo://tests/data/bifurcated_maze/encoding_models/
+    }  // pix_folder = repo://tests/data/bifurcated_maze/encoding_models/
     return path_to_folder;
 }
 

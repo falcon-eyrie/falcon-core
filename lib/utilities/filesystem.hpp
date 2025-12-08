@@ -61,7 +61,7 @@
 #endif
 
 // Not on Visual Studio. Let's use the normal version
-#else // #ifdef _MSC_VER
+#else  // #ifdef _MSC_VER
 #define INCLUDE_STD_FILESYSTEM_EXPERIMENTAL 0
 #endif
 
@@ -90,7 +90,7 @@ namespace fs = std::experimental::filesystem;
 namespace fs = std::filesystem;
 #endif
 
-#endif // #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
+#endif  // #ifndef INCLUDE_STD_FILESYSTEM_EXPERIMENTAL
 
 #include <string>
 
@@ -99,7 +99,7 @@ namespace fs = std::filesystem;
  *
  *@param x Path containing home to expand
  **/
-std::string expand_home(const std::string &x);
+std::string expand_home(const std::string& x);
 /**
  * Check if the path is already existing and is a directory - create one if
  *asked
@@ -109,8 +109,7 @@ std::string expand_home(const std::string &x);
  *@param create create the directory if not existing while expected to.
  *@return absolute path if a valid directory
  **/
-fs::path parse_directory(const std::string &x, bool exists = true,
-                         bool create = false);
+fs::path parse_directory(const std::string& x, bool exists = true, bool create = false);
 /**
  * Check if the path is already existing and is a file
  *
@@ -118,7 +117,7 @@ fs::path parse_directory(const std::string &x, bool exists = true,
  *@param exists expected of already existing or not
  *@return absolute path if a valid file
  **/
-fs::path parse_file(const std::string &x, bool exists = false);
+fs::path parse_file(const std::string& x, bool exists = false);
 
 /**
  * Get the list of all files in given directory and its sub directories.
@@ -127,4 +126,4 @@ fs::path parse_file(const std::string &x, bool exists = false);
  *@return vector containing paths of all the files in given directory and its
  *sub directories
  **/
-std::vector<std::string> getAllFilesInDir(const std::string &dirPath);
+std::vector<std::string> getAllFilesInDir(const std::string& dirPath);

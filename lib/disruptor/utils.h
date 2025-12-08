@@ -23,13 +23,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef DISRUPTOR_UTILS_H_ // NOLINT
-#define DISRUPTOR_UTILS_H_ // NOLINT
+#ifndef DISRUPTOR_UTILS_H_  // NOLINT
+#define DISRUPTOR_UTILS_H_  // NOLINT
 
 // From Google C++ Standard, modified to use C++11 deleted functions.
 // A macro to disallow the copy constructor and operator= functions.
-#define DISALLOW_COPY_AND_ASSIGN(TypeName)                                     \
-    TypeName(const TypeName &) = delete;                                       \
-    void operator=(const TypeName &) = delete
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+    TypeName(const TypeName&) = delete;    \
+    void operator=(const TypeName&) = delete
 
-#endif // DISRUPTOR_UTILS_H_ NOLINT
+#endif  // DISRUPTOR_UTILS_H_ NOLINT

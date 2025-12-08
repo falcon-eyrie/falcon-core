@@ -22,23 +22,23 @@
 #include <cassert>
 #include <iterator>
 
-template <class Iter_T> class stride_iter {
-  public:
+template <class Iter_T>
+class stride_iter {
+   public:
     typedef typename std::iterator_traits<Iter_T>::value_type value_type;
     typedef typename std::iterator_traits<Iter_T>::reference reference;
-    typedef
-        typename std::iterator_traits<Iter_T>::difference_type difference_type;
+    typedef typename std::iterator_traits<Iter_T>::difference_type difference_type;
     typedef typename std::iterator_traits<Iter_T>::pointer pointer;
     typedef std::random_access_iterator_tag iterator_category;
     typedef stride_iter self;
 
     // constructors
     stride_iter() : m(NULL), step(0) {}
-    stride_iter(const self &x) : m(x.m), step(x.step) {}
+    stride_iter(const self& x) : m(x.m), step(x.step) {}
     stride_iter(Iter_T x, difference_type n) : m(x), step(n) {}
 
     // operators
-    self &operator++() {
+    self& operator++() {
         m += step;
         return *this;
     }
@@ -47,11 +47,11 @@ template <class Iter_T> class stride_iter {
         m += step;
         return tmp;
     }
-    self &operator+=(const difference_type x) {
+    self& operator+=(const difference_type x) {
         m += (x * step);
         return *this;
     }
-    self &operator--() {
+    self& operator--() {
         m -= step;
         return *this;
     }
@@ -60,7 +60,7 @@ template <class Iter_T> class stride_iter {
         m -= step;
         return tmp;
     }
-    self &operator-=(const difference_type x) {
+    self& operator-=(const difference_type x) {
         m -= x * step;
         return *this;
     }
@@ -68,33 +68,33 @@ template <class Iter_T> class stride_iter {
     reference operator*() { return *m; }
 
     // friend operators
-    friend bool operator==(const self &x, const self &y) {
+    friend bool operator==(const self& x, const self& y) {
         assert(x.step == y.step);
         return x.m == y.m;
     }
-    friend bool operator!=(const self &x, const self &y) {
+    friend bool operator!=(const self& x, const self& y) {
         assert(x.step == y.step);
         return x.m != y.m;
     }
-    friend bool operator<(const self &x, const self &y) {
+    friend bool operator<(const self& x, const self& y) {
         assert(x.step == y.step);
         return x.m < y.m;
     }
-    friend difference_type operator-(const self &x, const self &y) {
+    friend difference_type operator-(const self& x, const self& y) {
         assert(x.step == y.step);
         return (x.m - y.m) / x.step;
     }
 
-    friend self operator+(const self &x, difference_type y) {
+    friend self operator+(const self& x, difference_type y) {
         return self(x.m + (y * x.step), x.step);
     }
-    friend self operator+(difference_type x, const self &y) { return y + x; }
+    friend self operator+(difference_type x, const self& y) { return y + x; }
 
-    friend self operator-(const self &x, difference_type y) {
+    friend self operator-(const self& x, difference_type y) {
         return self(x.m - (y * x.step), x.step);
     }
 
-  private:
+   private:
     Iter_T m;
     difference_type step;
 };

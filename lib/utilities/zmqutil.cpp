@@ -21,7 +21,7 @@
 #include <string>
 
 // Convert string to 0MQ string and send to socket
-bool s_send(zmq::socket_t &socket, const std::string &string, int more) {
+bool s_send(zmq::socket_t& socket, const std::string& string, int more) {
     // zmq::message_t message(string.size());
     zmq_msg_t message;
     zmq_msg_init_size(&message, string.size());
@@ -32,19 +32,17 @@ bool s_send(zmq::socket_t &socket, const std::string &string, int more) {
     return rc == string.size();
 }
 
-bool s_send_multi(zmq::socket_t &socket, const zmq_frames &frames) {
-    if (frames.empty())
-        return true;
+bool s_send_multi(zmq::socket_t& socket, const zmq_frames& frames) {
+    if (frames.empty()) return true;
 
     // all frames but last one
     for (unsigned int i = 0; i < frames.size() - 1; ++i)
-        if (!s_send(socket, frames[i], ZMQ_SNDMORE))
-            return false;
+        if (!s_send(socket, frames[i], ZMQ_SNDMORE)) return false;
     // last frame
     return s_send(socket, frames.back());
 }
 
-bool sockopt_rcvmore(zmq::socket_t &socket) {
+bool sockopt_rcvmore(zmq::socket_t& socket) {
     int64_t rcvmore = 0;
     size_t type_size = sizeof(int64_t);
     zmq_getsockopt(socket, ZMQ_RCVMORE, &rcvmore, &type_size);
@@ -52,15 +50,14 @@ bool sockopt_rcvmore(zmq::socket_t &socket) {
 }
 
 // Receive 0MQ string from socket and convert into string
-bool s_recv(zmq::socket_t &socket, std::string &s_message, int more) {
+bool s_recv(zmq::socket_t& socket, std::string& s_message, int more) {
     zmq_msg_t message;
     zmq_msg_init(&message);
     int size = zmq_msg_recv(&message, socket, more);
     if (size == -1) {
         return false;
     }
-    s_message.assign(static_cast<char *>(zmq_msg_data(&message)),
-                     zmq_msg_size(&message));
+    s_message.assign(static_cast<char*>(zmq_msg_data(&message)), zmq_msg_size(&message));
     zmq_msg_close(&message);
     return true;
 }
@@ -75,7 +72,7 @@ bool s_recv(zmq::socket_t &socket, std::string &s_message, int more) {
   s_message.assign(static_cast<char *>(zmq_msg_data(&message)),
 zmq_msg_size(&message)); zmq_msg_close(&message); return true;
 }*/
-zmq_frames s_blocking_recv_multi(zmq::socket_t &socket) {
+zmq_frames s_blocking_recv_multi(zmq::socket_t& socket) {
     zmq_frames frames;
     std::string message;
     do {
@@ -86,7 +83,7 @@ zmq_frames s_blocking_recv_multi(zmq::socket_t &socket) {
     return frames;
 }
 
-bool s_nonblocking_recv_multi(zmq::socket_t &socket, zmq_frames &frames) {
+bool s_nonblocking_recv_multi(zmq::socket_t& socket, zmq_frames& frames) {
     std::string message;
     do {
         if (!s_recv(socket, message, ZMQ_DONTWAIT)) {

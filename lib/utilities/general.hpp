@@ -33,17 +33,16 @@ struct EventCounter {
     uint64_t target = 0;
     uint64_t non_target = 0;
 
-    inline bool consistent_counters() {
-        return all_received == (target + non_target);
-    }
+    inline bool consistent_counters() { return all_received == (target + non_target); }
 
     void reset();
 };
 
 template <typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args &&...args);
+std::unique_ptr<T> make_unique(Args&&... args);
 
-template <class T, class A> T join(const A &begin, const A &end, const T &t);
+template <class T, class A>
+T join(const A& begin, const A& end, const T& t);
 
 /*
  * This method checks that:
@@ -56,8 +55,7 @@ template <class T, class A> T join(const A &begin, const A &end, const T &t);
  value
  * to the first multiple of the incoming buffer-size
  */
-void check_buffer_sizes_and_log(double incoming, double &outgoing,
-                                bool strict_check, size_t &n,
+void check_buffer_sizes_and_log(double incoming, double& outgoing, bool strict_check, size_t& n,
                                 std::string processor_name);
 
 const double MAX_N_HOURS_TEST = 1.5;

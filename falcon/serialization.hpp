@@ -18,8 +18,8 @@
 // ---------------------------------------------------------------------
 
 #pragma once
-#include "yaml-cpp/yaml.h"
 #include <string>
+#include "yaml-cpp/yaml.h"
 
 namespace Serialization {
 
@@ -40,33 +40,35 @@ enum class Encoding { BINARY = 0, YAML, FLATBUFFER };
 std::string encoding_to_string(Encoding fmt);
 Encoding string_to_encoding(std::string s);
 
-} // namespace Serialization
+}  // namespace Serialization
 
 namespace YAML {
 
-template <> struct convert<Serialization::Format> {
-    static Node encode(const Serialization::Format &rhs) {
+template <>
+struct convert<Serialization::Format> {
+    static Node encode(const Serialization::Format& rhs) {
         Node node;
         node = Serialization::format_to_string(rhs);
         return node;
     }
 
-    static bool decode(const Node &node, Serialization::Format &rhs) {
+    static bool decode(const Node& node, Serialization::Format& rhs) {
         rhs = Serialization::string_to_format(node.as<std::string>());
         return true;
     }
 };
 
-template <> struct convert<Serialization::Encoding> {
-    static Node encode(const Serialization::Encoding &rhs) {
+template <>
+struct convert<Serialization::Encoding> {
+    static Node encode(const Serialization::Encoding& rhs) {
         Node node;
         node = Serialization::encoding_to_string(rhs);
         return node;
     }
 
-    static bool decode(const Node &node, Serialization::Encoding &rhs) {
+    static bool decode(const Node& node, Serialization::Encoding& rhs) {
         rhs = Serialization::string_to_encoding(node.as<std::string>());
         return true;
     }
 };
-} // namespace YAML
+}  // namespace YAML

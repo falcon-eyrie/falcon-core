@@ -32,9 +32,9 @@ using namespace graph;
 
 std::string graph_state_string(GraphState state) {
     std::string s;
-#define PROCESS_STATE(p)                                                       \
-    case (GraphState::p):                                                      \
-        s = #p;                                                                \
+#define PROCESS_STATE(p)  \
+    case (GraphState::p): \
+        s = #p;           \
         break;
     switch (state) {
         PROCESS_STATE(NOGRAPH);
@@ -51,7 +51,6 @@ std::string graph_state_string(GraphState state) {
 }
 
 std::vector<std::string> expandProcessorName(std::string s) {
-
     static const int name_group = 1;
     static const int range_group = 2;
     static const int first_range_id = 1;
@@ -61,8 +60,7 @@ std::vector<std::string> expandProcessorName(std::string s) {
     int startid, endid;
 
     // name# or name[#, #-#]
-    std::regex re(
-        "^([a-zA-Z]+(?:[ -_][a-zA-Z]+)*)[ ]*((?:\\d+)|(?:\\([\\d,\\-]+\\)))?$");
+    std::regex re("^([a-zA-Z]+(?:[ -_][a-zA-Z]+)*)[ ]*((?:\\d+)|(?:\\([\\d,\\-]+\\)))?$");
 
     std::smatch match;
 
@@ -73,8 +71,7 @@ std::vector<std::string> expandProcessorName(std::string s) {
 
     // get base name
     if (!match[name_group].matched) {
-        throw std::runtime_error("Invalid processor name (no base name): \"" +
-                                 s + "\"");
+        throw std::runtime_error("Invalid processor name (no base name): \"" + s + "\"");
     }
 
     std::string name = match[name_group].str();
@@ -88,20 +85,17 @@ std::vector<std::string> expandProcessorName(std::string s) {
     if (!match[range_group].matched) {
         result.push_back(name);
     } else {
-        std::string range = match[range_group].str(); // Example: (1-2)
+        std::string range = match[range_group].str();  // Example: (1-2)
         // remove trimming spaces
-        range =
-            std::regex_replace(range, std::regex("^ +| +$"), std::string(""));
+        range = std::regex_replace(range, std::regex("^ +| +$"), std::string(""));
 
         if (range[0] == '(') {
             // match ID range vector
             // remove brackets and spaces
-            range.erase(std::remove_if(range.begin(), range.end(),
-                                       [](char x) {
-                                           return (x == '(' || x == ')' ||
-                                                   std::isspace(x));
-                                       }),
-                        range.end());
+            range.erase(
+                std::remove_if(range.begin(), range.end(),
+                               [](char x) { return (x == '(' || x == ')' || std::isspace(x)); }),
+                range.end());
 
             // split on comma
             auto id_range = split(range, ',');
@@ -110,7 +104,7 @@ std::vector<std::string> expandProcessorName(std::string s) {
             std::smatch match_range;
 
             // match start and end id of ranges
-            for (const auto &q : id_range) {
+            for (const auto& q : id_range) {
                 if (std::regex_match(q, match_range, re_range)) {
                     startid = stoi(match_range[first_range_id].str());
                     if (match_range[end_range_id].matched) {
@@ -122,26 +116,24 @@ std::vector<std::string> expandProcessorName(std::string s) {
                         result.push_back(name + std::to_string(kk));
                     }
                 } else {
-                    throw std::runtime_error(
-                        "Invalid processor name (invalid identifiers): \"" + s +
-                        "\"");
+                    throw std::runtime_error("Invalid processor name (invalid identifiers): \"" +
+                                             s + "\"");
                 }
             }
         } else {
             // try to convert to int
             try {
                 result.push_back(name + std::to_string(stoi(range)));
-            } catch (std::invalid_argument &e) {
-                throw std::runtime_error(
-                    "Invalid processor name (invalid identifiers): \"" + s +
-                    "\"");
+            } catch (std::invalid_argument& e) {
+                throw std::runtime_error("Invalid processor name (invalid identifiers): \"" + s +
+                                         "\"");
             }
         }
     }
     return result;
 }
 
-void ProcessorGraph::ConstructProcessorEngines(const YAML::Node &node) {
+void ProcessorGraph::ConstructProcessorEngines(const YAML::Node& node) {
     std::vector<std::string> processor_name_list;
     std::string processor_name;
     std::string processor_class;
@@ -161,73 +153,61 @@ void ProcessorGraph::ConstructProcessorEngines(const YAML::Node &node) {
             processor_class = processor_node["class"].as<std::string>();
 
             // loop through expanded name list
-            for (auto &name_it : processor_name_list) {
+            for (auto& name_it : processor_name_list) {
                 processor_name = name_it;
 
                 // does processor already exist?
                 auto it2 = processors_.find(processor_name);
 
-                if (it2 ==
-                    processors_.end()) { // no processor with this name known
+                if (it2 == processors_.end()) {  // no processor with this name known
                     try {
-                        processor.reset(ProcessorFactory::instance().create(
-                            processor_class));
-                    } catch (factory::UnknownClass &e) {
-                        throw InvalidProcessorError(
-                            "Cannot create processor " + processor_name +
-                            " of unknown class " + processor_class + ".");
+                        processor.reset(ProcessorFactory::instance().create(processor_class));
+                    } catch (factory::UnknownClass& e) {
+                        throw InvalidProcessorError("Cannot create processor " + processor_name +
+                                                    " of unknown class " + processor_class + ".");
                     }
-                    processor->set_name_and_type(processor_name,
-                                                 processor_class);
-                    processor->internal_Configure(processor_node,
-                                                  global_context_);
+                    processor->set_name_and_type(processor_name, processor_class);
+                    processor->internal_Configure(processor_node, global_context_);
                     processors_[processor_name] =
                         std::make_pair(processor_class, std::move(processor));
 
-                    LOG(DEBUG)
-                        << "Constructed and configured " << processor_name
-                        << " (" << processor_class << ").";
+                    LOG(DEBUG) << "Constructed and configured " << processor_name << " ("
+                               << processor_class << ").";
 
                 } else if (it2->second.first == processor_class) {
                     // processor with this name and class found
-                    it2->second.second->internal_Configure(processor_node,
-                                                           global_context_);
+                    it2->second.second->internal_Configure(processor_node, global_context_);
 
-                    LOG(DEBUG) << "Configured processor " << processor_name
-                               << " (" << processor_class << ")";
+                    LOG(DEBUG) << "Configured processor " << processor_name << " ("
+                               << processor_class << ")";
 
-                } else { // processor with this name, but different class found
+                } else {  // processor with this name, but different class found
                     throw InvalidProcessorError("Processor " + processor_name +
-                                                " of different class (" +
-                                                it2->second.first +
+                                                " of different class (" + it2->second.first +
                                                 ") already exists.");
                 }
             }
         } else {
-            throw InvalidProcessorError("No class specified for processor " +
-                                        processor_name + ".");
+            throw InvalidProcessorError("No class specified for processor " + processor_name + ".");
         }
     }
 }
 
-void ParseConnectionRules(const YAML::Node &node,
-                          StreamConnections &connections) {
+void ParseConnectionRules(const YAML::Node& node, StreamConnections& connections) {
     for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
-        expandConnectionRule(parseConnectionRule(it->as<std::string>()),
-                             connections);
+        expandConnectionRule(parseConnectionRule(it->as<std::string>()), connections);
         LOG(DEBUG) << "Parsed connection rule " << it->as<std::string>();
     }
 }
 
-ProcessorGraph::ProcessorGraph(GlobalContext &context)
+ProcessorGraph::ProcessorGraph(GlobalContext& context)
     : global_context_(context), terminate_signal_(false) {
     // log list of registered processors
     std::vector<std::string> processors =
         ProcessorFactory::instance().listEntries();
     for (const auto &item : processors) {
         documentation_[item] = LoadProcessorDoc(item);
-        if (documentation_[item].IsMap() &&
-            documentation_[item]["Description"]) {
+        if (documentation_[item].IsMap() && documentation_[item]["Description"]) {
             LOG(INFO) << "Registered processor " << item << " - "
                       << documentation_[item]["Description"];
         } else {
@@ -237,15 +217,14 @@ ProcessorGraph::ProcessorGraph(GlobalContext &context)
 }
 
 YAML::Node LoadProcessorDoc(std::string processor) {
-    std::transform(processor.begin(), processor.end(), processor.begin(),
-                   ::tolower);
+    std::transform(processor.begin(), processor.end(), processor.begin(), ::tolower);
     std::string filename = DOC_PATH + processor + "/doc.yaml";
     YAML::Node node;
     try {
         return YAML::LoadFile(filename);
-    } catch (YAML::BadFile &e) {
+    } catch (YAML::BadFile& e) {
         return YAML::Load("No available documentation.\n");
-    } catch (YAML::ParserException &e) {
+    } catch (YAML::ParserException& e) {
         LOG(DEBUG) << processor << " - " << e.what();
         return YAML::Load("Error when parsing this documentation.\n");
     }
@@ -259,33 +238,31 @@ std::string ProcessorGraph::state_string() const {
     return graph_state_string(state_);
 }
 
-IProcessor *ProcessorGraph::LookUpProcessor(std::string name) {
+IProcessor* ProcessorGraph::LookUpProcessor(std::string name) {
     if (processors_.count(name) == 0) {
         throw InvalidProcessorError("Processor \"" + name + "\" not found.");
     }
     return processors_[name].second.get();
 }
 
-std::vector<std::pair<std::string, std::shared_ptr<IState>>>
-ProcessorGraph::LookUpStates(std::vector<std::string> state_addresses) {
+std::vector<std::pair<std::string, std::shared_ptr<IState>>> ProcessorGraph::LookUpStates(
+    std::vector<std::string> state_addresses) {
     std::vector<std::pair<std::string, std::shared_ptr<IState>>> states;
 
-    for (auto &state_address : state_addresses) {
+    for (auto& state_address : state_addresses) {
         // parse processor.state name
         std::vector<std::string> address = split(state_address, '.');
 
         if (address.size() != 2) {
-            throw InvalidGraphError("Error parsing state address \"" +
-                                    state_address + "\"");
+            throw InvalidGraphError("Error parsing state address \"" + state_address + "\"");
         }
 
         // expand processor part of address
         auto expanded_processor = expandProcessorName(address[0]);
 
-        for (auto &itv : expanded_processor) {
-            IProcessor *processor = LookUpProcessor(itv);
-            auto state = processor->shared_state(
-                address[1]); // fix error message when this fails
+        for (auto& itv : expanded_processor) {
+            IProcessor* processor = LookUpProcessor(itv);
+            auto state = processor->shared_state(address[1]);  // fix error message when this fails
 
             states.push_back(std::make_pair(itv + "." + address[1], state));
         }
@@ -293,7 +270,7 @@ ProcessorGraph::LookUpStates(std::vector<std::string> state_addresses) {
     return states;
 }
 
-void ProcessorGraph::BuildSharedStates(const YAML::Node &node) {
+void ProcessorGraph::BuildSharedStates(const YAML::Node& node) {
     // states:
     //     - [processor.state, processor.state, ...]
     //     - group-name:
@@ -318,49 +295,41 @@ void ProcessorGraph::BuildSharedStates(const YAML::Node &node) {
         if (link->IsSequence()) {
             alias = "alias_" + std::to_string(group_index);
             states = LookUpStates(link->as<std::vector<std::string>>());
-        } else if (link->IsMap() && link->size() == 1 &&
-                   link->begin()->second.IsSequence()) {
+        } else if (link->IsMap() && link->size() == 1 && link->begin()->second.IsSequence()) {
             alias = link->begin()->first.as<std::string>();
-            states = LookUpStates(
-                link->begin()->second.as<std::vector<std::string>>());
-        } else if (link->IsMap() && link->size() == 1 &&
-                   link->begin()->second.IsMap()) {
+            states = LookUpStates(link->begin()->second.as<std::vector<std::string>>());
+        } else if (link->IsMap() && link->size() == 1 && link->begin()->second.IsMap()) {
             alias = link->begin()->first.as<std::string>();
-            description =
-                link->begin()->second["description"].as<std::string>("");
+            description = link->begin()->second["description"].as<std::string>("");
             permission = permission_from_string(
-                link->begin()->second["permission"].as<std::string>(
-                    "unspecified"));
-            states = LookUpStates(
-                link->begin()->second["states"].as<std::vector<std::string>>());
+                link->begin()->second["permission"].as<std::string>("unspecified"));
+            states = LookUpStates(link->begin()->second["states"].as<std::vector<std::string>>());
         } else {
             throw InvalidGraphError("Error parsing linked state request.");
         }
 
         shared_state_map_.AddAlias(alias, permission, description);
-        for (auto const &state : states) {
+        for (auto const& state : states) {
             shared_state_map_.ShareState(alias, state.first, state.second);
-            LOG(DEBUG) << "Successfully linked state " << state.first
-                       << " to alias " << alias;
+            LOG(DEBUG) << "Successfully linked state " << state.first << " to alias " << alias;
         }
     }
 }
 
-void ProcessorGraph::CreateConnection(SlotAddress &out, SlotAddress &in) {
+void ProcessorGraph::CreateConnection(SlotAddress& out, SlotAddress& in) {
     // get ProcessorEngine for output and input
     IProcessor *processor_out, *processor_in;
     try {
         processor_out = this->processors_.at(out.processor()).second.get();
-    } catch (std::out_of_range &e) {
-        throw std::out_of_range("Unknown processor \"" + out.processor() +
-                                "\"");
+    } catch (std::out_of_range& e) {
+        throw std::out_of_range("Unknown processor \"" + out.processor() + "\"");
     }
 
     out.set_processor_class(processor_out->type());
 
     try {
         processor_in = this->processors_.at(in.processor()).second.get();
-    } catch (std::out_of_range &e) {
+    } catch (std::out_of_range& e) {
         throw std::out_of_range("Unknown processor \"" + in.processor() + "\"");
     }
 
@@ -379,15 +348,13 @@ void ProcessorGraph::CreateConnection(SlotAddress &out, SlotAddress &in) {
     } catch (...) {
         // internal error
         // in_connector_->Disconnect();
-        throw std::runtime_error(
-            "Internal error: cannot connect to output slot");
+        throw std::runtime_error("Internal error: cannot connect to output slot");
     }
 }
 
-void ProcessorGraph::Build(const YAML::Node &node) {
+void ProcessorGraph::Build(const YAML::Node& node) {
     if (state_ != GraphState::NOGRAPH) {
-        throw InvalidStateError(
-            "A graph has already been built. Destroy old graph first.");
+        throw InvalidStateError("A graph has already been built. Destroy old graph first.");
     }
 
     if (!node["processors"] || !node["processors"].IsMap()) {
@@ -400,7 +367,7 @@ void ProcessorGraph::Build(const YAML::Node &node) {
         ConstructProcessorEngines(node["processors"]);
         LOG(INFO) << "Constructed and configured all processors";
 
-        for (auto &it : this->processors_) {
+        for (auto& it : this->processors_) {
             it.second.second->internal_CreatePorts();
             LOG(DEBUG) << "Created ports for processor " << it.first;
         }
@@ -410,10 +377,10 @@ void ProcessorGraph::Build(const YAML::Node &node) {
             ParseConnectionRules(node["connections"], connections_);
             LOG(INFO) << "Parsed all connection rules.";
 
-            for (auto &it : connections_) {
+            for (auto& it : connections_) {
                 CreateConnection(it.first, it.second);
-                LOG(DEBUG) << "Established connection " << it.first.string(true)
-                           << "->" << it.second.string(true);
+                LOG(DEBUG) << "Established connection " << it.first.string(true) << "->"
+                           << it.second.string(true);
             }
             LOG(INFO) << "All connections have been established.";
         }
@@ -429,14 +396,14 @@ void ProcessorGraph::Build(const YAML::Node &node) {
 
     try {
         // negiotiate connections
-        for (auto &it : this->processors_) {
+        for (auto& it : this->processors_) {
             it.second.second->internal_NegotiateConnections();
             LOG(DEBUG) << "Negotiated data streams for processor " << it.first;
         }
         LOG(INFO) << "All data streams have been negotiated.";
 
         // build ringbuffers
-        for (auto &it : this->processors_) {
+        for (auto& it : this->processors_) {
             it.second.second->internal_CreateRingBuffers();
             LOG(DEBUG) << "Constructed ring buffer for processor " << it.first;
         }
@@ -449,7 +416,7 @@ void ProcessorGraph::Build(const YAML::Node &node) {
 
     // prepare processors
     try {
-        for (auto &it : this->processors_) {
+        for (auto& it : this->processors_) {
             it.second.second->Prepare(global_context_);
             LOG(DEBUG) << "Successfully prepared processor " << it.first;
         }
@@ -476,7 +443,7 @@ void ProcessorGraph::Destroy() {
 
     if (state_ != GraphState::CONSTRUCTING) {
         // unprepare processors
-        for (auto &it : this->processors_) {
+        for (auto& it : this->processors_) {
             try {
                 it.second.second->Unprepare(global_context_);
                 LOG(DEBUG) << "Successfully unprepared processor " << it.first;
@@ -493,39 +460,36 @@ void ProcessorGraph::Destroy() {
     }
 
     // destroy connections and processors
-    shared_state_map_.clear(); // will unlink all states and remove groups
+    shared_state_map_.clear();  // will unlink all states and remove groups
     connections_.clear();
-    processors_.clear(); // will destroy processors and all their ports/states
+    processors_.clear();  // will destroy processors and all their ports/states
 
     yaml_ = YAML::Null;
     LOG(INFO) << "Graph has been destroyed.";
     set_state(GraphState::NOGRAPH);
 }
 
-void ProcessorGraph::StartProcessing(std::string run_group_id,
-                                     std::string run_id,
+void ProcessorGraph::StartProcessing(std::string run_group_id, std::string run_id,
                                      std::string template_id, bool test_flag) {
     // start processing only if state is READY
 
     if (state_ == GraphState::READY) {
-        run_context_.reset(new RunContext(global_context_, terminate_signal_,
-                                          run_group_id, run_id, template_id,
-                                          test_flag));
+        run_context_.reset(new RunContext(global_context_, terminate_signal_, run_group_id, run_id,
+                                          template_id, test_flag));
 
         set_state(GraphState::STARTING);
 
         // prepare all processors for processing
         // (i.e. flush buffers)
-        for (auto &it : this->processors_) {
+        for (auto& it : this->processors_) {
             it.second.second->internal_PrepareProcessing();
-            LOG(DEBUG) << "Prepared data stream ports of processor "
-                       << it.first;
+            LOG(DEBUG) << "Prepared data stream ports of processor " << it.first;
         }
         LOG(INFO) << "Prepared all data stream ports for processing.";
 
         try {
             // loop through all processors
-            for (auto &it : this->processors_) {
+            for (auto& it : this->processors_) {
                 it.second.second->internal_Start(*run_context_);
                 LOG(DEBUG) << "Started thread for processor " << it.first;
             }
@@ -555,8 +519,7 @@ void ProcessorGraph::StartProcessing(std::string run_group_id,
 
         set_state(GraphState::PROCESSING);
 
-    } else if (state_ == GraphState::NOGRAPH ||
-               state_ == GraphState::CONSTRUCTING ||
+    } else if (state_ == GraphState::NOGRAPH || state_ == GraphState::CONSTRUCTING ||
                state_ == GraphState::PREPARING) {
         throw InvalidStateError("Graph is not yet assembled.");
     }
@@ -567,41 +530,39 @@ void ProcessorGraph::StopProcessing() {
         set_state(GraphState::STOPPING);
 
         if (run_context_->error()) {
-            LOG(ERROR) << "Processing terminated with error. "
-                       << run_context_->error_message();
+            LOG(ERROR) << "Processing terminated with error. " << run_context_->error_message();
         }
 
         // signal stop
         run_context_->Terminate();
 
         // alert waiting processors
-        for (auto &it : this->processors_) {
+        for (auto& it : this->processors_) {
             it.second.second->internal_Alert();
         }
         // join processor threads
-        for (auto &it : this->processors_) {
+        for (auto& it : this->processors_) {
             it.second.second->internal_Stop();
         }
 
         LOG(INFO) << "Stopped all processors.";
-        LOG(INFO) << "Graph was processing for "
-                  << std::to_string(run_context_->seconds()) << " seconds";
+        LOG(INFO) << "Graph was processing for " << std::to_string(run_context_->seconds())
+                  << " seconds";
 
         run_context_.reset();
         terminate_signal_.store(false);
 
         set_state(GraphState::READY);
 
-    } else if (state_ == GraphState::NOGRAPH ||
-               state_ == GraphState::CONSTRUCTING ||
+    } else if (state_ == GraphState::NOGRAPH || state_ == GraphState::CONSTRUCTING ||
                state_ == GraphState::PREPARING) {
         throw InvalidStateError("Graph is not yet assembled.");
-    } else { // READY, STOPPING
-             // pass
+    } else {  // READY, STOPPING
+              // pass
     }
 }
 
-void ProcessorGraph::Update(YAML::Node &node) {
+void ProcessorGraph::Update(YAML::Node& node) {
     // YAML
     // shared-state: value
     // processor: {state: value}
@@ -622,11 +583,10 @@ void ProcessorGraph::Update(YAML::Node &node) {
                 continue;
             }
 
-            IProcessor *processor = processors_[key].second.get();
+            IProcessor* processor = processors_[key].second.get();
 
             // loop through states
-            for (YAML::iterator it2 = it->second.begin();
-                 it2 != it->second.end(); ++it2) {
+            for (YAML::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
                 try {
                     auto state_name = it2->first.as<std::string>();
                     auto state_value = it2->second.as<std::string>();
@@ -638,24 +598,22 @@ void ProcessorGraph::Update(YAML::Node &node) {
                         // set from string
                         it2->second = pstate->set_string(state_value);
                     } else {
-                        throw std::runtime_error(
-                            "Shared state " + state_name + " on processor " +
-                            key + " can not be controlled externally.");
+                        throw std::runtime_error("Shared state " + state_name + " on processor " +
+                                                 key + " can not be controlled externally.");
                     }
-                    LOG(UPDATE) << "State " << key << "." << state_name
-                                << " set to " << state_value;
-                } catch (std::exception &e) {
+                    LOG(UPDATE) << "State " << key << "." << state_name << " set to "
+                                << state_value;
+                } catch (std::exception& e) {
                     it2->second = false;
                     LOG(ERROR) << "Unable to update state value: " << e.what();
                 }
             }
-        } else { // key points to shared state alias
+        } else {  // key points to shared state alias
             try {
                 auto state_value = it->second.as<std::string>();
                 it->second = shared_state_map_.UpdateAlias(key, state_value);
-                LOG(UPDATE)
-                    << "Alias state " << key << " set to " << state_value;
-            } catch (std::exception &e) {
+                LOG(UPDATE) << "Alias state " << key << " set to " << state_value;
+            } catch (std::exception& e) {
                 it->second = false;
                 LOG(ERROR) << "Unable to update state value: " << e.what();
             }
@@ -663,7 +621,7 @@ void ProcessorGraph::Update(YAML::Node &node) {
     }
 }
 
-void ProcessorGraph::Retrieve(YAML::Node &node) {
+void ProcessorGraph::Retrieve(YAML::Node& node) {
     // YAML
     // processor:
     //    state: <null>
@@ -684,11 +642,10 @@ void ProcessorGraph::Retrieve(YAML::Node &node) {
                 continue;
             }
 
-            IProcessor *processor = processors_[key].second.get();
+            IProcessor* processor = processors_[key].second.get();
 
             // loop through states
-            for (YAML::iterator it2 = it->second.begin();
-                 it2 != it->second.end(); ++it2) {
+            for (YAML::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
                 try {
                     auto state_name = it2->first.as<std::string>();
 
@@ -696,20 +653,18 @@ void ProcessorGraph::Retrieve(YAML::Node &node) {
                     if (pstate->external_permission() != Permission::NONE) {
                         it2->second = pstate->get_string();
                     } else {
-                        throw std::runtime_error(
-                            "Shared state " + state_name + " on processor " +
-                            key + " can not be read externally.");
+                        throw std::runtime_error("Shared state " + state_name + " on processor " +
+                                                 key + " can not be read externally.");
                     }
-                } catch (std::exception &e) {
+                } catch (std::exception& e) {
                     it2->second = YAML::Null;
-                    LOG(ERROR)
-                        << "Unable to retrieve state value: " << e.what();
+                    LOG(ERROR) << "Unable to retrieve state value: " << e.what();
                 }
             }
-        } else { // key points to shared state alias
+        } else {  // key points to shared state alias
             try {
                 it->second = shared_state_map_.RetrieveAlias(key);
-            } catch (std::exception &e) {
+            } catch (std::exception& e) {
                 it->second = YAML::Null;
                 LOG(ERROR) << "Unable to retrieve state value: " << e.what();
             }
@@ -717,7 +672,7 @@ void ProcessorGraph::Retrieve(YAML::Node &node) {
     }
 }
 
-void ProcessorGraph::Apply(YAML::Node &node) {
+void ProcessorGraph::Apply(YAML::Node& node) {
     // YAML
     // falcon:
     //   version: 1.0
@@ -727,34 +682,30 @@ void ProcessorGraph::Apply(YAML::Node &node) {
     //          parameter: value
 
     if (!node.IsMap()) {
-        throw InvalidProcessorError(
-            "No processors found in method definition.");
+        throw InvalidProcessorError("No processors found in method definition.");
     }
     // loop through all processors, make sure value is another map
     for (YAML::iterator it = node.begin(); it != node.end(); ++it) {
         std::string processor_name = it->first.as<std::string>();
 
         if (!it->second.IsMap()) {
-            LOG(ERROR) << "Invalid method definition for processor "
-                       << processor_name;
+            LOG(ERROR) << "Invalid method definition for processor " << processor_name;
             continue;
         }
         // find corresponding processor engine
         if (processors_.count(processor_name) == 0) {
-            LOG(ERROR) << "In method definition: no processor named "
-                       << processor_name;
+            LOG(ERROR) << "In method definition: no processor named " << processor_name;
             continue;
         }
 
-        IProcessor *processor = processors_[processor_name].second.get();
+        IProcessor* processor = processors_[processor_name].second.get();
 
         // loop through all states
-        for (YAML::iterator it2 = it->second.begin(); it2 != it->second.end();
-             ++it2) {
+        for (YAML::iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
             try {
-                it2->second = processor->internal_ApplyMethod(
-                    it2->first.as<std::string>(), it2->second);
-            } catch (std::exception &e) {
+                it2->second =
+                    processor->internal_ApplyMethod(it2->first.as<std::string>(), it2->second);
+            } catch (std::exception& e) {
                 it2->second = YAML::Null;
                 LOG(ERROR) << "Unable to apply method: " << e.what();
             }
@@ -768,17 +719,14 @@ std::string ProcessorGraph::ExportYAML() {
     YAML::Emitter out;
     node["falcon"]["version"] = 1.0;
     if (state_ != GraphState::NOGRAPH) {
-        for (YAML::const_iterator it = yaml_["processors"].begin();
-             it != yaml_["processors"].end(); ++it) {
+        for (YAML::const_iterator it = yaml_["processors"].begin(); it != yaml_["processors"].end();
+             ++it) {
             std::vector<std::string> processor_list =
                 expandProcessorName(it->first.as<std::string>());
 
-            for (auto &name : processor_list) {
-
-                node["graph"]["processors"][name] =
-                    this->processors_[name].second->ExportYAML();
-                node["graph"]["processors"][name]["class"] =
-                    this->processors_[name].first;
+            for (auto& name : processor_list) {
+                node["graph"]["processors"][name] = this->processors_[name].second->ExportYAML();
+                node["graph"]["processors"][name]["class"] = this->processors_[name].first;
 
                 if (yaml_["processors"][it->first]["options"]) {
                     node["graph"]["processors"][name]["options"] =
@@ -792,9 +740,8 @@ std::string ProcessorGraph::ExportYAML() {
             }
         }
 
-        for (auto &it : this->connections_) {
-            node["graph"]["connections"].push_back(it.first.string() + "=" +
-                                                   it.second.string());
+        for (auto& it : this->connections_) {
+            node["graph"]["connections"].push_back(it.first.string() + "=" + it.second.string());
         }
 
         node["graph"]["states"] = shared_state_map_.ExportYAML();

@@ -28,9 +28,7 @@ FalconConfiguration::FalconConfiguration() : Configuration() {
     add_option("logging/screen/enabled", logging_screen_enabled, "");
     add_option("logging/cloud/enabled", logging_cloud_enabled, "");
     add_option("logging/cloud/port", logging_cloud_port, "");
-    add_option("server_side_storage/environment",
-               server_side_storage_environment, "");
-    add_option("server_side_storage/resources", server_side_storage_resources,
-               "");
+    add_option("server_side_storage/environment", server_side_storage_environment, "");
+    add_option("server_side_storage/resources", server_side_storage_resources, "");
     add_option("server_side_storage/custom", server_side_storage_custom, "");
 }
