@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
         std::cout << "Extensions: " << std::endl;
 
         std::vector<std::string> extensions = split(EXTENSIONS_BUILD, ';');
-        for (auto it : extensions) {
+        for (const auto &it : extensions) {
             std::cout << it << std::endl;
         }
         return EXIT_SUCCESS;

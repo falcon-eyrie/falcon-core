@@ -224,7 +224,7 @@ ProcessorGraph::ProcessorGraph(GlobalContext &context)
     // log list of registered processors
     std::vector<std::string> processors =
         ProcessorFactory::instance().listEntries();
-    for (auto item : processors) {
+    for (const auto &item : processors) {
         documentation_[item] = LoadProcessorDoc(item);
         if (documentation_[item].IsMap() &&
             documentation_[item]["Description"]) {
