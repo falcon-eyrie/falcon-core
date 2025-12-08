@@ -57,9 +57,9 @@ FetchContent_Declare(
 
 FetchContent_Declare(
 	units
-	GIT_REPOSITORY https://github.com/benfgit/units.git
+	GIT_REPOSITORY https://github.com/LLNL/units.git
 	GIT_SHALLOW ON
-	GIT_TAG patch-1
+	GIT_TAG c5610c81fb9285abef1217145365ac6532b6f0cc
 )
 
 FetchContent_Declare(
