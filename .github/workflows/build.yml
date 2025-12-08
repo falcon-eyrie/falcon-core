@@ -25,7 +25,7 @@ jobs:
             xz-utils
 
           sh scripts/setup/install_cmake.sh
-          sh scripts/setup/install_llvm.sh
+          sh scripts/setup/install_clang.sh
 
 
       - name: Run clang-format
@@ -45,8 +45,8 @@ jobs:
           cmake .. \
             -DCMAKE_BUILD_TYPE=Debug \
             -DIGNORE_EXTENSIONS=ON \
-            -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_CXX_COMPILER=clang++
+            -DCMAKE_C_COMPILER=/usr/local/bin/clang \
+            -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++
 
       - name: Build project
         run: |
