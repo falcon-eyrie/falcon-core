@@ -13,10 +13,11 @@ sudo curl -fsSL -o "$ARCHIVE" "$URL"
 
 echo "Extracting LLVM archive into llvm-${VERSION}/..."
 
-sudo rm -rf "/usr/local/llvm-${VERSION}"
+sudo rm -rf "llvm-${VERSION}"
 sudo mkdir -p "llvm-${VERSION}"
-#todo make faster
-# sudo tar -xf "$ARCHIVE" -C "llvm-${VERSION}" --strip-components=1
+
+# Use `pixz` for parallel decompression
+# It works 2x faster on Github CI, compared to regular `xz`
 sudo tar --use-compress-program=pixz -xf "$ARCHIVE" \
     -C "llvm-${VERSION}" --strip-components=1
 

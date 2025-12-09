@@ -9,6 +9,10 @@ jobs:
     name: Format and Compile
     runs-on: ubuntu-24.04
 
+    strategy:
+      matrix:
+        compiler: [clang, gcc]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -17,14 +21,16 @@ jobs:
         run: |
           sh scripts/setup/install_deps.sh
           sh scripts/setup/install_cmake.sh
-          sh scripts/setup/install_llvm.sh
+          if [ "${{ matrix.compiler }}" == "clang" ]; then
+            sh scripts/setup/install_llvm.sh
+          fi
 
-      - name: Run clang-format
+      - name: Run clang-format (only for clang)
+        if: matrix.compiler == 'clang'
         run: |
           sh scripts/format.sh
-          # Check for any changes caused by formatting
           if [[ -n "$(git status --porcelain)" ]]; then
-            echo "Following files seems to be not formatted. Please run './scripts/format.sh' locally and commit the changes."
+            echo "Following files seem to be not formatted. Please run './scripts/format.sh' locally and commit the changes."
             git --no-pager diff --name-only
             exit 1
           fi
@@ -33,17 +39,26 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          cmake .. \
+          if [ "${{ matrix.compiler }}" == "clang" ]; then
+            cmake .. \
             -DCMAKE_BUILD_TYPE=Debug \
             -DIGNORE_EXTENSIONS=ON \
             -DCMAKE_C_COMPILER=/usr/local/bin/clang \
             -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++
+          else
+            cmake .. \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DIGNORE_EXTENSIONS=ON \
+            -DCMAKE_C_COMPILER=/usr/bin/gcc \
+            -DCMAKE_CXX_COMPILER=/usr/bin/g++
+          fi
 
       - name: Build project
         run: |
           cd build
           make -j$(nproc)
 
-      - name: Run clang-tidy
+      - name: Run clang-tidy (only for clang)
+        if: matrix.compiler == 'clang'
         run: |
           sh scripts/tidy.sh
