@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
-ENABLE_LANGUAGE(CXX)
+cmake_minimum_required(VERSION 3.16)
 
 
 # Export compile commands for VS Code IntelliSense
@@ -14,6 +13,8 @@ endif()
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
 project (rootproject)
+
+ENABLE_LANGUAGE(CXX)
 
 set(_build_version "unknown")
 find_package(Git)
@@ -100,10 +101,9 @@ target_link_libraries(${YAMLCPP} yaml-cpp)
 FetchContent_GetProperties(cppzmq)
 if(NOT cppzmq_POPULATED)
 	message(STATUS "Populating zmq-cpp...")
-	FetchContent_Populate(cppzmq)
+	FetchContent_MakeAvailable(cppzmq)
 	# Add here options for cppzmq building
 	set(CPPZMQ_BUILD_TESTS OFF CACHE BOOL "Whether or not to build the tests")
-	add_subdirectory(${cppzmq_SOURCE_DIR} ${cppzmq_BINARY_DIR})
 	message(STATUS "Done.")
 endif()
 
@@ -113,7 +113,7 @@ target_link_libraries(${ZMQ} cppzmq)
 FetchContent_GetProperties(units)
 if(NOT units_POPULATED)
 	message(STATUS "Populating LLNL units...")
-	FetchContent_Populate(units)
+	FetchContent_MakeAvailable(units)
 	# Add here options for units building
 	set(CMAKE_CXX_STANDARD 17)
 	set(USE_LIBCXX OFF CACHE INTERNAL "")
@@ -124,7 +124,6 @@ if(NOT units_POPULATED)
 	set(UNITS_BUILD_STATIC_LIBRARY ON CACHE INTERNAL "")
 	set(UNITS_BUILD_SHARED_LIBRARY OFF CACHE INTERNAL "")
 	set(UNITS_BUILD_WEBSERVER OFF CACHE INTERNAL "")
-	add_subdirectory(${units_SOURCE_DIR} ${units_BINARY_DIR})
 	message(STATUS "Done.")
 endif()
 
