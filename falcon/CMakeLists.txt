@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 ENABLE_LANGUAGE(CXX)
 
 MACRO(SUBDIRLIST result curdir)
@@ -208,7 +208,7 @@ target_link_libraries(falcon yaml-cpp zmq flatbuffers ${PLATFORM_LINK_LIBRARIES}
 # linked at all because none of their exported symbols are explicitly used in falcon. Same is true for (part of)
 # the disruptor and utilities libraries
 
-SET(WHOLELIBS -Wl,--whole-archive g3logger logging units-static utilities options disruptor ${DATATYPE_LIBS} ${PROCESSOR_LIBS} -Wl,--no-whole-archive)
+SET(WHOLELIBS -Wl,--whole-archive g3log logging units::units utilities options disruptor ${DATATYPE_LIBS} ${PROCESSOR_LIBS} -Wl,--no-whole-archive)
 target_link_libraries(falcon ${WHOLELIBS})
 
 install(TARGETS falcon CONFIGURATIONS Release RUNTIME DESTINATION bin)

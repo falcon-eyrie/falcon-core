@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.11)
+cmake_minimum_required(VERSION 3.5)
 ENABLE_LANGUAGE(CXX)
 
 
@@ -54,35 +54,35 @@ include(FetchContent)
 FetchContent_Declare(
     flatbuffers
     GIT_REPOSITORY "https://github.com/google/flatbuffers"
-    GIT_TAG        v2.0.0
+    GIT_TAG        v25.9.23
 )
 
 FetchContent_Declare(
 		yaml-cpp
 		GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
 		GIT_SHALLOW	ON
-		GIT_TAG yaml-cpp-0.6.3
+		GIT_TAG bbf8bdb087bb3f3621ca0a5ace06047805f4e9f3
 	)
 
 FetchContent_Declare(
 		cppzmq
 		GIT_REPOSITORY https://github.com/zeromq/cppzmq.git
 		GIT_SHALLOW	ON
-		GIT_TAG v4.7.1
+		GIT_TAG v4.11.0
 	)
 
 FetchContent_Declare(
 	units
 	GIT_REPOSITORY https://github.com/LLNL/units.git
 	GIT_SHALLOW ON
-	GIT_TAG v0.4.0
+	GIT_TAG v0.13.1
 )
 
 FetchContent_Declare(
 	g3log
 	GIT_REPOSITORY https://github.com/KjellKod/g3log.git
 	GIT_SHALLOW ON
-	GIT_TAG 1.3.3
+	GIT_TAG 2.6
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -145,7 +145,8 @@ if(NOT units_POPULATED)
 endif()
 
 include_directories(BEFORE SYSTEM "${units_SOURCE_DIR}")
-target_link_libraries(${UNITS} units-static)
+# Temporarily disabled
+# target_link_libraries(${UNITS} units::units)
 
 message(STATUS "Populating g3log...")
 set(ADD_G3LOG_UNIT_TEST OFF CACHE INTERNAL "")
@@ -161,7 +162,7 @@ FetchContent_GetProperties(g3log)
 
 include_directories(BEFORE SYSTEM "${g3log_SOURCE_DIR}/src")
 include_directories(BEFORE SYSTEM "${g3log_BINARY_DIR}/include")
-target_link_libraries(${LOGGER} g3logger)
+target_link_libraries(${LOGGER} g3log)
 
 
 ## External extensions ##
