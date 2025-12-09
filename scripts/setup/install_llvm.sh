@@ -15,7 +15,10 @@ echo "Extracting LLVM archive into llvm-${VERSION}/..."
 
 sudo rm -rf "/usr/local/llvm-${VERSION}"
 sudo mkdir -p "llvm-${VERSION}"
-sudo tar -xf "$ARCHIVE" -C "llvm-${VERSION}" --strip-components=1
+#todo make faster
+# sudo tar -xf "$ARCHIVE" -C "llvm-${VERSION}" --strip-components=1
+sudo tar --use-compress-program=pixz -xf "$ARCHIVE" \
+    -C "llvm-${VERSION}" --strip-components=1
 
 echo "Extracted LLVM archive into llvm-${VERSION}/"
 

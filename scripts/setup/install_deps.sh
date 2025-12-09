@@ -5,4 +5,5 @@ sudo apt-get install -y \
   pkg-config \
   git \
   wget \
-  xz-utils
+  xz-utils \
+  pixz
