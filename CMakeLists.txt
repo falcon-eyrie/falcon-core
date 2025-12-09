@@ -44,7 +44,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 		yaml-cpp
 		GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-		GIT_SHALLOW	ON
+		GIT_SHALLOW	OFF
 		GIT_TAG bbf8bdb087bb3f3621ca0a5ace06047805f4e9f3
 	)
 
@@ -58,7 +58,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	units
 	GIT_REPOSITORY https://github.com/LLNL/units.git
-	GIT_SHALLOW ON
+	GIT_SHALLOW OFF
 	GIT_TAG c5610c81fb9285abef1217145365ac6532b6f0cc
 )
 
