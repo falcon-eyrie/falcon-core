@@ -1,35 +1,20 @@
-cmake_minimum_required(VERSION 3.5)
-ENABLE_LANGUAGE(CXX)
+cmake_minimum_required(VERSION 3.16)
 
 
 # Export compile commands for VS Code IntelliSense
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wunused -std=c++17 -pthread -D_GLIBCXX_USE_NANOSLEEP")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wextra -Wunused -std=c++17 -pthread")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wunused -std=c++17 -pthread -D_GLIBCXX_USE_NANOSLEEP")
-endif()
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message(STATUS "Detected GCC version ${CMAKE_CXX_COMPILER_VERSION}")
-
-	if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0)
-        message(FATAL_ERROR "GCC >= 11.0 required, found ${CMAKE_CXX_COMPILER_VERSION}")
-    endif()
-
-	if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.0
-        OR CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 13.999)
-        message(WARNING "Falcon is tested only with GCC 13.x — found GCC ${CMAKE_CXX_COMPILER_VERSION}")
-    endif()
-
-else()
-    message(WARNING "Non-GNU compiler detected: ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION} but  Falcon is tested only with GCC 13.x")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Wunused -std=c++17 -pthread")
 endif()
 
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
 project (rootproject)
+
+ENABLE_LANGUAGE(CXX)
 
 set(_build_version "unknown")
 find_package(Git)
@@ -60,7 +45,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 		yaml-cpp
 		GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
-		GIT_SHALLOW	ON
+		GIT_SHALLOW	OFF
 		GIT_TAG bbf8bdb087bb3f3621ca0a5ace06047805f4e9f3
 	)
 
@@ -74,8 +59,8 @@ FetchContent_Declare(
 FetchContent_Declare(
 	units
 	GIT_REPOSITORY https://github.com/LLNL/units.git
-	GIT_SHALLOW ON
-	GIT_TAG v0.13.1
+	GIT_SHALLOW OFF
+	GIT_TAG c5610c81fb9285abef1217145365ac6532b6f0cc
 )
 
 FetchContent_Declare(
@@ -116,10 +101,9 @@ target_link_libraries(${YAMLCPP} yaml-cpp)
 FetchContent_GetProperties(cppzmq)
 if(NOT cppzmq_POPULATED)
 	message(STATUS "Populating zmq-cpp...")
-	FetchContent_Populate(cppzmq)
+	FetchContent_MakeAvailable(cppzmq)
 	# Add here options for cppzmq building
 	set(CPPZMQ_BUILD_TESTS OFF CACHE BOOL "Whether or not to build the tests")
-	add_subdirectory(${cppzmq_SOURCE_DIR} ${cppzmq_BINARY_DIR})
 	message(STATUS "Done.")
 endif()
 
@@ -129,7 +113,7 @@ target_link_libraries(${ZMQ} cppzmq)
 FetchContent_GetProperties(units)
 if(NOT units_POPULATED)
 	message(STATUS "Populating LLNL units...")
-	FetchContent_Populate(units)
+	FetchContent_MakeAvailable(units)
 	# Add here options for units building
 	set(CMAKE_CXX_STANDARD 17)
 	set(USE_LIBCXX OFF CACHE INTERNAL "")
@@ -140,7 +124,6 @@ if(NOT units_POPULATED)
 	set(UNITS_BUILD_STATIC_LIBRARY ON CACHE INTERNAL "")
 	set(UNITS_BUILD_SHARED_LIBRARY OFF CACHE INTERNAL "")
 	set(UNITS_BUILD_WEBSERVER OFF CACHE INTERNAL "")
-	add_subdirectory(${units_SOURCE_DIR} ${units_BINARY_DIR})
 	message(STATUS "Done.")
 endif()
 

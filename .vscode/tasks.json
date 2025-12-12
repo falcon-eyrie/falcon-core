@@ -31,5 +31,15 @@
 			"isBackground": false,
 			"problemMatcher": []
 		},
+		{
+			"label": "lint",
+			"type": "shell",
+			"command": "sh",
+			"args": [
+				"${workspaceFolder}/scripts/tidy.sh"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
 	]
 }
