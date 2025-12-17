@@ -134,8 +134,8 @@ bool IState::IsShared() {
     return shared_;
 }
 
-void IState::set_description(std::string value) {
-    description_ = std::move(value);
+void IState::set_description(const std::string& value) {
+    description_ = value;
 }
 
 void IState::set_external_permission(Permission permission) {

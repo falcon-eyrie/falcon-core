@@ -156,7 +156,7 @@ class IState {
 
     virtual bool IsShared();
 
-    void set_description(std::string value);
+    void set_description(const std::string& value);
 
     virtual bool set_string(const std::string& value, bool cache = true) = 0;
 
