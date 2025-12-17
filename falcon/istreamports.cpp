@@ -35,7 +35,7 @@ void ISlotOut::Connect(ISlotIn* downstream) {
 std::vector<RingSequence*> ISlotOut::gating_sequences() {
     std::vector<RingSequence*> v;
     v.reserve(downstream_slots_.size());
-    
+
     for (auto& it : downstream_slots_) {
         v.push_back(it->sequence());
     }
