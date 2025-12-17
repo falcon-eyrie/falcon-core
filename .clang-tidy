@@ -1,8 +1,9 @@
 Checks: >
   -*,
+  performance-*,
+  # TODO(ben): Uncomment and fix the remanining lints
   #bugprone-*,
   #modernize-*,
-  performance-*,
   #readability-*,
 
 WarningsAsErrors: '*'
