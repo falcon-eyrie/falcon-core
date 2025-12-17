@@ -66,14 +66,14 @@ int main(int argc, char** argv) {
     parser.parse_check(argc, argv);
 
     if (parser.exist("version")) {
-        std::cout << "Falcon " << GIT_REVISION << std::endl;
-        std::cout << "Last build: " << BUILD_TIMESTAMP << std::endl;
-        std::cout << "Configuration: " << BUILD_TYPE << std::endl;
-        std::cout << "Extensions: " << std::endl;
+        std::cout << "Falcon " << GIT_REVISION << '\n';
+        std::cout << "Last build: " << BUILD_TIMESTAMP << '\n';
+        std::cout << "Configuration: " << BUILD_TYPE << '\n';
+        std::cout << "Extensions: " << '\n';
 
         std::vector<std::string> extensions = split(EXTENSIONS_BUILD, ';');
         for (const auto& it : extensions) {
-            std::cout << it << std::endl;
+            std::cout << it << '\n';
         }
         return EXIT_SUCCESS;
     }
@@ -88,8 +88,8 @@ int main(int argc, char** argv) {
     try {
         config.load(parser.get<std::string>("config"));
     } catch (std::runtime_error& e) {
-        std::cout << e.what() << std::endl;
-        std::cout << "Falcon terminated." << std::endl;
+        std::cout << e.what() << '\n';
+        std::cout << "Falcon terminated." << '\n';
         return EXIT_FAILURE;
     }
 

@@ -137,7 +137,8 @@ class IProcessor {
 
     /* this methods creates a file whose access key is filename and whose
     fullpath is prefix.filename.extension*/
-    void create_file(std::string prefix, std::string variable_name, std::string extension = "bin");
+    void create_file(const std::string& prefix, const std::string& variable_name,
+                     const std::string& extension = "bin");
 
     void prepare_latency_test(ProcessingContext& context);
     void save_source_timestamps_to_disk(std::uint64_t n_timestamps);

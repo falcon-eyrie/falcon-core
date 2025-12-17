@@ -2,9 +2,9 @@ Checks: >
   -*,
   #bugprone-*,
   #modernize-*,
-  #performance-*,
+  performance-*,
   #readability-*,
-  performance-for-range-copy
+
 WarningsAsErrors: '*'
 HeaderFilterRegex: ''
 CheckOptions:

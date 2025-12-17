@@ -19,6 +19,7 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
+#include <utility>
 
 #include "iprocessor.hpp"
 #include "logging/log.hpp"
@@ -76,7 +77,7 @@ YAML::Node IProcessor::ExportYAML() {
 }
 
 void IProcessor::remove_option(std::string name) {
-    options_.remove(name);
+    options_.remove(std::move(name));
 }
 
 IPortIn* IProcessor::input_port(const PortAddress& address) {
@@ -387,10 +388,11 @@ void IProcessor::internal_Alert() {
 }
 
 YAML::Node IProcessor::internal_ApplyMethod(std::string name, const YAML::Node& node) {
-    return exposed_method(name)(node);
+    return exposed_method(std::move(name))(node);
 }
 
-void IProcessor::create_file(std::string prefix, std::string variable_name, std::string extension) {
+void IProcessor::create_file(const std::string& prefix, const std::string& variable_name,
+                             const std::string& extension) {
     std::string full_path = prefix + "." + variable_name + "." + extension;
     if (path_exists(full_path)) {
         throw ProcessorInternalError("Output file " + full_path + " already exists.", name());

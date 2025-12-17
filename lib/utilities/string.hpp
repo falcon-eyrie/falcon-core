@@ -41,7 +41,7 @@ template <typename T>
 std::string join(const std::vector<T>& s, std::string delim = ",");
 
 std::string resolve_server_path(std::string p, const std::map<std::string, std::string>& contexts,
-                                std::string default_context = "");
+                                const std::string& default_context = "");
 
 template <typename T>
 std::string to_string_n(const T a_value, const int n = 1);

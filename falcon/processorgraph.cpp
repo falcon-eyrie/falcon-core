@@ -22,6 +22,7 @@
 #include <iostream>
 #include <regex>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "buildconstant.hpp"
@@ -50,7 +51,7 @@ std::string graph_state_string(GraphState state) {
     return s;
 }
 
-std::vector<std::string> expandProcessorName(std::string s) {
+std::vector<std::string> expandProcessorName(const std::string& s) {
     static const int name_group = 1;
     static const int range_group = 2;
     static const int first_range_id = 1;
@@ -163,8 +164,10 @@ void ProcessorGraph::ConstructProcessorEngines(const YAML::Node& node) {
                     try {
                         processor.reset(ProcessorFactory::instance().create(processor_class));
                     } catch (factory::UnknownClass& e) {
-                        throw InvalidProcessorError("Cannot create processor " + processor_name +
-                                                    " of unknown class " + processor_class + ".");
+                        std::ostringstream oss;
+                        oss << "Cannot create processor " << processor_name << " of unknown class "
+                            << processor_class << '.';
+                        throw InvalidProcessorError(oss.str());
                     }
                     processor->set_name_and_type(processor_name, processor_class);
                     processor->internal_Configure(processor_node, global_context_);
@@ -237,7 +240,7 @@ std::string ProcessorGraph::state_string() const {
     return graph_state_string(state_);
 }
 
-IProcessor* ProcessorGraph::LookUpProcessor(std::string name) {
+IProcessor* ProcessorGraph::LookUpProcessor(const std::string& name) {
     if (processors_.count(name) == 0) {
         throw InvalidProcessorError("Processor \"" + name + "\" not found.");
     }
@@ -245,7 +248,7 @@ IProcessor* ProcessorGraph::LookUpProcessor(std::string name) {
 }
 
 std::vector<std::pair<std::string, std::shared_ptr<IState>>> ProcessorGraph::LookUpStates(
-    std::vector<std::string> state_addresses) {
+    const std::vector<std::string>& state_addresses) {
     std::vector<std::pair<std::string, std::shared_ptr<IState>>> states;
 
     for (auto& state_address : state_addresses) {
@@ -473,8 +476,9 @@ void ProcessorGraph::StartProcessing(std::string run_group_id, std::string run_i
     // start processing only if state is READY
 
     if (state_ == GraphState::READY) {
-        run_context_.reset(new RunContext(global_context_, terminate_signal_, run_group_id, run_id,
-                                          template_id, test_flag));
+        run_context_.reset(new RunContext(global_context_, terminate_signal_,
+                                          std::move(run_group_id), std::move(run_id),
+                                          std::move(template_id), test_flag));
 
         set_state(GraphState::STARTING);
 
@@ -597,8 +601,11 @@ void ProcessorGraph::Update(YAML::Node& node) {
                         // set from string
                         it2->second = pstate->set_string(state_value);
                     } else {
-                        throw std::runtime_error("Shared state " + state_name + " on processor " +
-                                                 key + " can not be controlled externally.");
+                        throw std::runtime_error((std::ostringstream{}
+                                                  << "Shared state " << state_name
+                                                  << " on processor " << key
+                                                  << " can not be controlled externally.")
+                                                     .str());
                     }
                     LOG(UPDATE) << "State " << key << "." << state_name << " set to "
                                 << state_value;
@@ -652,8 +659,11 @@ void ProcessorGraph::Retrieve(YAML::Node& node) {
                     if (pstate->external_permission() != Permission::NONE) {
                         it2->second = pstate->get_string();
                     } else {
-                        throw std::runtime_error("Shared state " + state_name + " on processor " +
-                                                 key + " can not be read externally.");
+                        throw std::runtime_error((std::ostringstream{}
+                                                  << "Shared state " << state_name
+                                                  << " on processor " << key
+                                                  << " can not be read externally.")
+                                                     .str());
                     }
                 } catch (std::exception& e) {
                     it2->second = YAML::Null;

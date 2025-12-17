@@ -22,7 +22,7 @@
 #include "../utilities/zmqutil.hpp"
 #include "customsink.hpp"
 
-std::string ScreenSink::FormatMessage(const LEVELS level, g3::LogMessage& msg) {
+std::string ScreenSink::FormatMessage(const LEVELS& level, g3::LogMessage& msg) {
     if (level.value == DEBUG.value or level.value >= WARNING.value) {
         std::string out;
         out.append("\n" + msg.timestamp() + "\t" + msg.level() + " [" + msg.file() +
@@ -38,7 +38,7 @@ std::string ScreenSink::FormatMessage(const LEVELS level, g3::LogMessage& msg) {
     }
 }
 
-ScreenSink::FG_Color ScreenSink::GetColor(const LEVELS level) const {
+ScreenSink::FG_Color ScreenSink::GetColor(const LEVELS& level) const {
     if (level.value == WARNING.value) {
         return YELLOW;
     }

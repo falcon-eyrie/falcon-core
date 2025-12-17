@@ -20,6 +20,7 @@
 #include <sys/stat.h>
 #include <regex>
 #include <sstream>
+#include <utility>
 
 #include "string.hpp"
 
@@ -46,7 +47,7 @@ std::vector<std::string> split(const std::string& s, char delim) {
 }
 
 std::string resolve_server_path(std::string p, const std::map<std::string, std::string>& contexts,
-                                std::string default_context) {
+                                const std::string& default_context) {
     // regular expression: "^(\w+)://+([/_[:alnum:]])$"
     std::string expr("^(\\w+)://+([/_.[:alnum:]]*)$");
     std::regex re(expr);
@@ -88,7 +89,7 @@ std::string resolve_server_path(std::string p, const std::map<std::string, std::
 
 std::string extract_path_to_folder(std::string path_to_file) {
     // build paths to subfolders and check if all created paths exist
-    auto path_to_folder = path_to_file;
+    auto path_to_folder = std::move(path_to_file);
     // pix_folder = repo://tests/data/bifurcated_maze/encoding_models/TT_I_
     while (path_to_folder.back() != '/') {
         path_to_folder.pop_back();
