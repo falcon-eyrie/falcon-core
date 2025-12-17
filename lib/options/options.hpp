@@ -54,7 +54,7 @@ void set_nested_yaml_node(YAML::Node& root, const std::vector<std::string>& path
 
 class OptionBase {
    public:
-    OptionBase(const std::string& name, ValueBase& value, std::string description = "",
+    OptionBase(const std::string& name, ValueBase& value, const std::string& description = "",
                bool required = false);
 
     OptionBase(const OptionBase& other)

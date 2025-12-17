@@ -104,9 +104,9 @@ bool Permissions::IsCompatible(const Permissions& p) {
              (self_ != Permission::READ && p.others() == Permission::READ));
 }
 
-IState::IState(const Permissions& permissions, std::string description)
+IState::IState(const Permissions& permissions, const std::string& description)
     : permissions_(permissions),
-      description_(std::move(description)),
+      description_(description),
       shared_(false),
       external_permission_(std::make_shared<ExternalPermissionTracker>(permissions.external())) {
 }
@@ -153,8 +153,8 @@ void IState::unlock() {
     lock_.clear(std::memory_order_release);
 }
 
-SharedStateAlias::SharedStateAlias(Permission external, std::string description)
-    : external_(external), description_(std::move(description)) {
+SharedStateAlias::SharedStateAlias(Permission external, const std::string& description)
+    : external_(external), description_(description) {
 }
 
 SharedStateAlias::~SharedStateAlias() {

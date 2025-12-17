@@ -136,7 +136,7 @@ class IState {
     friend class graph::ProcessorGraph;
 
    public:
-    IState(const Permissions& permissions, std::string description = "");
+    IState(const Permissions& permissions, const std::string& description = "");
     IState(const IState& other);
     virtual ~IState() {}
     virtual IState* clone() const = 0;
@@ -344,7 +344,7 @@ class WritableState : public ReadableState<T> {
 
 class SharedStateAlias {
    public:
-    SharedStateAlias(Permission external = Permission::WRITE, std::string description = "");
+    SharedStateAlias(Permission external = Permission::WRITE, const std::string& description = "");
     ~SharedStateAlias();
     void AddState(const std::string& name, const std::shared_ptr<IState>& dependent);
     void RemoveState(const std::string& name);

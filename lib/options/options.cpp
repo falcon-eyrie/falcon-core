@@ -56,9 +56,9 @@ void options::set_nested_yaml_node(YAML::Node& root, const std::vector<std::stri
     }
 }
 
-OptionBase::OptionBase(const std::string& name, ValueBase& value, std::string description,
+OptionBase::OptionBase(const std::string& name, ValueBase& value, const std::string& description,
                        bool required)
-    : name_(name), description_(std::move(description)), required_(required), value_(value) {
+    : name_(name), description_(description), required_(required), value_(value) {
     if (name.size() == 0) {
         throw std::runtime_error("Option name cannot be empty.");
     }
