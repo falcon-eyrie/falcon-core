@@ -133,8 +133,8 @@ bool Serialization::YAMLSerializer::Serialize(std::ostream& stream, typename Any
     return true;
 }
 
-Serializer* serializer_from_string(std::string s, Serialization::Format fmt) {
-    return serializer(Serialization::string_to_encoding(std::move(s)), fmt);
+Serializer* serializer_from_string(const std::string& s, Serialization::Format fmt) {
+    return serializer(Serialization::string_to_encoding(s), fmt);
 }
 
 Serializer* serializer(Serialization::Encoding enc, Serialization::Format fmt) {

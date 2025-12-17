@@ -40,19 +40,19 @@ void IStreamInfo::set_stream_rate(const IStreamInfo& info) {
     set_stream_rate(info.stream_rate());
 }
 
-void IStreamInfo::set_stream_name(std::string stream_name) {
+void IStreamInfo::set_stream_name(const std::string& stream_name) {
     if (finalized()) {
         throw std::runtime_error("Stream information is finalized. Cannot change stream name.");
     }
-    stream_name_ = std::move(stream_name);
+    stream_name_ = stream_name;
 }
 
 void IStreamInfo::set_stream_name(const IStreamInfo& info) {
     set_stream_name(info.stream_name());
 }
 
-void IStreamInfo::set_stream_parameters(double stream_rate, std::string stream_name) {
-    set_stream_name(std::move(stream_name));
+void IStreamInfo::set_stream_parameters(double stream_rate, const std::string& stream_name) {
+    set_stream_name(stream_name);
     set_stream_rate(stream_rate);
 }
 

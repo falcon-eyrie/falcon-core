@@ -471,14 +471,13 @@ void ProcessorGraph::Destroy() {
     set_state(GraphState::NOGRAPH);
 }
 
-void ProcessorGraph::StartProcessing(std::string run_group_id, std::string run_id,
-                                     std::string template_id, bool test_flag) {
+void ProcessorGraph::StartProcessing(const std::string& run_group_id, const std::string& run_id,
+                                     const std::string& template_id, bool test_flag) {
     // start processing only if state is READY
 
     if (state_ == GraphState::READY) {
-        run_context_.reset(new RunContext(global_context_, terminate_signal_,
-                                          std::move(run_group_id), std::move(run_id),
-                                          std::move(template_id), test_flag));
+        run_context_.reset(new RunContext(global_context_, terminate_signal_, run_group_id, run_id,
+                                          template_id, test_flag));
 
         set_state(GraphState::STARTING);
 

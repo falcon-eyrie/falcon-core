@@ -52,7 +52,7 @@ T from_string(std::string s);
 // removes the appended (complete or incomplete) filename from the path
 // and returns the path to the folder;
 // returned path ends with '/'
-std::string extract_path_to_folder(std::string path_to_file);
+std::string extract_path_to_folder(const std::string& path_to_file);
 
 //
 std::string complete_path(std::string file_path, std::string processor_name, std::string extension);

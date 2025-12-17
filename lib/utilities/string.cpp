@@ -87,9 +87,9 @@ std::string resolve_server_path(std::string p, const std::map<std::string, std::
     return p;
 }
 
-std::string extract_path_to_folder(std::string path_to_file) {
+std::string extract_path_to_folder(const std::string& path_to_file) {
     // build paths to subfolders and check if all created paths exist
-    auto path_to_folder = std::move(path_to_file);
+    auto path_to_folder = path_to_file;
     // pix_folder = repo://tests/data/bifurcated_maze/encoding_models/TT_I_
     while (path_to_folder.back() != '/') {
         path_to_folder.pop_back();

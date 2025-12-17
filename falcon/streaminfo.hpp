@@ -42,11 +42,11 @@ class IStreamInfo {
     std::string datatype() const;
 
     std::string stream_name() const { return stream_name_; };
-    void set_stream_name(std::string stream_name);
+    void set_stream_name(const std::string& stream_name);
     void set_stream_name(const IStreamInfo& info);
 
     void set_stream_parameters(const IStreamInfo& info);
-    void set_stream_parameters(double stream_rate, std::string stream_name);
+    void set_stream_parameters(double stream_rate, const std::string& stream_name);
 
     template <typename T = typename AnyType::Data>
     const T& getDataPrototype() const {
