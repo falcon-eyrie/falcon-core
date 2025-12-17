@@ -25,8 +25,8 @@
 
 class Configuration {
    public:
-    void load(std::string filename);
-    void save(std::string filename);
+    void load(const std::string& filename);
+    void save(const std::string& filename);
 
     template <typename TValue>
     void add_option(std::string name, TValue& value, std::string description = "",

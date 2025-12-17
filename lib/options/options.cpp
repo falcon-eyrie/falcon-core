@@ -18,6 +18,7 @@
 // ---------------------------------------------------------------------
 
 #include "options.hpp"
+#include <utility>
 #include <vector>
 
 using namespace options;
@@ -55,8 +56,9 @@ void options::set_nested_yaml_node(YAML::Node& root, const std::vector<std::stri
     }
 }
 
-OptionBase::OptionBase(std::string name, ValueBase& value, std::string description, bool required)
-    : name_(name), description_(description), required_(required), value_(value) {
+OptionBase::OptionBase(const std::string& name, ValueBase& value, std::string description,
+                       bool required)
+    : name_(name), description_(std::move(description)), required_(required), value_(value) {
     if (name.size() == 0) {
         throw std::runtime_error("Option name cannot be empty.");
     }
@@ -100,7 +102,7 @@ OptionBase& OptionBase::optional() {
 }
 
 OptionBase& OptionBase::describe(std::string description) {
-    description_ = description;
+    description_ = std::move(description);
     return *(this);
 }
 
@@ -117,7 +119,7 @@ bool OptionBase::is_nullable() const {
     return value_.is_nullable();
 }
 
-OptionBase& OptionList::operator[](std::string key) {
+OptionBase& OptionList::operator[](const std::string& key) {
     for (auto& option : options_) {
         if (option.name() == key) {
             return option;
@@ -126,7 +128,7 @@ OptionBase& OptionList::operator[](std::string key) {
     throw std::runtime_error("No such option.");
 }
 
-void OptionList::remove(std::string key) {
+void OptionList::remove(const std::string& key) {
     options_.remove_if([key](const OptionBase& x) { return x.name() == key; });
 }
 
@@ -151,7 +153,7 @@ std::vector<std::string> OptionList::required_options() const {
     return opts;
 }
 
-bool OptionList::has_option(std::string name) const noexcept {
+bool OptionList::has_option(const std::string& name) const noexcept {
     // name = std::regex_replace(name, std::regex("[ _]"), "-");
     return std::any_of(options_.begin(), options_.end(),
                        [name](const OptionBase& x) { return x.name() == name; });
@@ -247,12 +249,12 @@ YAML::Node OptionList::to_yaml(const option_error_handler& handler) const {
     return root;
 }
 
-void OptionList::load_yaml(std::string filename, const option_error_handler& handler) {
+void OptionList::load_yaml(const std::string& filename, const option_error_handler& handler) {
     YAML::Node root = YAML::LoadFile(filename);
     from_yaml(root, handler);
 }
 
-void OptionList::save_yaml(std::string filename, const option_error_handler& handler) const {
+void OptionList::save_yaml(const std::string& filename, const option_error_handler& handler) const {
     auto node = to_yaml(handler);
 
     YAML::Emitter yaml_emitter;

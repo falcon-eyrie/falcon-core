@@ -177,7 +177,7 @@ class IProcessor {
      * @param name The name of the existing option.
      *
      */
-    void remove_option(std::string name);
+    void remove_option(const std::string& name);
 
     /**
      * Create an data output port on the processor.

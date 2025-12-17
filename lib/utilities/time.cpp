@@ -34,7 +34,7 @@ void custom_sleep_for(uint64_t microseconds) {
     }
 }
 
-std::string time_to_string(std::time_t t, std::string fmt) {
+std::string time_to_string(std::time_t t, const std::string& fmt) {
     std::stringstream s;
     s << std::put_time(std::localtime(&t), fmt.c_str());
     return s.str();

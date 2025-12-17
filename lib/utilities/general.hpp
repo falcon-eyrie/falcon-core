@@ -56,7 +56,7 @@ T join(const A& begin, const A& end, const T& t);
  * to the first multiple of the incoming buffer-size
  */
 void check_buffer_sizes_and_log(double incoming, double& outgoing, bool strict_check, size_t& n,
-                                std::string processor_name);
+                                const std::string& processor_name);
 
 const double MAX_N_HOURS_TEST = 1.5;
 constexpr std::size_t MAX_TEST_SAMPLING_FREQUENCY = 32000;

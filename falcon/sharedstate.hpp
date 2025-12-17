@@ -346,10 +346,10 @@ class SharedStateAlias {
    public:
     SharedStateAlias(Permission external = Permission::WRITE, std::string description = "");
     ~SharedStateAlias();
-    void AddState(std::string name, const std::shared_ptr<IState>& dependent);
-    void RemoveState(std::string name);
+    void AddState(const std::string& name, const std::shared_ptr<IState>& dependent);
+    void RemoveState(const std::string& name);
     void RemoveAllStates();
-    bool Update(std::string value);
+    bool Update(const std::string& value);
     std::string Retrieve();
     YAML::Node ExportYAML();
 
@@ -373,17 +373,18 @@ class SharedStateMap {
    public:
     SharedStateMap() {}
     ~SharedStateMap();
-    void AddAlias(std::string alias, Permission permission = Permission::WRITE,
-                  std::string description = "");
-    void RemoveAlias(std::string alias);
-    void ShareState(std::string alias, std::string name, std::shared_ptr<IState> state);
-    void UnShareState(std::string name);
+    void AddAlias(const std::string& alias, Permission permission = Permission::WRITE,
+                  const std::string& description = "");
+    void RemoveAlias(const std::string& alias);
+    void ShareState(const std::string& alias, const std::string& name,
+                    const std::shared_ptr<IState>& state);
+    void UnShareState(const std::string& name);
     void UnShareAll();
     void clear();
-    bool IsShared(std::string name);
-    std::vector<std::string> ListSharedStates(std::string alias);
-    bool UpdateAlias(std::string alias, std::string value);
-    std::string RetrieveAlias(std::string alias);
+    bool IsShared(const std::string& name);
+    std::vector<std::string> ListSharedStates(const std::string& alias);
+    bool UpdateAlias(const std::string& alias, const std::string& value);
+    std::string RetrieveAlias(const std::string& alias);
     YAML::Node ExportYAML();
 
    protected:

@@ -76,8 +76,8 @@ YAML::Node IProcessor::ExportYAML() {
     return node;
 }
 
-void IProcessor::remove_option(std::string name) {
-    options_.remove(std::move(name));
+void IProcessor::remove_option(const std::string& name) {
+    options_.remove(name);
 }
 
 IPortIn* IProcessor::input_port(const PortAddress& address) {

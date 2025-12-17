@@ -20,6 +20,7 @@
 #include "sharedstate.hpp"
 
 #include <string>
+#include <utility>
 #include <vector>
 
 Permission permission_from_string(std::string s) {
@@ -105,7 +106,7 @@ bool Permissions::IsCompatible(const Permissions& p) {
 
 IState::IState(const Permissions& permissions, std::string description)
     : permissions_(permissions),
-      description_(description),
+      description_(std::move(description)),
       shared_(false),
       external_permission_(std::make_shared<ExternalPermissionTracker>(permissions.external())) {
 }
@@ -134,7 +135,7 @@ bool IState::IsShared() {
 }
 
 void IState::set_description(std::string value) {
-    description_ = value;
+    description_ = std::move(value);
 }
 
 void IState::set_external_permission(Permission permission) {
@@ -153,14 +154,14 @@ void IState::unlock() {
 }
 
 SharedStateAlias::SharedStateAlias(Permission external, std::string description)
-    : external_(external), description_(description) {
+    : external_(external), description_(std::move(description)) {
 }
 
 SharedStateAlias::~SharedStateAlias() {
     RemoveAllStates();
 }
 
-void SharedStateAlias::AddState(std::string name, const std::shared_ptr<IState>& dependent) {
+void SharedStateAlias::AddState(const std::string& name, const std::shared_ptr<IState>& dependent) {
     // already part of group
     if (dependents_.count(name)) {
         return;
@@ -187,7 +188,7 @@ void SharedStateAlias::AddState(std::string name, const std::shared_ptr<IState>&
     dependents_[name] = dependent;
 }
 
-void SharedStateAlias::RemoveState(std::string name) {
+void SharedStateAlias::RemoveState(const std::string& name) {
     if (dependents_.count(name)) {
         dependents_[name]->UnShare();
         dependents_.erase(name);
@@ -205,7 +206,7 @@ void SharedStateAlias::RemoveAllStates() {
     master_.reset();
 }
 
-bool SharedStateAlias::Update(std::string value) {
+bool SharedStateAlias::Update(const std::string& value) {
     if (!master_) {
         throw std::runtime_error("Alias is not linked to states.");
     }
@@ -237,7 +238,8 @@ SharedStateMap::~SharedStateMap() {
     clear();
 }
 
-void SharedStateMap::AddAlias(std::string alias, Permission permission, std::string description) {
+void SharedStateMap::AddAlias(const std::string& alias, Permission permission,
+                              const std::string& description) {
     if (aliases_.count(alias)) {
         throw std::runtime_error("Shared state alias already exists.");
     }
@@ -245,12 +247,12 @@ void SharedStateMap::AddAlias(std::string alias, Permission permission, std::str
                      std::make_tuple(permission, description));
 }
 
-void SharedStateMap::RemoveAlias(std::string alias) {
+void SharedStateMap::RemoveAlias(const std::string& alias) {
     aliases_.erase(alias);
 }
 
-void SharedStateMap::ShareState(std::string alias, std::string name,
-                                std::shared_ptr<IState> state) {
+void SharedStateMap::ShareState(const std::string& alias, const std::string& name,
+                                const std::shared_ptr<IState>& state) {
     if (aliases_.count(alias) == 0) {
         throw std::runtime_error("Group does not exist.");
     }
@@ -269,7 +271,7 @@ void SharedStateMap::ShareState(std::string alias, std::string name,
     shared_states_[name] = alias;
 }
 
-void SharedStateMap::UnShareState(std::string name) {
+void SharedStateMap::UnShareState(const std::string& name) {
     if (IsShared(name)) {
         aliases_[shared_states_[name]].RemoveState(name);
         shared_states_.erase(name);
@@ -288,26 +290,27 @@ void SharedStateMap::clear() {
     aliases_.clear();
 }
 
-bool SharedStateMap::IsShared(std::string name) {
+bool SharedStateMap::IsShared(const std::string& name) {
     return (shared_states_.count(name) == 1);
 }
 
-std::vector<std::string> SharedStateMap::ListSharedStates(std::string alias) {
+std::vector<std::string> SharedStateMap::ListSharedStates(const std::string& alias) {
     std::vector<std::string> state_list;
+    state_list.reserve(shared_states_.size());
     for (auto const& imap : shared_states_) {
         state_list.push_back(imap.first);
     }
     return state_list;
 }
 
-bool SharedStateMap::UpdateAlias(std::string alias, std::string value) {
+bool SharedStateMap::UpdateAlias(const std::string& alias, const std::string& value) {
     if (aliases_.count(alias) == 0) {
         throw std::runtime_error("No alias named " + alias);
     }
     return aliases_[alias].Update(value);
 }
 
-std::string SharedStateMap::RetrieveAlias(std::string alias) {
+std::string SharedStateMap::RetrieveAlias(const std::string& alias) {
     if (aliases_.count(alias) == 0) {
         throw std::runtime_error("No alias named " + alias);
     }

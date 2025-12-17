@@ -54,7 +54,7 @@ void set_nested_yaml_node(YAML::Node& root, const std::vector<std::string>& path
 
 class OptionBase {
    public:
-    OptionBase(std::string name, ValueBase& value, std::string description = "",
+    OptionBase(const std::string& name, ValueBase& value, std::string description = "",
                bool required = false);
 
     OptionBase(const OptionBase& other)
@@ -170,24 +170,24 @@ class OptionList {
         }
     }
 
-    OptionBase& operator[](std::string key);
+    OptionBase& operator[](const std::string& key);
 
-    void remove(std::string key);
+    void remove(const std::string& key);
 
     std::vector<std::string> options() const;
 
     std::vector<std::string> required_options() const;
 
-    bool has_option(std::string name) const noexcept;
+    bool has_option(const std::string& name) const noexcept;
 
     void from_yaml(const YAML::Node& node, const option_error_handler& handler = {},
                    bool check = true);
 
     YAML::Node to_yaml(const option_error_handler& handler = {}) const;
 
-    void load_yaml(std::string filename, const option_error_handler& handler = {});
+    void load_yaml(const std::string& filename, const option_error_handler& handler = {});
 
-    void save_yaml(std::string filename, const option_error_handler& handler = {}) const;
+    void save_yaml(const std::string& filename, const option_error_handler& handler = {}) const;
 
     std::string list_options() {
         std::string name;
