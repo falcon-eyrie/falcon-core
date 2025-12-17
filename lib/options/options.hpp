@@ -85,7 +85,7 @@ class OptionBase {
 
     OptionBase& optional();
 
-    OptionBase& describe(std::string description);
+    OptionBase& describe(const std::string& description);
 
     OptionBase& set_null();
 
@@ -131,7 +131,7 @@ class Option : public OptionBase {
 
     Option<T>& optional() { return static_cast<Option<T>&>(OptionBase::optional()); }
 
-    Option<T>& describe(std::string description) {
+    Option<T>& describe(const std::string& description) {
         return static_cast<Option<T>&>(OptionBase::describe(description));
     }
 

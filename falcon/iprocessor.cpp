@@ -387,8 +387,8 @@ void IProcessor::internal_Alert() {
     }
 }
 
-YAML::Node IProcessor::internal_ApplyMethod(std::string name, const YAML::Node& node) {
-    return exposed_method(std::move(name))(node);
+YAML::Node IProcessor::internal_ApplyMethod(const std::string& name, const YAML::Node& node) {
+    return exposed_method(name)(node);
 }
 
 void IProcessor::create_file(const std::string& prefix, const std::string& variable_name,

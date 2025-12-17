@@ -593,7 +593,7 @@ class IProcessor {
 
     void internal_Alert();
 
-    YAML::Node internal_ApplyMethod(std::string name, const YAML::Node& node);
+    YAML::Node internal_ApplyMethod(const std::string& name, const YAML::Node& node);
 
     void set_name_and_type(std::string name, std::string type) {
         name_ = name;

@@ -101,8 +101,8 @@ OptionBase& OptionBase::optional() {
     return *(this);
 }
 
-OptionBase& OptionBase::describe(std::string description) {
-    description_ = std::move(description);
+OptionBase& OptionBase::describe(const std::string& description) {
+    description_ = description;
     return *(this);
 }
 
