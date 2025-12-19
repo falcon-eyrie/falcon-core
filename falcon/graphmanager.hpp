@@ -51,7 +51,7 @@ class GraphManager {
     bool terminate_ = false;
     GlobalContext* global_context_;
 
-    void HandleCommand(std::string command, std::deque<std::string>& extra,
+    void HandleCommand(const std::string& command, std::deque<std::string>& extra,
                        std::deque<std::string>& reply);
     void ParseGraph(YAML::Node& node);
 

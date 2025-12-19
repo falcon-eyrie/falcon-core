@@ -123,8 +123,8 @@ class ProcessorGraph {
      */
     void Build(const YAML::Node& node);
     void Destroy();
-    void StartProcessing(std::string run_group_id, std::string run_id, std::string template_id,
-                         bool test_flag);
+    void StartProcessing(const std::string& run_group_id, const std::string& run_id,
+                         const std::string& template_id, bool test_flag);
     void StopProcessing();
     /**
      *Update processor's shared state with input from the user
@@ -157,9 +157,9 @@ class ProcessorGraph {
     const ProcessorMap& processors() const { return processors_; }
     const StreamConnections& connections() const { return connections_; }
 
-    IProcessor* LookUpProcessor(std::string name);
+    IProcessor* LookUpProcessor(const std::string& name);
     std::vector<std::pair<std::string, std::shared_ptr<IState>>> LookUpStates(
-        std::vector<std::string> state_addresses);
+        const std::vector<std::string>& state_addresses);
 
     void BuildSharedStates(const YAML::Node& node);
 

@@ -18,6 +18,8 @@
 // ---------------------------------------------------------------------
 
 #include "serializer.hpp"
+
+#include <utility>
 #include "buildconstant.hpp"
 #include "idata.hpp"
 
@@ -115,7 +117,7 @@ bool Serialization::YAMLSerializer::Serialize(std::ostream& stream, typename Any
         emit << YAML::BeginSeq;
         emit << YAML::Flow << node;
         emit << YAML::EndSeq;
-        stream << std::endl;
+        stream << '\n';
     } else {
         emit << YAML::BeginSeq << YAML::BeginMap;
         emit << YAML::Key << "stream" << YAML::Value << streamid;
@@ -125,13 +127,13 @@ bool Serialization::YAMLSerializer::Serialize(std::ostream& stream, typename Any
             emit << YAML::Key << "data" << YAML::Value << node;
         }
         emit << YAML::EndMap << YAML::EndSeq;
-        stream << std::endl;
+        stream << '\n';
     }
 
     return true;
 }
 
-Serializer* serializer_from_string(std::string s, Serialization::Format fmt) {
+Serializer* serializer_from_string(const std::string& s, Serialization::Format fmt) {
     return serializer(Serialization::string_to_encoding(s), fmt);
 }
 

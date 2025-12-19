@@ -29,7 +29,7 @@ using namespace graph;
 GraphManager::GraphManager(GlobalContext& context) : global_context_(&context), graph_(context) {
 }
 
-void GraphManager::HandleCommand(std::string command, std::deque<std::string>& extra,
+void GraphManager::HandleCommand(const std::string& command, std::deque<std::string>& extra,
                                  std::deque<std::string>& reply) {
     if (command == "build") {
         if (extra.size() < 1) {
@@ -40,7 +40,7 @@ void GraphManager::HandleCommand(std::string command, std::deque<std::string>& e
         if (!node.IsMap()) {
             std::string file = node.as<std::string>();
             file = global_context_->resolve_path(file, "graphs");
-            std::cout << "Loading graph definition from file: " << file << std::endl;
+            std::cout << "Loading graph definition from file: " << file << '\n';
             try {
                 node = YAML::LoadFile(file);
             } catch (YAML::BadFile& e) {

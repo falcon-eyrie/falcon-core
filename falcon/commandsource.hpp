@@ -37,7 +37,7 @@ class CommandSource {
 
 class CommandLineCommands : public CommandSource {
    public:
-    void AddCommand(std::deque<std::string> command);
+    void AddCommand(const std::deque<std::string>& command);
     bool getcommand(std::deque<std::string>& command);
     bool sendreply(const std::deque<std::string>& command, std::deque<std::string>& reply);
 

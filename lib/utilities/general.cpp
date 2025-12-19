@@ -60,7 +60,7 @@ int check_buffer_sizes(double incoming, double& outgoing, bool strict_check, siz
 }
 
 void check_buffer_sizes_and_log(double incoming, double& outgoing, bool strict_check, size_t& n,
-                                std::string processor_name) {
+                                const std::string& processor_name) {
     double outgoing_copy = outgoing;
     switch (check_buffer_sizes(incoming, outgoing, strict_check, n)) {
         case -2:

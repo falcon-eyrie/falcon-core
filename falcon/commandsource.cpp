@@ -27,7 +27,7 @@
 
 using namespace commands;
 
-void CommandLineCommands::AddCommand(std::deque<std::string> command) {
+void CommandLineCommands::AddCommand(const std::deque<std::string>& command) {
     queued_commands_.push_back(command);
 }
 
@@ -54,7 +54,7 @@ bool CommandLineCommands::sendreply(const std::deque<std::string>& command,
         return true;
     }
 
-    std::cout << std::endl << join(reply.begin(), reply.end(), std::string(" ")) << std::flush;
+    std::cout << "\n" << join(reply.begin(), reply.end(), std::string(" ")) << std::flush;
 
     return true;
 }
@@ -124,7 +124,7 @@ bool KeyboardCommands::sendreply(const std::deque<std::string>& command,
         return true;
     }
 
-    std::cout << std::endl << join(reply.begin(), reply.end(), std::string(" ")) << std::flush;
+    std::cout << '\n' << join(reply.begin(), reply.end(), std::string(" ")) << std::flush;
 
     return true;
 }

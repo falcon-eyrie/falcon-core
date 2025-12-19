@@ -26,7 +26,7 @@
 #include "connectionparser.hpp"
 #include "utilities/string.hpp"
 
-ConnectionRule parseConnectionRule(std::string rulestring) {
+ConnectionRule parseConnectionRule(const std::string& rulestring) {
     // rule
     // <specifier>:<name><id>.<specifier>:<name><id>.<specifier>:<name><id>
     // specifier is one of f (processor), p (port) or s (slot)
@@ -273,7 +273,7 @@ std::vector<SlotAddress> expandSingleConnectionRule(SingleConnectionRule rule) {
     return cpoints;
 }
 
-void expandConnectionRule(ConnectionRule rule, StreamConnections& connections) {
+void expandConnectionRule(const ConnectionRule& rule, StreamConnections& connections) {
     // for output SingleConnectionRule
     auto out = rule.first;
     auto out_points = expandSingleConnectionRule(out);
@@ -327,11 +327,11 @@ void printConnectionRule(const ConnectionRule& rule) {
     printSingleConnectionRule(rule.first);
     std::cout << " = ";
     printSingleConnectionRule(rule.second);
-    std::cout << std::endl;
+    std::cout << '\n';
 }
 
 void printConnectionList(const StreamConnections& connections) {
     for (auto& it : connections) {
-        std::cout << it.first.string() << "=" << it.second.string() << std::endl;
+        std::cout << it.first.string() << "=" << it.second.string() << '\n';
     }
 }

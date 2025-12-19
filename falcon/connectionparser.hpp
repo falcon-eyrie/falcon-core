@@ -39,9 +39,9 @@ typedef std::array<ConnectionPart, 3> SingleConnectionRule;
 typedef std::pair<SingleConnectionRule, SingleConnectionRule> ConnectionRule;
 typedef std::vector<ConnectionRule> ConnectionRules;
 
-ConnectionRule parseConnectionRule(std::string rulestring);
+ConnectionRule parseConnectionRule(const std::string& rulestring);
 std::vector<SlotAddress> expandSingleConnectionRule(SingleConnectionRule rule);
-void expandConnectionRule(ConnectionRule rule, StreamConnections& connections);
+void expandConnectionRule(const ConnectionRule& rule, StreamConnections& connections);
 
 void printConnectionPart(const ConnectionPart& part);
 void printSingleConnectionRule(const SingleConnectionRule& rule);

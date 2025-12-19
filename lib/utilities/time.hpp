@@ -30,7 +30,7 @@ typedef Clock::time_point TimePoint;
 
 void custom_sleep_for(uint64_t microseconds);
 
-std::string time_to_string(std::time_t t, std::string fmt = "%F %T");
+std::string time_to_string(std::time_t t, const std::string& fmt = "%F %T");
 
 enum class TruncateFlag { ROUND = 0, FLOOR, CEIL };
 

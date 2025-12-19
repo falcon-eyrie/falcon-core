@@ -1,10 +1,11 @@
 Checks: >
   -*,
+  performance-*,
+  # TODO(ben): Uncomment and fix the remanining lints
   #bugprone-*,
   #modernize-*,
-  #performance-*,
   #readability-*,
-  performance-for-range-copy
+
 WarningsAsErrors: '*'
 HeaderFilterRegex: ''
 CheckOptions:
