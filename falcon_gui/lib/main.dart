@@ -11,7 +11,7 @@ void main() async {
 
   const windowOptions = WindowOptions(
     titleBarStyle: TitleBarStyle.hidden,
-    size: Size(800, 600),
+    size: Size(1280, 720),
     center: true,
     skipTaskbar: false,
     title: 'Falcon GUI',
@@ -19,6 +19,7 @@ void main() async {
   );
 
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.maximize();
     await windowManager.show();
     await windowManager.focus();
   });
