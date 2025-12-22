@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:falcon_gui/editor_view.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -75,6 +76,14 @@ class _HomePageState extends State<HomePage> with WindowListener {
     super.dispose();
   }
 
+  Future<void> _toggleMaximize() async {
+    if (isMaximized) {
+      await windowManager.unmaximize();
+    } else {
+      await windowManager.maximize();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,6 +91,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
         children: [
           GestureDetector(
             behavior: HitTestBehavior.translucent,
+            onDoubleTap: _toggleMaximize,
             onPanStart: (_) {
               unawaited(windowManager.startDragging());
             },
@@ -111,13 +121,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
                       color: Colors.white,
                       size: 18,
                     ),
-                    onPressed: () async {
-                      if (isMaximized) {
-                        await windowManager.unmaximize();
-                      } else {
-                        await windowManager.maximize();
-                      }
-                    },
+                    onPressed: _toggleMaximize,
                   ),
                   IconButton(
                     icon: const Icon(
@@ -131,11 +135,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
               ),
             ),
           ),
-          const Expanded(
-            child: Center(
-              child: Text('Hello'),
-            ),
-          ),
+          const Expanded(child: EditorView()),
         ],
       ),
     );
