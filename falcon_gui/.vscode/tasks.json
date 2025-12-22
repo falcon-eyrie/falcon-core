@@ -1,0 +1,17 @@
+{
+    // See https://code.visualstudio.com/docs/editor/tasks for more information
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Build Runner",
+            "type": "shell",
+            "command": "flutter pub run build_runner build --delete-conflicting-outputs",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "detail": "Runs the build_runner to generate code, deleting conflicting outputs."
+        }
+    ]
+}

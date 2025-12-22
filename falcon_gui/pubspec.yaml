@@ -1,0 +1,24 @@
+name: falcon_gui
+description: "Falcon GUI"
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: 3.10.4
+  flutter: 3.38.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  window_manager: 0.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  very_good_analysis: 10.0.0
+
+flutter:
+  uses-material-design: true
