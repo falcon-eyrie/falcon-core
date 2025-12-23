@@ -10,33 +10,18 @@ class NodeManager extends ChangeNotifier {
 
   static final NodeManager instance = NodeManager._internal();
 
-  // Store the minimum x and y of all nodes to simulate negative canvas growth
+  final Map<int, NodeData> _nodes = {
+    1: const NodeData(id: 1, position: Offset(100, 100), title: 'Node 1'),
+    2: const NodeData(id: 2, position: Offset(300, 200), title: 'Node 2'),
+  };
+
   double _minX = 0;
   double _minY = 0;
 
-  // Get canvas size, but also shift nodes virtually so it can "grow" -x and -y
-  Size get canvasSize {
-    double maxX = _nodes.values.fold<double>(
-      0,
-      (prev, node) => math.max(prev, node.position.dx + 300),
-    );
-    double maxY = _nodes.values.fold<double>(
-      0,
-      (prev, node) => math.max(prev, node.position.dy + 200),
-    );
+  Offset? _grabOffset;
 
-    // Update _minX and _minY based on current nodes
-    _minX = _nodes.values.fold<double>(0, (prev, node) => math.min(prev, node.position.dx));
-    _minY = _nodes.values.fold<double>(0, (prev, node) => math.min(prev, node.position.dy));
-
-    // Total width and height including "negative space"
-    return Size(maxX - _minX, maxY - _minY);
-  }
-
-  final Map<int, NodeData> _nodes = {
-    1: NodeData(id: 1, position: const Offset(100, 100), title: 'Node 1'),
-    2: NodeData(id: 2, position: const Offset(300, 200), title: 'Node 2'),
-  };
+  final TransformationController transformationController =
+      TransformationController();
 
   Map<int, NodeData> get nodes => _nodes;
 
@@ -44,21 +29,24 @@ class NodeManager extends ChangeNotifier {
       (_nodes.keys.isEmpty ? 0 : _nodes.keys.reduce((a, b) => a > b ? a : b)) +
       1;
 
-  NodeData? getNode(int id) => _nodes[id];
-
-  void addNode(NodeData node) {
+  void addNode({required NodeData node}) {
     _nodes[node.id] = node.copyWith(lastModified: DateTime.now());
     notifyListeners();
   }
 
-  int duplicateNode(int id) {
+  void removeNode({required int id}) {
+    _nodes.remove(id);
+    notifyListeners();
+  }
+
+  int duplicateNode({required int id}) {
     final original = _nodes[id];
     if (original == null) throw Exception('Node $id does not exist');
 
     final newId = _nextId();
     _nodes[newId] = original.copyWith(
       id: newId,
-      position: original.position + const Offset(20, 20),
+      position: original.position + const Offset(40, 40),
       title: '${original.title} Copy',
       lastModified: DateTime.now(),
     );
@@ -66,30 +54,89 @@ class NodeManager extends ChangeNotifier {
     return newId;
   }
 
-  void updatePosition(int id, Offset newPos) {
+  void onNodeDragStart({required int id, required Offset scenePosition}) {
     final node = _nodes[id];
     if (node == null) return;
 
-    _nodes[id] = node.copyWith(position: newPos, lastModified: DateTime.now());
-    notifyListeners();
+    final scenePositionTransformed = MatrixUtils.transformPoint(
+      transformationController.value.clone()..invert(),
+      scenePosition,
+    );
+    _grabOffset = scenePositionTransformed - node.position;
   }
 
-  void focus(int id) {
+  void onNodeDragUpdate({required int id, required Offset newPos}) {
+    final node = _nodes[id];
+    if (node == null) return;
+
+    final newPosTransformed = MatrixUtils.transformPoint(
+      transformationController.value.clone()..invert(),
+      newPos,
+    );
+
+    final updatedPosition = newPosTransformed - (_grabOffset ?? Offset.zero);
+
+    // Shift all nodes if dragged into negative coordinates
+    double shiftX = 0;
+    double shiftY = 0;
+    if (updatedPosition.dx < 0) shiftX = -updatedPosition.dx;
+    if (updatedPosition.dy < 0) shiftY = -updatedPosition.dy;
+
+    if (shiftX != 0 || shiftY != 0) {
+      _nodes.updateAll(
+        (key, n) => n.copyWith(
+          position: n.position + Offset(shiftX, shiftY),
+        ),
+      );
+
+      transformationController.value = transformationController.value.clone()
+        ..translateByDouble(-shiftX, -shiftY, 0, 1);
+    }
+
+    _nodes[id] = node.copyWith(
+      position: updatedPosition + Offset(shiftX, shiftY),
+      lastModified: DateTime.now(),
+    );
+
+    notifyListeners();
+
+    print('Canvas size ${canvasSize}');
+    for (var n in _nodes.values) {
+      print('Node ${n.id} at ${n.position}');
+    }
+  }
+
+  void onNodeDragEnd({required int id}) {
+    _grabOffset = null;
+  }
+
+  void onNodeClicked({required int id}) {
     final node = _nodes[id];
     if (node == null) return;
     _nodes[id] = node.copyWith(lastModified: DateTime.now());
     notifyListeners();
   }
 
-  void removeNode(int id) {
-    _nodes.remove(id);
-    notifyListeners();
-  }
+  Size get canvasSize {
+    final maxX = _nodes.values.fold<double>(
+      0,
+      (prev, node) => math.max(prev, node.position.dx + 300),
+    );
 
-  /// Get a shifted position for rendering nodes
-  /// This simulates negative coordinates visually
-  Offset getVisualPosition(NodeData node) {
-    // Shift every node by -_minX and -_minY to make canvas appear to grow -x/-y
-    return node.position - Offset(_minX, _minY);
+    final maxY = _nodes.values.fold<double>(
+      0,
+      (prev, node) => math.max(prev, node.position.dy + 200),
+    );
+
+    _minX = _nodes.values.fold<double>(
+      0,
+      (prev, node) => math.min(prev, node.position.dx),
+    );
+    _minY = _nodes.values.fold<double>(
+      0,
+      (prev, node) => math.min(prev, node.position.dy),
+    );
+
+    return Size(maxX - _minX, maxY - _minY);
   }
 }

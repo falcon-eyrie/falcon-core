@@ -48,7 +48,8 @@ class _NodeItemState extends State<NodeItem> {
                   IconButton(
                     icon: const Icon(Icons.copy, size: 16),
                     color: Colors.white,
-                    onPressed: () => nodeManager.duplicateNode(widget.node.id),
+                    onPressed: () =>
+                        nodeManager.duplicateNode(id: widget.node.id),
                   ),
                 ],
               ),

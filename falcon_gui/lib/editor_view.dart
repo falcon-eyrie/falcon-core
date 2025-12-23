@@ -18,17 +18,10 @@ class EditorView extends StatefulWidget {
 }
 
 class _EditorViewState extends State<EditorView> {
-  final TransformationController _controller = TransformationController();
-  Offset? grabOffset;
-
   /// Converts global screen position to world coordinates
   Offset _toScene(Offset globalPosition) {
     final renderBox = context.findRenderObject() as RenderBox?;
-    final local = renderBox?.globalToLocal(globalPosition) ?? Offset.zero;
-    return MatrixUtils.transformPoint(
-      _controller.value.clone()..invert(),
-      local,
-    );
+    return renderBox?.globalToLocal(globalPosition) ?? Offset.zero;
   }
 
   @override
@@ -38,12 +31,18 @@ class _EditorViewState extends State<EditorView> {
       builder: (context, _) {
         // 1. Convert nodes map to list and sort by lastModified
         final nodes = nodeManager.nodes.values.toList()
-          ..sort((a, b) => a.lastModified.compareTo(b.lastModified));
+          ..sort(
+            (a, b) =>
+                a.lastModified?.compareTo(
+                  b.lastModified ?? DateTime.now(),
+                ) ??
+                0,
+          );
 
         return InteractiveViewer(
-          transformationController: _controller,
+          transformationController: nodeManager.transformationController,
           minScale: 0.2,
-          maxScale: 10,
+          maxScale: 5,
           boundaryMargin: const EdgeInsets.all(double.infinity),
           constrained: false,
           child: ColoredBox(
@@ -60,22 +59,21 @@ class _EditorViewState extends State<EditorView> {
                     top: node.position.dy,
                     child: GestureDetector(
                       onPanStart: (details) {
-                        // Convert global touch to scene coordinates
-                        final scenePos = _toScene(details.globalPosition);
-                        grabOffset = scenePos - node.position;
-                        nodeManager.focus(node.id);
-                      },
-                      onPanUpdate: (details) {
-                        // Update node position relative to grab offset
-                        final scenePos = _toScene(details.globalPosition);
-
-                        nodeManager.updatePosition(
-                          node.id,
-                          scenePos - (grabOffset ?? Offset.zero),
+                        final scenePosition = _toScene(details.globalPosition);
+                        nodeManager.onNodeDragStart(
+                          id: node.id,
+                          scenePosition: scenePosition,
                         );
                       },
-                      onPanEnd: (_) => grabOffset = null,
-                      onTapDown: (_) => nodeManager.focus(node.id),
+                      onPanUpdate: (details) {
+                        final scenePosition = _toScene(details.globalPosition);
+                        nodeManager.onNodeDragUpdate(
+                          id: node.id,
+                          newPos: scenePosition,
+                        );
+                      },
+                      onPanEnd: (_) => nodeManager.onNodeDragEnd(id: node.id),
+                      onTapDown: (_) => nodeManager.onNodeClicked(id: node.id),
                       child: NodeItem(node: node),
                     ),
                   );

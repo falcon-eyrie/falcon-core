@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 class NodeData {
-  NodeData({
+  const NodeData({
     required this.id,
     required this.position,
     required this.title,
-    DateTime? lastModified,
-  }) : lastModified = lastModified ?? DateTime.now();
+    this.lastModified,
+  });
 
   final int id;
   final Offset position;
   final String title;
-  final DateTime lastModified;
+  final DateTime? lastModified;
 
   NodeData copyWith({
     int? id,
