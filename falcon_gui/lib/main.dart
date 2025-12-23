@@ -47,8 +47,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with WindowListener {
-  bool isMaximized = false;
-
+  bool _isMaximized = false;
   @override
   void initState() {
     super.initState();
@@ -57,18 +56,18 @@ class _HomePageState extends State<HomePage> with WindowListener {
   }
 
   Future<void> _syncState() async {
-    isMaximized = await windowManager.isMaximized();
+    _isMaximized = await windowManager.isMaximized();
     if (mounted) setState(() {});
   }
 
   @override
   void onWindowMaximize() {
-    setState(() => isMaximized = true);
+    setState(() => _isMaximized = true);
   }
 
   @override
   void onWindowUnmaximize() {
-    setState(() => isMaximized = false);
+    setState(() => _isMaximized = false);
   }
 
   @override
@@ -78,7 +77,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
   }
 
   Future<void> _toggleMaximize() async {
-    if (isMaximized) {
+    if (_isMaximized) {
       await windowManager.unmaximize();
     } else {
       await windowManager.maximize();
@@ -118,7 +117,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
                   ),
                   IconButton(
                     icon: Icon(
-                      isMaximized ? Icons.filter_none : Icons.crop_square,
+                      _isMaximized ? Icons.filter_none : Icons.crop_square,
                       color: Colors.white,
                       size: 18,
                     ),

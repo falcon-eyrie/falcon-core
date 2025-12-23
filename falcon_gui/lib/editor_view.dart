@@ -18,6 +18,24 @@ class EditorView extends StatefulWidget {
 }
 
 class _EditorViewState extends State<EditorView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _centerCanvas());
+  }
+
+  void _centerCanvas() {
+    final viewportSize = MediaQuery.of(context).size;
+    final canvasSize = nodeManager.canvasSize;
+    nodeManager.transformationController.value = Matrix4.identity()
+      ..translateByDouble(
+        (viewportSize.width - canvasSize.width) / 2,
+        (viewportSize.height - canvasSize.height) / 2,
+        0,
+        1,
+      );
+  }
+
   /// Converts global screen position to world coordinates
   Offset _toScene(Offset globalPosition) {
     final renderBox = context.findRenderObject() as RenderBox?;
@@ -45,40 +63,37 @@ class _EditorViewState extends State<EditorView> {
           maxScale: 5,
           boundaryMargin: const EdgeInsets.all(double.infinity),
           constrained: false,
-          child: ColoredBox(
-            color: Colors.orange,
-            child: SizedBox(
-              height: nodeManager.canvasSize.height,
-              width: nodeManager.canvasSize.width,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: nodes.map((node) {
-                  return Positioned(
-                    key: ValueKey(node.id),
-                    left: node.position.dx,
-                    top: node.position.dy,
-                    child: GestureDetector(
-                      onPanStart: (details) {
-                        final scenePosition = _toScene(details.globalPosition);
-                        nodeManager.onNodeDragStart(
-                          id: node.id,
-                          scenePosition: scenePosition,
-                        );
-                      },
-                      onPanUpdate: (details) {
-                        final scenePosition = _toScene(details.globalPosition);
-                        nodeManager.onNodeDragUpdate(
-                          id: node.id,
-                          newPos: scenePosition,
-                        );
-                      },
-                      onPanEnd: (_) => nodeManager.onNodeDragEnd(id: node.id),
-                      onTapDown: (_) => nodeManager.onNodeClicked(id: node.id),
-                      child: NodeItem(node: node),
-                    ),
-                  );
-                }).toList(),
-              ),
+          child: SizedBox(
+            height: nodeManager.canvasSize.height,
+            width: nodeManager.canvasSize.width,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: nodes.map((node) {
+                return Positioned(
+                  key: ValueKey(node.id),
+                  left: node.position.dx,
+                  top: node.position.dy,
+                  child: GestureDetector(
+                    onPanStart: (details) {
+                      final scenePosition = _toScene(details.globalPosition);
+                      nodeManager.onNodeDragStart(
+                        id: node.id,
+                        scenePosition: scenePosition,
+                      );
+                    },
+                    onPanUpdate: (details) {
+                      final scenePosition = _toScene(details.globalPosition);
+                      nodeManager.onNodeDragUpdate(
+                        id: node.id,
+                        newPos: scenePosition,
+                      );
+                    },
+                    onPanEnd: (_) => nodeManager.onNodeDragEnd(id: node.id),
+                    onTapDown: (_) => nodeManager.onNodeClicked(id: node.id),
+                    child: NodeItem(node: node),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         );

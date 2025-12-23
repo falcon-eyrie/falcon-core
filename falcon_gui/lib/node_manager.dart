@@ -3,17 +3,19 @@ import 'dart:math' as math;
 import 'package:falcon_gui/node_data.dart';
 import 'package:flutter/material.dart';
 
-final NodeManager nodeManager = NodeManager.instance;
+final NodeManager nodeManager = NodeManager.instance
+  ..loadNodes({
+    1: const NodeData(id: 1, position: Offset(100, 100), title: 'Node 1'),
+    2: const NodeData(id: 2, position: Offset(400, 390), title: 'Node 2'),
+    3: const NodeData(id: 3, position: Offset(700, 200), title: 'Node 3'),
+  });
 
 class NodeManager extends ChangeNotifier {
   NodeManager._internal();
 
   static final NodeManager instance = NodeManager._internal();
 
-  final Map<int, NodeData> _nodes = {
-    1: const NodeData(id: 1, position: Offset(100, 100), title: 'Node 1'),
-    2: const NodeData(id: 2, position: Offset(300, 200), title: 'Node 2'),
-  };
+  Map<int, NodeData> _nodes = {};
 
   double _minX = 0;
   double _minY = 0;
@@ -28,6 +30,13 @@ class NodeManager extends ChangeNotifier {
   int _nextId() =>
       (_nodes.keys.isEmpty ? 0 : _nodes.keys.reduce((a, b) => a > b ? a : b)) +
       1;
+
+  void loadNodes(Map<int, NodeData> nodes) {
+    _nodes = nodes;
+
+    _maybeShrinkCanvas();
+    notifyListeners();
+  }
 
   void addNode({required NodeData node}) {
     _nodes[node.id] = node.copyWith(lastModified: DateTime.now());
@@ -74,7 +83,7 @@ class NodeManager extends ChangeNotifier {
       newPos,
     );
 
-    final updatedPosition = newPosTransformed - (_grabOffset ?? Offset.zero);
+    var updatedPosition = newPosTransformed - (_grabOffset ?? Offset.zero);
 
     // Shift all nodes if dragged into negative coordinates
     double shiftX = 0;
@@ -84,25 +93,40 @@ class NodeManager extends ChangeNotifier {
 
     if (shiftX != 0 || shiftY != 0) {
       _nodes.updateAll(
-        (key, n) => n.copyWith(
-          position: n.position + Offset(shiftX, shiftY),
-        ),
+        (key, n) => n.copyWith(position: n.position + Offset(shiftX, shiftY)),
       );
 
+      // Move canvas so that negative space is removed
       transformationController.value = transformationController.value.clone()
         ..translateByDouble(-shiftX, -shiftY, 0, 1);
+
+      updatedPosition += Offset(shiftX, shiftY);
     }
 
     _nodes[id] = node.copyWith(
-      position: updatedPosition + Offset(shiftX, shiftY),
+      position: updatedPosition,
       lastModified: DateTime.now(),
     );
+    _maybeShrinkCanvas();
 
     notifyListeners();
+  }
 
-    print('Canvas size ${canvasSize}');
-    for (var n in _nodes.values) {
-      print('Node ${n.id} at ${n.position}');
+  void _maybeShrinkCanvas() {
+    final minX = _nodes.values.map((n) => n.position.dx).reduce(math.min);
+    final minY = _nodes.values.map((n) => n.position.dy).reduce(math.min);
+
+    if (minX > 0 || minY > 0) {
+      // Shift all nodes up-left
+      _nodes.updateAll(
+        (key, n) => n.copyWith(
+          position: n.position - Offset(minX, minY),
+        ),
+      );
+
+      // Move canvas down-right to make it seamless
+      transformationController.value = transformationController.value.clone()
+        ..translateByDouble(minX, minY, 0, 1);
     }
   }
 
@@ -117,23 +141,39 @@ class NodeManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  void onNodeSizeUpdated({required int id, required Size newSize}) {
+    final node = _nodes[id];
+    if (node == null) return;
+    _nodes[id] = node.copyWith(
+      layoutSize: newSize,
+      lastModified: DateTime.now(),
+    );
+
+    notifyListeners();
+  }
+
   Size get canvasSize {
+    if (_nodes.isEmpty) return Size.zero;
+
+    // Use actual layoutSize of nodes
     final maxX = _nodes.values.fold<double>(
       0,
-      (prev, node) => math.max(prev, node.position.dx + 300),
+      (prev, node) =>
+          math.max(prev, node.position.dx + (node.layoutSize.width)),
     );
 
     final maxY = _nodes.values.fold<double>(
       0,
-      (prev, node) => math.max(prev, node.position.dy + 200),
+      (prev, node) =>
+          math.max(prev, node.position.dy + (node.layoutSize.height)),
     );
 
     _minX = _nodes.values.fold<double>(
-      0,
+      double.infinity,
       (prev, node) => math.min(prev, node.position.dx),
     );
     _minY = _nodes.values.fold<double>(
-      0,
+      double.infinity,
       (prev, node) => math.min(prev, node.position.dy),
     );
 
