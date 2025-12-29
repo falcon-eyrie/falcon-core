@@ -4,6 +4,7 @@ analyzer:
   errors:
     public_member_api_docs: ignore
     document_ignores: ignore
-
+    todo: ignore
+    
 linter:
   rules:

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class NodeData {
-  const NodeData({
+class ProcessorData {
+  const ProcessorData({
     required this.id,
     required this.position,
     required this.title,
@@ -15,14 +15,14 @@ class NodeData {
   final String title;
   final DateTime? lastModified;
 
-  NodeData copyWith({
+  ProcessorData copyWith({
     int? id,
     Offset? position,
     String? title,
     DateTime? lastModified,
     Size? layoutSize,
   }) {
-    return NodeData(
+    return ProcessorData(
       id: id ?? this.id,
       layoutSize: layoutSize ?? this.layoutSize,
       position: position ?? this.position,

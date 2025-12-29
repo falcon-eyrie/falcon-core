@@ -1,5 +1,5 @@
-import 'package:falcon_gui/node_item.dart';
-import 'package:falcon_gui/node_manager.dart';
+import 'package:falcon_gui/graph_editor/proessor_item.dart';
+import 'package:falcon_gui/state/node_manager.dart';
 import 'package:flutter/material.dart';
 
 /// EditorView
@@ -26,8 +26,8 @@ class _EditorViewState extends State<EditorView> {
 
   void _centerCanvas() {
     final viewportSize = MediaQuery.of(context).size;
-    final canvasSize = nodeManager.canvasSize;
-    nodeManager.transformationController.value = Matrix4.identity()
+    final canvasSize = graphManager.canvasSize;
+    graphManager.transformationController.value = Matrix4.identity()
       ..translateByDouble(
         (viewportSize.width - canvasSize.width) / 2,
         (viewportSize.height - canvasSize.height) / 2,
@@ -45,52 +45,45 @@ class _EditorViewState extends State<EditorView> {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: nodeManager,
+      animation: graphManager,
       builder: (context, _) {
         // 1. Convert nodes map to list and sort by lastModified
-        final nodes = nodeManager.nodes.values.toList()
-          ..sort(
-            (a, b) =>
-                a.lastModified?.compareTo(
-                  b.lastModified ?? DateTime.now(),
-                ) ??
-                0,
-          );
+        final nodes = graphManager.processors.toList();
 
         return InteractiveViewer(
-          transformationController: nodeManager.transformationController,
+          transformationController: graphManager.transformationController,
           minScale: 0.2,
           maxScale: 5,
           boundaryMargin: const EdgeInsets.all(double.infinity),
           constrained: false,
           child: SizedBox(
-            height: nodeManager.canvasSize.height,
-            width: nodeManager.canvasSize.width,
+            height: graphManager.canvasSize.height,
+            width: graphManager.canvasSize.width,
             child: Stack(
               clipBehavior: Clip.none,
               children: nodes.map((node) {
                 return Positioned(
                   key: ValueKey(node.id),
-                  left: node.position.dx,
-                  top: node.position.dy,
+                  left: node.uiMetadata.position.dx,
+                  top: node.uiMetadata.position.dy,
                   child: GestureDetector(
                     onPanStart: (details) {
                       final scenePosition = _toScene(details.globalPosition);
-                      nodeManager.onNodeDragStart(
+                      graphManager.onNodeDragStart(
                         id: node.id,
                         scenePosition: scenePosition,
                       );
                     },
                     onPanUpdate: (details) {
                       final scenePosition = _toScene(details.globalPosition);
-                      nodeManager.onNodeDragUpdate(
+                      graphManager.onNodeDragUpdate(
                         id: node.id,
                         newPos: scenePosition,
                       );
                     },
-                    onPanEnd: (_) => nodeManager.onNodeDragEnd(id: node.id),
-                    onTapDown: (_) => nodeManager.onNodeClicked(id: node.id),
-                    child: NodeItem(node: node),
+                    onPanEnd: (_) => graphManager.onNodeDragEnd(id: node.id),
+                    onTapDown: (_) => graphManager.onNodeClicked(id: node.id),
+                    child: ProcessorItem(processor: node),
                   ),
                 );
               }).toList(),

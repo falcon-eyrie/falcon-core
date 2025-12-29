@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:falcon_gui/editor_view.dart';
+import 'package:falcon_gui/graph_editor/graph_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -32,9 +32,11 @@ class DesktopApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: const HomePage(),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
     );
   }
 }
@@ -135,7 +137,7 @@ class _HomePageState extends State<HomePage> with WindowListener {
               ),
             ),
           ),
-          const Expanded(child: EditorView()),
+          const Expanded(child: GraphEditor()),
         ],
       ),
     );
