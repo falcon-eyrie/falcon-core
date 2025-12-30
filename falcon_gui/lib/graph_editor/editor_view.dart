@@ -1,4 +1,4 @@
-import 'package:falcon_gui/graph_editor/proessor_item.dart';
+import 'package:falcon_gui/graph_editor/processor_item.dart';
 import 'package:falcon_gui/state/node_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -66,7 +66,7 @@ class _EditorViewState extends State<EditorView> {
                   key: ValueKey(node.id),
                   left: node.uiMetadata.position.dx,
                   top: node.uiMetadata.position.dy,
-                  child: GestureDetector(
+                  child: ProcessorItem(
                     onPanStart: (details) {
                       final scenePosition = _toScene(details.globalPosition);
                       graphManager.onNodeDragStart(
@@ -83,7 +83,7 @@ class _EditorViewState extends State<EditorView> {
                     },
                     onPanEnd: (_) => graphManager.onNodeDragEnd(id: node.id),
                     onTapDown: (_) => graphManager.onNodeClicked(id: node.id),
-                    child: ProcessorItem(processor: node),
+                    processor: node,
                   ),
                 );
               }).toList(),

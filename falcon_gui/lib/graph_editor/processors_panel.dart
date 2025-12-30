@@ -1,4 +1,4 @@
-import 'package:falcon_gui/graph_editor/proessor_item.dart';
+import 'package:falcon_gui/graph_editor/processor_item.dart';
 import 'package:falcon_gui/state/example_graph.dart';
 import 'package:flutter/material.dart';
 

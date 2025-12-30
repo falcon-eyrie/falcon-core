@@ -4,55 +4,56 @@ import 'package:collection/collection.dart';
 
 class FalconGraph {
   FalconGraph({
-    required this.processors,
-    required this.connections,
-  });
+    required Map<String, Processor> processors,
+    required List<Connection> connections,
+  }) : _processors = Map.of(processors),
+       _connections = List.of(connections);
 
-  final Map<String, Processor> processors;
-  final List<Connection> connections;
+  final Map<String, Processor> _processors;
+  final List<Connection> _connections;
 
-  bool validateConnections() {
-    for (final connection in connections) {
-      final from = processors[connection.fromProcessor]?.getOutputPort(
-        connection.fromPort,
-      );
-      final to = processors[connection.toProcessor]?.getInputPort(
-        connection.toPort,
-      );
+  Map<String, Processor> get processors => Map.unmodifiable(_processors);
+  List<Connection> get connections => List.unmodifiable(_connections);
 
-      if (from == null || to == null) return false;
+  void setProcessor({required String id, required Processor newValue}) {
+    _processors[id] = newValue;
+  }
 
-      final isPortsCompatible =
-          from.type == 'AnyType' ||
-          to.type == 'AnyType' ||
-          from.type == to.type;
-
-      if (!isPortsCompatible) {
-        return false;
-      }
-    }
-    return true;
+  FalconGraph copyWith({
+    Map<String, Processor>? processors,
+    List<Connection>? connections,
+  }) {
+    return FalconGraph(
+      processors: processors ?? Map.of(_processors),
+      connections: connections ?? List.of(_connections),
+    );
   }
 }
 
 class Processor {
-  const Processor({
+  Processor({
     required this.id,
     required this.className,
-    required this.options,
-    required this.inputPorts,
-    required this.outputPorts,
+    required Map<String, OptionValue<dynamic>> options,
+    required List<Port> inputPorts,
+    required List<Port> outputPorts,
     required this.uiMetadata,
     this.isTemplate = false,
-  });
+  }) : _inputPorts = List.of(inputPorts),
+       _outputPorts = List.of(outputPorts),
+       _options = Map.of(options);
 
   final String id;
   final String className;
-  final Options options;
-  final List<Port> inputPorts;
-  final List<Port> outputPorts;
+  final Map<String, OptionValue<dynamic>> _options;
+  final List<Port> _inputPorts;
+  final List<Port> _outputPorts;
   final UIMetadata uiMetadata;
   final bool isTemplate;
+
+  List<Port> get inputPorts => List.unmodifiable(_inputPorts);
+  List<Port> get outputPorts => List.unmodifiable(_outputPorts);
+  Map<String, OptionValue<dynamic>> get options => Map.unmodifiable(_options);
 
   Port? getInputPort(String name) =>
       inputPorts.firstWhereOrNull((p) => p.name == name);
@@ -60,9 +61,16 @@ class Processor {
   Port? getOutputPort(String name) =>
       outputPorts.firstWhereOrNull((p) => p.name == name);
 
+  void updateOption({
+    required String name,
+    required OptionValue<dynamic> value,
+  }) {
+    _options[name] = value;
+  }
+
   Processor copyWith({
     String? id,
-    Options? options,
+    Map<String, OptionValue<dynamic>>? options,
     List<Port>? inputPorts,
     List<Port>? outputPorts,
     UIMetadata? uiMetadata,
@@ -71,19 +79,18 @@ class Processor {
     return Processor(
       id: id ?? this.id,
       className: className,
-      options: options ?? this.options,
-      inputPorts: inputPorts ?? this.inputPorts,
-      outputPorts: outputPorts ?? this.outputPorts,
+      isTemplate: isTemplate ?? this.isTemplate,
+      options: options ?? Map.of(_options),
+      inputPorts: inputPorts ?? List.of(_inputPorts),
+      outputPorts: outputPorts ?? List.of(_outputPorts),
       uiMetadata: uiMetadata ?? this.uiMetadata,
     );
   }
 }
 
-typedef Options = Map<String, OptionValue<dynamic>>;
-
 sealed class OptionValue<T> {
   OptionValue(this.value);
-  T value;
+  final T value;
 }
 
 final class IntOption extends OptionValue<int> {
@@ -104,12 +111,14 @@ final class BoolOption extends OptionValue<bool> {
 }
 
 final class OneOfOption extends OptionValue<String> {
-  OneOfOption(super.value, this.allowed)
-    : assert(
+  OneOfOption(super.value, List<String> allowed)
+    : _allowed = allowed,
+      assert(
         allowed.contains(value),
         'Value $value is not in allowed options: $allowed',
       );
-  final List<String> allowed;
+  final List<String> _allowed;
+  List<String> get allowed => List.unmodifiable(_allowed);
 }
 
 class Port {
@@ -120,14 +129,34 @@ class Port {
 
 class UIMetadata {
   UIMetadata({
-    required this.position,
-    this.layoutSize = Size.zero,
+    Offset position = Offset.zero,
+    Size layoutSize = Size.zero,
     DateTime? lastModified,
-  }) : lastModified = lastModified ?? DateTime(1970);
+  }) : _position = position,
+       _layoutSize = layoutSize,
+       _lastModified = lastModified ?? DateTime(1970);
 
-  final Offset position;
-  final Size layoutSize;
-  DateTime lastModified;
+  Offset _position;
+  Size _layoutSize;
+  DateTime _lastModified;
+
+  Offset get position => _position;
+  Size get layoutSize => _layoutSize;
+  DateTime get lastModified => _lastModified;
+
+  set position(Offset newPosition) {
+    _position = newPosition;
+    _lastModified = DateTime.now();
+  }
+
+  set layoutSize(Size newSize) {
+    _layoutSize = newSize;
+    _lastModified = DateTime.now();
+  }
+
+  void updateLastModified() {
+    _lastModified = DateTime.now();
+  }
 
   UIMetadata copyWith({
     Offset? position,

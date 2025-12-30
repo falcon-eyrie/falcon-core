@@ -14,7 +14,10 @@ class GraphManager extends ChangeNotifier {
 
   static final GraphManager instance = GraphManager._internal();
 
-  FalconGraph _graph = FalconGraph(processors: {}, connections: []);
+  FalconGraph _graph = FalconGraph(
+    processors: {},
+    connections: [],
+  );
 
   double _minX = 0;
   double _minY = 0;
@@ -78,12 +81,15 @@ class GraphManager extends ChangeNotifier {
       newPosition = processor.uiMetadata.position + const Offset(20, 20);
     }
 
-    _graph.processors[newId] = processor.copyWith(
+    _graph.setProcessor(
       id: newId,
-      isTemplate: false, // In case it was a template, now it's a real node
-      uiMetadata: processor.uiMetadata.copyWith(
-        position: newPosition,
-        lastModified: DateTime.now(),
+      newValue: processor.copyWith(
+        id: newId,
+        isTemplate: false,
+        uiMetadata: processor.uiMetadata.copyWith(
+          position: newPosition,
+          lastModified: DateTime.now(),
+        ),
       ),
     );
 
@@ -122,14 +128,10 @@ class GraphManager extends ChangeNotifier {
     if (updatedPosition.dy < 0) shiftY = -updatedPosition.dy;
 
     if (shiftX != 0 || shiftY != 0) {
-      _graph.processors.updateAll(
-        (key, processor) => processor.copyWith(
-          uiMetadata: processor.uiMetadata.copyWith(
-            position: processor.uiMetadata.position + Offset(shiftX, shiftY),
-          ),
-        ),
-      );
-
+      for (final processor in _graph.processors.values) {
+        processor.uiMetadata.position =
+            processor.uiMetadata.position + Offset(shiftX, shiftY);
+      }
       // Move canvas so that negative space is removed
       transformationController.value = transformationController.value.clone()
         ..translateByDouble(-shiftX, -shiftY, 0, 1);
@@ -137,12 +139,8 @@ class GraphManager extends ChangeNotifier {
       updatedPosition += Offset(shiftX, shiftY);
     }
 
-    _graph.processors[id] = processor.copyWith(
-      uiMetadata: processor.uiMetadata.copyWith(
-        position: updatedPosition,
-        lastModified: DateTime.now(),
-      ),
-    );
+    _graph.processors[id]?.uiMetadata.position = updatedPosition;
+
     _maybeShrinkCanvas();
 
     notifyListeners();
@@ -158,13 +156,10 @@ class GraphManager extends ChangeNotifier {
 
     if (minX > 0 || minY > 0) {
       // Shift all nodes up-left
-      _graph.processors.updateAll(
-        (key, n) => n.copyWith(
-          uiMetadata: n.uiMetadata.copyWith(
-            position: n.uiMetadata.position - Offset(minX, minY),
-          ),
-        ),
-      );
+      for (final processor in _graph.processors.values) {
+        processor.uiMetadata.position =
+            processor.uiMetadata.position - Offset(minX, minY);
+      }
 
       // Move canvas down-right to make it seamless
       transformationController.value = transformationController.value.clone()
@@ -179,23 +174,15 @@ class GraphManager extends ChangeNotifier {
   void onNodeClicked({required String id}) {
     final processor = _graph.processors[id];
     if (processor == null) return;
-    _graph.processors[id] = processor.copyWith(
-      uiMetadata: processor.uiMetadata.copyWith(
-        lastModified: DateTime.now(),
-      ),
-    );
+    _graph.processors[id]?.uiMetadata.updateLastModified();
     notifyListeners();
   }
 
   void onNodeSizeUpdated({required String id, required Size newSize}) {
     final processor = _graph.processors[id];
     if (processor == null) return;
-    _graph.processors[id] = processor.copyWith(
-      uiMetadata: processor.uiMetadata.copyWith(
-        layoutSize: newSize,
-        lastModified: DateTime.now(),
-      ),
-    );
+
+    _graph.processors[id]?.uiMetadata.layoutSize = newSize;
 
     notifyListeners();
   }
@@ -242,7 +229,7 @@ class GraphManager extends ChangeNotifier {
     final processor = _graph.processors[processorId];
     if (processor == null) return;
 
-    processor.options[optionName] = newValue;
+    processor.updateOption(name: optionName, value: newValue);
 
     notifyListeners();
   }

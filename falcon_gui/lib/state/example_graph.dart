@@ -9,11 +9,16 @@ final exampleGraph = FalconGraph(
       isTemplate: true,
       options: {
         'nchannels': IntOption(32),
-        'format': OneOfOption('compact', ['compact', 'verbose']),
+        'format': OneOfOption(
+          'compact',
+          ['compact', 'verbose'],
+        ),
         'enabled': BoolOption(true),
       },
-      inputPorts: const [],
-      outputPorts: [Port(name: 'ripple', type: 'TimeSeriesType<double>')],
+      inputPorts: [],
+      outputPorts: [
+        Port(name: 'ripple', type: 'TimeSeriesType<double>'),
+      ],
       uiMetadata: UIMetadata(
         position: Offset.zero,
       ),
@@ -26,8 +31,10 @@ final exampleGraph = FalconGraph(
         'filepath': StringOption('/path/to/output/file'),
         'overwrite': BoolOption(false),
       },
-      inputPorts: [Port(name: 'input', type: 'TimeSeriesType<double>')],
-      outputPorts: const [],
+      inputPorts: [
+        Port(name: 'input', type: 'TimeSeriesType<double>'),
+      ],
+      outputPorts: [],
       uiMetadata: UIMetadata(
         position: Offset.zero,
       ),
@@ -38,14 +45,21 @@ final exampleGraph = FalconGraph(
       isTemplate: true,
       options: {
         'cutoff_frequency': DoubleOption(0.5),
-        'filter_type': OneOfOption('lowpass', [
+        'filter_type': OneOfOption(
           'lowpass',
-          'highpass',
-          'bandpass',
-        ]),
+          [
+            'lowpass',
+            'highpass',
+            'bandpass',
+          ],
+        ),
       },
-      inputPorts: [Port(name: 'input', type: 'TimeSeriesType<double>')],
-      outputPorts: [Port(name: 'output', type: 'TimeSeriesType<double>')],
+      inputPorts: [
+        Port(name: 'input', type: 'TimeSeriesType<double>'),
+      ],
+      outputPorts: [
+        Port(name: 'output', type: 'TimeSeriesType<double>'),
+      ],
       uiMetadata: UIMetadata(
         position: Offset.zero,
       ),

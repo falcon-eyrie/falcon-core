@@ -1,0 +1,55 @@
+/*
+
+
+
+source:
+    class: NlxPureReader
+    options:
+        nchannels: 32
+        format: compact
+
+
+saver:
+    class: FileSerializer
+    options:
+        encoding: binary
+        format: compact
+
+
+connections:
+  source.data = saver.data
+
+...
+
+string
+bool
+int
+double
+oneOf("binary", "yaml") // list of allowed strings
+*/
+// ---------- Option model (sealed, UI-friendly) ----------
+// ---------- Option model (mutable for UI) ----------
+// ---------- Option model (dynamic + type-safe) ----------
+
+bool validateConnections() {
+    for (final connection in connections) {
+      final from = processors[connection.fromProcessor]?.getOutputPort(
+        connection.fromPort,
+      );
+      final to = processors[connection.toProcessor]?.getInputPort(
+        connection.toPort,
+      );
+
+      if (from == null || to == null) return false;
+
+      final isPortsCompatible =
+          from.type == 'AnyType' ||
+          to.type == 'AnyType' ||
+          from.type == to.type;
+
+      if (!isPortsCompatible) {
+        return false;
+      }
+    }
+    return true;
+  }
