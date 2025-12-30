@@ -1,6 +1,7 @@
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/state/node_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ProcessorItem extends StatefulWidget {
   const ProcessorItem({
@@ -143,28 +144,64 @@ class _ProcessorItemState extends State<ProcessorItem> {
             (entry) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: switch (entry.value) {
-                final IntOption intOption => ProcessorIntOptionItem(
-                  optionName: entry.key,
+                final IntOption intOption => IntOptionField(
+                  name: entry.key,
                   option: intOption,
                   onChanged: (newValue) {
-                    graphManager.updateIntOption(
+                    graphManager.updateOptionValue(
                       processorId: widget.processor.id,
                       optionName: entry.key,
                       newValue: newValue,
                     );
                   },
                 ),
-                DoubleOption doubleOption => Text(
-                  '${entry.key}: ${doubleOption.value}',
+
+                final DoubleOption doubleOption => DoubleOptionField(
+                  name: entry.key,
+                  option: doubleOption,
+                  onChanged: (newValue) {
+                    graphManager.updateOptionValue(
+                      processorId: widget.processor.id,
+                      optionName: entry.key,
+                      newValue: newValue,
+                    );
+                  },
                 ),
-                StringOption stringOption => Text(
-                  '${entry.key}: ${stringOption.value}',
+
+                final StringOption stringOption => StringOptionField(
+                  name: entry.key,
+                  option: stringOption,
+                  onChanged: (newValue) {
+                    graphManager.updateOptionValue(
+                      processorId: widget.processor.id,
+                      optionName: entry.key,
+                      newValue: newValue,
+                    );
+                  },
                 ),
-                BoolOption boolOption => Text(
-                  '${entry.key}: ${boolOption.value}',
+
+                final BoolOption boolOption => BoolOptionField(
+                  name: entry.key,
+                  option: boolOption,
+                  onChanged: (newValue) {
+                    graphManager.updateOptionValue(
+                      processorId: widget.processor.id,
+                      optionName: entry.key,
+                      newValue: newValue,
+                    );
+                  },
                 ),
-                OneOfOption oneOfOption => Text(
-                  '${entry.key}: ${oneOfOption.value}',
+
+                final OneOfOption oneOfOption => OneOfOptionField(
+                  name: entry.key,
+                  option: oneOfOption,
+                  onChanged: (newValue) {
+                    graphManager.updateOptionValue(
+                      processorId: widget.processor.id,
+                      optionName: entry.key,
+                      newValue: newValue,
+                    );
+                  },
                 ),
               },
             ),
@@ -175,34 +212,188 @@ class _ProcessorItemState extends State<ProcessorItem> {
   }
 }
 
-/// A widget for editing an integer option of a processor.
-class ProcessorIntOptionItem extends StatelessWidget {
-  const ProcessorIntOptionItem({
-    required this.optionName,
+class IntOptionField extends StatelessWidget {
+  const IntOptionField({
+    required this.name,
     required this.option,
     required this.onChanged,
     super.key,
   });
 
-  final String optionName;
+  final String name;
   final IntOption option;
-  final ValueChanged<int> onChanged;
+  final ValueChanged<IntOption> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(optionName),
+        Text(name),
         const SizedBox(width: 8),
         Expanded(
           child: TextFormField(
             initialValue: option.value.toString(),
             keyboardType: TextInputType.number,
-            onChanged: (value) {
-              final intValue = int.tryParse(value);
-              if (intValue != null) {
-                onChanged(intValue);
+            inputFormatters: [
+              TextInputFormatter.withFunction((oldValue, newValue) {
+                var text = newValue.text;
+
+                if (!RegExp(r'^-?\d*-?$').hasMatch(text)) {
+                  return oldValue;
+                }
+
+                if (text.endsWith('-') && text.length > 1) {
+                  text = text.substring(0, text.length - 1);
+                }
+
+                return TextEditingValue(
+                  text: text,
+                  selection: TextSelection.collapsed(offset: text.length),
+                );
+              }),
+            ],
+            onChanged: (v) {
+              final value = int.tryParse(v);
+              if (value != null) onChanged(IntOption(value));
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// DOUBLE
+class DoubleOptionField extends StatelessWidget {
+  const DoubleOptionField({
+    required this.name,
+    required this.option,
+    required this.onChanged,
+    super.key,
+  });
+
+  final String name;
+  final DoubleOption option;
+  final ValueChanged<DoubleOption> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(name),
+        const SizedBox(width: 8),
+        Expanded(
+          child: TextFormField(
+            initialValue: option.value.toString(),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^-?\d*\.?\d*$'),
+              ),
+            ],
+            onChanged: (v) {
+              final value = double.tryParse(v);
+              if (value != null) {
+                onChanged(DoubleOption(value));
               }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// STRING
+class StringOptionField extends StatelessWidget {
+  const StringOptionField({
+    required this.name,
+    required this.option,
+    required this.onChanged,
+    super.key,
+  });
+
+  final String name;
+  final StringOption option;
+  final ValueChanged<StringOption> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(name),
+        const SizedBox(width: 8),
+        Expanded(
+          child: TextFormField(
+            initialValue: option.value,
+            onChanged: (value) => onChanged(StringOption(value)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// BOOL
+class BoolOptionField extends StatelessWidget {
+  const BoolOptionField({
+    required this.name,
+    required this.option,
+    required this.onChanged,
+    super.key,
+  });
+
+  final String name;
+  final BoolOption option;
+  final ValueChanged<BoolOption> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(name),
+        const SizedBox(width: 8),
+        Switch(
+          value: option.value,
+          onChanged: (value) => onChanged(BoolOption(value)),
+        ),
+      ],
+    );
+  }
+}
+
+/// ONE OF
+class OneOfOptionField extends StatelessWidget {
+  const OneOfOptionField({
+    required this.name,
+    required this.option,
+    required this.onChanged,
+    super.key,
+  });
+
+  final String name;
+  final OneOfOption option;
+  final ValueChanged<OneOfOption> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(name),
+        const SizedBox(width: 8),
+        Expanded(
+          child: DropdownButtonFormField<String>(
+            value: option.value,
+            items: option.allowed
+                .map(
+                  (v) => DropdownMenuItem(
+                    value: v,
+                    child: Text(v),
+                  ),
+                )
+                .toList(),
+            onChanged: (v) {
+              if (v != null) onChanged(OneOfOption(v, option.allowed));
             },
           ),
         ),

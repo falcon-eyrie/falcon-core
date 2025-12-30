@@ -234,15 +234,15 @@ class GraphManager extends ChangeNotifier {
     return Size(maxX - _minX, maxY - _minY);
   }
 
-  void updateIntOption({
+  void updateOptionValue({
     required String processorId,
     required String optionName,
-    required int newValue,
+    required OptionValue<dynamic> newValue,
   }) {
     final processor = _graph.processors[processorId];
     if (processor == null) return;
 
-    processor.options[optionName] = IntOption(newValue);
+    processor.options[optionName] = newValue;
 
     notifyListeners();
   }
