@@ -71,56 +71,41 @@ class _ProcessorItemState extends State<ProcessorItem> {
           _Ports(processor: widget.processor),
           const Divider(),
           ...widget.processor.options.entries.map(
-            (entry) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: switch (entry.value) {
-                final IntOption o => IntOptionField(
-                  name: entry.key,
-                  option: o,
-                  onChanged: (v) => graphManager.updateOptionValue(
-                    processorId: widget.processor.id,
-                    optionName: entry.key,
-                    newValue: v,
+            (entry) {
+              void onChanged(OptionValue<dynamic> newValue) {
+                graphManager.updateOptionValue(
+                  processorId: widget.processor.id,
+                  optionName: entry.key,
+                  newValue: newValue,
+                );
+              }
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: switch (entry.value) {
+                  final IntOption o => IntOptionField(
+                    option: o,
+                    onChanged: onChanged,
                   ),
-                ),
-                final DoubleOption o => DoubleOptionField(
-                  name: entry.key,
-                  option: o,
-                  onChanged: (v) => graphManager.updateOptionValue(
-                    processorId: widget.processor.id,
-                    optionName: entry.key,
-                    newValue: v,
+                  final DoubleOption o => DoubleOptionField(
+                    option: o,
+                    onChanged: onChanged,
                   ),
-                ),
-                final StringOption o => StringOptionField(
-                  name: entry.key,
-                  option: o,
-                  onChanged: (v) => graphManager.updateOptionValue(
-                    processorId: widget.processor.id,
-                    optionName: entry.key,
-                    newValue: v,
+                  final StringOption o => StringOptionField(
+                    option: o,
+                    onChanged: onChanged,
                   ),
-                ),
-                final BoolOption o => BoolOptionField(
-                  name: entry.key,
-                  option: o,
-                  onChanged: (v) => graphManager.updateOptionValue(
-                    processorId: widget.processor.id,
-                    optionName: entry.key,
-                    newValue: v,
+                  final BoolOption o => BoolOptionField(
+                    option: o,
+                    onChanged: onChanged,
                   ),
-                ),
-                final OneOfOption o => OneOfOptionField(
-                  name: entry.key,
-                  option: o,
-                  onChanged: (v) => graphManager.updateOptionValue(
-                    processorId: widget.processor.id,
-                    optionName: entry.key,
-                    newValue: v,
+                  final OneOfOption o => OneOfOptionField(
+                    option: o,
+                    onChanged: onChanged,
                   ),
-                ),
-              },
-            ),
+                },
+              );
+            },
           ),
         ],
       ),
@@ -174,6 +159,18 @@ class _Header extends StatelessWidget {
                 ],
               ),
             ),
+            if (!processor.isTemplate) ...[
+              IconButton(
+                icon: const Icon(
+                  Icons.delete,
+                  size: 16,
+                ),
+                color: context.c.onPrimary,
+                onPressed: () => graphManager.removeProcessor(id: processor.id),
+              ),
+
+              const SizedBox(width: 4),
+            ],
             IconButton(
               icon: Icon(
                 processor.isTemplate ? Icons.add : Icons.copy,
@@ -231,13 +228,11 @@ class _Ports extends StatelessWidget {
 abstract class OptionFieldBase<T extends OptionValue<dynamic>>
     extends StatelessWidget {
   const OptionFieldBase({
-    required this.name,
     required this.option,
     required this.onChanged,
     super.key,
   });
 
-  final String name;
   final T option;
   final ValueChanged<T> onChanged;
 
@@ -247,7 +242,7 @@ abstract class OptionFieldBase<T extends OptionValue<dynamic>>
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(name),
+        Text(option.displayName),
         const SizedBox(width: 8),
         Expanded(child: buildField(context)),
       ],
@@ -257,7 +252,6 @@ abstract class OptionFieldBase<T extends OptionValue<dynamic>>
 
 class IntOptionField extends OptionFieldBase<IntOption> {
   const IntOptionField({
-    required super.name,
     required super.option,
     required super.onChanged,
     super.key,
@@ -271,7 +265,7 @@ class IntOptionField extends OptionFieldBase<IntOption> {
       inputFormatters: [_intFormatter],
       onChanged: (v) {
         final value = int.tryParse(v);
-        if (value != null) onChanged(IntOption(value));
+        if (value != null) onChanged(option.copyWith(newValue: value));
       },
     );
   }
@@ -279,7 +273,6 @@ class IntOptionField extends OptionFieldBase<IntOption> {
 
 class DoubleOptionField extends OptionFieldBase<DoubleOption> {
   const DoubleOptionField({
-    required super.name,
     required super.option,
     required super.onChanged,
     super.key,
@@ -295,7 +288,7 @@ class DoubleOptionField extends OptionFieldBase<DoubleOption> {
       ],
       onChanged: (v) {
         final value = double.tryParse(v);
-        if (value != null) onChanged(DoubleOption(value));
+        if (value != null) onChanged(option.copyWith(newValue: value));
       },
     );
   }
@@ -303,7 +296,6 @@ class DoubleOptionField extends OptionFieldBase<DoubleOption> {
 
 class StringOptionField extends OptionFieldBase<StringOption> {
   const StringOptionField({
-    required super.name,
     required super.option,
     required super.onChanged,
     super.key,
@@ -313,14 +305,13 @@ class StringOptionField extends OptionFieldBase<StringOption> {
   Widget buildField(BuildContext context) {
     return TextFormField(
       initialValue: option.value,
-      onChanged: (v) => onChanged(StringOption(v)),
+      onChanged: (v) => onChanged(option.copyWith(newValue: v)),
     );
   }
 }
 
 class BoolOptionField extends OptionFieldBase<BoolOption> {
   const BoolOptionField({
-    required super.name,
     required super.option,
     required super.onChanged,
     super.key,
@@ -330,14 +321,13 @@ class BoolOptionField extends OptionFieldBase<BoolOption> {
   Widget buildField(BuildContext context) {
     return Switch(
       value: option.value,
-      onChanged: (v) => onChanged(BoolOption(v)),
+      onChanged: (v) => onChanged(option.copyWith(newValue: v)),
     );
   }
 }
 
 class OneOfOptionField extends OptionFieldBase<OneOfOption> {
   const OneOfOptionField({
-    required super.name,
     required super.option,
     required super.onChanged,
     super.key,
@@ -351,7 +341,7 @@ class OneOfOptionField extends OptionFieldBase<OneOfOption> {
           .map((v) => DropdownMenuItem(value: v, child: Text(v)))
           .toList(),
       onChanged: (v) {
-        if (v != null) onChanged(OneOfOption(v, option.allowed));
+        if (v != null) onChanged(option.copyWith(newValue: v));
       },
     );
   }

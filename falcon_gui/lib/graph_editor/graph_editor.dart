@@ -79,6 +79,11 @@ class _EditorControls extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           IconButton(
+            icon: const Icon(Icons.zoom_in_map),
+            tooltip: 'Reset zoom',
+            onPressed: graphManager.resetZoom,
+          ),
+          IconButton(
             icon: const Icon(Icons.zoom_out),
             tooltip: 'Zoom out',
             onPressed: graphManager.zoomOut,

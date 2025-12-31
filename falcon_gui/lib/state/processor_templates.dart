@@ -6,12 +6,13 @@ final processorTemplates = {
     className: 'SourceProcessor',
     isTemplate: true,
     options: {
-      'nchannels': IntOption(32),
+      'nchannels': IntOption(value: 32, displayName: 'Number of Channels'),
       'format': OneOfOption(
-        'compact',
-        ['compact', 'verbose'],
+        value: 'compact',
+        allowed: ['compact', 'verbose'],
+        displayName: 'Format',
       ),
-      'enabled': BoolOption(true),
+      'enabled': BoolOption(value: true, displayName: 'Enabled'),
     },
     inputPorts: [],
     outputPorts: [
@@ -24,8 +25,11 @@ final processorTemplates = {
     className: 'SinkProcessor',
     isTemplate: true,
     options: {
-      'filepath': StringOption('/path/to/output/file'),
-      'overwrite': BoolOption(false),
+      'filepath': StringOption(
+        value: '/path/to/output/file',
+        displayName: 'File Path',
+      ),
+      'overwrite': BoolOption(value: false, displayName: 'Overwrite'),
     },
     inputPorts: [
       Port(name: 'input', type: 'TimeSeriesType<double>'),
@@ -38,14 +42,18 @@ final processorTemplates = {
     className: 'FilterProcessor',
     isTemplate: true,
     options: {
-      'cutoff_frequency': DoubleOption(0.5),
+      'cutoff_frequency': DoubleOption(
+        value: 0.5,
+        displayName: 'Cutoff Frequency',
+      ),
       'filter_type': OneOfOption(
-        'lowpass',
-        [
+        value: 'lowpass',
+        allowed: [
           'lowpass',
           'highpass',
           'bandpass',
         ],
+        displayName: 'Filter Type',
       ),
     },
     inputPorts: [

@@ -19,6 +19,13 @@ class FalconGraph {
     _processors[id] = newValue;
   }
 
+  void removeProcessor({required String id}) {
+    _connections.removeWhere(
+      (conn) => conn.fromProcessor == id || conn.toProcessor == id,
+    );
+    _processors.remove(id);
+  }
+
   FalconGraph copyWith({
     Map<String, Processor>? processors,
     List<Connection>? connections,
@@ -89,36 +96,63 @@ class Processor {
 }
 
 sealed class OptionValue<T> {
-  OptionValue(this.value);
+  OptionValue({required this.value, required this.displayName});
   final T value;
+  final String displayName;
 }
 
 final class IntOption extends OptionValue<int> {
-  IntOption(super.value);
+  IntOption({required super.value, required super.displayName});
+
+  IntOption copyWith({required int newValue}) {
+    return IntOption(value: newValue, displayName: displayName);
+  }
 }
 
 final class DoubleOption extends OptionValue<double> {
-  DoubleOption(super.value);
+  DoubleOption({required super.value, required super.displayName});
+
+  DoubleOption copyWith({required double newValue}) {
+    return DoubleOption(value: newValue, displayName: displayName);
+  }
 }
 
 final class StringOption extends OptionValue<String> {
-  StringOption(super.value);
+  StringOption({required super.value, required super.displayName});
+
+  StringOption copyWith({required String newValue}) {
+    return StringOption(value: newValue, displayName: displayName);
+  }
 }
 
 final class BoolOption extends OptionValue<bool> {
-  // ignore: avoid_positional_boolean_parameters
-  BoolOption(super.value);
+  BoolOption({required super.value, required super.displayName});
+
+  BoolOption copyWith({required bool newValue}) {
+    return BoolOption(value: newValue, displayName: displayName);
+  }
 }
 
 final class OneOfOption extends OptionValue<String> {
-  OneOfOption(super.value, List<String> allowed)
-    : _allowed = allowed,
-      assert(
-        allowed.contains(value),
-        'Value $value is not in allowed options: $allowed',
-      );
+  OneOfOption({
+    required super.value,
+    required List<String> allowed,
+    required super.displayName,
+  }) : _allowed = allowed,
+       assert(
+         allowed.contains(value),
+         'Value $value is not in allowed options: $allowed',
+       );
   final List<String> _allowed;
   List<String> get allowed => List.unmodifiable(_allowed);
+
+  OneOfOption copyWith({required String newValue}) {
+    return OneOfOption(
+      value: newValue,
+      allowed: List.of(_allowed),
+      displayName: displayName,
+    );
+  }
 }
 
 class Port {

@@ -40,11 +40,7 @@ class GraphManager extends ChangeNotifier {
   }
 
   void removeProcessor({required String id}) {
-    _graph.connections.removeWhere(
-      (conn) => conn.fromProcessor == id || conn.toProcessor == id,
-    );
-    _graph.processors.removeWhere((key, _) => key == id);
-
+    _graph.removeProcessor(id: id);
     notifyListeners();
   }
 
@@ -250,4 +246,8 @@ class GraphManager extends ChangeNotifier {
   void zoomOut() =>
       transformationController.value = transformationController.value.clone()
         ..scaleByDouble(1 / 1.2, 1 / 1.2, 1 / 1.2, 1);
+
+  void resetZoom() {
+    transformationController.value = Matrix4.identity();
+  }
 }
