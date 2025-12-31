@@ -33,6 +33,8 @@ class GraphManager extends ChangeNotifier {
       (a, b) => a.uiMetadata.lastModified.compareTo(b.uiMetadata.lastModified),
     );
 
+  List<Connection> get connections => _graph.connections;
+
   String get graphAsYaml => _graph.toYaml();
 
   void loadGraph(FalconGraph graph) {
@@ -262,9 +264,27 @@ class GraphManager extends ChangeNotifier {
     transformationController.value = Matrix4.identity();
   }
 
-  final Map<String, Offset> _portPositions = {};
+  final _portPositions = <String, Offset>{};
+  final _enabledPortIds = <String>{'filter-threshold'};
+  String? _selectedPortUniqueId;
 
-  void onPortClicked({required String processorId, required String portName}) {}
+  String? get selectedPortUniqueId => _selectedPortUniqueId;
+
+  void onPortClicked({required String processorId, required String portName}) {
+    // final uniquePortId = '$processorId-$portName';
+
+    // _selectedPortUniqueId = uniquePortId;
+
+    // notifyListeners();
+
+    // testing the connections, temp solution
+    addConnection(
+      fromProcessorId: 'source',
+      fromPortName: 'ripple',
+      toProcessorId: 'sink',
+      toPortName: 'input',
+    );
+  }
 
   void onPortPositionUpdated({
     required String processorId,
@@ -273,5 +293,35 @@ class GraphManager extends ChangeNotifier {
   }) {
     final uniquePortId = '$processorId-$portName';
     _portPositions[uniquePortId] = newPosition;
+  }
+
+  /// Whether or not the specified port is compatible to connect to the
+  /// currently selected port.
+  ///
+  /// This does not mean the port is enabled or not, just that it can be
+  /// connected to the selected port.
+  bool isPortEnabled({required String processorId, required String portName}) {
+    final uniquePortId = '$processorId-$portName';
+
+    return _selectedPortUniqueId == uniquePortId ||
+        _enabledPortIds.contains(uniquePortId);
+  }
+
+  void addConnection({
+    required String fromProcessorId,
+    required String fromPortName,
+    required String toProcessorId,
+    required String toPortName,
+  }) {
+    _graph.addConnection(
+      newConnection: Connection(
+        fromProcessor: fromProcessorId,
+        fromPort: fromPortName,
+        toProcessor: toProcessorId,
+        toPort: toPortName,
+      ),
+    );
+
+    notifyListeners();
   }
 }

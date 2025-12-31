@@ -27,6 +27,19 @@ class FalconGraph {
     _processors.remove(id);
   }
 
+  void addConnection({required Connection newConnection}) {
+    final isNotDuplicate = _connections.none(
+      (connection) =>
+          connection.fromProcessor == newConnection.fromProcessor ||
+          connection.fromPort == newConnection.fromPort ||
+          connection.toProcessor == newConnection.toProcessor ||
+          connection.toPort == newConnection.toPort,
+    );
+    if (isNotDuplicate) {
+      _connections.add(newConnection);
+    }
+  }
+
   FalconGraph copyWith({
     Map<String, Processor>? processors,
     List<Connection>? connections,
@@ -222,4 +235,8 @@ class Connection {
   final String fromPort;
   final String toProcessor;
   final String toPort;
+
+  @override
+  String toString() =>
+      'Connection($fromProcessor:$fromPort -> $toProcessor:$toPort)';
 }
