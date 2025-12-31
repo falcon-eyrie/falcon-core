@@ -51,7 +51,8 @@ class _EditorViewState extends State<EditorView> {
           maxScale: 5,
           boundaryMargin: const EdgeInsets.all(double.infinity),
           constrained: false,
-          child: SizedBox(
+          child: Container(
+            color: Colors.amber,
             height: graphManager.canvasSize.height,
             width: graphManager.canvasSize.width,
             child: Stack(

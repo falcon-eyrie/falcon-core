@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:falcon_gui/model/falcon_graph.dart';
-import 'package:falcon_gui/model/graph_to_yaml.dart';
+import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
 
@@ -33,17 +33,17 @@ class GraphManager extends ChangeNotifier {
       (a, b) => a.uiMetadata.lastModified.compareTo(b.uiMetadata.lastModified),
     );
 
+  String get graphAsYaml => _graph.toYaml();
+
   void loadGraph(FalconGraph graph) {
     _graph = graph;
 
-    _maybeShrinkCanvas();
     notifyListeners();
   }
 
   void removeProcessor({required String id}) {
     _graph.removeProcessor(id: id);
 
-    _maybeShrinkCanvas();
     notifyListeners();
   }
 
@@ -74,8 +74,7 @@ class GraphManager extends ChangeNotifier {
 
     final Offset newPosition;
     if (processor.isTemplate) {
-      // TODO(ben): put the new processor in the center of the viewport
-      newPosition = Offset.zero;
+      newPosition = _findNonOverlappingPosition();
     } else {
       newPosition = processor.uiMetadata.position + const Offset(20, 20);
     }
@@ -92,10 +91,33 @@ class GraphManager extends ChangeNotifier {
       ),
     );
 
-    _maybeShrinkCanvas();
-
     notifyListeners();
     return newId;
+  }
+
+  Offset _findNonOverlappingPosition() {
+    const nodeSize = Size(300, 500);
+    const padding = 20;
+    final existingPositions = _graph.processors.values
+        .map((p) => p.uiMetadata.position & nodeSize)
+        .toList();
+
+    var position = Offset.zero;
+
+    bool overlaps(Offset pos) {
+      final rect = pos & nodeSize;
+      return existingPositions.any((r) => r.overlaps(rect));
+    }
+
+    while (overlaps(position)) {
+      position += Offset(nodeSize.width + padding, 0);
+      // move to next row if exceeding some arbitrary canvas width
+      if (position.dx > 2000) {
+        position = Offset(0, position.dy + nodeSize.height + padding);
+      }
+    }
+
+    return position;
   }
 
   void onOnProcessorDragStart({
@@ -145,12 +167,12 @@ class GraphManager extends ChangeNotifier {
     _graph.processors[id]?.uiMetadata.setPosition(updatedPosition);
     _graph.processors[id]?.uiMetadata.updateLastModified();
 
-    _maybeShrinkCanvas();
-
     notifyListeners();
   }
 
-  void _maybeShrinkCanvas() {
+  void _adjustCanvas() {
+    if (_graph.processors.isEmpty) return;
+
     final minX = _graph.processors.values
         .map((n) => n.uiMetadata.position.dx)
         .reduce(math.min);
@@ -158,17 +180,23 @@ class GraphManager extends ChangeNotifier {
         .map((n) => n.uiMetadata.position.dy)
         .reduce(math.min);
 
-    if (minX > 0 || minY > 0) {
-      // Shift all processors up-left
+    double shiftX = 0;
+    double shiftY = 0;
+
+    if (minX < 0) shiftX = -minX;
+    if (minY < 0) shiftY = -minY;
+
+    if (shiftX != 0 || shiftY != 0) {
+      // Shift all processors into positive coordinates
       for (final processor in _graph.processors.values) {
         processor.uiMetadata.setPosition(
-          processor.uiMetadata.position - Offset(minX, minY),
+          processor.uiMetadata.position + Offset(shiftX, shiftY),
         );
       }
 
-      // Move canvas down-right to make it seamless
+      // Translate canvas accordingly
       transformationController.value = transformationController.value.clone()
-        ..translateByDouble(minX, minY, 0, 1);
+        ..translateByDouble(-shiftX, -shiftY, 0, 1);
     }
   }
 
@@ -183,28 +211,15 @@ class GraphManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void onProcessorLayoutSizeUpdated({
-    required String id,
-    required Size newSize,
-  }) {
-    final processor = _graph.processors[id];
-    if (processor == null) return;
-
-    _graph.processors[id]?.uiMetadata.setLayoutSize(newSize);
-
-    notifyListeners();
-  }
-
   Size get canvasSize {
     if (_graph.processors.isEmpty) return Size.zero;
+    _adjustCanvas();
 
-    // Use actual layoutSize of processor
     final maxX = _graph.processors.values.fold<double>(
       0,
       (prev, processor) => math.max(
         prev,
-        processor.uiMetadata.position.dx +
-            (processor.uiMetadata.layoutSize.width),
+        processor.uiMetadata.position.dx + 500,
       ),
     );
 
@@ -212,8 +227,7 @@ class GraphManager extends ChangeNotifier {
       0,
       (prev, processor) => math.max(
         prev,
-        processor.uiMetadata.position.dy +
-            (processor.uiMetadata.layoutSize.height),
+        processor.uiMetadata.position.dy + 500,
       ),
     );
 
@@ -228,8 +242,6 @@ class GraphManager extends ChangeNotifier {
 
     return Size(maxX - _minX, maxY - _minY);
   }
-
-  String get yaml => _graph.toYaml();
 
   void updateOptionValue({
     required String processorId,

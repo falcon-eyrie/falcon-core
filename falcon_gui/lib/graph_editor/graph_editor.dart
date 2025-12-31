@@ -1,5 +1,6 @@
 import 'package:falcon_gui/graph_editor/editor_view.dart';
 import 'package:falcon_gui/graph_editor/processors_panel.dart';
+import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -8,35 +9,89 @@ class GraphEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       children: [
         // Control Panel Row
-        const _EditorControls(),
+        _EditorControls(),
         // Main Editor Row
         Expanded(
           child: Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 300,
                 child: ProcessorsPanel(),
               ),
-              const Expanded(child: EditorView()),
+              Expanded(child: EditorView()),
 
-              AnimatedBuilder(
-                animation: graphManager,
-                builder: (context, _) {
-                  return SizedBox(
-                    width: 300,
-                    child: SingleChildScrollView(
-                      child: Center(child: Text(graphManager.yaml)),
-                    ),
-                  );
-                },
-              ),
+              _YamlEditor(),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _YamlEditor extends StatefulWidget {
+  const _YamlEditor();
+
+  @override
+  State<_YamlEditor> createState() => _YamlEditorState();
+}
+
+class _YamlEditorState extends State<_YamlEditor> {
+  final TextEditingController controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: graphManager,
+      builder: (context, _) {
+        if (controller.text != graphManager.graphAsYaml) {
+          controller.value = TextEditingValue(
+            text: graphManager.graphAsYaml,
+            selection: controller.selection,
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.all(8),
+          child: SizedBox(
+            width: 300,
+            height: double.infinity,
+            child: TextFormField(
+              controller: controller,
+              maxLines: null,
+              expands: true,
+              decoration: const InputDecoration(
+                labelText: 'Graph YAML',
+                border: OutlineInputBorder(),
+                errorMaxLines: 10,
+              ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              textAlignVertical: TextAlignVertical.top,
+              validator: (value) {
+                try {
+                  FalconGraphSerializerX.fromYaml(value ?? '');
+                  return null;
+                } on FalconGraphYamlParserException catch (e) {
+                  return e.message;
+                  // ignore: avoid_catches_without_on_clauses
+                } catch (e) {
+                  return '$e';
+                }
+              },
+              onChanged: (value) {
+                try {
+                  graphManager.loadGraph(
+                    FalconGraphSerializerX.fromYaml(value),
+                  );
+                  // ignore: avoid_catches_without_on_clauses
+                } catch (_) {}
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

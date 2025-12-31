@@ -164,32 +164,23 @@ class Port {
 class UIMetadata {
   UIMetadata({
     Offset position = Offset.zero,
-    Size layoutSize = Size.zero,
     DateTime? lastModified,
     Color? color,
   }) : _position = position,
-       _layoutSize = layoutSize,
        _lastModified = lastModified ?? DateTime(1970),
        _color = color;
 
   Offset _position;
-  Size _layoutSize;
   DateTime _lastModified;
   Color? _color;
 
   Offset get position => _position;
-  Size get layoutSize => _layoutSize;
   DateTime get lastModified => _lastModified;
   Color? get color => _color;
 
   // ignore: use_setters_to_change_properties
   void setPosition(Offset newPosition) {
     _position = newPosition;
-  }
-
-  // ignore: use_setters_to_change_properties
-  void setLayoutSize(Size newSize) {
-    _layoutSize = newSize;
   }
 
   // ignore: use_setters_to_change_properties
@@ -204,10 +195,8 @@ class UIMetadata {
   UIMetadata copyWith({
     Offset? position,
     DateTime? lastModified,
-    Size? layoutSize,
   }) {
     return UIMetadata(
-      layoutSize: layoutSize ?? this.layoutSize,
       position: position ?? this.position,
       lastModified: lastModified ?? this.lastModified,
     );

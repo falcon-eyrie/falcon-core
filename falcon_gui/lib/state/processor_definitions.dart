@@ -1,6 +1,6 @@
 import 'package:falcon_gui/model/falcon_graph.dart';
 
-final processorTemplates = {
+final processorDefinitions = {
   'source': Processor(
     id: 'source',
     className: 'SourceProcessor',

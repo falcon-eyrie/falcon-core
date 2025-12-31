@@ -1,35 +1,3 @@
-/*
-
-
-
-source1:
-    class: NlxPureReader
-    options:
-        nchannels: 32
-        format: compact
-
-
-saver2:
-    class: FileSerializer
-    options:
-        encoding: binary
-        format: compact
-
-
-connections:
-  source1.data = saver2.data
-
-...
-
-string
-bool
-int
-double
-oneOf("binary", "yaml") // list of allowed strings
-*/
-// ---------- Option model (sealed, UI-friendly) ----------
-// ---------- Option model (mutable for UI) ----------
-// ---------- Option model (dynamic + type-safe) ----------
 
 bool validateConnections() {
     for (final connection in connections) {

@@ -4,7 +4,7 @@ import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class ProcessorItem extends StatefulWidget {
+class ProcessorItem extends StatelessWidget {
   const ProcessorItem({
     required this.processor,
     this.onPanStart,
@@ -22,35 +22,9 @@ class ProcessorItem extends StatefulWidget {
   final void Function(TapDownDetails)? onTapDown;
 
   @override
-  State<ProcessorItem> createState() => _ProcessorItemState();
-}
-
-class _ProcessorItemState extends State<ProcessorItem> {
-  final GlobalKey _key = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _reportSize());
-  }
-
-  void _reportSize() {
-    final context = _key.currentContext;
-    if (context == null) return;
-
-    final box = context.findRenderObject() as RenderBox?;
-    if (box == null) return;
-
-    graphManager.onProcessorLayoutSizeUpdated(
-      id: widget.processor.id,
-      newSize: box.size,
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
-      key: _key,
+      key: ValueKey(processor.id),
       width: 300,
       decoration: BoxDecoration(
         border: Border.all(color: context.c.surfaceContainerHighest),
@@ -62,19 +36,21 @@ class _ProcessorItemState extends State<ProcessorItem> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           GestureDetector(
-            onPanStart: widget.onPanStart,
-            onPanUpdate: widget.onPanUpdate,
-            onPanEnd: widget.onPanEnd,
-            onTapDown: widget.onTapDown,
-            child: _Header(processor: widget.processor),
+            onPanStart: onPanStart,
+            onPanUpdate: onPanUpdate,
+            onPanEnd: onPanEnd,
+            onTapDown: onTapDown,
+            child: _Header(processor: processor),
           ),
-          _Ports(processor: widget.processor),
+          _Ports(processor: processor),
           const Divider(),
-          ...widget.processor.options.entries.map(
+          ...processor.options.entries.map(
             (entry) {
+              final option = entry.value;
+
               void onChanged(OptionValue<dynamic> newValue) {
                 graphManager.updateOptionValue(
-                  processorId: widget.processor.id,
+                  processorId: processor.id,
                   optionName: entry.key,
                   newValue: newValue,
                 );
@@ -82,28 +58,36 @@ class _ProcessorItemState extends State<ProcessorItem> {
 
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: switch (entry.value) {
-                  final IntOption o => IntOptionField(
-                    option: o,
-                    onChanged: onChanged,
-                  ),
-                  final DoubleOption o => DoubleOptionField(
-                    option: o,
-                    onChanged: onChanged,
-                  ),
-                  final StringOption o => StringOptionField(
-                    option: o,
-                    onChanged: onChanged,
-                  ),
-                  final BoolOption o => BoolOptionField(
-                    option: o,
-                    onChanged: onChanged,
-                  ),
-                  final OneOfOption o => OneOfOptionField(
-                    option: o,
-                    onChanged: onChanged,
-                  ),
-                },
+                child: Row(
+                  children: [
+                    Text(option.displayName),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: switch (option) {
+                        final IntOption o => IntOptionField(
+                          option: o,
+                          onChanged: onChanged,
+                        ),
+                        final DoubleOption o => DoubleOptionField(
+                          option: o,
+                          onChanged: onChanged,
+                        ),
+                        final StringOption o => StringOptionField(
+                          option: o,
+                          onChanged: onChanged,
+                        ),
+                        final BoolOption o => BoolOptionField(
+                          option: o,
+                          onChanged: onChanged,
+                        ),
+                        final OneOfOption o => OneOfOptionField(
+                          option: o,
+                          onChanged: onChanged,
+                        ),
+                      },
+                    ),
+                  ],
+                ),
               );
             },
           ),
@@ -226,7 +210,7 @@ class _Ports extends StatelessWidget {
 }
 
 abstract class OptionFieldBase<T extends OptionValue<dynamic>>
-    extends StatelessWidget {
+    extends StatefulWidget {
   const OptionFieldBase({
     required this.option,
     required this.onChanged,
@@ -236,16 +220,58 @@ abstract class OptionFieldBase<T extends OptionValue<dynamic>>
   final T option;
   final ValueChanged<T> onChanged;
 
-  Widget buildField(BuildContext context);
+  @override
+  State<OptionFieldBase<T>> createState() => _OptionFieldBaseState<T>();
+
+  TextInputType get keyboardType;
+
+  List<TextInputFormatter> get inputFormatters;
+
+  T parseValue(String value);
+}
+
+class _OptionFieldBaseState<T extends OptionValue<dynamic>>
+    extends State<OptionFieldBase<T>> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.option.value.toString());
+  }
+
+  @override
+  void didUpdateWidget(covariant OptionFieldBase<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.option.value != widget.option.value) {
+      _controller.value = TextEditingValue(
+        text: widget.option.value.toString(),
+        selection: TextSelection.collapsed(
+          offset: widget.option.value.toString().length,
+        ),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(option.displayName),
-        const SizedBox(width: 8),
-        Expanded(child: buildField(context)),
-      ],
+    return TextFormField(
+      controller: _controller,
+      keyboardType: widget.keyboardType,
+      inputFormatters: widget.inputFormatters,
+      onChanged: (v) {
+        try {
+          final parsed = widget.parseValue(v);
+          widget.onChanged(parsed);
+          // ignore: avoid_catches_without_on_clauses
+        } catch (_) {}
+      },
     );
   }
 }
@@ -258,16 +284,16 @@ class IntOptionField extends OptionFieldBase<IntOption> {
   });
 
   @override
-  Widget buildField(BuildContext context) {
-    return TextFormField(
-      initialValue: option.value.toString(),
-      keyboardType: TextInputType.number,
-      inputFormatters: [_intFormatter],
-      onChanged: (v) {
-        final value = int.tryParse(v);
-        if (value != null) onChanged(option.copyWith(newValue: value));
-      },
-    );
+  TextInputType get keyboardType => TextInputType.number;
+
+  @override
+  List<TextInputFormatter> get inputFormatters => [_intFormatter];
+
+  @override
+  IntOption parseValue(String value) {
+    final v = int.tryParse(value);
+    if (v == null) throw Exception('Invalid int');
+    return option.copyWith(newValue: v);
   }
 }
 
@@ -279,18 +305,19 @@ class DoubleOptionField extends OptionFieldBase<DoubleOption> {
   });
 
   @override
-  Widget buildField(BuildContext context) {
-    return TextFormField(
-      initialValue: option.value.toString(),
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*$')),
-      ],
-      onChanged: (v) {
-        final value = double.tryParse(v);
-        if (value != null) onChanged(option.copyWith(newValue: value));
-      },
-    );
+  TextInputType get keyboardType =>
+      const TextInputType.numberWithOptions(decimal: true);
+
+  @override
+  List<TextInputFormatter> get inputFormatters => [
+    FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*$')),
+  ];
+
+  @override
+  DoubleOption parseValue(String value) {
+    final v = double.tryParse(value);
+    if (v == null) throw Exception('Invalid double');
+    return option.copyWith(newValue: v);
   }
 }
 
@@ -302,23 +329,27 @@ class StringOptionField extends OptionFieldBase<StringOption> {
   });
 
   @override
-  Widget buildField(BuildContext context) {
-    return TextFormField(
-      initialValue: option.value,
-      onChanged: (v) => onChanged(option.copyWith(newValue: v)),
-    );
-  }
+  TextInputType get keyboardType => TextInputType.text;
+
+  @override
+  List<TextInputFormatter> get inputFormatters => [];
+
+  @override
+  StringOption parseValue(String value) => option.copyWith(newValue: value);
 }
 
-class BoolOptionField extends OptionFieldBase<BoolOption> {
+class BoolOptionField extends StatelessWidget {
   const BoolOptionField({
-    required super.option,
-    required super.onChanged,
+    required this.option,
+    required this.onChanged,
     super.key,
   });
 
+  final BoolOption option;
+  final ValueChanged<BoolOption> onChanged;
+
   @override
-  Widget buildField(BuildContext context) {
+  Widget build(BuildContext context) {
     return Switch(
       value: option.value,
       onChanged: (v) => onChanged(option.copyWith(newValue: v)),
@@ -326,15 +357,18 @@ class BoolOptionField extends OptionFieldBase<BoolOption> {
   }
 }
 
-class OneOfOptionField extends OptionFieldBase<OneOfOption> {
+class OneOfOptionField extends StatelessWidget {
   const OneOfOptionField({
-    required super.option,
-    required super.onChanged,
+    required this.option,
+    required this.onChanged,
     super.key,
   });
 
+  final OneOfOption option;
+  final ValueChanged<OneOfOption> onChanged;
+
   @override
-  Widget buildField(BuildContext context) {
+  Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       initialValue: option.value,
       items: option.allowed
