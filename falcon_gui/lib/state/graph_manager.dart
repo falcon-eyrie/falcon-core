@@ -300,11 +300,15 @@ class GraphManager extends ChangeNotifier {
           final otherUniqueId = '${otherProcessor.id}-${otherPort.name}';
           if (otherUniqueId == uniquePortId) continue;
 
-          // Simple type compatibility check: ports are compatible if they
-          // share the same type or either is "AnyType"
-          if (port.type == 'AnyType' ||
+          final isDataTypeCompatible =
+              port.type == 'AnyType' ||
               otherPort.type == 'AnyType' ||
-              port.type == otherPort.type) {
+              port.type == otherPort.type;
+          final isSameProcessor = otherProcessor.id == processorId;
+          final isSrcDstPair = port.isSrc != otherPort.isSrc;
+          final isCompatible =
+              isSrcDstPair && !isSameProcessor && isDataTypeCompatible;
+          if (isCompatible) {
             _enabledPortIds.add(otherUniqueId);
           }
         }

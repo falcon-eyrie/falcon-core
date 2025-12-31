@@ -13,7 +13,7 @@ class ProcessorPortsView extends StatelessWidget {
     final srcPorts = processor.ports.where((port) => port.isSrc);
     final dstPorts = processor.ports.where((port) => port.isDst);
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           Column(
@@ -66,7 +66,7 @@ class _PortRow extends StatelessWidget {
       ),
     );
 
-    final dot = _ProcessorPortDot(
+    final dot = _PortHalfDot(
       processorId: processor.id,
       portName: port.name,
       isSrc: port.isSrc,
@@ -98,8 +98,8 @@ class _PortRow extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: port.isSrc
-                ? [dot, const SizedBox(width: 4), text]
-                : [text, const SizedBox(width: 4), dot],
+                ? [text, const SizedBox(width: 4), dot]
+                : [dot, const SizedBox(width: 4), text],
           ),
         ),
       ),
@@ -107,8 +107,8 @@ class _PortRow extends StatelessWidget {
   }
 }
 
-class _ProcessorPortDot extends StatelessWidget {
-  const _ProcessorPortDot({
+class _PortHalfDot extends StatelessWidget {
+  const _PortHalfDot({
     required this.isTemplate,
     required this.processorId,
     required this.portName,
@@ -166,16 +166,22 @@ class _ProcessorPortDot extends StatelessWidget {
       });
     }
 
-    return Container(
-      width: 12,
-      height: 12,
-      decoration: BoxDecoration(
-        color: !isEnabled
-            ? Colors.grey
-            : isSrc
-            ? Colors.blue
-            : Colors.green,
-        shape: BoxShape.circle,
+    return ClipRect(
+      child: Align(
+        alignment: isSrc ? Alignment.centerLeft : Alignment.centerRight,
+        widthFactor: 0.5,
+        child: Container(
+          width: isEnabled ? 16 : 12,
+          height: isEnabled ? 16 : 12,
+          decoration: BoxDecoration(
+            color: !isEnabled
+                ? Colors.grey
+                : isSrc
+                ? Colors.blue
+                : Colors.green,
+            shape: BoxShape.circle,
+          ),
+        ),
       ),
     );
   }

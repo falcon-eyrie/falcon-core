@@ -62,6 +62,7 @@ class _EditorViewState extends State<EditorView> {
                   painter: ConnectionPainter(
                     connections: graphManager.connections,
                     processors: graphManager.processors,
+                    lineColor: const Color.fromARGB(255, 32, 137, 145),
                   ),
                   size: Size(
                     graphManager.canvasSize.width,
@@ -109,15 +110,16 @@ class ConnectionPainter extends CustomPainter {
   ConnectionPainter({
     required this.connections,
     required this.processors,
+    required this.lineColor,
   });
   final List<Connection> connections;
   final List<Processor> processors;
-
+  final Color lineColor;
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.blue.withAlpha(179)
-      ..strokeWidth = 2
+      ..color = lineColor
+      ..strokeWidth = 6
       ..style = PaintingStyle.stroke;
 
     for (final connection in connections) {
