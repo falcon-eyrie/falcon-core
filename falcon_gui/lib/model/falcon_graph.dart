@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
+import 'package:falcon_gui/utils/regex.dart';
 
 class FalconGraph {
   FalconGraph({
@@ -48,7 +49,13 @@ class Processor {
     this.isTemplate = false,
   }) : _inputPorts = List.of(inputPorts),
        _outputPorts = List.of(outputPorts),
-       _options = Map.of(options);
+       _options = Map.of(options),
+       assert(
+         processorIdRegex.hasMatch(id),
+         '$id is not a valid processor id. '
+         'It must contain only letters (a–z, A–Z), digits (0-9) and '
+         'underscores (_)',
+       );
 
   final String id;
   final String className;

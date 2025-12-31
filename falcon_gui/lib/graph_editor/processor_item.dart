@@ -23,75 +23,83 @@ class ProcessorItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      key: ValueKey(processor.id),
-      width: 300,
-      decoration: BoxDecoration(
-        border: Border.all(color: context.c.surfaceContainerHighest),
-        borderRadius: BorderRadius.circular(8),
-        color: context.c.surface,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          GestureDetector(
-            onPanStart: onPanStart,
-            onPanUpdate: onPanUpdate,
-            onPanEnd: onPanEnd,
-            onTapDown: onTapDown,
-            child: _Header(processor: processor),
-          ),
-          _Ports(processor: processor),
-          const Divider(),
-          ...processor.options.entries.map(
-            (entry) {
-              final option = entry.value;
+    return GestureDetector(
+      onTapDown: onTapDown,
+      child: Container(
+        key: ValueKey(processor.id),
+        width: 300,
+        decoration: BoxDecoration(
+          border: Border.all(color: context.c.surfaceContainerHighest),
+          borderRadius: BorderRadius.circular(8),
+          color: context.c.surface,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            GestureDetector(
+              onPanStart: onPanStart,
+              onPanUpdate: onPanUpdate,
+              onPanEnd: onPanEnd,
+              child: _Header(processor: processor),
+            ),
+            _Ports(processor: processor),
+            const Divider(),
+            ...processor.options.entries.map(
+              (entry) {
+                final option = entry.value;
 
-              void onChanged(OptionValue<dynamic> newValue) {
-                graphManager.updateOptionValue(
-                  processorId: processor.id,
-                  optionName: entry.key,
-                  newValue: newValue,
+                void onChanged(OptionValue<dynamic> newValue) {
+                  graphManager.updateOptionValue(
+                    processorId: processor.id,
+                    optionName: entry.key,
+                    newValue: newValue,
+                  );
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(option.displayName),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: switch (option) {
+                            final IntOption o => IntOptionField(
+                              option: o,
+                              onChanged: onChanged,
+                            ),
+                            final DoubleOption o => DoubleOptionField(
+                              option: o,
+                              onChanged: onChanged,
+                            ),
+                            final StringOption o => StringOptionField(
+                              option: o,
+                              onChanged: onChanged,
+                            ),
+                            final BoolOption o => BoolOptionField(
+                              option: o,
+                              onChanged: onChanged,
+                            ),
+                            final OneOfOption o => OneOfOptionField(
+                              option: o,
+                              onChanged: onChanged,
+                            ),
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 );
-              }
-
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  children: [
-                    Text(option.displayName),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: switch (option) {
-                        final IntOption o => IntOptionField(
-                          option: o,
-                          onChanged: onChanged,
-                        ),
-                        final DoubleOption o => DoubleOptionField(
-                          option: o,
-                          onChanged: onChanged,
-                        ),
-                        final StringOption o => StringOptionField(
-                          option: o,
-                          onChanged: onChanged,
-                        ),
-                        final BoolOption o => BoolOptionField(
-                          option: o,
-                          onChanged: onChanged,
-                        ),
-                        final OneOfOption o => OneOfOptionField(
-                          option: o,
-                          onChanged: onChanged,
-                        ),
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -185,22 +193,51 @@ class _Ports extends StatelessWidget {
       child: Row(
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: processor.inputPorts
                 .map(
-                  (p) => Padding(
+                  (port) => Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: ProcessorPortItem(isInput: true, port: p),
+                    child: Row(
+                      children: [
+                        _ProcessorPortDot(
+                          isInput: true,
+                          port: port,
+                          onClicked: () => graphManager.onPortClicked(
+                            processorId: processor.id,
+                            portName: port.name,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+
+                        Text(port.name),
+                      ],
+                    ),
                   ),
                 )
                 .toList(),
           ),
           const Spacer(),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: processor.outputPorts
                 .map(
-                  (p) => Padding(
+                  (port) => Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: ProcessorPortItem(isInput: false, port: p),
+                    child: Row(
+                      children: [
+                        Text(port.name),
+                        const SizedBox(width: 4),
+                        _ProcessorPortDot(
+                          isInput: false,
+                          port: port,
+                          onClicked: () => graphManager.onPortClicked(
+                            processorId: processor.id,
+                            portName: port.name,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
                 .toList(),
@@ -399,24 +436,37 @@ final _intFormatter = TextInputFormatter.withFunction(
   },
 );
 
-class ProcessorPortItem extends StatelessWidget {
-  const ProcessorPortItem({
+class _ProcessorPortDot extends StatelessWidget {
+  const _ProcessorPortDot({
     required this.isInput,
     required this.port,
+    required this.onClicked,
     super.key,
   });
 
   final Port port;
   final bool isInput;
+  final VoidCallback onClicked;
+
+  void _reportPosition() {
+    // todo report position
+    // graphManager.onPortPositionUpdated()
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 12,
-      height: 12,
-      decoration: BoxDecoration(
-        color: isInput ? Colors.blue : Colors.green,
-        shape: BoxShape.circle,
+    return MouseRegion(
+      cursor: SystemMouseCursors.alias,
+      child: GestureDetector(
+        onTapDown: (_) => onClicked(),
+        child: Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: isInput ? Colors.blue : Colors.green,
+            shape: BoxShape.circle,
+          ),
+        ),
       ),
     );
   }

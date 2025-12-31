@@ -1,5 +1,5 @@
 import 'package:falcon_gui/graph_editor/processor_item.dart';
-import 'package:falcon_gui/state/processor_definitions.dart';
+import 'package:falcon_gui/model/processor_definitions.dart';
 import 'package:flutter/material.dart';
 
 class ProcessorsPanel extends StatelessWidget {

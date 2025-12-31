@@ -58,9 +58,13 @@ final processorDefinitions = {
     },
     inputPorts: [
       Port(name: 'input', type: 'TimeSeriesType<double>'),
+      Port(name: 'trigger', type: 'TimeSeriesType<double>'),
     ],
     outputPorts: [
       Port(name: 'output', type: 'TimeSeriesType<double>'),
+      Port(name: 'threshold', type: 'TimeSeriesType<double>'),
+      Port(name: 'noise', type: 'TimeSeriesType<double>'),
+      Port(name: 'levels', type: 'TimeSeriesType<double>'),
     ],
     uiMetadata: UIMetadata(),
   ),

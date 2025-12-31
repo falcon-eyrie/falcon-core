@@ -4,26 +4,90 @@ import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:flutter/material.dart';
 
-class GraphEditor extends StatelessWidget {
+class GraphEditor extends StatefulWidget {
   const GraphEditor({super.key});
 
   @override
+  State<GraphEditor> createState() => _GraphEditorState();
+}
+
+class _GraphEditorState extends State<GraphEditor> {
+  bool _isProcessorsCollapsed = false;
+  bool _isYamlCollapsed = true;
+  final double _processorsWidth = 300;
+  final double _yamlWidth = 400;
+
+  @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
-        // Control Panel Row
-        _EditorControls(),
-        // Main Editor Row
+        const _EditorControls(),
         Expanded(
           child: Row(
             children: [
-              SizedBox(
-                width: 300,
-                child: ProcessorsPanel(),
+              // Processors Panel
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: _isProcessorsCollapsed ? 40 : _processorsWidth,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        _isProcessorsCollapsed
+                            ? Icons.chevron_right
+                            : Icons.chevron_left,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isProcessorsCollapsed = !_isProcessorsCollapsed;
+                        });
+                      },
+                    ),
+                    Expanded(
+                      child: _isProcessorsCollapsed
+                          ? const SizedBox.shrink()
+                          : const ProcessorsPanel(),
+                    ),
+                  ],
+                ),
               ),
-              Expanded(child: EditorView()),
 
-              _YamlEditor(),
+              const VerticalDivider(width: 1),
+
+              // Editor View
+              const Expanded(child: EditorView()),
+
+              const VerticalDivider(width: 1),
+
+              // YAML Editor
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: _isYamlCollapsed ? 40 : _yamlWidth,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        _isYamlCollapsed
+                            ? Icons.chevron_left
+                            : Icons.chevron_right,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isYamlCollapsed = !_isYamlCollapsed;
+                        });
+                      },
+                    ),
+                    Expanded(
+                      child: _isYamlCollapsed
+                          ? const SizedBox.shrink()
+                          : const _YamlEditor(),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -55,40 +119,36 @@ class _YamlEditorState extends State<_YamlEditor> {
         }
         return Padding(
           padding: const EdgeInsets.all(8),
-          child: SizedBox(
-            width: 300,
-            height: double.infinity,
-            child: TextFormField(
-              controller: controller,
-              maxLines: null,
-              expands: true,
-              decoration: const InputDecoration(
-                labelText: 'Graph YAML',
-                border: OutlineInputBorder(),
-                errorMaxLines: 10,
-              ),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              textAlignVertical: TextAlignVertical.top,
-              validator: (value) {
-                try {
-                  FalconGraphSerializerX.fromYaml(value ?? '');
-                  return null;
-                } on FalconGraphYamlParserException catch (e) {
-                  return e.message;
-                  // ignore: avoid_catches_without_on_clauses
-                } catch (e) {
-                  return '$e';
-                }
-              },
-              onChanged: (value) {
-                try {
-                  graphManager.loadGraph(
-                    FalconGraphSerializerX.fromYaml(value),
-                  );
-                  // ignore: avoid_catches_without_on_clauses
-                } catch (_) {}
-              },
+          child: TextFormField(
+            controller: controller,
+            maxLines: null,
+            expands: true,
+            decoration: const InputDecoration(
+              labelText: 'Graph YAML',
+              border: OutlineInputBorder(),
+              errorMaxLines: 10,
             ),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            textAlignVertical: TextAlignVertical.top,
+            validator: (value) {
+              try {
+                FalconGraphSerializerX.fromYaml(value ?? '');
+                return null;
+              } on FalconGraphYamlParserException catch (e) {
+                return e.message;
+                // ignore: avoid_catches_without_on_clauses
+              } catch (e) {
+                return '$e';
+              }
+            },
+            onChanged: (value) {
+              try {
+                graphManager.loadGraph(
+                  FalconGraphSerializerX.fromYaml(value),
+                );
+                // ignore: avoid_catches_without_on_clauses
+              } catch (_) {}
+            },
           ),
         );
       },
@@ -127,8 +187,6 @@ class _EditorControls extends StatelessWidget {
             child: const Text('Reset'),
           ),
           const Spacer(),
-
-          // You can add more controls here, e.g., zoom, settings, etc.
           IconButton(
             icon: const Icon(Icons.undo),
             tooltip: 'Undo',

@@ -1,0 +1,358 @@
+source:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 342, y: 507 }
+    lastModified: "2025-12-31T16:24:52.882027"
+
+source_1:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 620, y: 258 }
+    lastModified: "2025-12-31T16:26:21.033649"
+
+source_2:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 211, y: 862 }
+    lastModified: "2025-12-31T16:24:55.263769"
+
+source_3:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 940, y: 167 }
+    lastModified: "2025-12-31T16:26:20.118742"
+
+source_4:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 1488, y: 66 }
+    lastModified: "2025-12-31T16:26:28.601091"
+
+source_5:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 2183, y: 271 }
+    lastModified: "2025-12-31T16:25:33.057532"
+
+source_6:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 2704, y: 619 }
+    lastModified: "2025-12-31T16:25:34.264450"
+
+source_7:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 2486, y: 449 }
+    lastModified: "2025-12-31T16:26:14.334061"
+
+source_8:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 2325, y: 2200 }
+    lastModified: "2025-12-31T16:26:06.189469"
+
+source_9:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 2702, y: 1608 }
+    lastModified: "2025-12-31T16:26:04.109951"
+
+source_10:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 2710, y: 1256 }
+    lastModified: "2025-12-31T16:25:36.465687"
+
+source_11:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 110, y: 1486 }
+    lastModified: "2025-12-31T16:25:56.460960"
+
+source_12:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 66, y: 1772 }
+    lastModified: "2025-12-31T16:25:58.291575"
+
+source_13:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 1128, y: 2361 }
+    lastModified: "2025-12-31T16:26:08.431081"
+
+source_14:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 871, y: 2307 }
+    lastModified: "2025-12-31T16:25:17.129828"
+
+source_15:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 1402, y: 2349 }
+    lastModified: "2025-12-31T16:25:39.591628"
+
+source_16:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 2009, y: 2237 }
+    lastModified: "2025-12-31T16:25:38.557355"
+
+source_17:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 2510, y: 1901 }
+    lastModified: "2025-12-31T16:25:37.573833"
+
+source_18:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 211, y: 2067 }
+    lastModified: "2025-12-31T16:25:00.540166"
+
+source_19:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 2783, y: 916 }
+    lastModified: "2025-12-31T16:26:10.525201"
+
+source_20:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 116, y: 1161 }
+    lastModified: "2025-12-31T16:25:53.021210"
+
+source_21:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 520, y: 2262 }
+    lastModified: "2025-12-31T16:26:00.038932"
+
+source_22:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 1721, y: 2319 }
+    lastModified: "2025-12-31T16:26:02.145636"
+
+source_23:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 1926, y: 141 }
+    lastModified: "2025-12-31T16:26:17.556470"
+
+source_24:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 1237, y: 95 }
+    lastModified: "2025-12-31T16:26:23.942439"
+
+source_25:
+  class: SourceProcessor
+  options:
+    nchannels: 32
+    format: "compact"
+    enabled: true
+  ui:
+    position: { x: 1705, y: 121 }
+    lastModified: "2025-12-31T16:26:31.514002"
+
+sink:
+  class: SinkProcessor
+  options:
+    filepath: "/path/to/output/file"
+    overwrite: false
+  ui:
+    position: { x: 1053, y: 837 }
+    lastModified: "2025-12-31T16:27:14.838185"
+
+sink_1:
+  class: SinkProcessor
+  options:
+    filepath: "/path/to/output/file"
+    overwrite: false
+  ui:
+    position: { x: 1800, y: 865 }
+    lastModified: "2025-12-31T16:27:30.524563"
+
+filter:
+  class: FilterProcessor
+  options:
+    cutoff_frequency: 0.5
+    filter_type: "lowpass"
+  ui:
+    position: { x: 1267, y: 1841 }
+    lastModified: "2025-12-31T16:27:02.042524"
+
+filter_1:
+  class: FilterProcessor
+  options:
+    cutoff_frequency: 0.5
+    filter_type: "lowpass"
+  ui:
+    position: { x: 1921, y: 1743 }
+    lastModified: "2025-12-31T16:27:04.908976"
+
+filter_2:
+  class: FilterProcessor
+  options:
+    cutoff_frequency: 0.5
+    filter_type: "lowpass"
+  ui:
+    position: { x: 1595, y: 1773 }
+    lastModified: "2025-12-31T16:27:03.363171"
+
+filter_3:
+  class: FilterProcessor
+  options:
+    cutoff_frequency: 0.5
+    filter_type: "lowpass"
+  ui:
+    position: { x: 640, y: 1560 }
+    lastModified: "2025-12-31T16:26:41.689080"
+
+filter_4:
+  class: FilterProcessor
+  options:
+    cutoff_frequency: 0.5
+    filter_type: "lowpass"
+  ui:
+    position: { x: 939, y: 1796 }
+    lastModified: "2025-12-31T16:27:00.469708"
+
+filter_5:
+  class: FilterProcessor
+  options:
+    cutoff_frequency: 0.5
+    filter_type: "lowpass"
+  ui:
+    position: { x: 863, y: 678 }
+    lastModified: "2025-12-31T16:27:08.954912"
+
+filter_6:
+  class: FilterProcessor
+  options:
+    cutoff_frequency: 0.5
+    filter_type: "lowpass"
+  ui:
+    position: { x: 1117, y: 678 }
+    lastModified: "2025-12-31T16:27:12.457793"
+
+filter_7:
+  class: FilterProcessor
+  options:
+    cutoff_frequency: 0.5
+    filter_type: "lowpass"
+  ui:
+    position: { x: 1639, y: 724 }
+    lastModified: "2025-12-31T16:27:19.471641"
+
+filter_8:
+  class: FilterProcessor
+  options:
+    cutoff_frequency: 0.5
+    filter_type: "lowpass"
+  ui:
+    position: { x: 1905, y: 704 }
+    lastModified: "2025-12-31T16:27:29.643855"

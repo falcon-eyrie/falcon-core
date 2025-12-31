@@ -1,5 +1,6 @@
 import 'package:falcon_gui/model/falcon_graph.dart';
-import 'package:falcon_gui/state/processor_definitions.dart';
+import 'package:falcon_gui/model/processor_definitions.dart';
+import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
 
@@ -14,31 +15,28 @@ extension FalconGraphSerializerX on FalconGraph {
 
       buffer
         ..writeln('${processor.id}:')
-        ..writeln('    class: ${processor.className}');
+        ..writeln('  class: ${processor.className}');
 
       if (processor.options.isNotEmpty) {
-        buffer.writeln('    options:');
+        buffer.writeln('  options:');
         for (final entry in processor.options.entries) {
           buffer.writeln(
-            '        ${entry.key}: ${_yamlScalar(entry.value.value)}',
+            '    ${entry.key}: ${_yamlScalar(entry.value.value)}',
           );
         }
       }
 
       buffer
-        ..writeln('    ui:')
+        ..writeln('  ui:')
+        ..writeln('    position:')
+        ..writeln('      x: ${ui.position.dx.toInt()}')
+        ..writeln('      y: ${ui.position.dy.toInt()}')
         ..writeln(
-          '        position: { x: ${ui.position.dx.toInt()}, '
-          'y: ${ui.position.dy.toInt()} }',
-        )
-        ..writeln(
-          '        lastModified: "${ui.lastModified.toIso8601String()}"',
+          '    lastModified: "${ui.lastModified.toUtc().toIso8601String()}"',
         );
 
       if (ui.color != null) {
-        buffer.writeln(
-          '        color: "#${ui.color!.toARGB32()}"',
-        );
+        buffer.writeln('    color: "#${ui.color!.toARGB32()}"');
       }
 
       buffer.writeln();
@@ -48,7 +46,7 @@ extension FalconGraphSerializerX on FalconGraph {
       buffer.writeln('connections:');
       for (final conn in connections) {
         buffer.writeln(
-          '    ${conn.fromProcessor}.${conn.fromPort} = '
+          '  ${conn.fromProcessor}.${conn.fromPort} = '
           '${conn.toProcessor}.${conn.toPort}',
         );
       }
@@ -65,6 +63,13 @@ extension FalconGraphSerializerX on FalconGraph {
   }
 
   static FalconGraph fromYaml(String yamlString) {
+    if (yamlString.trim().isEmpty) {
+      return FalconGraph(
+        processors: {},
+        connections: [],
+      );
+    }
+
     final doc = loadYaml(yamlString) as YamlMap;
 
     final processors = <String, Processor>{};
@@ -140,6 +145,13 @@ extension FalconGraphSerializerX on FalconGraph {
         }
       }
 
+      if (!processorIdRegex.hasMatch(key)) {
+        throw FalconGraphYamlParserException(
+          '$key is not a valid processor id. '
+          'It must contain only letters (a–z, A–Z), digits (0-9) and '
+          'underscores (_)',
+        );
+      }
       processors[key] = Processor(
         id: key,
         className: className,

@@ -170,36 +170,6 @@ class GraphManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _adjustCanvas() {
-    if (_graph.processors.isEmpty) return;
-
-    final minX = _graph.processors.values
-        .map((n) => n.uiMetadata.position.dx)
-        .reduce(math.min);
-    final minY = _graph.processors.values
-        .map((n) => n.uiMetadata.position.dy)
-        .reduce(math.min);
-
-    double shiftX = 0;
-    double shiftY = 0;
-
-    if (minX < 0) shiftX = -minX;
-    if (minY < 0) shiftY = -minY;
-
-    if (shiftX != 0 || shiftY != 0) {
-      // Shift all processors into positive coordinates
-      for (final processor in _graph.processors.values) {
-        processor.uiMetadata.setPosition(
-          processor.uiMetadata.position + Offset(shiftX, shiftY),
-        );
-      }
-
-      // Translate canvas accordingly
-      transformationController.value = transformationController.value.clone()
-        ..translateByDouble(-shiftX, -shiftY, 0, 1);
-    }
-  }
-
   void onProcessorDragEnd({required String id}) {
     _grabOffset = null;
   }
@@ -211,6 +181,30 @@ class GraphManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _adjustCanvas() {
+    if (_graph.processors.isEmpty) return;
+
+    final minX = _graph.processors.values
+        .map((n) => n.uiMetadata.position.dx)
+        .reduce(math.min);
+    final minY = _graph.processors.values
+        .map((n) => n.uiMetadata.position.dy)
+        .reduce(math.min);
+
+    if (minX > 0 || minY > 0) {
+      // Shift all processors up-left
+      for (final processor in _graph.processors.values) {
+        processor.uiMetadata.setPosition(
+          processor.uiMetadata.position - Offset(minX, minY),
+        );
+      }
+
+      // Move canvas down-right to make it seamless
+      transformationController.value = transformationController.value.clone()
+        ..translateByDouble(minX, minY, 0, 1);
+    }
+  }
+
   Size get canvasSize {
     if (_graph.processors.isEmpty) return Size.zero;
     _adjustCanvas();
@@ -219,7 +213,7 @@ class GraphManager extends ChangeNotifier {
       0,
       (prev, processor) => math.max(
         prev,
-        processor.uiMetadata.position.dx + 500,
+        processor.uiMetadata.position.dx + 1000,
       ),
     );
 
@@ -227,7 +221,7 @@ class GraphManager extends ChangeNotifier {
       0,
       (prev, processor) => math.max(
         prev,
-        processor.uiMetadata.position.dy + 500,
+        processor.uiMetadata.position.dy + 1000,
       ),
     );
 
@@ -266,5 +260,18 @@ class GraphManager extends ChangeNotifier {
 
   void resetZoom() {
     transformationController.value = Matrix4.identity();
+  }
+
+  final Map<String, Offset> _portPositions = {};
+
+  void onPortClicked({required String processorId, required String portName}) {}
+
+  void onPortPositionUpdated({
+    required String processorId,
+    required String portName,
+    required Offset newPosition,
+  }) {
+    final uniquePortId = '$processorId-$portName';
+    _portPositions[uniquePortId] = newPosition;
   }
 }
