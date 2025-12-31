@@ -22,7 +22,7 @@ class FalconGraph {
 
   void removeProcessor({required String id}) {
     _connections.removeWhere(
-      (conn) => conn.fromProcessor == id || conn.toProcessor == id,
+      (conn) => conn.srcProcessor == id || conn.dstProcessor == id,
     );
     _processors.remove(id);
   }
@@ -30,10 +30,10 @@ class FalconGraph {
   void addConnection({required Connection newConnection}) {
     final isNotDuplicate = _connections.none(
       (connection) =>
-          connection.fromProcessor == newConnection.fromProcessor ||
-          connection.fromPort == newConnection.fromPort ||
-          connection.toProcessor == newConnection.toProcessor ||
-          connection.toPort == newConnection.toPort,
+          connection.srcProcessor == newConnection.srcProcessor &&
+          connection.srcPort == newConnection.srcPort &&
+          connection.dstProcessor == newConnection.dstProcessor &&
+          connection.dstPort == newConnection.dstPort,
     );
     if (isNotDuplicate) {
       _connections.add(newConnection);
@@ -56,12 +56,10 @@ class Processor {
     required this.id,
     required this.className,
     required Map<String, OptionValue<dynamic>> options,
-    required List<Port> inputPorts,
-    required List<Port> outputPorts,
+    required List<Port> ports,
     required this.uiMetadata,
     this.isTemplate = false,
-  }) : _inputPorts = List.of(inputPorts),
-       _outputPorts = List.of(outputPorts),
+  }) : _ports = List.of(ports),
        _options = Map.of(options),
        assert(
          processorIdRegex.hasMatch(id),
@@ -73,20 +71,14 @@ class Processor {
   final String id;
   final String className;
   final Map<String, OptionValue<dynamic>> _options;
-  final List<Port> _inputPorts;
-  final List<Port> _outputPorts;
+  final List<Port> _ports;
   final UIMetadata uiMetadata;
   final bool isTemplate;
 
-  List<Port> get inputPorts => List.unmodifiable(_inputPorts);
-  List<Port> get outputPorts => List.unmodifiable(_outputPorts);
+  List<Port> get ports => List.unmodifiable(_ports);
   Map<String, OptionValue<dynamic>> get options => Map.unmodifiable(_options);
 
-  Port? getInputPort(String name) =>
-      inputPorts.firstWhereOrNull((p) => p.name == name);
-
-  Port? getOutputPort(String name) =>
-      outputPorts.firstWhereOrNull((p) => p.name == name);
+  Port? getPort(String name) => ports.firstWhereOrNull((p) => p.name == name);
 
   void updateOption({
     required String name,
@@ -98,8 +90,7 @@ class Processor {
   Processor copyWith({
     String? id,
     Map<String, OptionValue<dynamic>>? options,
-    List<Port>? inputPorts,
-    List<Port>? outputPorts,
+    List<Port>? ports,
     UIMetadata? uiMetadata,
     bool? isTemplate,
   }) {
@@ -108,8 +99,7 @@ class Processor {
       className: className,
       isTemplate: isTemplate ?? this.isTemplate,
       options: options ?? Map.of(_options),
-      inputPorts: inputPorts ?? List.of(_inputPorts),
-      outputPorts: outputPorts ?? List.of(_outputPorts),
+      ports: ports ?? List.of(_ports),
       uiMetadata: uiMetadata ?? this.uiMetadata,
     );
   }
@@ -176,9 +166,11 @@ final class OneOfOption extends OptionValue<String> {
 }
 
 class Port {
-  Port({required this.name, required this.type});
+  Port({required this.isSrc, required this.name, required this.type});
   final String name;
   final String type; // e.g. "AnyType", "TimeSeriesType<double>", "int"
+  final bool isSrc;
+  bool get isDst => !isSrc;
 }
 
 class UIMetadata {
@@ -225,18 +217,18 @@ class UIMetadata {
 
 class Connection {
   Connection({
-    required this.fromProcessor,
-    required this.fromPort,
-    required this.toProcessor,
-    required this.toPort,
+    required this.srcProcessor,
+    required this.srcPort,
+    required this.dstProcessor,
+    required this.dstPort,
   });
 
-  final String fromProcessor;
-  final String fromPort;
-  final String toProcessor;
-  final String toPort;
+  final String srcProcessor;
+  final String srcPort;
+  final String dstProcessor;
+  final String dstPort;
 
   @override
   String toString() =>
-      'Connection($fromProcessor:$fromPort -> $toProcessor:$toPort)';
+      'Connection($srcProcessor:$srcPort -> $dstProcessor:$dstPort)';
 }

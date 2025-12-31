@@ -264,26 +264,84 @@ class GraphManager extends ChangeNotifier {
     transformationController.value = Matrix4.identity();
   }
 
+  // Offset of each port's center position relative to the processor item
+  // widget that contains it.
   final _portPositions = <String, Offset>{};
-  final _enabledPortIds = <String>{'filter-threshold'};
+
+  // Currently selected port unique ID (processorId-portName) for connection
+  // creation.
   String? _selectedPortUniqueId;
+
+  // Set of enabled port unique IDs (processorId-portName) for connection
+  // creation. In other words, user will see these ports highlighted as
+  // connectable to the currently selected port.
+  final _enabledPortIds = <String>{};
 
   String? get selectedPortUniqueId => _selectedPortUniqueId;
 
-  void onPortClicked({required String processorId, required String portName}) {
-    // final uniquePortId = '$processorId-$portName';
+  Offset getPortPosition({
+    required String processorId,
+    required String portName,
+  }) {
+    final uniquePortId = '$processorId-$portName';
+    return _portPositions[uniquePortId] ?? Offset.zero;
+  }
 
-    // _selectedPortUniqueId = uniquePortId;
+  void onPortClicked({required String processorId, required Port port}) {
+    final uniquePortId = '$processorId-${port.name}';
 
-    // notifyListeners();
+    if (_selectedPortUniqueId == null) {
+      _selectedPortUniqueId = uniquePortId;
 
-    // testing the connections, temp solution
-    addConnection(
-      fromProcessorId: 'source',
-      fromPortName: 'ripple',
-      toProcessorId: 'sink',
-      toPortName: 'input',
-    );
+      // Determine enabled ports
+      _enabledPortIds.clear();
+      for (final otherProcessor in _graph.processors.values) {
+        for (final otherPort in [...otherProcessor.ports]) {
+          final otherUniqueId = '${otherProcessor.id}-${otherPort.name}';
+          if (otherUniqueId == uniquePortId) continue;
+
+          // Simple type compatibility check: ports are compatible if they
+          // share the same type or either is "AnyType"
+          if (port.type == 'AnyType' ||
+              otherPort.type == 'AnyType' ||
+              port.type == otherPort.type) {
+            _enabledPortIds.add(otherUniqueId);
+          }
+        }
+      }
+    } else {
+      if (_selectedPortUniqueId != uniquePortId) {
+        final selectedPortParts = _selectedPortUniqueId!.split('-');
+        final sourceProcessorId = selectedPortParts[0];
+        final sourcePortName = selectedPortParts[1];
+        final destinationProcessorId = processorId;
+        final destinationPortName = port.name;
+
+        if (port.isSrc) {
+          _graph.addConnection(
+            newConnection: Connection(
+              srcProcessor: destinationProcessorId,
+              srcPort: destinationPortName,
+              dstProcessor: sourceProcessorId,
+              dstPort: sourcePortName,
+            ),
+          );
+        } else {
+          _graph.addConnection(
+            newConnection: Connection(
+              srcProcessor: sourceProcessorId,
+              srcPort: sourcePortName,
+              dstProcessor: destinationProcessorId,
+              dstPort: destinationPortName,
+            ),
+          );
+        }
+      }
+
+      _selectedPortUniqueId = null;
+    }
+
+    notifyListeners();
   }
 
   void onPortPositionUpdated({
@@ -296,32 +354,20 @@ class GraphManager extends ChangeNotifier {
   }
 
   /// Whether or not the specified port is compatible to connect to the
-  /// currently selected port.
+  /// currently selected port. This will be used to highlight compatible ports
+  /// and grey out incompatible ones.
   ///
   /// This does not mean the port is enabled or not, just that it can be
   /// connected to the selected port.
   bool isPortEnabled({required String processorId, required String portName}) {
     final uniquePortId = '$processorId-$portName';
 
-    return _selectedPortUniqueId == uniquePortId ||
-        _enabledPortIds.contains(uniquePortId);
-  }
+    // If we are not in the create connection mode, all ports are enabled
+    if (_selectedPortUniqueId == null) return true;
 
-  void addConnection({
-    required String fromProcessorId,
-    required String fromPortName,
-    required String toProcessorId,
-    required String toPortName,
-  }) {
-    _graph.addConnection(
-      newConnection: Connection(
-        fromProcessor: fromProcessorId,
-        fromPort: fromPortName,
-        toProcessor: toProcessorId,
-        toPort: toPortName,
-      ),
-    );
+    // The selected port itself is always enabled
+    if (_selectedPortUniqueId == uniquePortId) return true;
 
-    notifyListeners();
+    return _enabledPortIds.contains(uniquePortId);
   }
 }

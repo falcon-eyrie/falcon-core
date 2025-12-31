@@ -46,8 +46,8 @@ extension FalconGraphSerializerX on FalconGraph {
       buffer.writeln('connections:');
       for (final conn in connections) {
         buffer.writeln(
-          '  ${conn.fromProcessor}.${conn.fromPort} = '
-          '${conn.toProcessor}.${conn.toPort}',
+          '  ${conn.srcProcessor}.${conn.srcPort} = '
+          '${conn.dstProcessor}.${conn.dstPort}',
         );
       }
     }
@@ -79,18 +79,35 @@ extension FalconGraphSerializerX on FalconGraph {
       final key = entry.key as String;
 
       if (key == 'connections') {
-        final list = entry.value as YamlList;
-        for (final line in list.cast<String>()) {
+        if (entry.value is YamlMap) {
+          final connectionsMap = entry.value as YamlMap;
+          for (final connEntry in connectionsMap.entries) {
+            final line = connEntry.value as String;
+            final parts = line.split('=');
+            final left = parts[0].trim().split('.');
+            final right = parts[1].trim().split('.');
+
+            connections.add(
+              Connection(
+                srcProcessor: left[0],
+                srcPort: left[1],
+                dstProcessor: right[0],
+                dstPort: right[1],
+              ),
+            );
+          }
+        } else if (entry.value is String) {
+          final line = entry.value as String;
           final parts = line.split('=');
           final left = parts[0].trim().split('.');
           final right = parts[1].trim().split('.');
 
           connections.add(
             Connection(
-              fromProcessor: left[0],
-              fromPort: left[1],
-              toProcessor: right[0],
-              toPort: right[1],
+              srcProcessor: left[0],
+              srcPort: left[1],
+              dstProcessor: right[0],
+              dstPort: right[1],
             ),
           );
         }
@@ -156,8 +173,7 @@ extension FalconGraphSerializerX on FalconGraph {
         id: key,
         className: className,
         options: options,
-        inputPorts: List.of(templateProcessor.inputPorts),
-        outputPorts: List.of(templateProcessor.outputPorts),
+        ports: List.of(templateProcessor.ports),
         uiMetadata: UIMetadata(
           position: position,
           lastModified: lastModified,

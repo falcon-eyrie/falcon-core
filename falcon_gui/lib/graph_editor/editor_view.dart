@@ -1,4 +1,6 @@
+import 'package:collection/collection.dart';
 import 'package:falcon_gui/graph_editor/processor_item.dart';
+import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -55,38 +57,106 @@ class _EditorViewState extends State<EditorView> {
             width: graphManager.canvasSize.width,
             child: Stack(
               clipBehavior: Clip.none,
-              children: graphManager.processors.map((processor) {
-                return Positioned(
-                  key: ValueKey(processor.id),
-                  left: processor.uiMetadata.position.dx,
-                  top: processor.uiMetadata.position.dy,
-                  child: ProcessorItem(
-                    onPanStart: (details) {
-                      final scenePosition = _toScene(details.globalPosition);
-                      graphManager.onOnProcessorDragStart(
-                        id: processor.id,
-                        scenePosition: scenePosition,
-                      );
-                    },
-                    onPanUpdate: (details) {
-                      final scenePosition = _toScene(details.globalPosition);
-                      graphManager.onProcessorDragUpdate(
-                        id: processor.id,
-                        newPos: scenePosition,
-                      );
-                    },
-                    onPanEnd: (_) =>
-                        graphManager.onProcessorDragEnd(id: processor.id),
-                    onTapDown: (_) =>
-                        graphManager.onProcessorClicked(id: processor.id),
-                    processor: processor,
+              children: [
+                CustomPaint(
+                  painter: ConnectionPainter(
+                    connections: graphManager.connections,
+                    processors: graphManager.processors,
                   ),
-                );
-              }).toList(),
+                  size: Size(
+                    graphManager.canvasSize.width,
+                    graphManager.canvasSize.height,
+                  ),
+                ),
+                ...graphManager.processors.map((processor) {
+                  return Positioned(
+                    key: ValueKey(processor.id),
+                    left: processor.uiMetadata.position.dx,
+                    top: processor.uiMetadata.position.dy,
+                    child: ProcessorItem(
+                      onPanStart: (details) {
+                        final scenePosition = _toScene(details.globalPosition);
+                        graphManager.onOnProcessorDragStart(
+                          id: processor.id,
+                          scenePosition: scenePosition,
+                        );
+                      },
+                      onPanUpdate: (details) {
+                        final scenePosition = _toScene(details.globalPosition);
+                        graphManager.onProcessorDragUpdate(
+                          id: processor.id,
+                          newPos: scenePosition,
+                        );
+                      },
+                      onPanEnd: (_) =>
+                          graphManager.onProcessorDragEnd(id: processor.id),
+                      onTapDown: (_) =>
+                          graphManager.onProcessorClicked(id: processor.id),
+                      processor: processor,
+                    ),
+                  );
+                }),
+              ],
             ),
           ),
         );
       },
     );
   }
+}
+
+class ConnectionPainter extends CustomPainter {
+  ConnectionPainter({
+    required this.connections,
+    required this.processors,
+  });
+  final List<Connection> connections;
+  final List<Processor> processors;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.blue.withAlpha(179)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    for (final connection in connections) {
+      final srcProcessor = processors.firstWhereOrNull(
+        (p) => p.id == connection.srcProcessor,
+      );
+      final dstProcessor = processors.firstWhereOrNull(
+        (p) => p.id == connection.dstProcessor,
+      );
+
+      if (srcProcessor != null && dstProcessor != null) {
+        final fromPortOffset = graphManager.getPortPosition(
+          processorId: connection.srcProcessor,
+          portName: connection.srcPort,
+        );
+        final toPortOffset = graphManager.getPortPosition(
+          processorId: connection.dstProcessor,
+          portName: connection.dstPort,
+        );
+
+        // Calculate final canvas positions
+        final fromPos = srcProcessor.uiMetadata.position + fromPortOffset;
+        final toPos = dstProcessor.uiMetadata.position + toPortOffset;
+
+        final path = Path()
+          ..moveTo(fromPos.dx, fromPos.dy)
+          ..cubicTo(
+            fromPos.dx + 100,
+            fromPos.dy,
+            toPos.dx - 100,
+            toPos.dy,
+            toPos.dx,
+            toPos.dy,
+          );
+        canvas.drawPath(path, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(ConnectionPainter oldDelegate) => true;
 }

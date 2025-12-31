@@ -135,9 +135,10 @@ class FalconTheme {
 abstract final class DefaultProcessorColor {
   static Color? byClassName({required String className}) {
     return {
-      'SourceProcessor': const Color.fromARGB(255, 117, 59, 183),
-      'FilterProcessor': const Color.fromARGB(255, 57, 93, 129),
-      'SinkProcessor': const Color.fromARGB(255, 138, 84, 72),
+      'SourceProcessor': const Color.fromARGB(255, 183, 67, 59),
+      'FilterProcessor': const Color.fromARGB(255, 65, 129, 57),
+      'SinkProcessor': const Color.fromARGB(255, 92, 72, 138),
+      'DistruptorProcessor': const Color.fromARGB(255, 173, 59, 183),
     }[className];
   }
 }

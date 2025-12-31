@@ -5,6 +5,7 @@ analyzer:
     public_member_api_docs: ignore
     document_ignores: ignore
     todo: ignore
+    avoid_catches_without_on_clauses: ignore
     
 linter:
   rules:

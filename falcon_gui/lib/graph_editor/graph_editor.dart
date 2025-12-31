@@ -104,18 +104,28 @@ class _YamlEditor extends StatefulWidget {
 }
 
 class _YamlEditorState extends State<_YamlEditor> {
-  final TextEditingController controller = TextEditingController();
+  late final TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(text: graphManager.graphAsYaml);
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: graphManager,
       builder: (context, _) {
-        if (controller.text != graphManager.graphAsYaml) {
-          controller.value = TextEditingValue(
-            text: graphManager.graphAsYaml,
-            selection: controller.selection,
-          );
+        final currentYaml = graphManager.graphAsYaml;
+        if (controller.text != currentYaml) {
+          controller.text = currentYaml;
         }
         return Padding(
           padding: const EdgeInsets.all(8),
@@ -136,7 +146,6 @@ class _YamlEditorState extends State<_YamlEditor> {
                 return null;
               } on FalconGraphYamlParserException catch (e) {
                 return e.message;
-                // ignore: avoid_catches_without_on_clauses
               } catch (e) {
                 return '$e';
               }
@@ -146,7 +155,6 @@ class _YamlEditorState extends State<_YamlEditor> {
                 graphManager.loadGraph(
                   FalconGraphSerializerX.fromYaml(value),
                 );
-                // ignore: avoid_catches_without_on_clauses
               } catch (_) {}
             },
           ),

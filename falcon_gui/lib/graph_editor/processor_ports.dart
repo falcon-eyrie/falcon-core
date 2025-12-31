@@ -10,6 +10,8 @@ class ProcessorPortsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final srcPorts = processor.ports.where((port) => port.isSrc);
+    final dstPorts = processor.ports.where((port) => port.isDst);
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Row(
@@ -17,11 +19,10 @@ class ProcessorPortsView extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (final port in processor.inputPorts)
+              for (final port in dstPorts)
                 _PortRow(
                   processor: processor,
                   port: port,
-                  isInput: true,
                 ),
             ],
           ),
@@ -29,11 +30,10 @@ class ProcessorPortsView extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              for (final port in processor.outputPorts)
+              for (final port in srcPorts)
                 _PortRow(
                   processor: processor,
                   port: port,
-                  isInput: false,
                 ),
             ],
           ),
@@ -47,12 +47,10 @@ class _PortRow extends StatelessWidget {
   const _PortRow({
     required this.processor,
     required this.port,
-    required this.isInput,
   });
 
   final Processor processor;
   final Port port;
-  final bool isInput;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +69,7 @@ class _PortRow extends StatelessWidget {
     final dot = _ProcessorPortDot(
       processorId: processor.id,
       portName: port.name,
-      isInput: isInput,
+      isSrc: port.isSrc,
       isEnabled: isEnabled,
       isTemplate: processor.isTemplate,
     );
@@ -79,10 +77,12 @@ class _PortRow extends StatelessWidget {
     return MouseRegion(
       cursor: SystemMouseCursors.alias,
       child: GestureDetector(
-        onTapDown: (_) => graphManager.onPortClicked(
-          processorId: processor.id,
-          portName: port.name,
-        ),
+        onTapDown: isEnabled
+            ? (_) => graphManager.onPortClicked(
+                processorId: processor.id,
+                port: port,
+              )
+            : null,
         onVerticalDragStart: (_) {},
         onVerticalDragUpdate: (_) {},
         onHorizontalDragStart: (_) {},
@@ -97,7 +97,7 @@ class _PortRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: isInput
+            children: port.isSrc
                 ? [dot, const SizedBox(width: 4), text]
                 : [text, const SizedBox(width: 4), dot],
           ),
@@ -112,13 +112,13 @@ class _ProcessorPortDot extends StatelessWidget {
     required this.isTemplate,
     required this.processorId,
     required this.portName,
-    required this.isInput,
+    required this.isSrc,
     required this.isEnabled,
   });
 
   final String processorId;
   final String portName;
-  final bool isInput;
+  final bool isSrc;
   final bool isEnabled;
   final bool isTemplate;
 
@@ -126,15 +126,36 @@ class _ProcessorPortDot extends StatelessWidget {
     final renderBox = context.findRenderObject() as RenderBox?;
     if (renderBox == null || !renderBox.hasSize) return;
 
-    final position = renderBox.globalToLocal(
-      renderBox.size.center(Offset.zero),
-    );
+    // Get the dot's center position relative to itself
+    final dotLocalCenter = renderBox.size.center(Offset.zero);
 
-    graphManager.onPortPositionUpdated(
-      processorId: processorId,
-      portName: portName,
-      newPosition: position,
-    );
+    // Convert to global coordinates
+    final globalPos = renderBox.localToGlobal(dotLocalCenter);
+
+    // Find the ProcessorItem's render box by looking for the ValueKey
+    RenderBox? processorItemRenderBox;
+    context.visitAncestorElements((element) {
+      if (element.widget.key is ValueKey &&
+          (element.widget.key as ValueKey<String>?)?.value == processorId) {
+        final renderObj = element.renderObject;
+        if (renderObj is RenderBox) {
+          processorItemRenderBox = renderObj;
+          return false; // Stop searching
+        }
+      }
+      return true; // Continue searching
+    });
+
+    if (processorItemRenderBox != null) {
+      // Convert global position to ProcessorItem's local coordinates
+      final localOffset = processorItemRenderBox!.globalToLocal(globalPos);
+
+      graphManager.onPortPositionUpdated(
+        processorId: processorId,
+        portName: portName,
+        newPosition: localOffset,
+      );
+    }
   }
 
   @override
@@ -151,7 +172,7 @@ class _ProcessorPortDot extends StatelessWidget {
       decoration: BoxDecoration(
         color: !isEnabled
             ? Colors.grey
-            : isInput
+            : isSrc
             ? Colors.blue
             : Colors.green,
         shape: BoxShape.circle,

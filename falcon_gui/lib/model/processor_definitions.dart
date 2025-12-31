@@ -14,9 +14,8 @@ final processorDefinitions = {
       ),
       'enabled': BoolOption(value: true, displayName: 'Enabled'),
     },
-    inputPorts: [],
-    outputPorts: [
-      Port(name: 'ripple', type: 'TimeSeriesType<double>'),
+    ports: [
+      Port(name: 'ripple', type: 'TimeSeriesType<double>', isSrc: true),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -31,10 +30,9 @@ final processorDefinitions = {
       ),
       'overwrite': BoolOption(value: false, displayName: 'Overwrite'),
     },
-    inputPorts: [
-      Port(name: 'input', type: 'TimeSeriesType<double>'),
+    ports: [
+      Port(name: 'input', type: 'AnyType', isSrc: false),
     ],
-    outputPorts: [],
     uiMetadata: UIMetadata(),
   ),
   'filter': Processor(
@@ -56,15 +54,34 @@ final processorDefinitions = {
         displayName: 'Filter Type',
       ),
     },
-    inputPorts: [
-      Port(name: 'input', type: 'TimeSeriesType<double>'),
-      Port(name: 'trigger', type: 'TimeSeriesType<double>'),
+    ports: [
+      Port(name: 'input', type: 'TimeSeriesType<double>', isSrc: false),
+      Port(name: 'trigger', type: 'EventType', isSrc: false),
+      Port(name: 'output', type: 'TimeSeriesType<double>', isSrc: true),
+      Port(name: 'threshold', type: 'EventType', isSrc: true),
+      Port(name: 'noise', type: 'MeasurementType<double>', isSrc: true),
+      Port(name: 'levels', type: 'LevelType', isSrc: true),
     ],
-    outputPorts: [
-      Port(name: 'output', type: 'TimeSeriesType<double>'),
-      Port(name: 'threshold', type: 'TimeSeriesType<double>'),
-      Port(name: 'noise', type: 'TimeSeriesType<double>'),
-      Port(name: 'levels', type: 'TimeSeriesType<double>'),
+    uiMetadata: UIMetadata(),
+  ),
+  'distruptor': Processor(
+    id: 'distruptor',
+    className: 'DistruptorProcessor',
+    isTemplate: true,
+    options: {
+      'intensity': DoubleOption(value: 1, displayName: 'Intensity'),
+      'mode': OneOfOption(
+        value: 'random',
+        allowed: [
+          'random',
+          'patterned',
+        ],
+        displayName: 'Mode',
+      ),
+    },
+    ports: [
+      Port(name: 'input', type: 'TimeSeriesType<double>', isSrc: false),
+      Port(name: 'output', type: 'TimeSeriesType<double>', isSrc: true),
     ],
     uiMetadata: UIMetadata(),
   ),
