@@ -1,5 +1,5 @@
 import 'package:falcon_gui/graph_editor/processor_item.dart';
-import 'package:falcon_gui/state/example_graph.dart';
+import 'package:falcon_gui/state/processor_templates.dart';
 import 'package:flutter/material.dart';
 
 class ProcessorsPanel extends StatelessWidget {
@@ -11,14 +11,17 @@ class ProcessorsPanel extends StatelessWidget {
       width: 300,
       child: ListView.builder(
         itemBuilder: (context, index) {
-          final processor = exampleGraph.processors.values.elementAtOrNull(
+          final processor = processorTemplates.values.elementAtOrNull(
             index,
           );
 
           if (processor == null) {
             return null;
           }
-          return ProcessorItem(processor: processor);
+          return Padding(
+            padding: const EdgeInsets.all(8),
+            child: ProcessorItem(processor: processor),
+          );
         },
       ),
     );

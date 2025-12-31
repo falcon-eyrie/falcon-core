@@ -132,26 +132,35 @@ class UIMetadata {
     Offset position = Offset.zero,
     Size layoutSize = Size.zero,
     DateTime? lastModified,
+    Color? color,
   }) : _position = position,
        _layoutSize = layoutSize,
-       _lastModified = lastModified ?? DateTime(1970);
+       _lastModified = lastModified ?? DateTime(1970),
+       _color = color;
 
   Offset _position;
   Size _layoutSize;
   DateTime _lastModified;
+  Color? _color;
 
   Offset get position => _position;
   Size get layoutSize => _layoutSize;
   DateTime get lastModified => _lastModified;
+  Color? get color => _color;
 
-  set position(Offset newPosition) {
+  // ignore: use_setters_to_change_properties
+  void setPosition(Offset newPosition) {
     _position = newPosition;
-    _lastModified = DateTime.now();
   }
 
-  set layoutSize(Size newSize) {
+  // ignore: use_setters_to_change_properties
+  void setLayoutSize(Size newSize) {
     _layoutSize = newSize;
-    _lastModified = DateTime.now();
+  }
+
+  // ignore: use_setters_to_change_properties
+  void setColor(Color newColor) {
+    _color = newColor;
   }
 
   void updateLastModified() {

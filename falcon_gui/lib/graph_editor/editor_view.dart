@@ -1,15 +1,11 @@
 import 'package:falcon_gui/graph_editor/processor_item.dart';
-import 'package:falcon_gui/state/node_manager.dart';
+import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:flutter/material.dart';
 
 /// EditorView
 ///
 /// Main canvas/editor view for Linux desktop. Users can pan,
-/// zoom, and drag nodes.
-/// Nodes are represented as NodeItem widgets with data stored
-/// in NodeData objects.
-/// This implementation prevents visual shifting of other nodes when nodes
-/// are moved toward top or left of the canvas.
+/// zoom, and drag processors.
 class EditorView extends StatefulWidget {
   const EditorView({super.key});
 
@@ -47,10 +43,9 @@ class _EditorViewState extends State<EditorView> {
     return AnimatedBuilder(
       animation: graphManager,
       builder: (context, _) {
-        // 1. Convert nodes map to list and sort by lastModified
-        final nodes = graphManager.processors.toList();
-
         return InteractiveViewer(
+          interactionEndFrictionCoefficient: 0.000000001,
+
           transformationController: graphManager.transformationController,
           minScale: 0.2,
           maxScale: 5,
@@ -61,29 +56,31 @@ class _EditorViewState extends State<EditorView> {
             width: graphManager.canvasSize.width,
             child: Stack(
               clipBehavior: Clip.none,
-              children: nodes.map((node) {
+              children: graphManager.processors.map((processor) {
                 return Positioned(
-                  key: ValueKey(node.id),
-                  left: node.uiMetadata.position.dx,
-                  top: node.uiMetadata.position.dy,
+                  key: ValueKey(processor.id),
+                  left: processor.uiMetadata.position.dx,
+                  top: processor.uiMetadata.position.dy,
                   child: ProcessorItem(
                     onPanStart: (details) {
                       final scenePosition = _toScene(details.globalPosition);
-                      graphManager.onNodeDragStart(
-                        id: node.id,
+                      graphManager.onOnProcessorDragStart(
+                        id: processor.id,
                         scenePosition: scenePosition,
                       );
                     },
                     onPanUpdate: (details) {
                       final scenePosition = _toScene(details.globalPosition);
-                      graphManager.onNodeDragUpdate(
-                        id: node.id,
+                      graphManager.onProcessorDragUpdate(
+                        id: processor.id,
                         newPos: scenePosition,
                       );
                     },
-                    onPanEnd: (_) => graphManager.onNodeDragEnd(id: node.id),
-                    onTapDown: (_) => graphManager.onNodeClicked(id: node.id),
-                    processor: node,
+                    onPanEnd: (_) =>
+                        graphManager.onProcessorDragEnd(id: processor.id),
+                    onTapDown: (_) =>
+                        graphManager.onProcessorClicked(id: processor.id),
+                    processor: processor,
                   ),
                 );
               }).toList(),

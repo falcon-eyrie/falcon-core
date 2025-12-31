@@ -5,7 +5,7 @@ import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
 
 // td: when loading from file, fill in the missing ui metadata, which will be
-// complex because nodes needs to be positioned and aligned
+// complex because processors needs to be positioned and aligned
 
 final GraphManager graphManager = GraphManager.instance;
 
@@ -39,7 +39,7 @@ class GraphManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeNode({required String id}) {
+  void removeProcessor({required String id}) {
     _graph.connections.removeWhere(
       (conn) => conn.fromProcessor == id || conn.toProcessor == id,
     );
@@ -56,7 +56,7 @@ class GraphManager extends ChangeNotifier {
   /// the number is incremented until a unique ID is found.
   ///
   /// The original processor can already be in the canvas or a template from
-  /// the panel. In either case, the new processor will be a real node in
+  /// the panel. In either case, the new processor will be a real processor in
   /// the canvas. The new processor will have `isTemplate` set to false.
   String duplicateProcessor({
     required Processor processor,
@@ -75,7 +75,7 @@ class GraphManager extends ChangeNotifier {
 
     final Offset newPosition;
     if (processor.isTemplate) {
-      // TODO(ben): put the new node in the center of the viewport
+      // TODO(ben): put the new processor in the center of the viewport
       newPosition = Offset.zero;
     } else {
       newPosition = processor.uiMetadata.position + const Offset(20, 20);
@@ -99,7 +99,10 @@ class GraphManager extends ChangeNotifier {
     return newId;
   }
 
-  void onNodeDragStart({required String id, required Offset scenePosition}) {
+  void onOnProcessorDragStart({
+    required String id,
+    required Offset scenePosition,
+  }) {
     final processor = _graph.processors[id];
     if (processor == null) return;
 
@@ -110,7 +113,7 @@ class GraphManager extends ChangeNotifier {
     _grabOffset = scenePositionTransformed - processor.uiMetadata.position;
   }
 
-  void onNodeDragUpdate({required String id, required Offset newPos}) {
+  void onProcessorDragUpdate({required String id, required Offset newPos}) {
     final processor = _graph.processors[id];
     if (processor == null) return;
 
@@ -121,7 +124,7 @@ class GraphManager extends ChangeNotifier {
 
     var updatedPosition = newPosTransformed - (_grabOffset ?? Offset.zero);
 
-    // Shift all nodes if dragged into negative coordinates
+    // Shift all processors if dragged into negative coordinates
     double shiftX = 0;
     double shiftY = 0;
     if (updatedPosition.dx < 0) shiftX = -updatedPosition.dx;
@@ -129,8 +132,9 @@ class GraphManager extends ChangeNotifier {
 
     if (shiftX != 0 || shiftY != 0) {
       for (final processor in _graph.processors.values) {
-        processor.uiMetadata.position =
-            processor.uiMetadata.position + Offset(shiftX, shiftY);
+        processor.uiMetadata.setPosition(
+          processor.uiMetadata.position + Offset(shiftX, shiftY),
+        );
       }
       // Move canvas so that negative space is removed
       transformationController.value = transformationController.value.clone()
@@ -139,7 +143,8 @@ class GraphManager extends ChangeNotifier {
       updatedPosition += Offset(shiftX, shiftY);
     }
 
-    _graph.processors[id]?.uiMetadata.position = updatedPosition;
+    _graph.processors[id]?.uiMetadata.setPosition(updatedPosition);
+    _graph.processors[id]?.uiMetadata.updateLastModified();
 
     _maybeShrinkCanvas();
 
@@ -155,10 +160,11 @@ class GraphManager extends ChangeNotifier {
         .reduce(math.min);
 
     if (minX > 0 || minY > 0) {
-      // Shift all nodes up-left
+      // Shift all processors up-left
       for (final processor in _graph.processors.values) {
-        processor.uiMetadata.position =
-            processor.uiMetadata.position - Offset(minX, minY);
+        processor.uiMetadata.setPosition(
+          processor.uiMetadata.position - Offset(minX, minY),
+        );
       }
 
       // Move canvas down-right to make it seamless
@@ -167,22 +173,25 @@ class GraphManager extends ChangeNotifier {
     }
   }
 
-  void onNodeDragEnd({required String id}) {
+  void onProcessorDragEnd({required String id}) {
     _grabOffset = null;
   }
 
-  void onNodeClicked({required String id}) {
+  void onProcessorClicked({required String id}) {
     final processor = _graph.processors[id];
     if (processor == null) return;
     _graph.processors[id]?.uiMetadata.updateLastModified();
     notifyListeners();
   }
 
-  void onNodeSizeUpdated({required String id, required Size newSize}) {
+  void onProcessorLayoutSizeUpdated({
+    required String id,
+    required Size newSize,
+  }) {
     final processor = _graph.processors[id];
     if (processor == null) return;
 
-    _graph.processors[id]?.uiMetadata.layoutSize = newSize;
+    _graph.processors[id]?.uiMetadata.setLayoutSize(newSize);
 
     notifyListeners();
   }
@@ -190,7 +199,7 @@ class GraphManager extends ChangeNotifier {
   Size get canvasSize {
     if (_graph.processors.isEmpty) return Size.zero;
 
-    // Use actual layoutSize of nodes
+    // Use actual layoutSize of processor
     final maxX = _graph.processors.values.fold<double>(
       0,
       (prev, processor) => math.max(
@@ -233,4 +242,12 @@ class GraphManager extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  void zoomIn() =>
+      transformationController.value = transformationController.value.clone()
+        ..scaleByDouble(1.2, 1.2, 1.2, 1);
+
+  void zoomOut() =>
+      transformationController.value = transformationController.value.clone()
+        ..scaleByDouble(1 / 1.2, 1 / 1.2, 1 / 1.2, 1);
 }

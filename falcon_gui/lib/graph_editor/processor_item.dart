@@ -1,5 +1,6 @@
 import 'package:falcon_gui/model/falcon_graph.dart';
-import 'package:falcon_gui/state/node_manager.dart';
+import 'package:falcon_gui/state/graph_manager.dart';
+import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -40,7 +41,7 @@ class _ProcessorItemState extends State<ProcessorItem> {
     final box = context.findRenderObject() as RenderBox?;
     if (box == null) return;
 
-    graphManager.onNodeSizeUpdated(
+    graphManager.onProcessorLayoutSizeUpdated(
       id: widget.processor.id,
       newSize: box.size,
     );
@@ -50,10 +51,11 @@ class _ProcessorItemState extends State<ProcessorItem> {
   Widget build(BuildContext context) {
     return Container(
       key: _key,
-      width: 200,
+      width: 300,
       decoration: BoxDecoration(
-        border: Border.all(),
+        border: Border.all(color: context.c.surfaceContainerHighest),
         borderRadius: BorderRadius.circular(8),
+        color: context.c.surface,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -66,7 +68,6 @@ class _ProcessorItemState extends State<ProcessorItem> {
             onTapDown: widget.onTapDown,
             child: _Header(processor: widget.processor),
           ),
-          const Divider(),
           _Ports(processor: widget.processor),
           const Divider(),
           ...widget.processor.options.entries.map(
@@ -134,15 +135,19 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color =
+        processor.uiMetadata.color ??
+        DefaultProcessorColor.byClassName(className: processor.className) ??
+        context.c.primary;
     return MouseRegion(
       cursor: processor.isTemplate
           ? MouseCursor.defer
           : SystemMouseCursors.move,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        decoration: const BoxDecoration(
-          color: Colors.pinkAccent,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
         ),
         child: Row(
           children: [
@@ -153,17 +158,17 @@ class _Header extends StatelessWidget {
                   Text(
                     processor.id,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xffffffff),
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                   Text(
                     processor.className,
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xffffffff),
                       fontSize: 14,
-                      fontWeight: FontWeight.w100,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
                 ],
@@ -174,7 +179,7 @@ class _Header extends StatelessWidget {
                 processor.isTemplate ? Icons.add : Icons.copy,
                 size: 16,
               ),
-              color: Colors.white,
+              color: context.c.onPrimary,
               onPressed: () =>
                   graphManager.duplicateProcessor(processor: processor),
             ),

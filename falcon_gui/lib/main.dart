@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:falcon_gui/graph_editor/graph_editor.dart';
+import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
+final ValueNotifier<ThemeMode> _themeNotifier = ValueNotifier(ThemeMode.dark);
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
@@ -32,11 +34,17 @@ class DesktopApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const HomePage(),
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+    return AnimatedBuilder(
+      animation: _themeNotifier,
+      builder: (context, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: const HomePage(),
+          themeMode: _themeNotifier.value,
+          theme: FalconTheme(Theme.of(context).textTheme).light(),
+          darkTheme: FalconTheme(Theme.of(context).textTheme).dark(),
+        );
+      },
     );
   }
 }
@@ -100,19 +108,35 @@ class _HomePageState extends State<HomePage> with WindowListener {
             child: Container(
               height: 40,
               width: double.infinity,
-              color: Colors.grey.shade900,
+              color: context.c.surfaceContainerLowest,
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
                 children: [
                   const Text(
-                    'Falcon GUI',
-                    style: TextStyle(color: Colors.white),
+                    'Falcon',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
                   ),
                   const Spacer(),
+                  AnimatedBuilder(
+                    animation: _themeNotifier,
+                    builder: (context, _) {
+                      return IconButton(
+                        icon: Icon(
+                          _themeNotifier.value == ThemeMode.dark
+                              ? Icons.sunny
+                              : Icons.dark_mode,
+                          size: 18,
+                        ),
+                        onPressed: () => _themeNotifier.value =
+                            _themeNotifier.value == ThemeMode.dark
+                            ? ThemeMode.light
+                            : ThemeMode.dark,
+                      );
+                    },
+                  ),
                   IconButton(
                     icon: const Icon(
                       Icons.remove,
-                      color: Colors.white,
                       size: 18,
                     ),
                     onPressed: windowManager.minimize,
@@ -120,7 +144,6 @@ class _HomePageState extends State<HomePage> with WindowListener {
                   IconButton(
                     icon: Icon(
                       _isMaximized ? Icons.filter_none : Icons.crop_square,
-                      color: Colors.white,
                       size: 18,
                     ),
                     onPressed: _toggleMaximize,
@@ -128,7 +151,6 @@ class _HomePageState extends State<HomePage> with WindowListener {
                   IconButton(
                     icon: const Icon(
                       Icons.close,
-                      color: Colors.white,
                       size: 18,
                     ),
                     onPressed: windowManager.close,
