@@ -45,7 +45,6 @@ class _EditorViewState extends State<EditorView> {
       builder: (context, _) {
         return InteractiveViewer(
           interactionEndFrictionCoefficient: 0.000000001,
-
           transformationController: graphManager.transformationController,
           minScale: 0.01,
           maxScale: 5,

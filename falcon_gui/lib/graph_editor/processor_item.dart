@@ -148,6 +148,7 @@ class _Header extends StatelessWidget {
                 icon: const Icon(
                   Icons.delete,
                   size: 16,
+                  color: Color(0xffffffff),
                 ),
                 color: context.c.onPrimary,
                 onPressed: () => graphManager.removeProcessor(id: processor.id),
@@ -159,6 +160,7 @@ class _Header extends StatelessWidget {
               icon: Icon(
                 processor.isTemplate ? Icons.add : Icons.copy,
                 size: 16,
+                color: const Color(0xffffffff),
               ),
               color: context.c.onPrimary,
               onPressed: () =>
