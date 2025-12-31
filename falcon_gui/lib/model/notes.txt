@@ -2,14 +2,14 @@
 
 
 
-source:
+source1:
     class: NlxPureReader
     options:
         nchannels: 32
         format: compact
 
 
-saver:
+saver2:
     class: FileSerializer
     options:
         encoding: binary
@@ -17,7 +17,7 @@ saver:
 
 
 connections:
-  source.data = saver.data
+  source1.data = saver2.data
 
 ...
 

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:falcon_gui/model/falcon_graph.dart';
+import 'package:falcon_gui/model/graph_to_yaml.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
 
@@ -41,6 +42,8 @@ class GraphManager extends ChangeNotifier {
 
   void removeProcessor({required String id}) {
     _graph.removeProcessor(id: id);
+
+    _maybeShrinkCanvas();
     notifyListeners();
   }
 
@@ -225,6 +228,8 @@ class GraphManager extends ChangeNotifier {
 
     return Size(maxX - _minX, maxY - _minY);
   }
+
+  String get yaml => _graph.toYaml();
 
   void updateOptionValue({
     required String processorId,

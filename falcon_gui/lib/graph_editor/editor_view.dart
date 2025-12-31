@@ -47,7 +47,7 @@ class _EditorViewState extends State<EditorView> {
           interactionEndFrictionCoefficient: 0.000000001,
 
           transformationController: graphManager.transformationController,
-          minScale: 0.2,
+          minScale: 0.01,
           maxScale: 5,
           boundaryMargin: const EdgeInsets.all(double.infinity),
           constrained: false,

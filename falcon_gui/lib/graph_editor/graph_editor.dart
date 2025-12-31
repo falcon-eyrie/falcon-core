@@ -8,19 +8,31 @@ class GraphEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
         // Control Panel Row
-        _EditorControls(),
+        const _EditorControls(),
         // Main Editor Row
         Expanded(
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 300,
                 child: ProcessorsPanel(),
               ),
-              Expanded(child: EditorView()),
+              const Expanded(child: EditorView()),
+
+              AnimatedBuilder(
+                animation: graphManager,
+                builder: (context, _) {
+                  return SizedBox(
+                    width: 300,
+                    child: SingleChildScrollView(
+                      child: Center(child: Text(graphManager.yaml)),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),
