@@ -2,6 +2,7 @@ import 'package:falcon_gui/graph_editor/processor_options.dart';
 import 'package:falcon_gui/graph_editor/processor_ports.dart';
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
+import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -44,9 +45,32 @@ class ProcessorItem extends StatelessWidget {
               onPanEnd: onPanEnd,
               child: _Header(processor: processor),
             ),
-            ProcessorPortsView(processor: processor),
+            IgnorePointer(
+              ignoring: processor.isTemplate,
+              child: ColorFiltered(
+                colorFilter: processor.isTemplate
+                    ? greyScaleFilter
+                    : const ColorFilter.mode(
+                        Colors.transparent,
+                        BlendMode.multiply,
+                      ),
+
+                child: ProcessorPortsView(processor: processor),
+              ),
+            ),
             const Divider(),
-            ProcessorOptionsView(processor: processor),
+            IgnorePointer(
+              ignoring: processor.isTemplate,
+              child: ColorFiltered(
+                colorFilter: processor.isTemplate
+                    ? greyScaleFilter
+                    : const ColorFilter.mode(
+                        Colors.transparent,
+                        BlendMode.multiply,
+                      ),
+                child: ProcessorOptionsView(processor: processor),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,7 +1,6 @@
-import 'package:collection/collection.dart';
 import 'package:falcon_gui/graph_editor/processor_item.dart';
-import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 /// EditorView
@@ -45,59 +44,78 @@ class _EditorViewState extends State<EditorView> {
     return AnimatedBuilder(
       animation: graphManager,
       builder: (context, _) {
-        return InteractiveViewer(
-          interactionEndFrictionCoefficient: 0.000000001,
-          transformationController: graphManager.transformationController,
-          minScale: 0.01,
-          maxScale: 5,
-          boundaryMargin: const EdgeInsets.all(double.infinity),
-          constrained: false,
-          child: SizedBox(
-            height: graphManager.canvasSize.height,
-            width: graphManager.canvasSize.width,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                CustomPaint(
-                  painter: ConnectionPainter(
-                    connections: graphManager.connections,
-                    processors: graphManager.processors,
-                    lineColor: const Color.fromARGB(255, 32, 137, 145),
-                  ),
-                  size: Size(
-                    graphManager.canvasSize.width,
-                    graphManager.canvasSize.height,
-                  ),
-                ),
-                ...graphManager.processors.map((processor) {
-                  return Positioned(
-                    key: ValueKey(processor.id),
-                    left: processor.uiMetadata.position.dx,
-                    top: processor.uiMetadata.position.dy,
-                    child: ProcessorItem(
-                      onPanStart: (details) {
-                        final scenePosition = _toScene(details.globalPosition);
-                        graphManager.onOnProcessorDragStart(
-                          id: processor.id,
-                          scenePosition: scenePosition,
-                        );
-                      },
-                      onPanUpdate: (details) {
-                        final scenePosition = _toScene(details.globalPosition);
-                        graphManager.onProcessorDragUpdate(
-                          id: processor.id,
-                          newPos: scenePosition,
-                        );
-                      },
-                      onPanEnd: (_) =>
-                          graphManager.onProcessorDragEnd(id: processor.id),
-                      onTapDown: (_) =>
-                          graphManager.onProcessorClicked(id: processor.id),
-                      processor: processor,
+        final isCreatingConnection = graphManager.selectedPortUniqueId != null;
+        return MouseRegion(
+          cursor: isCreatingConnection
+              ? SystemMouseCursors.alias
+              : MouseCursor.defer,
+          onHover: (event) {
+            final scenePosition = _toScene(event.position);
+            graphManager.updateCursorPosition(scenePosition);
+          },
+          child: Listener(
+            onPointerDown: (event) {
+              if (event.buttons == kSecondaryMouseButton) {
+                graphManager.cancelPortSelection();
+              }
+            },
+            child: InteractiveViewer(
+              interactionEndFrictionCoefficient: 0.000000001,
+              transformationController: graphManager.transformationController,
+              minScale: 0.01,
+              maxScale: 5,
+              boundaryMargin: const EdgeInsets.all(double.infinity),
+              constrained: false,
+              child: SizedBox(
+                height: graphManager.canvasSize.height,
+                width: graphManager.canvasSize.width,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    CustomPaint(
+                      painter: ConnectionPainter(
+                        lineColor: const Color(0xFF208991),
+                      ),
+                      size: Size(
+                        graphManager.canvasSize.width,
+                        graphManager.canvasSize.height,
+                      ),
                     ),
-                  );
-                }),
-              ],
+                    ...graphManager.processors.map((processor) {
+                      return Positioned(
+                        key: ValueKey(processor.id),
+                        left: processor.uiMetadata.position.dx,
+                        top: processor.uiMetadata.position.dy,
+                        child: ProcessorItem(
+                          onPanStart: (details) {
+                            final scenePosition = _toScene(
+                              details.globalPosition,
+                            );
+                            graphManager.onOnProcessorDragStart(
+                              id: processor.id,
+                              scenePosition: scenePosition,
+                            );
+                          },
+                          onPanUpdate: (details) {
+                            final scenePosition = _toScene(
+                              details.globalPosition,
+                            );
+                            graphManager.onProcessorDragUpdate(
+                              id: processor.id,
+                              newPos: scenePosition,
+                            );
+                          },
+                          onPanEnd: (_) =>
+                              graphManager.onProcessorDragEnd(id: processor.id),
+                          onTapDown: (_) =>
+                              graphManager.onProcessorClicked(id: processor.id),
+                          processor: processor,
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
             ),
           ),
         );
@@ -108,13 +126,10 @@ class _EditorViewState extends State<EditorView> {
 
 class ConnectionPainter extends CustomPainter {
   ConnectionPainter({
-    required this.connections,
-    required this.processors,
     required this.lineColor,
   });
-  final List<Connection> connections;
-  final List<Processor> processors;
   final Color lineColor;
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
@@ -122,40 +137,35 @@ class ConnectionPainter extends CustomPainter {
       ..strokeWidth = 6
       ..style = PaintingStyle.stroke;
 
-    for (final connection in connections) {
-      final srcProcessor = processors.firstWhereOrNull(
-        (p) => p.id == connection.srcProcessor,
-      );
-      final dstProcessor = processors.firstWhereOrNull(
-        (p) => p.id == connection.dstProcessor,
-      );
-
-      if (srcProcessor != null && dstProcessor != null) {
-        final fromPortOffset = graphManager.getPortPosition(
-          processorId: connection.srcProcessor,
-          portName: connection.srcPort,
+    // Draw temporary connection line
+    final tempLine = graphManager.tempConnectionLinePosition;
+    if (tempLine != null) {
+      final path = Path()
+        ..moveTo(tempLine.startPos.dx, tempLine.startPos.dy)
+        ..cubicTo(
+          tempLine.startPos.dx + 100,
+          tempLine.startPos.dy,
+          tempLine.endPos.dx - 100,
+          tempLine.endPos.dy,
+          tempLine.endPos.dx,
+          tempLine.endPos.dy,
         );
-        final toPortOffset = graphManager.getPortPosition(
-          processorId: connection.dstProcessor,
-          portName: connection.dstPort,
+      canvas.drawPath(path, paint);
+    }
+
+    // Draw existing connections
+    for (final connPos in graphManager.connectionPositions) {
+      final path = Path()
+        ..moveTo(connPos.startPos.dx, connPos.startPos.dy)
+        ..cubicTo(
+          connPos.startPos.dx + 100,
+          connPos.startPos.dy,
+          connPos.endPos.dx - 100,
+          connPos.endPos.dy,
+          connPos.endPos.dx,
+          connPos.endPos.dy,
         );
-
-        // Calculate final canvas positions
-        final fromPos = srcProcessor.uiMetadata.position + fromPortOffset;
-        final toPos = dstProcessor.uiMetadata.position + toPortOffset;
-
-        final path = Path()
-          ..moveTo(fromPos.dx, fromPos.dy)
-          ..cubicTo(
-            fromPos.dx + 100,
-            fromPos.dy,
-            toPos.dx - 100,
-            toPos.dy,
-            toPos.dx,
-            toPos.dy,
-          );
-        canvas.drawPath(path, paint);
-      }
+      canvas.drawPath(path, paint);
     }
   }
 

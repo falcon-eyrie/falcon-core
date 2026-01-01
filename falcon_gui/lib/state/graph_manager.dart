@@ -272,12 +272,17 @@ class GraphManager extends ChangeNotifier {
   // creation.
   String? _selectedPortUniqueId;
 
+  // Cursor position for drawing temporary connection line
+  Offset? _cursorPosition;
+
+  String? get selectedPortUniqueId => _selectedPortUniqueId;
+
+  Offset? get cursorPosition => _cursorPosition;
+
   // Set of enabled port unique IDs (processorId-portName) for connection
   // creation. In other words, user will see these ports highlighted as
   // connectable to the currently selected port.
   final _enabledPortIds = <String>{};
-
-  String? get selectedPortUniqueId => _selectedPortUniqueId;
 
   Offset getPortPosition({
     required String processorId,
@@ -343,9 +348,22 @@ class GraphManager extends ChangeNotifier {
       }
 
       _selectedPortUniqueId = null;
+      _cursorPosition = null;
     }
 
     notifyListeners();
+  }
+
+  void updateCursorPosition(Offset position) {
+    if (_selectedPortUniqueId != null) {
+      // Apply same transformation as processor drag to get canvas coordinates
+      final canvasPosition = MatrixUtils.transformPoint(
+        graphManager.transformationController.value.clone()..invert(),
+        position,
+      );
+      _cursorPosition = canvasPosition;
+      notifyListeners();
+    }
   }
 
   void onPortPositionUpdated({
@@ -373,5 +391,58 @@ class GraphManager extends ChangeNotifier {
     if (_selectedPortUniqueId == uniquePortId) return true;
 
     return _enabledPortIds.contains(uniquePortId);
+  }
+
+  void cancelPortSelection() {
+    _selectedPortUniqueId = null;
+    _cursorPosition = null;
+    _enabledPortIds.clear();
+    notifyListeners();
+  }
+
+  ({Offset startPos, Offset endPos})? get tempConnectionLinePosition {
+    if (_selectedPortUniqueId == null || _cursorPosition == null) {
+      return null;
+    }
+
+    final parts = _selectedPortUniqueId!.split('-');
+    final processorId = parts[0];
+    final portName = parts.sublist(1).join('-');
+
+    final processor = _graph.processors[processorId];
+    if (processor == null) return null;
+
+    final portPos = getPortPosition(
+      processorId: processorId,
+      portName: portName,
+    );
+    final startPos = processor.uiMetadata.position + portPos;
+
+    return (startPos: startPos, endPos: _cursorPosition!);
+  }
+
+  List<({Offset startPos, Offset endPos})> get connectionPositions {
+    return connections.map((connection) {
+      final srcProcessor = _graph.processors[connection.srcProcessor];
+      final dstProcessor = _graph.processors[connection.dstProcessor];
+
+      if (srcProcessor == null || dstProcessor == null) {
+        return (startPos: Offset.zero, endPos: Offset.zero);
+      }
+
+      final fromPortOffset = getPortPosition(
+        processorId: connection.srcProcessor,
+        portName: connection.srcPort,
+      );
+      final toPortOffset = getPortPosition(
+        processorId: connection.dstProcessor,
+        portName: connection.dstPort,
+      );
+
+      final fromPos = srcProcessor.uiMetadata.position + fromPortOffset;
+      final toPos = dstProcessor.uiMetadata.position + toPortOffset;
+
+      return (startPos: fromPos, endPos: toPos);
+    }).toList();
   }
 }
