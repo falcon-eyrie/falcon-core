@@ -120,17 +120,19 @@ class _OptionFieldBaseState<T extends OptionValue<dynamic>>
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: _controller,
-      keyboardType: widget.keyboardType,
-      inputFormatters: widget.inputFormatters,
-      onChanged: (v) {
-        try {
-          final parsed = widget.parseValue(v);
-          widget.onChanged(parsed);
-          // ignore: avoid_catches_without_on_clauses
-        } catch (_) {}
-      },
+    return IntrinsicWidth(
+      child: TextFormField(
+        controller: _controller,
+        keyboardType: widget.keyboardType,
+        inputFormatters: widget.inputFormatters,
+        onChanged: (v) {
+          try {
+            final parsed = widget.parseValue(v);
+            widget.onChanged(parsed);
+            // ignore: avoid_catches_without_on_clauses
+          } catch (_) {}
+        },
+      ),
     );
   }
 }
@@ -209,9 +211,9 @@ class BoolOptionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Switch(
+    return Checkbox(
       value: option.value,
-      onChanged: (v) => onChanged(option.copyWith(newValue: v)),
+      onChanged: (v) => onChanged(option.copyWith(newValue: v ?? false)),
     );
   }
 }
@@ -228,14 +230,16 @@ class OneOfOptionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
-      initialValue: option.value,
-      items: option.allowed
-          .map((v) => DropdownMenuItem(value: v, child: Text(v)))
-          .toList(),
-      onChanged: (v) {
-        if (v != null) onChanged(option.copyWith(newValue: v));
-      },
+    return IntrinsicWidth(
+      child: DropdownButtonFormField<String>(
+        initialValue: option.value,
+        items: option.allowed
+            .map((v) => DropdownMenuItem(value: v, child: Text(v)))
+            .toList(),
+        onChanged: (v) {
+          if (v != null) onChanged(option.copyWith(newValue: v));
+        },
+      ),
     );
   }
 }

@@ -136,7 +136,7 @@ abstract final class DefaultProcessorColor {
   static Color? byClassName({required String className}) {
     return {
       'SourceProcessor': const Color.fromARGB(255, 183, 67, 59),
-      'FilterProcessor': const Color.fromARGB(255, 65, 129, 57),
+      'FilterProcessor': const Color.fromARGB(255, 57, 68, 129),
       'SinkProcessor': const Color.fromARGB(255, 92, 72, 138),
       'DistruptorProcessor': const Color.fromARGB(255, 173, 59, 183),
     }[className];
