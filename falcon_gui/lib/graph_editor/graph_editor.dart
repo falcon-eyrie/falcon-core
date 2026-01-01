@@ -105,16 +105,19 @@ class _YamlEditor extends StatefulWidget {
 
 class _YamlEditorState extends State<_YamlEditor> {
   late final TextEditingController controller;
+  late final FocusNode focusNode;
 
   @override
   void initState() {
     super.initState();
     controller = TextEditingController(text: graphManager.graphAsYaml);
+    focusNode = FocusNode();
   }
 
   @override
   void dispose() {
     controller.dispose();
+    focusNode.dispose();
     super.dispose();
   }
 
@@ -124,13 +127,15 @@ class _YamlEditorState extends State<_YamlEditor> {
       animation: graphManager,
       builder: (context, _) {
         final currentYaml = graphManager.graphAsYaml;
-        if (controller.text != currentYaml) {
+        // Only update if not focused and text differs
+        if (!focusNode.hasFocus && controller.text != currentYaml) {
           controller.text = currentYaml;
         }
         return Padding(
           padding: const EdgeInsets.all(8),
           child: TextFormField(
             controller: controller,
+            focusNode: focusNode,
             maxLines: null,
             expands: true,
             decoration: const InputDecoration(
