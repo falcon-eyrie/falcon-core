@@ -2,6 +2,7 @@ import 'package:falcon_gui/graph_editor/editor_view.dart';
 import 'package:falcon_gui/graph_editor/processors_panel.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
+import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 
 class GraphEditor extends StatefulWidget {
@@ -23,71 +24,103 @@ class _GraphEditorState extends State<GraphEditor> {
       children: [
         const _EditorControls(),
         Expanded(
-          child: Row(
+          child: Stack(
             children: [
-              // Processors Panel
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                width: _isProcessorsCollapsed ? 40 : _processorsWidth,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        _isProcessorsCollapsed
-                            ? Icons.chevron_right
-                            : Icons.chevron_left,
+              // Editor View (always centered)
+              const EditorView(),
+
+              // Processors Panel (left overlay)
+              Positioned(
+                left: _isProcessorsCollapsed ? -_processorsWidth : 0,
+                top: 0,
+                bottom: 0,
+                width: _processorsWidth,
+                child: ColoredBox(
+                  color: context.c.surfaceContainer,
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          _isProcessorsCollapsed
+                              ? Icons.chevron_right
+                              : Icons.chevron_left,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isProcessorsCollapsed = !_isProcessorsCollapsed;
+                          });
+                        },
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _isProcessorsCollapsed = !_isProcessorsCollapsed;
-                        });
-                      },
-                    ),
-                    Expanded(
-                      child: _isProcessorsCollapsed
-                          ? const SizedBox.shrink()
-                          : const ProcessorsPanel(),
-                    ),
-                  ],
+                      const Expanded(
+                        child: ProcessorsPanel(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
-              const VerticalDivider(width: 1),
-
-              // Editor View
-              const Expanded(child: EditorView()),
-
-              const VerticalDivider(width: 1),
-
-              // YAML Editor
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                width: _isYamlCollapsed ? 40 : _yamlWidth,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        _isYamlCollapsed
-                            ? Icons.chevron_left
-                            : Icons.chevron_right,
+              // YAML Editor (right overlay)
+              Positioned(
+                right: _isYamlCollapsed ? -_yamlWidth : 0,
+                top: 0,
+                bottom: 0,
+                width: _yamlWidth,
+                child: ColoredBox(
+                  color: context.c.surfaceContainer,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          _isYamlCollapsed
+                              ? Icons.chevron_left
+                              : Icons.chevron_right,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isYamlCollapsed = !_isYamlCollapsed;
+                          });
+                        },
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _isYamlCollapsed = !_isYamlCollapsed;
-                        });
-                      },
-                    ),
-                    Expanded(
-                      child: _isYamlCollapsed
-                          ? const SizedBox.shrink()
-                          : const _YamlEditor(),
-                    ),
-                  ],
+                      const Expanded(
+                        child: _YamlEditor(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+
+              if (_isProcessorsCollapsed)
+                Positioned(
+                  left: 8,
+                  top: 8,
+                  child: IconButton(
+                    icon: const Icon(Icons.widgets),
+                    tooltip: 'Show Processors',
+                    onPressed: () {
+                      setState(() {
+                        _isProcessorsCollapsed = false;
+                      });
+                    },
+                  ),
+                ),
+
+              if (_isYamlCollapsed)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: IconButton(
+                    icon: const Icon(Icons.code),
+                    tooltip: 'Show YAML',
+                    onPressed: () {
+                      setState(() {
+                        _isYamlCollapsed = false;
+                      });
+                    },
+                  ),
+                ),
             ],
           ),
         ),
@@ -174,73 +207,76 @@ class _EditorControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            tooltip: 'Settings',
-            onPressed: () {
-              debugPrint('Settings pressed');
-            },
-          ),
-          const SizedBox(width: 20),
-          ElevatedButton(
-            onPressed: () {
-              debugPrint('Save pressed');
-            },
-            child: const Text('Save'),
-          ),
-          const SizedBox(width: 8),
-          ElevatedButton(
-            onPressed: () {
-              debugPrint('Reset pressed');
-            },
-            child: const Text('Reset'),
-          ),
-          const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.undo),
-            tooltip: 'Undo',
-            onPressed: () {
-              debugPrint('Undo pressed');
-            },
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.redo),
-            tooltip: 'Redo',
-            onPressed: () {
-              debugPrint('Redo pressed');
-            },
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.zoom_in_map),
-            tooltip: 'Reset zoom',
-            onPressed: graphManager.resetZoom,
-          ),
-          IconButton(
-            icon: const Icon(Icons.zoom_out),
-            tooltip: 'Zoom out',
-            onPressed: graphManager.zoomOut,
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.zoom_in),
-            tooltip: 'Zoom in',
-            onPressed: graphManager.zoomIn,
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: const Icon(Icons.play_arrow),
-            tooltip: 'Run Pipeline',
-            onPressed: () {
-              debugPrint('Play pressed');
-            },
-          ),
-        ],
+    return ColoredBox(
+      color: context.c.surfaceContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              tooltip: 'Settings',
+              onPressed: () {
+                debugPrint('Settings pressed');
+              },
+            ),
+            const SizedBox(width: 20),
+            ElevatedButton(
+              onPressed: () {
+                debugPrint('Save pressed');
+              },
+              child: const Text('Save'),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton(
+              onPressed: () {
+                debugPrint('Reset pressed');
+              },
+              child: const Text('Reset'),
+            ),
+            const Spacer(),
+            IconButton(
+              icon: const Icon(Icons.undo),
+              tooltip: 'Undo',
+              onPressed: () {
+                debugPrint('Undo pressed');
+              },
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.redo),
+              tooltip: 'Redo',
+              onPressed: () {
+                debugPrint('Redo pressed');
+              },
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.zoom_in_map),
+              tooltip: 'Reset zoom',
+              onPressed: graphManager.resetZoom,
+            ),
+            IconButton(
+              icon: const Icon(Icons.zoom_out),
+              tooltip: 'Zoom out',
+              onPressed: graphManager.zoomOut,
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.zoom_in),
+              tooltip: 'Zoom in',
+              onPressed: graphManager.zoomIn,
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.play_arrow),
+              tooltip: 'Run Pipeline',
+              onPressed: () {
+                debugPrint('Play pressed');
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
