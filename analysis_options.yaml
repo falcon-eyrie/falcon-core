@@ -1,0 +1,10 @@
+# Disables Dart analysis for root C++ project in VS Code (and possiblely other IDEs).
+# The recommended way to enable Dart analysis for the GUI project is to open it as
+# a standalone project in the IDE.
+analyzer:
+  errors:
+    todo: ignore
+  exclude:
+    - "**"
+linter:
+  rules: []
