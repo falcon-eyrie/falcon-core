@@ -1,4 +1,5 @@
 import 'package:falcon_gui/graph_editor/editor_view.dart';
+import 'package:falcon_gui/graph_editor/graph_controls.dart';
 import 'package:falcon_gui/graph_editor/processors_panel.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
@@ -22,76 +23,67 @@ class _GraphEditorState extends State<GraphEditor> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const _EditorControls(),
+        const GraphToolbar(),
         Expanded(
           child: Stack(
             children: [
-              // Editor View (always centered)
-              const EditorView(),
-
-              // Processors Panel (left overlay)
-              Positioned(
-                left: _isProcessorsCollapsed ? -_processorsWidth : 0,
-                top: 0,
-                bottom: 0,
-                width: _processorsWidth,
-                child: ColoredBox(
-                  color: context.c.surfaceContainer,
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          _isProcessorsCollapsed
-                              ? Icons.chevron_right
-                              : Icons.chevron_left,
+              Row(
+                children: [
+                  // Processors Panel (left)
+                  if (!_isProcessorsCollapsed)
+                    SizedBox(
+                      width: _processorsWidth,
+                      child: ColoredBox(
+                        color: context.c.surfaceContainer,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.chevron_left),
+                              onPressed: () {
+                                setState(() {
+                                  _isProcessorsCollapsed = true;
+                                });
+                              },
+                            ),
+                            const Expanded(
+                              child: ProcessorsPanel(),
+                            ),
+                          ],
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _isProcessorsCollapsed = !_isProcessorsCollapsed;
-                          });
-                        },
                       ),
-                      const Expanded(
-                        child: ProcessorsPanel(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                    ),
 
-              // YAML Editor (right overlay)
-              Positioned(
-                right: _isYamlCollapsed ? -_yamlWidth : 0,
-                top: 0,
-                bottom: 0,
-                width: _yamlWidth,
-                child: ColoredBox(
-                  color: context.c.surfaceContainer,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          _isYamlCollapsed
-                              ? Icons.chevron_left
-                              : Icons.chevron_right,
+                  const Expanded(
+                    child: EditorView(),
+                  ),
+
+                  // YAML Editor (right)
+                  if (!_isYamlCollapsed)
+                    SizedBox(
+                      width: _yamlWidth,
+                      child: ColoredBox(
+                        color: context.c.surfaceContainer,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.chevron_right),
+                              onPressed: () {
+                                setState(() {
+                                  _isYamlCollapsed = true;
+                                });
+                              },
+                            ),
+                            const Expanded(
+                              child: _YamlEditor(),
+                            ),
+                          ],
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _isYamlCollapsed = !_isYamlCollapsed;
-                          });
-                        },
                       ),
-                      const Expanded(
-                        child: _YamlEditor(),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                ],
               ),
-
               if (_isProcessorsCollapsed)
                 Positioned(
                   left: 8,
@@ -106,7 +98,6 @@ class _GraphEditorState extends State<GraphEditor> {
                     },
                   ),
                 ),
-
               if (_isYamlCollapsed)
                 Positioned(
                   right: 8,
@@ -198,86 +189,6 @@ class _YamlEditorState extends State<_YamlEditor> {
           ),
         );
       },
-    );
-  }
-}
-
-class _EditorControls extends StatelessWidget {
-  const _EditorControls();
-
-  @override
-  Widget build(BuildContext context) {
-    return ColoredBox(
-      color: context.c.surfaceContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.settings),
-              tooltip: 'Settings',
-              onPressed: () {
-                debugPrint('Settings pressed');
-              },
-            ),
-            const SizedBox(width: 20),
-            ElevatedButton(
-              onPressed: () {
-                debugPrint('Save pressed');
-              },
-              child: const Text('Save'),
-            ),
-            const SizedBox(width: 8),
-            ElevatedButton(
-              onPressed: () {
-                debugPrint('Reset pressed');
-              },
-              child: const Text('Reset'),
-            ),
-            const Spacer(),
-            IconButton(
-              icon: const Icon(Icons.undo),
-              tooltip: 'Undo',
-              onPressed: () {
-                debugPrint('Undo pressed');
-              },
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.redo),
-              tooltip: 'Redo',
-              onPressed: () {
-                debugPrint('Redo pressed');
-              },
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.zoom_in_map),
-              tooltip: 'Reset zoom',
-              onPressed: graphManager.resetZoom,
-            ),
-            IconButton(
-              icon: const Icon(Icons.zoom_out),
-              tooltip: 'Zoom out',
-              onPressed: graphManager.zoomOut,
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.zoom_in),
-              tooltip: 'Zoom in',
-              onPressed: graphManager.zoomIn,
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.play_arrow),
-              tooltip: 'Run Pipeline',
-              onPressed: () {
-                debugPrint('Play pressed');
-              },
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

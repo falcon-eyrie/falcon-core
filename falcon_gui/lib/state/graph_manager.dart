@@ -261,7 +261,8 @@ class GraphManager extends ChangeNotifier {
         ..scaleByDouble(1 / 1.2, 1 / 1.2, 1 / 1.2, 1);
 
   void resetZoom() {
-    transformationController.value = Matrix4.identity();
+    transformationController.value = Matrix4.identity()
+      ..translateByDouble(10, 10, 0, 1);
   }
 
   // Offset of each port's center position relative to the processor item

@@ -35,7 +35,7 @@ class FalconManager extends ChangeNotifier {
       _falconProcess = await Process.start(falconPath, []);
       notifyListeners();
     } catch (e) {
-      print('Error creating falcon instance: $e');
+      debugPrint('Error creating falcon instance: $e');
     }
   }
 
@@ -46,7 +46,7 @@ class FalconManager extends ChangeNotifier {
       _falconProcess = null;
       notifyListeners();
     } catch (e) {
-      print('Error killing falcon instance: $e');
+      debugPrint('Error killing falcon instance: $e');
     }
   }
 
@@ -57,7 +57,7 @@ class FalconManager extends ChangeNotifier {
           ? PriorityStatus.prioritized
           : PriorityStatus.notPrioritized;
     } catch (e) {
-      print('Error checking priority: $e');
+      debugPrint('Error checking priority: $e');
       return PriorityStatus.unknown;
     }
   }
@@ -68,7 +68,7 @@ class FalconManager extends ChangeNotifier {
       _priorityStatus = PriorityStatus.prioritized;
       notifyListeners();
     } catch (e) {
-      print('Error setting priority: $e');
+      debugPrint('Error setting priority: $e');
     }
   }
 }
