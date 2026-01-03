@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:falcon_gui/graph_editor/graph_editor.dart';
+import 'package:falcon_gui/utils/misc.dart';
+import 'package:falcon_gui/utils/priority_dialog.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
@@ -25,7 +27,7 @@ void main() async {
     await windowManager.show();
     await windowManager.focus();
   });
-
+  Future.delayed(const Duration(milliseconds: 1000), maybeShowPriorityDialog);
   runApp(const DesktopApp());
 }
 
@@ -40,6 +42,7 @@ class DesktopApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           home: const HomePage(),
+          navigatorKey: globalNavigatorKey,
           themeMode: _themeNotifier.value,
           theme: FalconTheme(Theme.of(context).textTheme).light(),
           darkTheme: FalconTheme(Theme.of(context).textTheme).dark(),

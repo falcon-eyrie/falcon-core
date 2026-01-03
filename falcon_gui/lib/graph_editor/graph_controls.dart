@@ -1,4 +1,4 @@
-
+import 'package:falcon_gui/settings/settings_view.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +17,12 @@ class GraphToolbar extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.settings),
               tooltip: 'Settings',
-              onPressed: () {
-                debugPrint('Settings pressed');
+              onPressed: () async {
+                await showDialog<void>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => const SettingsView(),
+                );
               },
             ),
             const SizedBox(width: 20),

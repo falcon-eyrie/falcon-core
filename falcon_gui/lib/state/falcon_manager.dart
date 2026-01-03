@@ -3,36 +3,30 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-enum PriorityStatus {
-  prioritized,
-  notPrioritized,
-  unknown,
-}
-
 final FalconManager falconManager = FalconManager.instance;
 
 class FalconManager extends ChangeNotifier {
-  FalconManager._internal() {
-    unawaited(_initializePriorityStatus());
-  }
+  FalconManager._internal();
 
   static final FalconManager instance = FalconManager._internal();
 
-  final String falconPath = '~/falcon/bin/falcon';
+  String get _falconPath {
+    final home = Platform.environment['HOME'] ?? '';
+    return '~/falcon/bin/falcon'.replaceFirst('~', home);
+  }
+
   Process? _falconProcess;
   PriorityStatus _priorityStatus = PriorityStatus.unknown;
 
-  PriorityStatus get priorityStatus => _priorityStatus;
+  PriorityStatus get processPriority => _priorityStatus;
 
-  Future<void> _initializePriorityStatus() async {
-    _priorityStatus = await _checkPrioritized();
-    notifyListeners();
-  }
+  String get processPriorityCommand =>
+      'sudo setcap cap_sys_nice=eip $_falconPath';
 
   Future<void> createFalcon() async {
     if (_falconProcess != null) return;
     try {
-      _falconProcess = await Process.start(falconPath, []);
+      _falconProcess = await Process.start(_falconPath, []);
       notifyListeners();
     } catch (e) {
       debugPrint('Error creating falcon instance: $e');
@@ -50,25 +44,24 @@ class FalconManager extends ChangeNotifier {
     }
   }
 
-  Future<PriorityStatus> _checkPrioritized() async {
+  Future<PriorityStatus> checkProcessPriority() async {
     try {
-      final result = await Process.run('getcap', [falconPath]);
-      return result.stdout.toString().contains('cap_sys_nice')
+      final result = await Process.run('getcap', [_falconPath]);
+      _priorityStatus = result.stdout.toString().contains('cap_sys_nice')
           ? PriorityStatus.prioritized
           : PriorityStatus.notPrioritized;
     } catch (e) {
       debugPrint('Error checking priority: $e');
-      return PriorityStatus.unknown;
+      _priorityStatus = PriorityStatus.unknown;
     }
+    notifyListeners();
+    return _priorityStatus;
   }
+}
 
-  Future<void> prioritizeProcess() async {
-    try {
-      await Process.run('sudo', ['setcap', 'cap_sys_nice=pe', falconPath]);
-      _priorityStatus = PriorityStatus.prioritized;
-      notifyListeners();
-    } catch (e) {
-      debugPrint('Error setting priority: $e');
-    }
-  }
+/// Falcon process priority status.
+enum PriorityStatus {
+  prioritized,
+  notPrioritized,
+  unknown,
 }
