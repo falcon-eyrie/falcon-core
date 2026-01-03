@@ -35,10 +35,14 @@
 #include "logging/log.hpp"
 #include "options/units.hpp"
 #include "utilities/time.hpp"
+#include <sys/prctl.h>
 
 using namespace std;
 
 int main(int argc, char** argv) {
+    // When parent dies, this process gets SIGTERM
+    prctl(PR_SET_PDEATHSIG, SIGTERM);
+
     // create a parser
     cmdline::parser parser;
 

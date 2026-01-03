@@ -23,9 +23,9 @@ void main() async {
   );
 
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.maximize();
+    // await windowManager.maximize();
     await windowManager.show();
-    await windowManager.focus();
+    // await windowManager.focus();
   });
   Future.delayed(const Duration(milliseconds: 1000), maybeShowPriorityDialog);
   runApp(const DesktopApp());
