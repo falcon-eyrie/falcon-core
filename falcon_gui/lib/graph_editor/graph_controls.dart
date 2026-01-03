@@ -1,4 +1,5 @@
 import 'package:falcon_gui/settings/settings_view.dart';
+import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +28,8 @@ class GraphToolbar extends StatelessWidget {
             ),
             const SizedBox(width: 20),
             ElevatedButton(
-              onPressed: () {
-                debugPrint('Save pressed');
+              onPressed: () async {
+                await falconManager.sendTestCommandSimple();
               },
               child: const Text('Save'),
             ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dartzmq/dartzmq.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 final FalconManager falconManager = FalconManager.instance;
@@ -18,7 +19,9 @@ class FalconManager extends ChangeNotifier {
 
   Process? _falconProcess;
   ZContext? _zmqContext;
-  ZSyncSocket? _zmqSocket;
+  ZSocket? _zmqSocket;
+  late StreamController<ZMessage> _messageController;
+
   PriorityStatus _priorityStatus = PriorityStatus.unknown;
 
   PriorityStatus get processPriority => _priorityStatus;
@@ -29,7 +32,6 @@ class FalconManager extends ChangeNotifier {
   Future<void> createFalcon() async {
     if (_falconProcess != null) return;
     try {
-      _falconProcess = await Process.start(_falconPath, []);
       await _initializeZMQ();
       notifyListeners();
     } catch (e) {
@@ -40,13 +42,16 @@ class FalconManager extends ChangeNotifier {
   Future<void> _initializeZMQ() async {
     try {
       _zmqContext = ZContext();
-      // Create socket with REQ type
-      final socket = _zmqContext!.createSocket(SocketType.req);
-      socket.connect('tcp://127.0.0.1:5555');
-      _zmqSocket = socket as ZSyncSocket;
-      debugPrint('Connected to Falcon on port 5555');
+      _zmqSocket = _zmqContext!.createSocket(SocketType.req);
 
-      unawaited(_sendTestCommand());
+      // Create a broadcast stream from the socket's messages
+      _messageController = StreamController<ZMessage>.broadcast();
+      _zmqSocket!.messages.listen((message) {
+        _messageController.add(message);
+      });
+
+      _zmqSocket!.connect('tcp://localhost:5555');
+      debugPrint('Connected to Falcon on port 5555');
     } catch (e) {
       debugPrint('Error initializing ZMQ: $e');
     }
@@ -54,14 +59,10 @@ class FalconManager extends ChangeNotifier {
 
   Future<void> killFalcon() async {
     debugPrint('killFalcon called');
-    if (_falconProcess == null) {
-      debugPrint('No falcon process to kill');
-      return;
-    }
     try {
-      debugPrint('Killing falcon process with PID: ${_falconProcess!.pid}');
+      await _messageController.close();
       _zmqSocket?.close();
-      unawaited(_zmqContext?.stop());
+      await _zmqContext?.stop();
       _falconProcess?.kill();
       _falconProcess = null;
       _zmqSocket = null;
@@ -100,27 +101,7 @@ class FalconManager extends ChangeNotifier {
     return _priorityStatus;
   }
 
-  Future<String?> sendCommand(String command) async {
-    if (_zmqSocket == null) {
-      debugPrint('ZMQ socket not initialized');
-      return null;
-    }
-    try {
-      _zmqSocket!.sendString(command);
-      final msg = await Future(() => _zmqSocket!.recv());
-      if (msg.isEmpty) return null;
-      final combined = <int>[];
-      for (final frame in msg) {
-        combined.addAll(frame.payload);
-      }
-      return String.fromCharCodes(combined);
-    } catch (e) {
-      debugPrint('Error sending command: $e');
-      return null;
-    }
-  }
-
-  Future<String?> sendCommandWithTimeout(
+  Future<String?> sendCommand(
     String command, {
     Duration timeout = const Duration(seconds: 5),
   }) async {
@@ -130,13 +111,8 @@ class FalconManager extends ChangeNotifier {
     }
     try {
       _zmqSocket!.sendString(command);
-      final msg = await Future(() => _zmqSocket!.recv()).timeout(timeout);
-      if (msg.isEmpty) return null;
-      final combined = <int>[];
-      for (final frame in msg) {
-        combined.addAll(frame.payload);
-      }
-      return String.fromCharCodes(combined);
+      final message = await _messageController.stream.first.timeout(timeout);
+      return _parseMessage(message);
     } on TimeoutException {
       debugPrint('Command timeout: $command');
       return null;
@@ -146,10 +122,41 @@ class FalconManager extends ChangeNotifier {
     }
   }
 
-  Future<void> _sendTestCommand() async {
+  Future<void> sendTestCommandSimple() async {
     debugPrint('Sending test command to Falcon');
-    final response = await sendCommand('ping');
-    debugPrint('Received response: $response');
+    try {
+      _zmqSocket!.sendString('info');
+      debugPrint('Sent "info" command');
+
+      final message = await _messageController.stream.first.timeout(
+        const Duration(seconds: 5),
+      );
+
+      if (message.isEmpty) {
+        debugPrint('Empty response received');
+        return;
+      }
+
+      final result = _parseMessage(message);
+      debugPrint('Response: $result');
+    } on TimeoutException {
+      debugPrint('Test command timeout');
+    } catch (e) {
+      debugPrint('Error in test command: $e');
+    }
+  }
+
+  String? _parseMessage(ZMessage message) {
+    if (message.isEmpty) return null;
+    final combined = <int>[];
+    final frameList = message.toList();
+    for (int i = 0; i < frameList.length; i++) {
+      combined.addAll(frameList[i].payload);
+      if (i < frameList.length - 1) {
+        combined.add(32); // space
+      }
+    }
+    return String.fromCharCodes(combined);
   }
 }
 
