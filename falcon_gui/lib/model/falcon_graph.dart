@@ -150,7 +150,7 @@ final class OneOfOption extends OptionValue<String> {
     required super.displayName,
   }) : _allowed = allowed,
        assert(
-         allowed.contains(value),
+         allowed.map((e) => e.toUpperCase()).contains(value.toUpperCase()),
          'Value $value is not in allowed options: $allowed',
        );
   final List<String> _allowed;

@@ -8,45 +8,49 @@ extension FalconGraphSerializerX on FalconGraph {
   String toYaml() {
     final buffer = StringBuffer();
 
-    for (final processor in processors.values) {
-      if (processor.isTemplate) continue;
+    if (processors.isNotEmpty) {
+      buffer.writeln('processors:');
+      for (final processor in processors.values) {
+        if (processor.isTemplate) continue;
 
-      final ui = processor.uiMetadata;
+        final ui = processor.uiMetadata;
 
-      buffer
-        ..writeln('${processor.id}:')
-        ..writeln('  class: ${processor.className}');
+        buffer
+          ..writeln('  ${processor.id}:')
+          ..writeln('    class: ${processor.className}');
 
-      if (processor.options.isNotEmpty) {
-        buffer.writeln('  options:');
-        for (final entry in processor.options.entries) {
-          buffer.writeln(
-            '    ${entry.key}: ${_yamlScalar(entry.value.value)}',
-          );
+        if (processor.options.isNotEmpty) {
+          buffer.writeln('    options:');
+          for (final entry in processor.options.entries) {
+            buffer.writeln(
+              '      ${entry.key}: ${_yamlScalar(entry.value.value)}',
+            );
+          }
         }
+
+        buffer
+          ..writeln('    ui:')
+          ..writeln('      position:')
+          ..writeln('        x: ${ui.position.dx.toInt()}')
+          ..writeln('        y: ${ui.position.dy.toInt()}')
+          ..writeln(
+            // ignore: lines_longer_than_80_chars
+            '      lastModified: "${ui.lastModified.toUtc().toIso8601String()}"',
+          );
+
+        if (ui.color != null) {
+          buffer.writeln('      color: "#${ui.color!.toARGB32()}"');
+        }
+
+        buffer.writeln();
       }
-
-      buffer
-        ..writeln('  ui:')
-        ..writeln('    position:')
-        ..writeln('      x: ${ui.position.dx.toInt()}')
-        ..writeln('      y: ${ui.position.dy.toInt()}')
-        ..writeln(
-          '    lastModified: "${ui.lastModified.toUtc().toIso8601String()}"',
-        );
-
-      if (ui.color != null) {
-        buffer.writeln('    color: "#${ui.color!.toARGB32()}"');
-      }
-
-      buffer.writeln();
     }
 
     if (connections.isNotEmpty) {
       buffer.writeln('connections:');
       for (final conn in connections) {
         buffer.writeln(
-          '  ${conn.srcProcessor}.${conn.srcPort} = '
+          '  - ${conn.srcProcessor}.${conn.srcPort} = '
           '${conn.dstProcessor}.${conn.dstPort}',
         );
       }
@@ -75,11 +79,14 @@ extension FalconGraphSerializerX on FalconGraph {
     final processors = <String, Processor>{};
     final connections = <Connection>[];
 
+    // Get processors map - support both with and without "processors:" key
+    final processorsMap = doc['processors'] as YamlMap? ?? doc;
+
     // First pass: parse all processors
-    for (final entry in doc.entries) {
+    for (final entry in processorsMap.entries) {
       final key = entry.key as String;
 
-      if (key == 'connections') continue;
+      if (key == 'connections' || key == 'processors') continue;
 
       final map = entry.value as YamlMap;
       final className = map['class'] as String;
@@ -150,22 +157,17 @@ extension FalconGraphSerializerX on FalconGraph {
     }
 
     // Second pass: parse and validate connections
-    final connectionsEntry = doc.entries.firstWhere(
-      (e) => e.key == 'connections',
-      orElse: () => const MapEntry('connections', null),
-    );
+    final connectionsEntry = doc['connections'];
 
-    if (connectionsEntry.value != null) {
-      final connValue = connectionsEntry.value;
-
-      if (connValue is YamlList) {
+    if (connectionsEntry != null) {
+      if (connectionsEntry is YamlList) {
         // Handle list format: connections: [line1, line2, ...]
-        for (final line in connValue) {
+        for (final line in connectionsEntry) {
           _parseAndValidateConnection(line as String, processors, connections);
         }
-      } else if (connValue is YamlMap) {
+      } else if (connectionsEntry is YamlMap) {
         // Handle map format where keys and values form the connection
-        for (final connEntry in connValue.entries) {
+        for (final connEntry in connectionsEntry.entries) {
           final srcPart = (connEntry.key ?? '').toString().trim();
           final dstPart = (connEntry.value ?? '').toString().trim();
 
@@ -174,10 +176,9 @@ extension FalconGraphSerializerX on FalconGraph {
             _parseAndValidateConnection(line, processors, connections);
           }
         }
-      } else if (connValue is String) {
+      } else if (connectionsEntry is String) {
         // Handle string that may contain multiple connections
-        // Split on pattern where a new connection starts
-        final lines = connValue
+        final lines = connectionsEntry
             .split(RegExp(r'(?<!=)\s+(?=\w+\.\w+\s*=)'))
             .where((line) => line.trim().isNotEmpty)
             .toList();
@@ -350,7 +351,9 @@ OptionValue<dynamic> _optionFromScalar(
   }
   if (templateOption is OneOfOption) {
     final v = value as String;
-    if (!templateOption.allowed.contains(v)) {
+    if (!templateOption.allowed
+        .map((allowed) => allowed.toUpperCase())
+        .contains(v.toUpperCase())) {
       throw FalconGraphYamlParserException(
         'Value "$v" is not allowed for option "${templateOption.displayName}". '
         'Allowed values: ${templateOption.allowed.join(", ")}',

@@ -7,23 +7,20 @@ class ProcessorsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 300,
-      child: ListView.builder(
-        itemBuilder: (context, index) {
-          final processor = processorDefinitions.values.elementAtOrNull(
-            index,
-          );
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        final processor = processorDefinitions.values.elementAtOrNull(
+          index,
+        );
 
-          if (processor == null) {
-            return null;
-          }
-          return Padding(
-            padding: const EdgeInsets.all(8),
-            child: ProcessorItem(processor: processor),
-          );
-        },
-      ),
+        if (processor == null) {
+          return null;
+        }
+        return Padding(
+          padding: const EdgeInsets.all(8),
+          child: ProcessorItem(processor: processor),
+        );
+      },
     );
   }
 }

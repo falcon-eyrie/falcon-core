@@ -59,11 +59,30 @@ class _PortRow extends StatelessWidget {
       portName: port.name,
     );
 
-    final text = Text(
-      port.name,
-      style: TextStyle(
-        color: isEnabled ? context.c.onSurface : Colors.grey,
-      ),
+    final text = Column(
+      crossAxisAlignment: port.isSrc
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          port.name,
+          style: TextStyle(
+            color: isEnabled ? context.c.onSurface : Colors.grey,
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ),
+        ),
+        Text(
+          port.type,
+          style: TextStyle(
+            color: isEnabled ? context.c.onSurface.withAlpha(200) : Colors.grey,
+            fontSize: 14,
+            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+      ],
     );
 
     final dot = _PortHalfDot(

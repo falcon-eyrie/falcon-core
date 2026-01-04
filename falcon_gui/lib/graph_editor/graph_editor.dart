@@ -16,7 +16,7 @@ class GraphEditor extends StatefulWidget {
 class _GraphEditorState extends State<GraphEditor> {
   bool _isProcessorsCollapsed = false;
   bool _isYamlCollapsed = true;
-  final double _processorsWidth = 300;
+  final double _processorsWidth = 450;
   final double _yamlWidth = 400;
 
   @override

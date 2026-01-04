@@ -8,7 +8,7 @@ import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
-final ValueNotifier<ThemeMode> _themeNotifier = ValueNotifier(ThemeMode.dark);
+final ValueNotifier<ThemeMode> _themeNotifier = ValueNotifier(ThemeMode.light);
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();

@@ -133,18 +133,21 @@ class FalconTheme {
 }
 
 abstract final class DefaultProcessorColor {
+  static final _classNames = <String>[];
   static Color byClassName({required String className}) {
     Color colorGenerator(int index) {
       final hue = (index * 137) % 360;
-      return HSVColor.fromAHSV(1, hue.toDouble(), 0.7, 0.5).toColor();
+      return HSVColor.fromAHSV(1, hue.toDouble(), 0.3, 0.4).toColor();
     }
 
-    return {
-          'SourceProcessor': colorGenerator(1),
-          'FilterProcessor': colorGenerator(2),
-          'SinkProcessor': colorGenerator(3),
-          'DistruptorProcessor': colorGenerator(4),
-        }[className] ??
-        colorGenerator(0);
+    int index;
+    if (_classNames.contains(className)) {
+      index = _classNames.indexOf(className);
+    } else {
+      _classNames.add(className);
+      index = _classNames.indexOf(className);
+    }
+
+    return colorGenerator(index);
   }
 }

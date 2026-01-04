@@ -232,9 +232,11 @@ class OneOfOptionField extends StatelessWidget {
   Widget build(BuildContext context) {
     return IntrinsicWidth(
       child: DropdownButtonFormField<String>(
-        initialValue: option.value,
+        initialValue: option.value.toUpperCase(),
         items: option.allowed
-            .map((v) => DropdownMenuItem(value: v, child: Text(v)))
+            .map(
+              (v) => DropdownMenuItem(value: v.toUpperCase(), child: Text(v)),
+            )
             .toList(),
         onChanged: (v) {
           if (v != null) onChanged(option.copyWith(newValue: v));
