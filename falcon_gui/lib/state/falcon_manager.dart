@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:falcon_gui/utils/zmq_ffi.dart';
+import 'package:falcon_gui/state/falcon_zmq.dart';
+import 'package:falcon_gui/utils/killing_falcon_banner.dart';
+import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 final FalconManager falconManager = FalconManager.instance;
 
@@ -18,9 +19,8 @@ class FalconManager extends ChangeNotifier {
   }
 
   Process? _falconProcess;
-  ZMQFFi? _zmq;
-  ZMQContext? _zmqContext;
-  ZMQSocket? _zmqSocket;
+  FalconZMQ? _falconZMQ;
+  Completer<void>? _processExitCompleter;
 
   PriorityStatus _priorityStatus = PriorityStatus.unknown;
 
@@ -30,9 +30,35 @@ class FalconManager extends ChangeNotifier {
       'sudo setcap cap_sys_nice=eip $_falconPath';
 
   Future<void> createFalcon() async {
+    final pids = await _getExistingFalconPIDs();
+
+    if (pids.isNotEmpty) {
+      debugPrint('Existing Falcon instances detected: $pids');
+      if (kDebugMode) {
+        unawaited(killOthersAndSpawnNew());
+      } else {
+        showOtherFalconInstancesBanner(pids: pids);
+      }
+      return;
+    }
+
     if (_falconProcess != null) return;
     try {
-      _falconProcess = await Process.start(_falconPath, []);
+      _falconProcess = await Process.start(
+        _falconPath,
+        [],
+        mode: ProcessStartMode.inheritStdio,
+      );
+      _processExitCompleter = Completer<void>();
+      unawaited(
+        _falconProcess!.exitCode.then((_) {
+          debugPrint('Falcon process exitCode received');
+          if (_processExitCompleter != null &&
+              !_processExitCompleter!.isCompleted) {
+            _processExitCompleter!.complete();
+          }
+        }),
+      );
       await _initializeZMQ();
       notifyListeners();
     } catch (e) {
@@ -40,19 +66,45 @@ class FalconManager extends ChangeNotifier {
     }
   }
 
+  Future<List<int>> _getExistingFalconPIDs() async {
+    final pgrepResult = await Process.run('pgrep', ['-f', _falconPath]);
+    final pids = pgrepResult.stdout
+        .toString()
+        .trim()
+        .split('\n')
+        .where((line) => line.isNotEmpty)
+        .map(int.parse)
+        .toList();
+    return pids;
+  }
+
+  Future<void> killOthersAndSpawnNew() async {
+    final pids = await _getExistingFalconPIDs();
+    for (final pid in pids) {
+      try {
+        final result = Process.killPid(pid, ProcessSignal.sigkill);
+        debugPrint(
+          'Killed existing Falcon process with PID: $pid '
+          'Result: $result',
+        );
+      } catch (e) {
+        debugPrint('Error killing existing process $pid: $e');
+      }
+    }
+
+    await createFalcon();
+  }
+
   Future<void> _initializeZMQ() async {
     try {
-      _zmq = ZMQFFi();
-      _zmqContext = _zmq!.ctxNew();
-      _zmqSocket = _zmq!.socket(_zmqContext!, ZMQ_REQ);
+      _falconZMQ = FalconZMQ();
 
-      _zmq!.setSocketOption(_zmqSocket!, ZMQ_RCVTIMEO, 5000);
-
-      final connectResult = _zmq!.connect(_zmqSocket!, 'tcp://localhost:5555');
-      if (connectResult != 0) {
-        throw Exception('Failed to connect to falcon: ${_zmq!.getErrno()}');
+      final connected = await _falconZMQ!.connect();
+      if (!connected) {
+        throw Exception('Failed to connect to Falcon via ZMQ');
       }
-      debugPrint('Connected to Falcon on port 5555');
+
+      debugPrint('FalconManager: Connected to Falcon');
     } catch (e) {
       debugPrint('Error initializing ZMQ: $e');
       rethrow;
@@ -62,17 +114,39 @@ class FalconManager extends ChangeNotifier {
   Future<void> killFalcon() async {
     debugPrint('killFalcon called');
     try {
-      if (_zmqSocket != null) {
-        _zmq!.close(_zmqSocket!);
+      showKillingFalconBanner();
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      await sendCommand(FalconCommand.kill);
+
+      // Wait for process to terminate
+      if (_falconProcess != null && _processExitCompleter != null) {
+        try {
+          // Wait for process to exit with 5 second timeout
+          await Future.any([
+            _processExitCompleter!.future,
+            Future<void>.delayed(const Duration(seconds: 15)),
+          ]);
+
+          if (!_processExitCompleter!.isCompleted) {
+            debugPrint(
+              'Process did not exit gracefully after 5 seconds, force killing',
+            );
+            _falconProcess!.kill(ProcessSignal.sigkill);
+          } else {
+            debugPrint('Process exited successfully');
+          }
+        } catch (e) {
+          debugPrint('Error waiting for process to exit: $e');
+        }
       }
-      if (_zmqContext != null) {
-        _zmq!.ctxTerm(_zmqContext!);
-      }
-      _falconProcess?.kill();
+
+      await _falconZMQ?.disconnect();
+      await _falconZMQ?.dispose();
+      _falconZMQ = null;
+
       _falconProcess = null;
-      _zmqSocket = null;
-      _zmqContext = null;
-      _zmq = null;
+      _processExitCompleter = null;
+
       notifyListeners();
     } catch (e) {
       debugPrint('Error killing falcon instance: $e');
@@ -107,36 +181,32 @@ class FalconManager extends ChangeNotifier {
     return _priorityStatus;
   }
 
+  /// Send a Falcon command
   Future<String?> sendCommand(
-    String command, {
+    FalconCommand command, {
     Duration timeout = const Duration(seconds: 5),
   }) async {
-    if (_zmqSocket == null || _zmq == null) {
-      debugPrint('ZMQ socket not initialized');
+    if (_falconZMQ == null || !_falconZMQ!.isConnected) {
+      debugPrint('FalconManager: ZMQ not connected');
       return null;
     }
-    try {
-      final sendResult = _zmq!.send(_zmqSocket!, command.codeUnits);
-      if (sendResult < 0) {
-        debugPrint('Failed to send command: ${_zmq!.getErrno()}');
-        return null;
-      }
+    return _falconZMQ!.sendCommand(command, timeout: timeout);
+  }
 
-      final response = _zmq!.recv(_zmqSocket!);
-      if (response == null || response.isEmpty) {
-        debugPrint('Empty response received');
-        return null;
-      }
-
-      return String.fromCharCodes(response);
-    } catch (e) {
-      debugPrint('Error sending command: $e');
+  /// Send custom command parts
+  Future<String?> sendCommandParts(
+    List<String> parts, {
+    Duration timeout = const Duration(seconds: 5),
+  }) async {
+    if (_falconZMQ == null || !_falconZMQ!.isConnected) {
+      debugPrint('FalconManager: ZMQ not connected');
       return null;
     }
+    return _falconZMQ!.sendCommandParts(parts, timeout: timeout);
   }
 
   Future<void> sendTestCommandSimple() async {
-    final response = await sendCommand('kill');
+    final response = await sendCommand(FalconCommand.graphYaml);
     if (response != null) {
       debugPrint('Test command response: $response');
     } else {
@@ -145,12 +215,13 @@ class FalconManager extends ChangeNotifier {
   }
 
   void debugConnectionStatus() {
-    if (_zmqSocket == null) {
-      debugPrint('Socket is null');
+    if (_falconZMQ == null) {
+      debugPrint('FalconZMQ is null');
       return;
     }
-    debugPrint('Socket is initialized');
-    debugPrint('ZMQ error number: ${_zmq?.getErrno()}');
+    debugPrint(
+      'FalconZMQ is ${_falconZMQ!.isConnected ? "connected" : "disconnected"}',
+    );
   }
 }
 

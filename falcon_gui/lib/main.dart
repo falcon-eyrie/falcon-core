@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:falcon_gui/graph_editor/graph_editor.dart';
+import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/priority_dialog.dart';
 import 'package:falcon_gui/utils/theme.dart';
@@ -21,6 +22,7 @@ void main() async {
     title: 'Falcon GUI',
     windowButtonVisibility: false,
   );
+  await windowManager.setPreventClose(true);
 
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
     // await windowManager.maximize();
@@ -87,6 +89,13 @@ class _HomePageState extends State<HomePage> with WindowListener {
   void dispose() {
     windowManager.removeListener(this);
     super.dispose();
+  }
+
+  @override
+  Future<void> onWindowClose() async {
+    await falconManager.killFalcon();
+
+    await windowManager.destroy();
   }
 
   Future<void> _toggleMaximize() async {

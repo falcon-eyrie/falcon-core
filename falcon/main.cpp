@@ -24,6 +24,7 @@
 #include <regex>
 #include <string>
 
+#include <sys/prctl.h>
 #include "buildconstant.hpp"
 #include "cmdline/cmdline.h"
 #include "commandhandler.hpp"
@@ -35,7 +36,6 @@
 #include "logging/log.hpp"
 #include "options/units.hpp"
 #include "utilities/time.hpp"
-#include <sys/prctl.h>
 
 using namespace std;
 
