@@ -40,6 +40,16 @@ class FalconGraph {
     }
   }
 
+  void removeConnection({required Connection connectionToRemove}) {
+    _connections.removeWhere(
+      (connection) =>
+          connection.srcProcessor == connectionToRemove.srcProcessor &&
+          connection.srcPort == connectionToRemove.srcPort &&
+          connection.dstProcessor == connectionToRemove.dstProcessor &&
+          connection.dstPort == connectionToRemove.dstPort,
+    );
+  }
+
   FalconGraph copyWith({
     Map<String, Processor>? processors,
     List<Connection>? connections,

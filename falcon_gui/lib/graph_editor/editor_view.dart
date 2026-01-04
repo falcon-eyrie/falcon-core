@@ -57,6 +57,10 @@ class _EditorViewState extends State<EditorView> {
             onPointerDown: (event) {
               if (event.buttons == kSecondaryMouseButton) {
                 graphManager.cancelPortSelection();
+
+                // Check if clicking on a connection line
+                final scenePosition = _toScene(event.position);
+                graphManager.removeConnectionAtPosition(scenePosition);
               }
             },
             child: InteractiveViewer(
