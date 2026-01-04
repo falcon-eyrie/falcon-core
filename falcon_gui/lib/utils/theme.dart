@@ -133,12 +133,18 @@ class FalconTheme {
 }
 
 abstract final class DefaultProcessorColor {
-  static Color? byClassName({required String className}) {
+  static Color byClassName({required String className}) {
+    Color colorGenerator(int index) {
+      final hue = (index * 137) % 360;
+      return HSVColor.fromAHSV(1, hue.toDouble(), 0.7, 0.5).toColor();
+    }
+
     return {
-      'SourceProcessor': const Color.fromARGB(255, 183, 67, 59),
-      'FilterProcessor': const Color.fromARGB(255, 57, 68, 129),
-      'SinkProcessor': const Color.fromARGB(255, 92, 72, 138),
-      'DistruptorProcessor': const Color.fromARGB(255, 173, 59, 183),
-    }[className];
+          'SourceProcessor': colorGenerator(1),
+          'FilterProcessor': colorGenerator(2),
+          'SinkProcessor': colorGenerator(3),
+          'DistruptorProcessor': colorGenerator(4),
+        }[className] ??
+        colorGenerator(0);
   }
 }
