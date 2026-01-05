@@ -1,0 +1,4 @@
+- Address processor option renaming such as "message/detection" to "message_detection" in Falcon Core.
+- Polish/improve UI
+- Add processor states
+- Document readme.md for how to compile and run Falcon GUI

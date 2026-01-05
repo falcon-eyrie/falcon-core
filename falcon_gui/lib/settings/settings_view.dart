@@ -1,4 +1,5 @@
 import 'package:falcon_gui/settings/falcon_priority_status.dart';
+import 'package:falcon_gui/settings/theme_mode_setting.dart';
 import 'package:falcon_gui/utils/dialog_view.dart';
 import 'package:flutter/material.dart';
 
@@ -13,10 +14,13 @@ class SettingsView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FalconProcessPriorityStatus(),
+          SizedBox(height: 20),
+          ThemeModeSetting(),
+          SizedBox(height: 20),
         ],
       ),
     );
   }
 }
 
-// TODO(ben): a setting to change config.yaml 
+// TODO(ben): a setting to change config.yaml

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:falcon_gui/graph_editor/graph_editor.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
+import 'package:falcon_gui/settings/theme_mode_setting.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/misc.dart';
@@ -11,7 +12,6 @@ import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
-final ValueNotifier<ThemeMode> _themeNotifier = ValueNotifier(ThemeMode.light);
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
@@ -36,7 +36,8 @@ void main() async {
   graphManager.addListener(() {
     unawaited(falconManager.saveYaml(graphManager.graphAsYaml));
   });
-  
+
+  await loadThemeModeFromSharedPreferences();
   unawaited(_tempLoadGraph());
 
   Future.delayed(const Duration(milliseconds: 1000), maybeShowPriorityDialog);
@@ -57,13 +58,13 @@ class DesktopApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _themeNotifier,
+      animation: themeNotifier,
       builder: (context, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           home: const HomePage(),
           navigatorKey: globalNavigatorKey,
-          themeMode: _themeNotifier.value,
+          themeMode: themeNotifier.value,
           theme: FalconTheme(Theme.of(context).textTheme).light(),
           darkTheme: FalconTheme(Theme.of(context).textTheme).dark(),
         );
@@ -147,23 +148,6 @@ class _HomePageState extends State<HomePage> with WindowListener {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
                   ),
                   const Spacer(),
-                  AnimatedBuilder(
-                    animation: _themeNotifier,
-                    builder: (context, _) {
-                      return IconButton(
-                        icon: Icon(
-                          _themeNotifier.value == ThemeMode.dark
-                              ? Icons.sunny
-                              : Icons.dark_mode,
-                          size: 18,
-                        ),
-                        onPressed: () => _themeNotifier.value =
-                            _themeNotifier.value == ThemeMode.dark
-                            ? ThemeMode.light
-                            : ThemeMode.dark,
-                      );
-                    },
-                  ),
                   IconButton(
                     icon: const Icon(
                       Icons.remove,
