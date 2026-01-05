@@ -1,18 +1,63 @@
 import 'package:falcon_gui/model/falcon_graph.dart';
 
 OneOfOption _createEncodingOption() => OneOfOption(
-  value: 'BINARY',
-  allowed: ['BINARY', 'YAML', 'FLATBUFFER'],
+  value: 'binary',
+  allowed: ['binary', 'yaml', 'flatbuffer'],
   displayName: 'Encoding',
 );
 
 OneOfOption _createFormatOption() => OneOfOption(
-  value: 'FULL',
-  allowed: ['NONE', 'FULL', 'COMPACT', 'HEADERONLY', 'STREAMHEADER'],
+  value: 'full',
+  allowed: ['none', 'full', 'compact', 'headeronly', 'streamheader'],
   displayName: 'Format',
 );
 
-final processorDefinitions = {
+final Map<String, Processor> processorDefinitions = () {
+  // return sources first,
+  // processors second
+  // sinks last
+  // within each group, sort alphabetically
+  final sortedKeys = _processorDefinitionsUnsorted.keys.toList()
+    ..sort((a, b) {
+      final procA = _processorDefinitionsUnsorted[a]!;
+      final procB = _processorDefinitionsUnsorted[b]!;
+
+      int groupA;
+      int groupB;
+
+      if (procA.ports.any((port) => port.isSrc) &&
+          !procA.ports.any((port) => !port.isSrc)) {
+        groupA = 0; // source
+      } else if (procA.ports.any((port) => !port.isSrc) &&
+          !procA.ports.any((port) => port.isSrc)) {
+        groupA = 2; // sink
+      } else {
+        groupA = 1; // processor
+      }
+
+      if (procB.ports.any((port) => port.isSrc) &&
+          !procB.ports.any((port) => !port.isSrc)) {
+        groupB = 0; // source
+      } else if (procB.ports.any((port) => !port.isSrc) &&
+          !procB.ports.any((port) => port.isSrc)) {
+        groupB = 2; // sink
+      } else {
+        groupB = 1; // processor
+      }
+
+      if (groupA != groupB) {
+        return groupA.compareTo(groupB);
+      } else {
+        return procA.className.compareTo(procB.className);
+      }
+    });
+
+  return {
+    for (final key in sortedKeys) key: _processorDefinitionsUnsorted[key]!,
+  };
+}();
+
+final _processorDefinitionsUnsorted = {
   'file_serializer': Processor(
     id: 'file_serializer',
     className: 'FileSerializer',
@@ -205,7 +250,7 @@ final processorDefinitions = {
     isTemplate: true,
     options: {
       'filter_def': StringOption(
-        value: '',
+        value: '/path/to/default_filter_def.yaml',
         displayName: 'Filter Definition File',
       ),
     },

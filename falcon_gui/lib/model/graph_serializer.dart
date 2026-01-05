@@ -6,40 +6,40 @@ import 'package:yaml/yaml.dart';
 
 extension FalconGraphSerializerX on FalconGraph {
   String toYaml() {
-    final buffer = StringBuffer();
+    final buffer = StringBuffer()..writeln('graph:');
 
     if (processors.isNotEmpty) {
-      buffer.writeln('processors:');
+      buffer.writeln('  processors:');
       for (final processor in processors.values) {
         if (processor.isTemplate) continue;
 
         final ui = processor.uiMetadata;
 
         buffer
-          ..writeln('  ${processor.id}:')
-          ..writeln('    class: ${processor.className}');
+          ..writeln('    ${processor.id}:')
+          ..writeln('      class: ${processor.className}');
 
         if (processor.options.isNotEmpty) {
-          buffer.writeln('    options:');
+          buffer.writeln('      options:');
           for (final entry in processor.options.entries) {
             buffer.writeln(
-              '      ${entry.key}: ${_yamlScalar(entry.value.value)}',
+              '        ${entry.key}: ${_yamlScalar(entry.value.value)}',
             );
           }
         }
 
         buffer
-          ..writeln('    ui:')
-          ..writeln('      position:')
-          ..writeln('        x: ${ui.position.dx.toInt()}')
-          ..writeln('        y: ${ui.position.dy.toInt()}')
+          ..writeln('      ui:')
+          ..writeln('        position:')
+          ..writeln('          x: ${ui.position.dx.toInt()}')
+          ..writeln('          y: ${ui.position.dy.toInt()}')
           ..writeln(
             // ignore: lines_longer_than_80_chars
-            '      lastModified: "${ui.lastModified.toUtc().toIso8601String()}"',
+            '        lastModified: "${ui.lastModified.toUtc().toIso8601String()}"',
           );
 
         if (ui.color != null) {
-          buffer.writeln('      color: "#${ui.color!.toARGB32()}"');
+          buffer.writeln('        color: "#${ui.color!.toARGB32()}"');
         }
 
         buffer.writeln();
@@ -47,10 +47,10 @@ extension FalconGraphSerializerX on FalconGraph {
     }
 
     if (connections.isNotEmpty) {
-      buffer.writeln('connections:');
+      buffer.writeln('  connections:');
       for (final conn in connections) {
         buffer.writeln(
-          '  - ${conn.srcProcessor}.${conn.srcPort} = '
+          '    - ${conn.srcProcessor}.${conn.srcPort} = '
           '${conn.dstProcessor}.${conn.dstPort}',
         );
       }
@@ -68,13 +68,15 @@ extension FalconGraphSerializerX on FalconGraph {
 
   static FalconGraph fromYaml(String yamlString) {
     if (yamlString.trim().isEmpty) {
-      return FalconGraph(
-        processors: {},
-        connections: [],
-      );
+      return FalconGraph(processors: {}, connections: []);
     }
 
-    final doc = loadYaml(yamlString) as YamlMap;
+    var doc = loadYaml(yamlString) as YamlMap;
+
+    // Extract graph content if it's wrapped in 'graph:' key
+    if (doc['graph'] != null) {
+      doc = doc['graph'] as YamlMap;
+    }
 
     final processors = <String, Processor>{};
     final connections = <Connection>[];
@@ -189,10 +191,7 @@ extension FalconGraphSerializerX on FalconGraph {
       }
     }
 
-    return FalconGraph(
-      processors: processors,
-      connections: connections,
-    );
+    return FalconGraph(processors: processors, connections: connections);
   }
 
   static void _parseAndValidateConnection(
@@ -352,8 +351,8 @@ OptionValue<dynamic> _optionFromScalar(
   if (templateOption is OneOfOption) {
     final v = value as String;
     if (!templateOption.allowed
-        .map((allowed) => allowed.toUpperCase())
-        .contains(v.toUpperCase())) {
+        .map((allowed) => allowed.toLowerCase())
+        .contains(v.toLowerCase())) {
       throw FalconGraphYamlParserException(
         'Value "$v" is not allowed for option "${templateOption.displayName}". '
         'Allowed values: ${templateOption.allowed.join(", ")}',

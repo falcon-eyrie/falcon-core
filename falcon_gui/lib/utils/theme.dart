@@ -136,8 +136,8 @@ abstract final class DefaultProcessorColor {
   static final _classNames = <String>[];
   static Color byClassName({required String className}) {
     Color colorGenerator(int index) {
-      final hue = (index * 137) % 360;
-      return HSVColor.fromAHSV(1, hue.toDouble(), 0.3, 0.4).toColor();
+      final hue = ((index + 7) * 137) % 360;
+      return HSVColor.fromAHSV(1, hue.toDouble(), 0.6, 0.7).toColor();
     }
 
     int index;

@@ -158,9 +158,9 @@ final class OneOfOption extends OptionValue<String> {
     required super.value,
     required List<String> allowed,
     required super.displayName,
-  }) : _allowed = allowed,
+  }) : _allowed = allowed.map((e) => e.toLowerCase()).toList(),
        assert(
-         allowed.map((e) => e.toUpperCase()).contains(value.toUpperCase()),
+         allowed.map((e) => e.toLowerCase()).contains(value.toLowerCase()),
          'Value $value is not in allowed options: $allowed',
        );
   final List<String> _allowed;
@@ -214,10 +214,7 @@ class UIMetadata {
     _lastModified = DateTime.now();
   }
 
-  UIMetadata copyWith({
-    Offset? position,
-    DateTime? lastModified,
-  }) {
+  UIMetadata copyWith({Offset? position, DateTime? lastModified}) {
     return UIMetadata(
       position: position ?? this.position,
       lastModified: lastModified ?? this.lastModified,

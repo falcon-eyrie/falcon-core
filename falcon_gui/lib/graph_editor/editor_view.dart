@@ -7,34 +7,11 @@ import 'package:flutter/material.dart';
 ///
 /// Main canvas/editor view for Linux desktop. Users can pan,
 /// zoom, and drag processors.
-class EditorView extends StatefulWidget {
+class EditorView extends StatelessWidget {
   const EditorView({super.key});
 
-  @override
-  State<EditorView> createState() => _EditorViewState();
-}
-
-class _EditorViewState extends State<EditorView> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _centerCanvas());
-  }
-
-  void _centerCanvas() {
-    final viewportSize = MediaQuery.of(context).size;
-    final canvasSize = graphManager.canvasSize;
-    graphManager.transformationController.value = Matrix4.identity()
-      ..translateByDouble(
-        (viewportSize.width - canvasSize.width) / 2,
-        (viewportSize.height - canvasSize.height) / 2,
-        0,
-        1,
-      );
-  }
-
   /// Converts global screen position to world coordinates
-  Offset _toScene(Offset globalPosition) {
+  Offset _toScene(Offset globalPosition, BuildContext context) {
     final renderBox = context.findRenderObject() as RenderBox?;
     return renderBox?.globalToLocal(globalPosition) ?? Offset.zero;
   }
@@ -50,7 +27,7 @@ class _EditorViewState extends State<EditorView> {
               ? SystemMouseCursors.alias
               : MouseCursor.defer,
           onHover: (event) {
-            final scenePosition = _toScene(event.position);
+            final scenePosition = _toScene(event.position, context);
             graphManager.updateCursorPosition(scenePosition);
           },
           child: Listener(
@@ -59,7 +36,7 @@ class _EditorViewState extends State<EditorView> {
                 graphManager.cancelPortSelection();
 
                 // Check if clicking on a connection line
-                final scenePosition = _toScene(event.position);
+                final scenePosition = _toScene(event.position, context);
                 graphManager.removeConnectionAtPosition(scenePosition);
               }
             },
@@ -94,6 +71,7 @@ class _EditorViewState extends State<EditorView> {
                           onPanStart: (details) {
                             final scenePosition = _toScene(
                               details.globalPosition,
+                              context,
                             );
                             graphManager.onOnProcessorDragStart(
                               id: processor.id,
@@ -103,6 +81,7 @@ class _EditorViewState extends State<EditorView> {
                           onPanUpdate: (details) {
                             final scenePosition = _toScene(
                               details.globalPosition,
+                              context,
                             );
                             graphManager.onProcessorDragUpdate(
                               id: processor.id,

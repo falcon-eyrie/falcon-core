@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
+import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,7 @@ class GraphManager extends ChangeNotifier {
   Offset? _grabOffset;
 
   final TransformationController transformationController =
-      TransformationController();
+      TransformationController(topLeftMatrix);
 
   List<Processor> get processors => _graph.processors.values.toList()
     ..sort(
@@ -98,24 +99,34 @@ class GraphManager extends ChangeNotifier {
   }
 
   Offset _findNonOverlappingPosition() {
-    const nodeSize = Size(300, 500);
+    final biggestNodeSize = _graph.processors.values.fold<Size>(
+      Size.zero,
+      (prev, processor) {
+        final processorSize = Size(400, processor.options.length * 40.0 + 300);
+
+        return Size(
+          math.max(prev.width, processorSize.width),
+          math.max(prev.height, processorSize.height),
+        );
+      },
+    );
     const padding = 20;
     final existingPositions = _graph.processors.values
-        .map((p) => p.uiMetadata.position & nodeSize)
+        .map((p) => p.uiMetadata.position & biggestNodeSize)
         .toList();
 
     var position = Offset.zero;
 
     bool overlaps(Offset pos) {
-      final rect = pos & nodeSize;
+      final rect = pos & biggestNodeSize;
       return existingPositions.any((r) => r.overlaps(rect));
     }
 
     while (overlaps(position)) {
-      position += Offset(nodeSize.width + padding, 0);
+      position += Offset(biggestNodeSize.width + padding, 0);
       // move to next row if exceeding some arbitrary canvas width
       if (position.dx > 2000) {
-        position = Offset(0, position.dy + nodeSize.height + padding);
+        position = Offset(0, position.dy + biggestNodeSize.height + padding);
       }
     }
 
@@ -261,8 +272,7 @@ class GraphManager extends ChangeNotifier {
         ..scaleByDouble(1 / 1.2, 1 / 1.2, 1 / 1.2, 1);
 
   void resetZoom() {
-    transformationController.value = Matrix4.identity()
-      ..translateByDouble(40, 40, 0, 1);
+    transformationController.value = topLeftMatrix;
   }
 
   // Offset of each port's center position relative to the processor item
@@ -519,5 +529,33 @@ class GraphManager extends ChangeNotifier {
       uuu * p0.dx + 3 * uu * t * p1.dx + 3 * u * tt * p2.dx + ttt * p3.dx,
       uuu * p0.dy + 3 * uu * t * p1.dy + 3 * u * tt * p2.dy + ttt * p3.dy,
     );
+  }
+
+  String? newProcessorNameValidator(String? newId) {
+    if (newId == null || newId.trim().isEmpty) {
+      return 'Name cannot be empty';
+    }
+    if (!processorIdRegex.hasMatch(newId)) {
+      return 'Invalid name format';
+    }
+    if (_graph.processors.values.where((p) => p.id == newId).length >= 2) {
+      return 'Name already exists';
+    }
+    return null;
+  }
+
+  void renameProcessor({required String oldId, required String newId}) {
+    if (oldId == newId) return;
+    if (newProcessorNameValidator(newId) != null) return;
+
+    final processor = _graph.processors[oldId];
+    if (processor == null) return;
+
+    final updatedProcessor = processor.copyWith(id: newId);
+    _graph
+      ..setProcessor(id: newId, newValue: updatedProcessor)
+      ..removeProcessor(id: oldId);
+
+    notifyListeners();
   }
 }
