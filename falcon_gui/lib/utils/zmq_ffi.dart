@@ -2,8 +2,14 @@
 // ignore_for_file: public_member_api_docs
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:convert';
 import 'dart:ffi';
+
 import 'package:ffi/ffi.dart';
+
+// Lightweight client-only zmq implementation
+// using FFI for REQ/REP communication with
+// Falcon process in Linux environment.
 
 typedef ZMQContext = Pointer<Void>;
 typedef ZMQSocket = Pointer<Void>;
@@ -106,6 +112,8 @@ const int ZMQ_REP = 4;
 
 // ZMQ flags
 const int ZMQ_DONTWAIT = 1;
+const int ZMQ_SNDMORE = 2;
+const int ZMQ_RCVMORE = 13;
 const int ZMQ_RCVTIMEO = 27;
 
 // Error constants
@@ -225,7 +233,7 @@ class ZMQFFi {
   ZMQSocket socket(ZMQContext ctx, int type) => zmq_socket(ctx, type);
 
   /// Connects the socket to an endpoint.
-  /// Uses arena allocator for automatic memory management of the string 
+  /// Uses arena allocator for automatic memory management of the string
   /// pointer.
   int connect(ZMQSocket sock, String endpoint) {
     return using((arena) {
@@ -273,6 +281,27 @@ class ZMQFFi {
     });
   }
 
+  /// Gets a socket option as an integer.
+  int getSocketOptionInt(ZMQSocket sock, int option) {
+    return using((arena) {
+      final readPtr = arena<Int32>();
+      final sizePtr = arena<Size>()..value = sizeOf<Int32>();
+
+      final result = zmq_getsockopt(
+        sock,
+        option,
+        readPtr.cast<Void>(),
+        sizePtr,
+      );
+      if (result != 0) {
+        final err = zmq_errno();
+        final errStr = zmq_strerror(err).toDartString();
+        throw Exception('zmq_getsockopt failed: $errStr');
+      }
+      return readPtr.value;
+    });
+  }
+
   /// Sends data over the socket.
   /// Returns the number of bytes sent.
   int send(ZMQSocket sock, List<int> data, {int flags = 0}) {
@@ -287,6 +316,65 @@ class ZMQFFi {
       }
       return result;
     });
+  }
+
+  /// Sends a multipart message where each part is a separate frame.
+  /// Equivalent to Python's socket.send_multipart()
+  void sendMultipart(ZMQSocket sock, List<List<int>> parts) {
+    for (var i = 0; i < parts.length; i++) {
+      final isLastPart = i == parts.length - 1;
+      final flags = isLastPart ? 0 : ZMQ_SNDMORE;
+      final result = send(sock, parts[i], flags: flags);
+      if (result < 0) {
+        throw Exception('sendMultipart failed at part $i');
+      }
+    }
+  }
+
+  /// Receives a multipart message as a list of frames.
+  /// Equivalent to Python's socket.recv_multipart()
+  List<List<int>> recvMultipart(ZMQSocket sock) {
+    final parts = <List<int>>[];
+    while (true) {
+      final part = recv(sock);
+      if (part == null) {
+        throw Exception('recvMultipart failed: no data received');
+      }
+      // Only add non-empty parts
+      if (part.isNotEmpty) {
+        parts.add(part);
+      }
+
+      // Check if there are more parts
+      final hasMore = getSocketOptionInt(sock, ZMQ_RCVMORE);
+      if (hasMore == 0) {
+        break;
+      }
+    }
+    return parts;
+  }
+
+  /// Sends a multipart message with string parts.
+  /// Each part is UTF-8 encoded.
+  void sendMultipartStrings(ZMQSocket sock, List<String> parts) {
+    final encodedParts = parts.map(_encodeString).toList();
+    sendMultipart(sock, encodedParts);
+  }
+
+  /// Receives a multipart message and decodes parts as UTF-8 strings.
+  List<String> recvMultipartStrings(ZMQSocket sock) {
+    final parts = recvMultipart(sock);
+    return parts.map(_decodeString).toList();
+  }
+
+  /// Encodes a string to UTF-8 bytes using UTF-8 encoding.
+  static List<int> _encodeString(String str) {
+    return utf8.encode(str);
+  }
+
+  /// Decodes UTF-8 bytes to a string.
+  static String _decodeString(List<int> bytes) {
+    return utf8.decode(bytes);
   }
 
   /// Receives a message from the socket.
@@ -314,6 +402,10 @@ class ZMQFFi {
           if (n >= 0) {
             final dataPtr = zmq_msg_data(msg);
             final size = zmq_msg_size(msg);
+            if (size == 0) {
+              // Return empty list for empty messages (not null)
+              return <int>[];
+            }
             return dataPtr.cast<Uint8>().asTypedList(size).toList();
           }
 

@@ -1,84 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:falcon_gui/utils/zmq_ffi.dart';
 import 'package:flutter/foundation.dart';
-
-/// Falcon commands matching Python FalconCommand enum
-enum FalconCommand {
-  graphStart,
-  graphStop,
-  graphTest,
-  graphDestroy,
-  graphState,
-  graphYaml,
-  info,
-  documentation,
-  quit,
-  kill,
-  testOn,
-  testOff,
-  testToggle,
-  resourcesList
-  ;
-
-  /// Convert command to list of string parts for ZMQ multipart message
-  List<String> serialize() {
-    switch (this) {
-      case FalconCommand.graphStart:
-        return ['graph', 'start'];
-      case FalconCommand.graphStop:
-        return ['graph', 'stop'];
-      case FalconCommand.graphTest:
-        return ['graph', 'test'];
-      case FalconCommand.graphDestroy:
-        return ['graph', 'destroy'];
-      case FalconCommand.graphState:
-        return ['graph', 'state'];
-      case FalconCommand.graphYaml:
-        return ['graph', 'yaml'];
-      case FalconCommand.info:
-        return ['info'];
-      case FalconCommand.documentation:
-        return ['documentation'];
-      case FalconCommand.quit:
-        return ['quit'];
-      case FalconCommand.kill:
-        return ['kill'];
-      case FalconCommand.testOn:
-        return ['test', 'true'];
-      case FalconCommand.testOff:
-        return ['test', 'false'];
-      case FalconCommand.testToggle:
-        return ['test'];
-      case FalconCommand.resourcesList:
-        return ['resources', 'list'];
-    }
-  }
-
-  /// Create custom command with arbitrary parts
-  static List<String> custom(List<String> parts) => parts;
-
-  /// Create graph build command
-  static List<String> graphBuild(String graphFile) => [
-    'graph',
-    'build',
-    graphFile,
-  ];
-
-  /// Create resources list type command
-  static List<String> resourcesListType(String resourceType) => [
-    'resources',
-    'list',
-    resourceType,
-  ];
-
-  /// Create resources graph command
-  static List<String> resourcesGraph(String graphPath) => [
-    'resources',
-    'graphs',
-    graphPath,
-  ];
-}
 
 /// ZMQ connection wrapper for Falcon
 class FalconZMQ {
@@ -105,11 +27,12 @@ class FalconZMQ {
 
   /// Stream controllers for different data types
   final _logStreamController = StreamController<String>.broadcast();
-  final _commandResponseController = StreamController<String>.broadcast();
+  final _commandResponseController = StreamController<List<String>>.broadcast();
   final _dataStreamController = StreamController<List<int>>.broadcast();
 
   Stream<String> get logStream => _logStreamController.stream;
-  Stream<String> get commandResponseStream => _commandResponseController.stream;
+  Stream<List<String>> get commandResponseStream =>
+      _commandResponseController.stream;
   Stream<List<int>> get dataStream => _dataStreamController.stream;
 
   /// Initialize ZMQ and connect all sockets
@@ -138,23 +61,23 @@ class FalconZMQ {
     }
   }
 
-  /// Send a command and wait for response
-  Future<String?> sendCommand(
-    FalconCommand command, {
+  /// Send a Falcon command and wait for response
+  Future<List<String>?> sendCommand(
+    FalconZmqCommand command, {
     Duration timeout = const Duration(seconds: 5),
   }) async {
     return _sendCommandParts(command.serialize(), timeout: timeout);
   }
 
-  /// Send custom command parts
-  Future<String?> sendCommandParts(
+  /// Send custom Falcon command parts
+  Future<List<String>?> sendCommandParts(
     List<String> parts, {
     Duration timeout = const Duration(seconds: 5),
   }) async {
     return _sendCommandParts(parts, timeout: timeout);
   }
 
-  Future<String?> _sendCommandParts(
+  Future<List<String>?> _sendCommandParts(
     List<String> parts, {
     required Duration timeout,
   }) async {
@@ -163,22 +86,10 @@ class FalconZMQ {
     }
 
     try {
-      final commandStr = parts.join(' ');
+      // Use ZMQ FFI to send/receive multipart strings
+      _zmq!.sendMultipartStrings(_commandSocket!, parts);
+      final responseStr = _zmq!.recvMultipartStrings(_commandSocket!);
 
-      // Send multipart message (simulate by sending joined parts)
-      // In a full implementation, you'd send each part separately
-      final sendResult = _zmq!.send(_commandSocket!, utf8.encode(commandStr));
-      if (sendResult < 0) {
-        return null;
-      }
-
-      // Receive response
-      final response = _zmq!.recv(_commandSocket!);
-      if (response == null || response.isEmpty) {
-        return null;
-      }
-
-      final responseStr = utf8.decode(response);
       _commandResponseController.add(responseStr);
       return responseStr;
     } catch (e) {
@@ -223,4 +134,81 @@ class FalconZMQ {
     unawaited(_commandResponseController.close());
     unawaited(_dataStreamController.close());
   }
+}
+
+/// Falcon commands matching Python FalconCommand enum
+enum FalconZmqCommand {
+  graphStart,
+  graphStop,
+  graphTest,
+  graphDestroy,
+  graphState,
+  graphYaml,
+  info,
+  documentation,
+  quit,
+  kill,
+  testOn,
+  testOff,
+  testToggle,
+  resourcesList
+  ;
+
+  /// Convert command to list of string parts for ZMQ multipart message
+  List<String> serialize() {
+    switch (this) {
+      case FalconZmqCommand.graphStart:
+        return ['graph', 'start'];
+      case FalconZmqCommand.graphStop:
+        return ['graph', 'stop'];
+      case FalconZmqCommand.graphTest:
+        return ['graph', 'test'];
+      case FalconZmqCommand.graphDestroy:
+        return ['graph', 'destroy'];
+      case FalconZmqCommand.graphState:
+        return ['graph', 'state'];
+      case FalconZmqCommand.graphYaml:
+        return ['graph', 'yaml'];
+      case FalconZmqCommand.info:
+        return ['info'];
+      case FalconZmqCommand.documentation:
+        return ['documentation'];
+      case FalconZmqCommand.quit:
+        return ['quit'];
+      case FalconZmqCommand.kill:
+        return ['kill'];
+      case FalconZmqCommand.testOn:
+        return ['test', 'true'];
+      case FalconZmqCommand.testOff:
+        return ['test', 'false'];
+      case FalconZmqCommand.testToggle:
+        return ['test'];
+      case FalconZmqCommand.resourcesList:
+        return ['resources', 'list'];
+    }
+  }
+
+  /// Create custom command with arbitrary parts
+  static List<String> custom(List<String> parts) => parts;
+
+  /// Create graph build command
+  static List<String> graphBuild(String graphFile) => [
+    'graph',
+    'build',
+    graphFile,
+  ];
+
+  /// Create resources list type command
+  static List<String> resourcesListType(String resourceType) => [
+    'resources',
+    'list',
+    resourceType,
+  ];
+
+  /// Create resources graph command
+  static List<String> resourcesGraph(String graphPath) => [
+    'resources',
+    'graphs',
+    graphPath,
+  ];
 }

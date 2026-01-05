@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:falcon_gui/graph_editor/graph_editor.dart';
+import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
+import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/priority_dialog.dart';
 import 'package:falcon_gui/utils/theme.dart';
@@ -29,8 +32,23 @@ void main() async {
     await windowManager.show();
     // await windowManager.focus();
   });
+
+  graphManager.addListener(() {
+    unawaited(falconManager.saveYaml(graphManager.graphAsYaml));
+  });
+  
+  unawaited(_tempLoadGraph());
+
   Future.delayed(const Duration(milliseconds: 1000), maybeShowPriorityDialog);
   runApp(const DesktopApp());
+}
+
+Future<void> _tempLoadGraph() async {
+  try {
+    final p = File('/home/device/falcon/resources/graphs/current.yaml');
+    final yaml = await p.readAsString();
+    graphManager.loadGraph(FalconGraphSerializerX.fromYaml(yaml));
+  } catch (_) {}
 }
 
 class DesktopApp extends StatelessWidget {

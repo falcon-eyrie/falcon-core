@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:falcon_gui/state/falcon_state.dart';
 import 'package:falcon_gui/state/falcon_zmq.dart';
 import 'package:falcon_gui/utils/killing_falcon_banner.dart';
 import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';
@@ -12,6 +13,10 @@ class FalconManager extends ChangeNotifier {
   FalconManager._internal();
 
   static final FalconManager instance = FalconManager._internal();
+
+  FalconState _falconState = FalconState.ready;
+
+  FalconState get falconState => _falconState;
 
   String get _falconPath {
     final home = Platform.environment['HOME'] ?? '';
@@ -29,6 +34,34 @@ class FalconManager extends ChangeNotifier {
   String get processPriorityCommand =>
       'sudo setcap cap_sys_nice=eip $_falconPath';
 
+  Future<PriorityStatus> checkProcessPriority() async {
+    try {
+      final result = await Process.run('getcap', [_falconPath]);
+      final newStatus = result.stdout.toString().contains('cap_sys_nice')
+          ? PriorityStatus.prioritized
+          : PriorityStatus.notPrioritized;
+      if (_priorityStatus != PriorityStatus.prioritized &&
+          newStatus == PriorityStatus.prioritized) {
+        debugPrint('Falcon process has been prioritized.');
+
+        if (_falconProcess != null) {
+          debugPrint('Restarting falcon to apply new priority settings.');
+          unawaited(killFalcon().then((_) => createFalcon()));
+        } else {
+          debugPrint('Spawning falcon with prioritized settings.');
+          unawaited(createFalcon());
+        }
+      }
+
+      _priorityStatus = newStatus;
+    } catch (e) {
+      debugPrint('Error checking priority: $e');
+      _priorityStatus = PriorityStatus.unknown;
+    }
+    notifyListeners();
+    return _priorityStatus;
+  }
+
   Future<void> createFalcon() async {
     final pids = await _getExistingFalconPIDs();
 
@@ -43,27 +76,32 @@ class FalconManager extends ChangeNotifier {
     }
 
     if (_falconProcess != null) return;
+
     try {
       _falconProcess = await Process.start(
         _falconPath,
-        [],
+        ['-c', 'falcon/debug_config.yaml'],
         mode: ProcessStartMode.inheritStdio,
       );
       _processExitCompleter = Completer<void>();
-      unawaited(
-        _falconProcess!.exitCode.then((_) {
-          debugPrint('Falcon process exitCode received');
-          if (_processExitCompleter != null &&
-              !_processExitCompleter!.isCompleted) {
-            _processExitCompleter!.complete();
-          }
-        }),
-      );
+      _listenForExitCode();
       await _initializeZMQ();
       notifyListeners();
     } catch (e) {
       debugPrint('Error creating falcon instance: $e');
     }
+  }
+
+  void _listenForExitCode() {
+    unawaited(
+      _falconProcess!.exitCode.then((_) {
+        debugPrint('Falcon process exitCode received');
+        if (_processExitCompleter != null &&
+            !_processExitCompleter!.isCompleted) {
+          _processExitCompleter!.complete();
+        }
+      }),
+    );
   }
 
   Future<List<int>> _getExistingFalconPIDs() async {
@@ -116,7 +154,7 @@ class FalconManager extends ChangeNotifier {
     try {
       showKillingFalconBanner();
       await Future<void>.delayed(const Duration(milliseconds: 100));
-      await sendCommand(FalconCommand.kill);
+      await sendCommand(FalconZmqCommand.kill);
 
       // Wait for process to terminate
       if (_falconProcess != null && _processExitCompleter != null) {
@@ -153,48 +191,19 @@ class FalconManager extends ChangeNotifier {
     }
   }
 
-  Future<PriorityStatus> checkProcessPriority() async {
-    try {
-      final result = await Process.run('getcap', [_falconPath]);
-      final newStatus = result.stdout.toString().contains('cap_sys_nice')
-          ? PriorityStatus.prioritized
-          : PriorityStatus.notPrioritized;
-      if (_priorityStatus != PriorityStatus.prioritized &&
-          newStatus == PriorityStatus.prioritized) {
-        debugPrint('Falcon process has been prioritized.');
-
-        if (_falconProcess != null) {
-          debugPrint('Restarting falcon to apply new priority settings.');
-          unawaited(killFalcon().then((_) => createFalcon()));
-        } else {
-          debugPrint('Spawning falcon with prioritized settings.');
-          unawaited(createFalcon());
-        }
-      }
-
-      _priorityStatus = newStatus;
-    } catch (e) {
-      debugPrint('Error checking priority: $e');
-      _priorityStatus = PriorityStatus.unknown;
-    }
-    notifyListeners();
-    return _priorityStatus;
-  }
-
   /// Send a Falcon command
-  Future<String?> sendCommand(
-    FalconCommand command, {
-    Duration timeout = const Duration(seconds: 5),
-  }) async {
+  Future<List<String>?> sendCommand(
+    FalconZmqCommand command,
+  ) async {
     if (_falconZMQ == null || !_falconZMQ!.isConnected) {
       debugPrint('FalconManager: ZMQ not connected');
       return null;
     }
-    return _falconZMQ!.sendCommand(command, timeout: timeout);
+    return _falconZMQ!.sendCommand(command);
   }
 
   /// Send custom command parts
-  Future<String?> sendCommandParts(
+  Future<List<String>?> sendCommandParts(
     List<String> parts, {
     Duration timeout = const Duration(seconds: 5),
   }) async {
@@ -205,13 +214,12 @@ class FalconManager extends ChangeNotifier {
     return _falconZMQ!.sendCommandParts(parts, timeout: timeout);
   }
 
-  Future<void> sendTestCommandSimple() async {
-    final response = await sendCommand(FalconCommand.graphYaml);
-    if (response != null) {
-      debugPrint('Test command response: $response');
-    } else {
-      debugPrint('No response for test command');
-    }
+  String _lastSavedGraphYaml = '';
+  final _p = File('/home/device/falcon/resources/graphs/current.yaml');
+  Future<void> saveYaml(String graphAsYaml) async {
+    if (graphAsYaml == _lastSavedGraphYaml) return;
+    _lastSavedGraphYaml = graphAsYaml;
+    await _p.writeAsString(graphAsYaml);
   }
 
   void debugConnectionStatus() {
@@ -222,6 +230,19 @@ class FalconManager extends ChangeNotifier {
     debugPrint(
       'FalconZMQ is ${_falconZMQ!.isConnected ? "connected" : "disconnected"}',
     );
+  }
+
+  Future<void> toggleProcessingState() async {
+    await sendCommand(FalconZmqCommand.graphDestroy);
+    await sendCommandParts(FalconZmqCommand.graphBuild(_p.path));
+    if (_falconState == FalconState.processing) {
+      await sendCommand(FalconZmqCommand.graphStop);
+      _falconState = FalconState.ready;
+    } else {
+      await sendCommand(FalconZmqCommand.graphStart);
+      _falconState = FalconState.processing;
+    }
+    notifyListeners();
   }
 }
 

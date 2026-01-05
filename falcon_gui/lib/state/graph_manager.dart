@@ -6,8 +6,9 @@ import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
 
-// td: when loading from file, fill in the missing ui metadata, which will be
-// complex because processors needs to be positioned and aligned
+// TODO(ben): when loading from file, fill in the missing ui metadata
+// which will be complex because processors needs to be positioned
+// and aligned with non-overlapping positions.
 
 final GraphManager graphManager = GraphManager.instance;
 

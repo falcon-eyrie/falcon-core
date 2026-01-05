@@ -70,19 +70,19 @@ final _processorDefinitionsUnsorted = {
       'encoding': _createEncodingOption(),
       'format': _createFormatOption(),
       'overwrite': BoolOption(value: false, displayName: 'Overwrite'),
-      'throttle': BoolOption(value: false, displayName: 'Throttle'),
-      'throttle_threshold': DoubleOption(
+      'throttle/enabled': BoolOption(value: false, displayName: 'Throttle'),
+      'throttle/threshold': DoubleOption(
         value: 0.3,
         displayName: 'Throttle Threshold',
       ),
-      'throttle_smooth': DoubleOption(
+      'throttle/smooth': DoubleOption(
         value: 0.5,
         displayName: 'Throttle Smooth',
       ),
       'preamble': BoolOption(value: true, displayName: 'Preamble'),
     },
     ports: [
-      Port(name: 'data_port', type: 'AnyType', isSrc: false),
+      Port(name: 'data', type: 'AnyType', isSrc: false),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -109,7 +109,7 @@ final _processorDefinitionsUnsorted = {
       ),
     },
     ports: [
-      Port(name: 'output_port', type: 'VectorType<uint32_t>', isSrc: true),
+      Port(name: 'udp', type: 'VectorType<uint32_t>', isSrc: true),
     ],
     uiMetadata: UIMetadata(),
   ),
