@@ -2,3 +2,5 @@
 - Polish/improve UI
 - Add processor states
 - Document readme.md for how to compile and run Falcon GUI
+- Use absolute paths for config files
+- Replace temporary absolute paths with correct paths

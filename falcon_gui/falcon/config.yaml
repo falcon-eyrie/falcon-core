@@ -1,0 +1,20 @@
+graph:
+  file: ""
+  autostart: false
+debug:
+  enabled: false
+testing:
+  enabled: false
+network:
+  port: 5555
+logging:
+  path: /home/device/falcon/output/logs
+  screen:
+    enabled: true
+  cloud:
+    enabled: true
+    port: 5556
+server_side_storage:
+  environment: /home/device/falcon/output
+  resources: /home/device/falcon/resources
+  custom: {}

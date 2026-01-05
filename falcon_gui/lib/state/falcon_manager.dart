@@ -80,7 +80,14 @@ class FalconManager extends ChangeNotifier {
     try {
       _falconProcess = await Process.start(
         _falconPath,
-        ['-c', 'falcon/debug_config.yaml'],
+        [
+          '-c',
+          if (kDebugMode) ...[
+            'falcon/debug_config.yaml',
+          ] else ...[
+            '/home/device/.local/share/org.falcon-eyrie.falcon_gui/config.yaml',
+          ],
+        ],
         mode: ProcessStartMode.inheritStdio,
       );
       _processExitCompleter = Completer<void>();
