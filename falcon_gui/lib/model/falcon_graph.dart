@@ -27,14 +27,18 @@ class FalconGraph {
     _processors.remove(id);
   }
 
-  void addConnection({required Connection newConnection}) {
-    final isNotDuplicate = _connections.none(
-      (connection) =>
-          connection.inProcessor == newConnection.inProcessor &&
-          connection.inPort == newConnection.inPort &&
-          connection.outProcessor == newConnection.outProcessor &&
-          connection.outPort == newConnection.outPort,
+  bool connectionExists({required Connection connection}) {
+    return _connections.any(
+      (conn) =>
+          conn.inProcessor == connection.inProcessor &&
+          conn.inPort == connection.inPort &&
+          conn.outProcessor == connection.outProcessor &&
+          conn.outPort == connection.outPort,
     );
+  }
+
+  void addConnection({required Connection newConnection}) {
+    final isNotDuplicate = !connectionExists(connection: newConnection);
     if (isNotDuplicate) {
       _connections.add(newConnection);
     }
@@ -48,6 +52,31 @@ class FalconGraph {
           connection.outProcessor == connectionToRemove.outProcessor &&
           connection.outPort == connectionToRemove.outPort,
     );
+  }
+
+  void renameConnections({
+    required String oldProcessorId,
+    required String newProcessorId,
+  }) {
+    for (var i = 0; i < _connections.length; i++) {
+      final conn = _connections[i];
+      if (conn.inProcessor == oldProcessorId) {
+        _connections[i] = Connection(
+          inProcessor: newProcessorId,
+          inPort: conn.inPort,
+          outProcessor: conn.outProcessor,
+          outPort: conn.outPort,
+        );
+      }
+      if (conn.outProcessor == oldProcessorId) {
+        _connections[i] = Connection(
+          inProcessor: conn.inProcessor,
+          inPort: conn.inPort,
+          outProcessor: newProcessorId,
+          outPort: conn.outPort,
+        );
+      }
+    }
   }
 
   FalconGraph copyWith({
@@ -97,9 +126,9 @@ class Processor {
     _options[name] = value;
   }
 
-  bool get isSource => _ports.every((port) => port.isIn);
+  bool get isSource => _ports.every((port) => port.isOut);
 
-  bool get isSink => _ports.every((port) => port.isOut);
+  bool get isSink => _ports.every((port) => port.isIn);
 
   bool get isIntermediate => !isSource && !isSink;
 

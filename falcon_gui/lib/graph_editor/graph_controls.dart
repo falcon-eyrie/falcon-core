@@ -4,6 +4,7 @@ import 'package:falcon_gui/state/falcon_state.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
 
 class GraphToolbar extends StatelessWidget {
   const GraphToolbar({
@@ -20,29 +21,14 @@ class GraphToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: falconManager,
-      builder: (context, child) {
+    return _MultiListener(
+      builder: (context) {
         return ColoredBox(
           color: context.c.surfaceContainer,
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  tooltip: 'Settings',
-                  onPressed: () async {
-                    await showDialog<void>(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => const SettingsView(),
-                    );
-                  },
-                ),
-                const SizedBox(width: 20),
-
-                // alter background color when panel is visible
                 IconButton(
                   icon: const Icon(Icons.account_tree),
                   style: IconButton.styleFrom(
@@ -91,6 +77,16 @@ class GraphToolbar extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 IconButton(
+                  icon: Icon(
+                    graphManager.isAllCollapsed
+                        ? Remix.arrow_down_double_fill
+                        : Remix.arrow_up_double_fill,
+                  ),
+                  tooltip: 'Toggle collapse all',
+                  onPressed: graphManager.toggleCollapseAll,
+                ),
+                const SizedBox(width: 8),
+                IconButton(
                   icon: const Icon(Icons.zoom_in_map),
                   tooltip: 'Reset zoom',
                   onPressed: graphManager.resetZoom,
@@ -125,9 +121,42 @@ class GraphToolbar extends StatelessWidget {
                     onPressed: falconManager.toggleProcessingState,
                   ),
                 ],
+                const SizedBox(width: 8),
+
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  tooltip: 'Settings',
+                  onPressed: () async {
+                    await showDialog<void>(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => const SettingsView(),
+                    );
+                  },
+                ),
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+}
+
+class _MultiListener extends StatelessWidget {
+  const _MultiListener({required this.builder});
+  final Widget Function(BuildContext context) builder;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: graphManager,
+      builder: (context, _) {
+        return AnimatedBuilder(
+          animation: falconManager,
+          builder: (context, _) {
+            return builder(context);
+          },
         );
       },
     );

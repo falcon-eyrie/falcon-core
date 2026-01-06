@@ -6,7 +6,7 @@ import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 
-class ProcessorItem extends StatelessWidget {
+class ProcessorItem extends StatefulWidget {
   const ProcessorItem({
     required this.processor,
     this.onPanStart,
@@ -23,16 +23,35 @@ class ProcessorItem extends StatelessWidget {
   final void Function(DragEndDetails)? onPanEnd;
   final void Function()? onTapDown;
 
+  @override
+  State<ProcessorItem> createState() => _ProcessorItemState();
+}
+
+class _ProcessorItemState extends State<ProcessorItem> {
+  // Template processors neither store any state nor they are modifiable
+  bool _isTemplateExpanded = false;
   void _toggleExpanded() {
-    graphManager.toggleProcessorExpanded(id: processor.id);
+    if (widget.processor.isTemplate) {
+      setState(() {
+        _isTemplateExpanded = !_isTemplateExpanded;
+      });
+    } else {
+      graphManager.toggleProcessorExpanded(id: widget.processor.id);
+    }
   }
+
+  bool get showPorts => !widget.processor.isTemplate || _isTemplateExpanded;
+
+  bool get _isExpanded => widget.processor.isTemplate
+      ? _isTemplateExpanded
+      : widget.processor.uiMetadata.isExpanded;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) => onTapDown?.call(),
+      onTapDown: (_) => widget.onTapDown?.call(),
       child: Container(
-        key: ValueKey(processor.id),
+        key: ValueKey(widget.processor.id),
         width: 400,
         decoration: BoxDecoration(
           border: Border.all(color: context.c.surfaceContainerHighest),
@@ -44,41 +63,43 @@ class ProcessorItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             GestureDetector(
-              onPanStart: onPanStart,
-              onPanUpdate: onPanUpdate,
-              onPanEnd: onPanEnd,
+              onPanStart: widget.onPanStart,
+              onPanUpdate: widget.onPanUpdate,
+              onPanEnd: widget.onPanEnd,
               child: _Header(
-                processor: processor,
+                processor: widget.processor,
                 onExpandToggle: _toggleExpanded,
-                isExpanded: processor.uiMetadata.isExpanded,
-                onFocused: () => onTapDown?.call(),
+                isExpanded: _isExpanded,
+                onFocused: () => widget.onTapDown?.call(),
               ),
             ),
-            IgnorePointer(
-              ignoring: processor.isTemplate,
-              child: ColorFiltered(
-                colorFilter: processor.isTemplate
-                    ? greyScaleFilter
-                    : const ColorFilter.mode(
-                        Colors.transparent,
-                        BlendMode.multiply,
-                      ),
-
-                child: ProcessorPortsView(processor: processor),
-              ),
-            ),
-            if (processor.uiMetadata.isExpanded) ...[
-              const Divider(),
+            if (showPorts) ...[
               IgnorePointer(
-                ignoring: processor.isTemplate,
+                ignoring: widget.processor.isTemplate,
                 child: ColorFiltered(
-                  colorFilter: processor.isTemplate
+                  colorFilter: widget.processor.isTemplate
                       ? greyScaleFilter
                       : const ColorFilter.mode(
                           Colors.transparent,
                           BlendMode.multiply,
                         ),
-                  child: ProcessorOptionsView(processor: processor),
+
+                  child: ProcessorPortsView(processor: widget.processor),
+                ),
+              ),
+            ],
+            if (_isExpanded) ...[
+              const Divider(),
+              IgnorePointer(
+                ignoring: widget.processor.isTemplate,
+                child: ColorFiltered(
+                  colorFilter: widget.processor.isTemplate
+                      ? greyScaleFilter
+                      : const ColorFilter.mode(
+                          Colors.transparent,
+                          BlendMode.multiply,
+                        ),
+                  child: ProcessorOptionsView(processor: widget.processor),
                 ),
               ),
             ],

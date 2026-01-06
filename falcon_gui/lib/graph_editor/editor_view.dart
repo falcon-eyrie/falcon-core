@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:falcon_gui/graph_editor/processor_item.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:flutter/gestures.dart';
@@ -7,8 +9,36 @@ import 'package:flutter/material.dart';
 ///
 /// Main canvas/editor view for Linux desktop. Users can pan,
 /// zoom, and drag processors.
-class EditorView extends StatelessWidget {
+class EditorView extends StatefulWidget {
   const EditorView({super.key});
+
+  @override
+  State<EditorView> createState() => _EditorViewState();
+}
+
+class _EditorViewState extends State<EditorView> {
+  bool _canRenderConnections = false;
+
+  bool get _showConnectionsPainter =>
+      graphManager.processors.isNotEmpty && _canRenderConnections;
+
+  void _checkCanRenderConnections() {
+    if (!_canRenderConnections) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(
+          Future.microtask(() {
+            if (!_canRenderConnections &&
+                mounted &&
+                graphManager.hasAnyPortPositions) {
+              setState(() {
+                _canRenderConnections = true;
+              });
+            }
+          }),
+        );
+      });
+    }
+  }
 
   /// Converts global screen position to world coordinates
   Offset _toScene(Offset globalPosition, BuildContext context) {
@@ -21,6 +51,8 @@ class EditorView extends StatelessWidget {
     return AnimatedBuilder(
       animation: graphManager,
       builder: (context, _) {
+        _checkCanRenderConnections();
+
         final isCreatingConnection = graphManager.selectedPortUniqueId != null;
         return MouseRegion(
           cursor: isCreatingConnection
@@ -53,15 +85,17 @@ class EditorView extends StatelessWidget {
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    CustomPaint(
-                      painter: ConnectionPainter(
-                        lineColor: const Color(0xFF208991),
+                    if (_showConnectionsPainter) ...[
+                      CustomPaint(
+                        painter: ConnectionPainter(
+                          lineColor: const Color(0xFF208991),
+                        ),
+                        size: Size(
+                          graphManager.canvasSize.width,
+                          graphManager.canvasSize.height,
+                        ),
                       ),
-                      size: Size(
-                        graphManager.canvasSize.width,
-                        graphManager.canvasSize.height,
-                      ),
-                    ),
+                    ],
                     ...graphManager.processors.map((processor) {
                       return Positioned(
                         key: ValueKey(processor.id),

@@ -26,31 +26,17 @@ final Map<String, Processor> processorDefinitions = () {
       final procA = _processorDefinitionsUnsorted[a]!;
       final procB = _processorDefinitionsUnsorted[b]!;
 
-      int groupA;
-      int groupB;
-
-      if (procA.ports.any((port) => port.isIn) &&
-          !procA.ports.any((port) => !port.isIn)) {
-        groupA = 0; // source
-      } else if (procA.ports.any((port) => !port.isIn) &&
-          !procA.ports.any((port) => port.isIn)) {
-        groupA = 2; // sink
-      } else {
-        groupA = 1; // processor
+      int rank(Processor p) {
+        if (p.isSource) return 0;
+        if (p.isSink) return 2;
+        return 1;
       }
 
-      if (procB.ports.any((port) => port.isIn) &&
-          !procB.ports.any((port) => !port.isIn)) {
-        groupB = 0; // source
-      } else if (procB.ports.any((port) => !port.isIn) &&
-          !procB.ports.any((port) => port.isIn)) {
-        groupB = 2; // sink
-      } else {
-        groupB = 1; // processor
-      }
+      final rankA = rank(procA);
+      final rankB = rank(procB);
 
-      if (groupA != groupB) {
-        return groupA.compareTo(groupB);
+      if (rankA != rankB) {
+        return rankA.compareTo(rankB);
       } else {
         return procA.className.compareTo(procB.className);
       }
@@ -86,7 +72,7 @@ final _processorDefinitionsUnsorted = {
       'preamble': BoolOption(value: true, displayName: 'Preamble'),
     },
     ports: [
-      Port(name: 'data', type: 'AnyType', isIn: false),
+      Port(name: 'data', type: 'AnyType', isIn: true),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -113,7 +99,7 @@ final _processorDefinitionsUnsorted = {
       ),
     },
     ports: [
-      Port(name: 'udp', type: 'VectorType<uint32_t>', isIn: true),
+      Port(name: 'udp', type: 'VectorType<uint32_t>', isIn: false),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -131,7 +117,7 @@ final _processorDefinitionsUnsorted = {
       'interleave': BoolOption(value: false, displayName: 'Interleave'),
     },
     ports: [
-      Port(name: 'data_port', type: 'AnyType', isIn: false),
+      Port(name: 'data_port', type: 'AnyType', isIn: true),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -146,7 +132,7 @@ final _processorDefinitionsUnsorted = {
       ),
     },
     ports: [
-      Port(name: 'event_port', type: 'EventType', isIn: false),
+      Port(name: 'event_port', type: 'EventType', isIn: true),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -161,8 +147,8 @@ final _processorDefinitionsUnsorted = {
       ),
     },
     ports: [
-      Port(name: 'data_in_port', type: 'EventType', isIn: false),
-      Port(name: 'data_out_port', type: 'EventType', isIn: true),
+      Port(name: 'data_in_port', type: 'EventType', isIn: true),
+      Port(name: 'data_out_port', type: 'EventType', isIn: false),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -197,9 +183,9 @@ final _processorDefinitionsUnsorted = {
       ),
     },
     ports: [
-      Port(name: 'data_in_port', type: 'EventType', isIn: false),
-      Port(name: 'data_out_port', type: 'EventType', isIn: true),
-      Port(name: 'block_in_port', type: 'EventType', isIn: false),
+      Port(name: 'data_in_port', type: 'EventType', isIn: true),
+      Port(name: 'data_out_port', type: 'EventType', isIn: false),
+      Port(name: 'block_in_port', type: 'EventType', isIn: true),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -242,9 +228,9 @@ final _processorDefinitionsUnsorted = {
       ),
     },
     ports: [
-      Port(name: 'data_in_port', type: 'TimeSeriesType<double>', isIn: false),
-      Port(name: 'event_out_port', type: 'EventType', isIn: true),
-      Port(name: 'stats_out_port', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'data_in_port', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'event_out_port', type: 'EventType', isIn: false),
+      Port(name: 'stats_out_port', type: 'TimeSeriesType<double>', isIn: false),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -259,8 +245,8 @@ final _processorDefinitionsUnsorted = {
       ),
     },
     ports: [
-      Port(name: 'data_in_port', type: 'TimeSeriesType<double>', isIn: false),
-      Port(name: 'data_out_port', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'data_in_port', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'data_out_port', type: 'TimeSeriesType<double>', isIn: false),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -270,7 +256,7 @@ final _processorDefinitionsUnsorted = {
     isTemplate: true,
     options: {
       'channelmap': StringOption(
-        value: '',
+        value: 'group1: [0,1,2,3]',
         displayName: 'Channel Map',
       ),
       'address': StringOption(
@@ -308,6 +294,8 @@ final _processorDefinitionsUnsorted = {
     },
     ports: [
       // Note: Dynamic ports created based on channelmap
+      // temp ports
+      Port(name: 'group1', type: 'TimeSeriesType<double>', isIn: false),
     ],
     uiMetadata: UIMetadata(),
   ),
@@ -370,8 +358,8 @@ final _processorDefinitionsUnsorted = {
       ),
     },
     ports: [
-      Port(name: 'data_in_port', type: 'EventType', isIn: false),
-      Port(name: 'output_port', type: 'EventType', isIn: true),
+      Port(name: 'data_in_port', type: 'EventType', isIn: true),
+      Port(name: 'output_port', type: 'EventType', isIn: false),
     ],
     uiMetadata: UIMetadata(),
   ),

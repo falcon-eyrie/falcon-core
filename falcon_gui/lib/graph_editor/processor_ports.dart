@@ -19,7 +19,7 @@ class ProcessorPortsView extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (final port in outPorts)
+              for (final port in inPorts)
                 _PortRow(
                   processor: processor,
                   port: port,
@@ -30,7 +30,7 @@ class ProcessorPortsView extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              for (final port in inPorts)
+              for (final port in outPorts)
                 _PortRow(
                   processor: processor,
                   port: port,
@@ -67,10 +67,10 @@ class _PortRow extends StatelessWidget {
       PortSelectabilityStatus.idle => 'Click to start a connection',
       PortSelectabilityStatus.compatible => 'Click to create a connection',
       PortSelectabilityStatus.alreadyConnected => 'Connection already exists',
-      PortSelectabilityStatus.selectedAsIn => 'Cannot connect to self',
+      PortSelectabilityStatus.selectedAsInput => 'Cannot connect to self',
       PortSelectabilityStatus.typeIncompatible => 'Incompatible port type',
-      PortSelectabilityStatus.bothIn => 'Cannot connect two input ports',
-      PortSelectabilityStatus.bothOut => 'Cannot connect two output ports',
+      PortSelectabilityStatus.bothInput => 'Cannot connect two input ports',
+      PortSelectabilityStatus.bothOutput => 'Cannot connect two output ports',
       PortSelectabilityStatus.sameProcessor =>
         'Cannot connect ports within the same processor',
       null => null,
@@ -78,8 +78,8 @@ class _PortRow extends StatelessWidget {
 
     final text = Column(
       crossAxisAlignment: port.isIn
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.start,
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
@@ -137,8 +137,8 @@ class _PortRow extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: port.isIn
-                ? [text, const SizedBox(width: 4), dot]
-                : [dot, const SizedBox(width: 4), text],
+                ? [dot, const SizedBox(width: 4), text]
+                : [text, const SizedBox(width: 4), dot],
           ),
         ),
       ),
@@ -207,7 +207,7 @@ class _PortHalfDot extends StatelessWidget {
 
     return ClipRect(
       child: Align(
-        alignment: isIn ? Alignment.centerLeft : Alignment.centerRight,
+        alignment: isIn ? Alignment.centerRight : Alignment.centerLeft,
         widthFactor: 0.5,
         child: Container(
           width: isEnabled ? 16 : 12,
@@ -216,8 +216,8 @@ class _PortHalfDot extends StatelessWidget {
             color: !isEnabled
                 ? Colors.grey
                 : isIn
-                ? Colors.blue
-                : Colors.green,
+                ? Colors.green
+                : Colors.blue,
             shape: BoxShape.circle,
           ),
         ),

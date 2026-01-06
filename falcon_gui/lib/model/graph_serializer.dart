@@ -52,8 +52,8 @@ extension FalconGraphSerializerX on FalconGraph {
       buffer.writeln('  connections:');
       for (final conn in connections) {
         buffer.writeln(
-          '    - ${conn.inProcessor}.${conn.inPort} = '
-          '${conn.outProcessor}.${conn.outPort}',
+          '    - ${conn.outProcessor}.${conn.outPort} = '
+          '${conn.inProcessor}.${conn.inPort}',
         );
       }
     }

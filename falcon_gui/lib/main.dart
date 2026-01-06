@@ -28,7 +28,7 @@ void main() async {
   await windowManager.setPreventClose(true);
 
   await windowManager.waitUntilReadyToShow(windowOptions, () async {
-    // await windowManager.maximize();
+    await windowManager.maximize();
     await windowManager.show();
     // await windowManager.focus();
   });

@@ -26,8 +26,18 @@ class ProcessorsPanel extends StatelessWidget {
       width: 400,
       color: context.c.surfaceContainer,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Padding(
+            padding: EdgeInsets.all(8),
+            child: Text(
+              'Available Processors',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               itemBuilder: (context, index) {
@@ -53,18 +63,6 @@ class ProcessorsPanel extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (index == 0) ...[
-                        const Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Text(
-                            'Available Processors',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
                       const Divider(),
 
                       Padding(

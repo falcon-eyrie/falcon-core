@@ -280,6 +280,10 @@ class GraphManager extends ChangeNotifier {
   // widget that contains it.
   final _portPositions = <String, Offset>{};
 
+  // Whether any port positions have been reported from the processor widgets.
+  // Used to avoid drawing connections before port positions are known.
+  bool get hasAnyPortPositions => _portPositions.isNotEmpty;
+
   // Currently selected port unique ID (processorId-portName) for connection
   // creation.
   String? _selectedPortUniqueId;
@@ -312,14 +316,14 @@ class GraphManager extends ChangeNotifier {
 
     // The port itself is selected as input port
     if (_selectedPortUniqueId == uniquePortId) {
-      return PortSelectabilityStatus.selectedAsIn;
+      return PortSelectabilityStatus.selectedAsInput;
     }
 
     final statusMap = {
       _validOutPortIds: PortSelectabilityStatus.compatible,
       _typeIncompatiblePortIds: PortSelectabilityStatus.typeIncompatible,
-      _bothInPortIds: PortSelectabilityStatus.bothIn,
-      _bothOutPortIds: PortSelectabilityStatus.bothOut,
+      _bothInPortIds: PortSelectabilityStatus.bothInput,
+      _bothOutPortIds: PortSelectabilityStatus.bothOutput,
       _alreadyConnectedPortIds: PortSelectabilityStatus.alreadyConnected,
       _sameProcessorPortIds: PortSelectabilityStatus.sameProcessor,
     };
@@ -373,7 +377,23 @@ class GraphManager extends ChangeNotifier {
               otherPort.type == 'AnyType' ||
               port.type == otherPort.type;
 
-          final isAlreadyConnected = 1 != 1; //todo: implement connection check
+          final possibleConnection = port.isIn
+              ? Connection(
+                  inProcessor: processorId,
+                  inPort: port.name,
+                  outProcessor: otherProcessor.id,
+                  outPort: otherPort.name,
+                )
+              : Connection(
+                  inProcessor: otherProcessor.id,
+                  inPort: otherPort.name,
+                  outProcessor: processorId,
+                  outPort: port.name,
+                );
+
+          final isAlreadyConnected = _graph.connectionExists(
+            connection: possibleConnection,
+          );
 
           if (isAlreadyConnected) {
             _alreadyConnectedPortIds.add(otherUniqueId);
@@ -610,6 +630,12 @@ class GraphManager extends ChangeNotifier {
     final updatedProcessor = processor.copyWith(id: newId);
     _graph
       ..setProcessor(id: newId, newValue: updatedProcessor)
+      ..renameConnections(
+        oldProcessorId: oldId,
+        newProcessorId: newId,
+      )
+      // Remove old processor after renaming the connections.
+      // Otherwise the connections will be removed with the old processor.
       ..removeProcessor(id: oldId);
 
     notifyListeners();
@@ -622,13 +648,35 @@ class GraphManager extends ChangeNotifier {
     processor.uiMetadata.toggleExpanded();
     notifyListeners();
   }
+
+  bool get isAllExpanded => _graph.processors.values.every(
+    (processor) => processor.uiMetadata.isExpanded,
+  );
+
+  bool get isAllCollapsed => _graph.processors.values.every(
+    (processor) => !processor.uiMetadata.isExpanded,
+  );
+
+  void toggleCollapseAll() {
+    final isAllExpanded = this.isAllExpanded;
+    final isAllCollapsed = this.isAllCollapsed;
+
+    for (final processor in _graph.processors.values) {
+      if (isAllExpanded || isAllCollapsed) {
+        processor.uiMetadata.toggleExpanded();
+      } else if (processor.uiMetadata.isExpanded) {
+        processor.uiMetadata.toggleExpanded();
+      }
+    }
+    notifyListeners();
+  }
 }
 
 enum PortSelectabilityStatus {
-  selectedAsIn,
+  selectedAsInput,
   typeIncompatible,
-  bothIn,
-  bothOut,
+  bothInput,
+  bothOutput,
   alreadyConnected,
   sameProcessor,
   compatible,
