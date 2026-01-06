@@ -6,7 +6,7 @@ import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 
-class ProcessorItem extends StatefulWidget {
+class ProcessorItem extends StatelessWidget {
   const ProcessorItem({
     required this.processor,
     this.onPanStart,
@@ -21,37 +21,18 @@ class ProcessorItem extends StatefulWidget {
   final void Function(DragStartDetails)? onPanStart;
   final void Function(DragUpdateDetails)? onPanUpdate;
   final void Function(DragEndDetails)? onPanEnd;
-  final void Function(TapDownDetails)? onTapDown;
-
-  @override
-  State<ProcessorItem> createState() => _ProcessorItemState();
-}
-
-class _ProcessorItemState extends State<ProcessorItem> {
-  bool _isExpanded = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _isExpanded = !widget.processor.isTemplate;
-
-    // This could be a nice to have
-    //_isExpanded = widget.processor.uiMetadata.isExpanded ?? false;
-  }
+  final void Function()? onTapDown;
 
   void _toggleExpanded() {
-    setState(() {
-      _isExpanded = !_isExpanded;
-    });
+    graphManager.toggleProcessorExpanded(id: processor.id);
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: widget.onTapDown,
+      onTapDown: (_) => onTapDown?.call(),
       child: Container(
-        key: ValueKey(widget.processor.id),
+        key: ValueKey(processor.id),
         width: 400,
         decoration: BoxDecoration(
           border: Border.all(color: context.c.surfaceContainerHighest),
@@ -63,40 +44,41 @@ class _ProcessorItemState extends State<ProcessorItem> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             GestureDetector(
-              onPanStart: widget.onPanStart,
-              onPanUpdate: widget.onPanUpdate,
-              onPanEnd: widget.onPanEnd,
+              onPanStart: onPanStart,
+              onPanUpdate: onPanUpdate,
+              onPanEnd: onPanEnd,
               child: _Header(
-                processor: widget.processor,
+                processor: processor,
                 onExpandToggle: _toggleExpanded,
-                isExpanded: _isExpanded,
+                isExpanded: processor.uiMetadata.isExpanded,
+                onFocused: () => onTapDown?.call(),
               ),
             ),
             IgnorePointer(
-              ignoring: widget.processor.isTemplate,
+              ignoring: processor.isTemplate,
               child: ColorFiltered(
-                colorFilter: widget.processor.isTemplate
+                colorFilter: processor.isTemplate
                     ? greyScaleFilter
                     : const ColorFilter.mode(
                         Colors.transparent,
                         BlendMode.multiply,
                       ),
 
-                child: ProcessorPortsView(processor: widget.processor),
+                child: ProcessorPortsView(processor: processor),
               ),
             ),
-            if (_isExpanded) ...[
+            if (processor.uiMetadata.isExpanded) ...[
               const Divider(),
               IgnorePointer(
-                ignoring: widget.processor.isTemplate,
+                ignoring: processor.isTemplate,
                 child: ColorFiltered(
-                  colorFilter: widget.processor.isTemplate
+                  colorFilter: processor.isTemplate
                       ? greyScaleFilter
                       : const ColorFilter.mode(
                           Colors.transparent,
                           BlendMode.multiply,
                         ),
-                  child: ProcessorOptionsView(processor: widget.processor),
+                  child: ProcessorOptionsView(processor: processor),
                 ),
               ),
             ],
@@ -112,11 +94,13 @@ class _Header extends StatefulWidget {
     required this.processor,
     required this.onExpandToggle,
     required this.isExpanded,
+    required this.onFocused,
   });
 
   final Processor processor;
   final VoidCallback onExpandToggle;
   final bool isExpanded;
+  final VoidCallback onFocused;
 
   @override
   State<_Header> createState() => _HeaderState();
@@ -166,6 +150,7 @@ class _HeaderState extends State<_Header> {
                     _ProcessorNameEditor(
                       processor: widget.processor,
                       onNameChanged: _onNameChanged,
+                      onFocused: widget.onFocused,
                     ),
                   ] else ...[
                     MouseRegion(
@@ -236,12 +221,13 @@ class _HeaderState extends State<_Header> {
 class _ProcessorNameEditor extends StatefulWidget {
   const _ProcessorNameEditor({
     required this.processor,
+    required this.onFocused,
     required this.onNameChanged,
   });
 
   final Processor processor;
   final void Function(String) onNameChanged;
-
+  final VoidCallback onFocused;
   @override
   State<_ProcessorNameEditor> createState() => _ProcessorNameEditorState();
 }
@@ -260,15 +246,15 @@ class _ProcessorNameEditorState extends State<_ProcessorNameEditor> {
 
   @override
   void dispose() {
-    _focusNode
-      ..removeListener(_onFocusChange)
-      ..dispose();
+    _focusNode.dispose();
     _nameController.dispose();
     super.dispose();
   }
 
   void _onFocusChange() {
-    if (!_focusNode.hasFocus) {
+    if (_focusNode.hasFocus) {
+      widget.onFocused();
+    } else {
       _onNameSubmitted();
     }
   }

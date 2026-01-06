@@ -16,102 +16,49 @@ class GraphEditor extends StatefulWidget {
 class _GraphEditorState extends State<GraphEditor> {
   bool _isProcessorsCollapsed = false;
   bool _isYamlCollapsed = true;
-  final double _processorsWidth = 400;
-  final double _yamlWidth = 400;
+
+  void _onYamlCollapseToggled() {
+    setState(() {
+      _isYamlCollapsed = !_isYamlCollapsed;
+    });
+  }
+
+  void _onProcessorPanelCollapseToggled() {
+    setState(() {
+      _isProcessorsCollapsed = !_isProcessorsCollapsed;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const GraphToolbar(),
+        GraphToolbar(
+          isProcessorsCollapsed: _isProcessorsCollapsed,
+          isYamlCollapsed: _isYamlCollapsed,
+          onProcessorPanelClicked: _onProcessorPanelCollapseToggled,
+          onYamlPanelClicked: _onYamlCollapseToggled,
+        ),
         Expanded(
           child: Stack(
             children: [
               Row(
                 children: [
                   // Processors Panel (left)
-                  if (!_isProcessorsCollapsed)
-                    SizedBox(
-                      width: _processorsWidth,
-                      child: ColoredBox(
-                        color: context.c.surfaceContainer,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.chevron_left),
-                              onPressed: () {
-                                setState(() {
-                                  _isProcessorsCollapsed = true;
-                                });
-                              },
-                            ),
-                            const Expanded(
-                              child: ProcessorsPanel(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  if (!_isProcessorsCollapsed) ...[
+                    const ProcessorsPanel(),
+                  ],
 
                   const Expanded(
                     child: EditorView(),
                   ),
 
                   // YAML Editor (right)
-                  if (!_isYamlCollapsed)
-                    SizedBox(
-                      width: _yamlWidth,
-                      child: ColoredBox(
-                        color: context.c.surfaceContainer,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.chevron_right),
-                              onPressed: () {
-                                setState(() {
-                                  _isYamlCollapsed = true;
-                                });
-                              },
-                            ),
-                            const Expanded(
-                              child: _YamlEditor(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  if (!_isYamlCollapsed) ...[
+                    const _YamlEditor(),
+                  ],
                 ],
               ),
-              if (_isProcessorsCollapsed)
-                Positioned(
-                  left: 8,
-                  top: 8,
-                  child: IconButton(
-                    icon: const Icon(Icons.widgets),
-                    tooltip: 'Show Processors',
-                    onPressed: () {
-                      setState(() {
-                        _isProcessorsCollapsed = false;
-                      });
-                    },
-                  ),
-                ),
-              if (_isYamlCollapsed)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: IconButton(
-                    icon: const Icon(Icons.code),
-                    tooltip: 'Show YAML',
-                    onPressed: () {
-                      setState(() {
-                        _isYamlCollapsed = false;
-                      });
-                    },
-                  ),
-                ),
             ],
           ),
         ),
@@ -135,7 +82,7 @@ class _YamlEditorState extends State<_YamlEditor> {
   void initState() {
     super.initState();
     controller = TextEditingController(text: graphManager.graphAsYaml);
-    focusNode = FocusNode();
+    focusNode = FocusNode()..addListener(_onFocusChange);
   }
 
   @override
@@ -143,6 +90,15 @@ class _YamlEditorState extends State<_YamlEditor> {
     controller.dispose();
     focusNode.dispose();
     super.dispose();
+  }
+
+  void _onFocusChange() {
+    if (!focusNode.hasFocus) {
+      final currentYaml = graphManager.graphAsYaml;
+      if (controller.text != currentYaml) {
+        controller.text = currentYaml;
+      }
+    }
   }
 
   @override
@@ -155,8 +111,10 @@ class _YamlEditorState extends State<_YamlEditor> {
         if (!focusNode.hasFocus && controller.text != currentYaml) {
           controller.text = currentYaml;
         }
-        return Padding(
+        return Container(
+          width: 450,
           padding: const EdgeInsets.all(8),
+          color: context.c.surfaceContainer,
           child: TextFormField(
             controller: controller,
             focusNode: focusNode,

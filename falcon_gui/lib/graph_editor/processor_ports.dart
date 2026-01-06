@@ -10,8 +10,8 @@ class ProcessorPortsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final srcPorts = processor.ports.where((port) => port.isSrc);
-    final dstPorts = processor.ports.where((port) => port.isDst);
+    final inPorts = processor.ports.where((port) => port.isIn);
+    final outPorts = processor.ports.where((port) => port.isOut);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -19,7 +19,7 @@ class ProcessorPortsView extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (final port in dstPorts)
+              for (final port in outPorts)
                 _PortRow(
                   processor: processor,
                   port: port,
@@ -30,7 +30,7 @@ class ProcessorPortsView extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              for (final port in srcPorts)
+              for (final port in inPorts)
                 _PortRow(
                   processor: processor,
                   port: port,
@@ -54,13 +54,30 @@ class _PortRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isEnabled = graphManager.isPortEnabled(
+    final portSelectionStatus = graphManager.getPortSelectabilityStatus(
       processorId: processor.id,
       portName: port.name,
     );
 
+    final isEnabled =
+        portSelectionStatus == PortSelectabilityStatus.compatible ||
+        portSelectionStatus == PortSelectabilityStatus.idle;
+
+    final tooltipMessage = switch (portSelectionStatus) {
+      PortSelectabilityStatus.idle => 'Click to start a connection',
+      PortSelectabilityStatus.compatible => 'Click to create a connection',
+      PortSelectabilityStatus.alreadyConnected => 'Connection already exists',
+      PortSelectabilityStatus.selectedAsIn => 'Cannot connect to self',
+      PortSelectabilityStatus.typeIncompatible => 'Incompatible port type',
+      PortSelectabilityStatus.bothIn => 'Cannot connect two input ports',
+      PortSelectabilityStatus.bothOut => 'Cannot connect two output ports',
+      PortSelectabilityStatus.sameProcessor =>
+        'Cannot connect ports within the same processor',
+      null => null,
+    };
+
     final text = Column(
-      crossAxisAlignment: port.isSrc
+      crossAxisAlignment: port.isIn
           ? CrossAxisAlignment.end
           : CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -88,35 +105,38 @@ class _PortRow extends StatelessWidget {
     final dot = _PortHalfDot(
       processorId: processor.id,
       portName: port.name,
-      isSrc: port.isSrc,
+      isIn: port.isIn,
       isEnabled: isEnabled,
       isTemplate: processor.isTemplate,
     );
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.alias,
-      child: GestureDetector(
-        onTapDown: isEnabled
-            ? (_) => graphManager.onPortClicked(
-                processorId: processor.id,
-                port: port,
-              )
-            : null,
-        onVerticalDragStart: (_) {},
-        onVerticalDragUpdate: (_) {},
-        onHorizontalDragStart: (_) {},
-        onHorizontalDragUpdate: (_) {},
-        onHorizontalDragCancel: () {},
-        onHorizontalDragEnd: (_) {},
-        onHorizontalDragDown: (_) {},
-        onVerticalDragCancel: () {},
-        onVerticalDragEnd: (_) {},
-        onVerticalDragDown: (_) {},
+    return GestureDetector(
+      onTapDown: isEnabled
+          ? (_) => graphManager.onPortClicked(
+              processorId: processor.id,
+              port: port,
+            )
+          : null,
+      onVerticalDragStart: (_) {},
+      onVerticalDragUpdate: (_) {},
+      onHorizontalDragStart: (_) {},
+      onHorizontalDragUpdate: (_) {},
+      onHorizontalDragCancel: () {},
+      onHorizontalDragEnd: (_) {},
+      onHorizontalDragDown: (_) {},
+      onVerticalDragCancel: () {},
+      onVerticalDragEnd: (_) {},
+      onVerticalDragDown: (_) {},
+      child: Tooltip(
+        mouseCursor: isEnabled
+            ? SystemMouseCursors.alias
+            : SystemMouseCursors.forbidden,
+        message: processor.isTemplate ? '' : tooltipMessage,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: port.isSrc
+            children: port.isIn
                 ? [text, const SizedBox(width: 4), dot]
                 : [dot, const SizedBox(width: 4), text],
           ),
@@ -131,13 +151,13 @@ class _PortHalfDot extends StatelessWidget {
     required this.isTemplate,
     required this.processorId,
     required this.portName,
-    required this.isSrc,
+    required this.isIn,
     required this.isEnabled,
   });
 
   final String processorId;
   final String portName;
-  final bool isSrc;
+  final bool isIn;
   final bool isEnabled;
   final bool isTemplate;
 
@@ -187,7 +207,7 @@ class _PortHalfDot extends StatelessWidget {
 
     return ClipRect(
       child: Align(
-        alignment: isSrc ? Alignment.centerLeft : Alignment.centerRight,
+        alignment: isIn ? Alignment.centerLeft : Alignment.centerRight,
         widthFactor: 0.5,
         child: Container(
           width: isEnabled ? 16 : 12,
@@ -195,7 +215,7 @@ class _PortHalfDot extends StatelessWidget {
           decoration: BoxDecoration(
             color: !isEnabled
                 ? Colors.grey
-                : isSrc
+                : isIn
                 ? Colors.blue
                 : Colors.green,
             shape: BoxShape.circle,

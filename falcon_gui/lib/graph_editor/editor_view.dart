@@ -90,7 +90,7 @@ class EditorView extends StatelessWidget {
                           },
                           onPanEnd: (_) =>
                               graphManager.onProcessorDragEnd(id: processor.id),
-                          onTapDown: (_) =>
+                          onTapDown: () =>
                               graphManager.onProcessorClicked(id: processor.id),
                           processor: processor,
                         ),

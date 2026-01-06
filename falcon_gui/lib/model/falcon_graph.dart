@@ -22,7 +22,7 @@ class FalconGraph {
 
   void removeProcessor({required String id}) {
     _connections.removeWhere(
-      (conn) => conn.srcProcessor == id || conn.dstProcessor == id,
+      (conn) => conn.inProcessor == id || conn.outProcessor == id,
     );
     _processors.remove(id);
   }
@@ -30,10 +30,10 @@ class FalconGraph {
   void addConnection({required Connection newConnection}) {
     final isNotDuplicate = _connections.none(
       (connection) =>
-          connection.srcProcessor == newConnection.srcProcessor &&
-          connection.srcPort == newConnection.srcPort &&
-          connection.dstProcessor == newConnection.dstProcessor &&
-          connection.dstPort == newConnection.dstPort,
+          connection.inProcessor == newConnection.inProcessor &&
+          connection.inPort == newConnection.inPort &&
+          connection.outProcessor == newConnection.outProcessor &&
+          connection.outPort == newConnection.outPort,
     );
     if (isNotDuplicate) {
       _connections.add(newConnection);
@@ -43,10 +43,10 @@ class FalconGraph {
   void removeConnection({required Connection connectionToRemove}) {
     _connections.removeWhere(
       (connection) =>
-          connection.srcProcessor == connectionToRemove.srcProcessor &&
-          connection.srcPort == connectionToRemove.srcPort &&
-          connection.dstProcessor == connectionToRemove.dstProcessor &&
-          connection.dstPort == connectionToRemove.dstPort,
+          connection.inProcessor == connectionToRemove.inProcessor &&
+          connection.inPort == connectionToRemove.inPort &&
+          connection.outProcessor == connectionToRemove.outProcessor &&
+          connection.outPort == connectionToRemove.outPort,
     );
   }
 
@@ -96,6 +96,12 @@ class Processor {
   }) {
     _options[name] = value;
   }
+
+  bool get isSource => _ports.every((port) => port.isIn);
+
+  bool get isSink => _ports.every((port) => port.isOut);
+
+  bool get isIntermediate => !isSource && !isSink;
 
   Processor copyWith({
     String? id,
@@ -176,11 +182,11 @@ final class OneOfOption extends OptionValue<String> {
 }
 
 class Port {
-  Port({required this.isSrc, required this.name, required this.type});
+  Port({required this.isIn, required this.name, required this.type});
   final String name;
   final String type; // e.g. "AnyType", "TimeSeriesType<double>", "int"
-  final bool isSrc;
-  bool get isDst => !isSrc;
+  final bool isIn;
+  bool get isOut => !isIn;
 }
 
 class UIMetadata {
@@ -188,17 +194,22 @@ class UIMetadata {
     Offset position = Offset.zero,
     DateTime? lastModified,
     Color? color,
+    bool isExpanded = false,
   }) : _position = position,
+
        _lastModified = lastModified ?? DateTime(1970),
-       _color = color;
+       _color = color,
+       _isExpanded = isExpanded;
 
   Offset _position;
   DateTime _lastModified;
   Color? _color;
+  bool _isExpanded;
 
   Offset get position => _position;
   DateTime get lastModified => _lastModified;
   Color? get color => _color;
+  bool get isExpanded => _isExpanded;
 
   // ignore: use_setters_to_change_properties
   void setPosition(Offset newPosition) {
@@ -214,6 +225,10 @@ class UIMetadata {
     _lastModified = DateTime.now();
   }
 
+  void toggleExpanded() {
+    _isExpanded = !_isExpanded;
+  }
+
   UIMetadata copyWith({Offset? position, DateTime? lastModified}) {
     return UIMetadata(
       position: position ?? this.position,
@@ -224,18 +239,18 @@ class UIMetadata {
 
 class Connection {
   Connection({
-    required this.srcProcessor,
-    required this.srcPort,
-    required this.dstProcessor,
-    required this.dstPort,
+    required this.inProcessor,
+    required this.inPort,
+    required this.outProcessor,
+    required this.outPort,
   });
 
-  final String srcProcessor;
-  final String srcPort;
-  final String dstProcessor;
-  final String dstPort;
+  final String inProcessor;
+  final String inPort;
+  final String outProcessor;
+  final String outPort;
 
   @override
   String toString() =>
-      'Connection($srcProcessor:$srcPort -> $dstProcessor:$dstPort)';
+      'Connection($inProcessor:$inPort -> $outProcessor:$outPort)';
 }

@@ -134,6 +134,7 @@ class FalconTheme {
 
 abstract final class DefaultProcessorColor {
   static final _classNames = <String>[];
+
   static Color byClassName({required String className}) {
     Color colorGenerator(int index) {
       final hue = ((index + 7) * 137) % 360;
@@ -149,5 +150,11 @@ abstract final class DefaultProcessorColor {
     }
 
     return colorGenerator(index);
+  }
+
+  static void register(String className) {
+    if (!_classNames.contains(className)) {
+      _classNames.add(className);
+    }
   }
 }

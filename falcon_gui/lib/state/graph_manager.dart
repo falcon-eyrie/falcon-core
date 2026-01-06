@@ -291,10 +291,48 @@ class GraphManager extends ChangeNotifier {
 
   Offset? get cursorPosition => _cursorPosition;
 
-  // Set of enabled port unique IDs (processorId-portName) for connection
-  // creation. In other words, user will see these ports highlighted as
-  // connectable to the currently selected port.
-  final _enabledPortIds = <String>{};
+  // Port selectability status for the currently selected input port.
+  final _validOutPortIds = <String>{};
+  final _typeIncompatiblePortIds = <String>{};
+  final _bothInPortIds = <String>{};
+  final _bothOutPortIds = <String>{};
+  final _alreadyConnectedPortIds = <String>{};
+  final _sameProcessorPortIds = <String>{};
+
+  PortSelectabilityStatus? getPortSelectabilityStatus({
+    required String processorId,
+    required String portName,
+  }) {
+    // If we are not in the create connection mode, all ports are idle
+    if (_selectedPortUniqueId == null) {
+      return PortSelectabilityStatus.idle;
+    }
+
+    final uniquePortId = '$processorId-$portName';
+
+    // The port itself is selected as input port
+    if (_selectedPortUniqueId == uniquePortId) {
+      return PortSelectabilityStatus.selectedAsIn;
+    }
+
+    final statusMap = {
+      _validOutPortIds: PortSelectabilityStatus.compatible,
+      _typeIncompatiblePortIds: PortSelectabilityStatus.typeIncompatible,
+      _bothInPortIds: PortSelectabilityStatus.bothIn,
+      _bothOutPortIds: PortSelectabilityStatus.bothOut,
+      _alreadyConnectedPortIds: PortSelectabilityStatus.alreadyConnected,
+      _sameProcessorPortIds: PortSelectabilityStatus.sameProcessor,
+    };
+
+    for (final entry in statusMap.entries) {
+      if (entry.key.contains(uniquePortId)) {
+        return entry.value;
+      }
+    }
+
+    // This should not happen, but return idle as fallback
+    return PortSelectabilityStatus.idle;
+  }
 
   Offset getPortPosition({
     required String processorId,
@@ -311,52 +349,87 @@ class GraphManager extends ChangeNotifier {
       _selectedPortUniqueId = uniquePortId;
 
       // Determine enabled ports
-      _enabledPortIds.clear();
+      _validOutPortIds.clear();
+      _typeIncompatiblePortIds.clear();
+      _bothInPortIds.clear();
+      _bothOutPortIds.clear();
+      _alreadyConnectedPortIds.clear();
+      _sameProcessorPortIds.clear();
+
       for (final otherProcessor in _graph.processors.values) {
-        for (final otherPort in [...otherProcessor.ports]) {
+        for (final otherPort in otherProcessor.ports) {
           final otherUniqueId = '${otherProcessor.id}-${otherPort.name}';
+
+          // Skip self
           if (otherUniqueId == uniquePortId) continue;
+
+          final isSameProcessor = otherProcessor.id == processorId;
+          final isInOutPair = port.isIn != otherPort.isIn;
+          final isBothIn = port.isIn && otherPort.isIn;
+          final isBothOut = !port.isIn && !otherPort.isIn;
 
           final isDataTypeCompatible =
               port.type == 'AnyType' ||
               otherPort.type == 'AnyType' ||
               port.type == otherPort.type;
-          final isSameProcessor = otherProcessor.id == processorId;
-          final isSrcDstPair = port.isSrc != otherPort.isSrc;
-          final isCompatible =
-              isSrcDstPair && !isSameProcessor && isDataTypeCompatible;
-          if (isCompatible) {
-            _enabledPortIds.add(otherUniqueId);
+
+          final isAlreadyConnected = 1 != 1; //todo: implement connection check
+
+          if (isAlreadyConnected) {
+            _alreadyConnectedPortIds.add(otherUniqueId);
+            continue;
+          }
+
+          if (isSameProcessor) {
+            _sameProcessorPortIds.add(otherUniqueId);
+            continue;
+          }
+
+          if (isBothIn) {
+            _bothInPortIds.add(otherUniqueId);
+            continue;
+          }
+
+          if (isBothOut) {
+            _bothOutPortIds.add(otherUniqueId);
+            continue;
+          }
+
+          if (!isDataTypeCompatible) {
+            _typeIncompatiblePortIds.add(otherUniqueId);
+            continue;
+          }
+
+          if (isInOutPair) {
+            _validOutPortIds.add(otherUniqueId);
           }
         }
       }
-    } else {
-      if (_selectedPortUniqueId != uniquePortId) {
-        final selectedPortParts = _selectedPortUniqueId!.split('-');
-        final sourceProcessorId = selectedPortParts[0];
-        final sourcePortName = selectedPortParts[1];
-        final destinationProcessorId = processorId;
-        final destinationPortName = port.name;
+    } else if (_validOutPortIds.contains(uniquePortId)) {
+      final selectedPortParts = _selectedPortUniqueId!.split('-');
+      final inProcessorId = selectedPortParts[0];
+      final inPortName = selectedPortParts[1];
+      final outProcessorId = processorId;
+      final outPortName = port.name;
 
-        if (port.isSrc) {
-          _graph.addConnection(
-            newConnection: Connection(
-              srcProcessor: destinationProcessorId,
-              srcPort: destinationPortName,
-              dstProcessor: sourceProcessorId,
-              dstPort: sourcePortName,
-            ),
-          );
-        } else {
-          _graph.addConnection(
-            newConnection: Connection(
-              srcProcessor: sourceProcessorId,
-              srcPort: sourcePortName,
-              dstProcessor: destinationProcessorId,
-              dstPort: destinationPortName,
-            ),
-          );
-        }
+      if (port.isIn) {
+        _graph.addConnection(
+          newConnection: Connection(
+            inProcessor: outProcessorId,
+            inPort: outPortName,
+            outProcessor: inProcessorId,
+            outPort: inPortName,
+          ),
+        );
+      } else {
+        _graph.addConnection(
+          newConnection: Connection(
+            inProcessor: inProcessorId,
+            inPort: inPortName,
+            outProcessor: outProcessorId,
+            outPort: outPortName,
+          ),
+        );
       }
 
       _selectedPortUniqueId = null;
@@ -387,28 +460,10 @@ class GraphManager extends ChangeNotifier {
     _portPositions[uniquePortId] = newPosition;
   }
 
-  /// Whether or not the specified port is compatible to connect to the
-  /// currently selected port. This will be used to highlight compatible ports
-  /// and grey out incompatible ones.
-  ///
-  /// This does not mean the port is enabled or not, just that it can be
-  /// connected to the selected port.
-  bool isPortEnabled({required String processorId, required String portName}) {
-    final uniquePortId = '$processorId-$portName';
-
-    // If we are not in the create connection mode, all ports are enabled
-    if (_selectedPortUniqueId == null) return true;
-
-    // The selected port itself is always enabled
-    if (_selectedPortUniqueId == uniquePortId) return true;
-
-    return _enabledPortIds.contains(uniquePortId);
-  }
-
   void cancelPortSelection() {
     _selectedPortUniqueId = null;
     _cursorPosition = null;
-    _enabledPortIds.clear();
+    _validOutPortIds.clear();
     notifyListeners();
   }
 
@@ -436,10 +491,10 @@ class GraphManager extends ChangeNotifier {
   List<({Offset startPos, Offset endPos, Connection connection})>
   get connectionPositions {
     return connections.map((connection) {
-      final srcProcessor = _graph.processors[connection.srcProcessor];
-      final dstProcessor = _graph.processors[connection.dstProcessor];
+      final inProcessor = _graph.processors[connection.inProcessor];
+      final outProcessor = _graph.processors[connection.outProcessor];
 
-      if (srcProcessor == null || dstProcessor == null) {
+      if (inProcessor == null || outProcessor == null) {
         return (
           startPos: Offset.zero,
           endPos: Offset.zero,
@@ -448,16 +503,16 @@ class GraphManager extends ChangeNotifier {
       }
 
       final fromPortOffset = getPortPosition(
-        processorId: connection.srcProcessor,
-        portName: connection.srcPort,
+        processorId: connection.inProcessor,
+        portName: connection.inPort,
       );
       final toPortOffset = getPortPosition(
-        processorId: connection.dstProcessor,
-        portName: connection.dstPort,
+        processorId: connection.outProcessor,
+        portName: connection.outPort,
       );
 
-      final fromPos = srcProcessor.uiMetadata.position + fromPortOffset;
-      final toPos = dstProcessor.uiMetadata.position + toPortOffset;
+      final fromPos = inProcessor.uiMetadata.position + fromPortOffset;
+      final toPos = outProcessor.uiMetadata.position + toPortOffset;
 
       return (startPos: fromPos, endPos: toPos, connection: connection);
     }).toList();
@@ -559,4 +614,23 @@ class GraphManager extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  void toggleProcessorExpanded({required String id}) {
+    final processor = _graph.processors[id];
+    if (processor == null) return;
+
+    processor.uiMetadata.toggleExpanded();
+    notifyListeners();
+  }
+}
+
+enum PortSelectabilityStatus {
+  selectedAsIn,
+  typeIncompatible,
+  bothIn,
+  bothOut,
+  alreadyConnected,
+  sameProcessor,
+  compatible,
+  idle,
 }

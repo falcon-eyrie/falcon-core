@@ -18,12 +18,12 @@ void main() async {
   await windowManager.setBackgroundColor(Colors.transparent);
 
   const windowOptions = WindowOptions(
-    titleBarStyle: TitleBarStyle.hidden,
+    titleBarStyle: TitleBarStyle.normal,
     size: Size(1280, 720),
     center: true,
     skipTaskbar: false,
     title: 'Falcon GUI',
-    windowButtonVisibility: false,
+    windowButtonVisibility: true,
   );
   await windowManager.setPreventClose(true);
 
@@ -62,7 +62,7 @@ class DesktopApp extends StatelessWidget {
       builder: (context, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: const HomePage(),
+          home: const RootPage(),
           navigatorKey: globalNavigatorKey,
           themeMode: themeNotifier.value,
           theme: FalconTheme(Theme.of(context).textTheme).light(),
@@ -73,35 +73,18 @@ class DesktopApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class RootPage extends StatefulWidget {
+  const RootPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<RootPage> createState() => _RootPageState();
 }
 
-class _HomePageState extends State<HomePage> with WindowListener {
-  bool _isMaximized = false;
+class _RootPageState extends State<RootPage> with WindowListener {
   @override
   void initState() {
     super.initState();
     windowManager.addListener(this);
-    unawaited(_syncState());
-  }
-
-  Future<void> _syncState() async {
-    _isMaximized = await windowManager.isMaximized();
-    if (mounted) setState(() {});
-  }
-
-  @override
-  void onWindowMaximize() {
-    setState(() => _isMaximized = true);
-  }
-
-  @override
-  void onWindowUnmaximize() {
-    setState(() => _isMaximized = false);
   }
 
   @override
@@ -117,65 +100,10 @@ class _HomePageState extends State<HomePage> with WindowListener {
     await windowManager.destroy();
   }
 
-  Future<void> _toggleMaximize() async {
-    if (_isMaximized) {
-      await windowManager.unmaximize();
-    } else {
-      await windowManager.maximize();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onDoubleTap: _toggleMaximize,
-            onPanStart: (_) {
-              unawaited(windowManager.startDragging());
-            },
-            child: Container(
-              height: 40,
-              width: double.infinity,
-              color: context.c.surfaceContainerLowest,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                children: [
-                  const Text(
-                    'Falcon',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.remove,
-                      size: 18,
-                    ),
-                    onPressed: windowManager.minimize,
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      _isMaximized ? Icons.filter_none : Icons.crop_square,
-                      size: 18,
-                    ),
-                    onPressed: _toggleMaximize,
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.close,
-                      size: 18,
-                    ),
-                    onPressed: windowManager.close,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const Expanded(child: GraphEditor()),
-        ],
-      ),
+    return const Scaffold(
+      body: GraphEditor(),
     );
   }
 }

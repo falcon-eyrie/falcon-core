@@ -31,15 +31,17 @@ extension FalconGraphSerializerX on FalconGraph {
         buffer
           ..writeln('      ui:')
           ..writeln('        position:')
-          ..writeln('          x: ${ui.position.dx.toInt()}')
-          ..writeln('          y: ${ui.position.dy.toInt()}')
+          ..writeln('          x: ${_yamlScalar(ui.position.dx.toInt())}')
+          ..writeln('          y: ${_yamlScalar(ui.position.dy.toInt())}')
           ..writeln(
-            // ignore: lines_longer_than_80_chars
-            '        lastModified: "${ui.lastModified.toUtc().toIso8601String()}"',
+            '        lastModified: "${_yamlScalar(ui.lastModified.toUtc())}"',
+          )
+          ..writeln(
+            '        isExpanded: ${_yamlScalar(ui.isExpanded)}',
           );
 
         if (ui.color != null) {
-          buffer.writeln('        color: "#${ui.color!.toARGB32()}"');
+          buffer.writeln('        color: ${_yamlScalar(ui.color)}');
         }
 
         buffer.writeln();
@@ -50,8 +52,8 @@ extension FalconGraphSerializerX on FalconGraph {
       buffer.writeln('  connections:');
       for (final conn in connections) {
         buffer.writeln(
-          '    - ${conn.srcProcessor}.${conn.srcPort} = '
-          '${conn.dstProcessor}.${conn.dstPort}',
+          '    - ${conn.inProcessor}.${conn.inPort} = '
+          '${conn.outProcessor}.${conn.outPort}',
         );
       }
     }
@@ -63,6 +65,10 @@ extension FalconGraphSerializerX on FalconGraph {
     if (value is String) return '"${value.replaceAll('"', r'\"')}"';
     if (value is num || value is bool) return value.toString();
     if (value == null) return 'null';
+    if (value is DateTime) return value.toIso8601String();
+    if (value is Color) {
+      return '#${value.toARGB32().toRadixString(16).padLeft(8, '0')}';
+    }
     return '"$value"';
   }
 
@@ -113,28 +119,44 @@ extension FalconGraphSerializerX on FalconGraph {
             'Missing required option "$name" for processor "$className".',
           );
         }
-        options[name] = _optionFromScalar(templateOption, optMap[name]);
+        try {
+          options[name] = _optionFromScalar(templateOption, optMap[name]);
+        } catch (e) {
+          throw FalconGraphYamlParserException(
+            '"${optMap[name]}" is not a valid value for option "$name" for '
+            'processor "$className".',
+          );
+        }
       }
 
       var position = Offset.zero;
       var lastModified = DateTime(1970);
       Color? color;
+      var isExpanded = false;
 
       final uiMap = map['ui'] as YamlMap?;
       if (uiMap != null) {
-        final pos = uiMap['position'] as YamlMap?;
-        if (pos != null) {
-          position = Offset(
-            (pos['x'] as num).toDouble(),
-            (pos['y'] as num).toDouble(),
-          );
-        }
-        if (uiMap['lastModified'] != null) {
-          lastModified = DateTime.parse(uiMap['lastModified'] as String);
-        }
-        if (uiMap['color'] != null) {
-          final hex = (uiMap['color'] as String).replaceFirst('#', '');
-          color = Color(int.parse(hex, radix: 16));
+        try {
+          final pos = uiMap['position'] as YamlMap?;
+          if (pos != null) {
+            position = Offset(
+              (pos['x'] as num).toDouble(),
+              (pos['y'] as num).toDouble(),
+            );
+          }
+          if (uiMap['lastModified'] != null) {
+            lastModified = DateTime.parse(uiMap['lastModified'] as String);
+          }
+          if (uiMap['color'] != null) {
+            final hex = (uiMap['color'] as String).replaceFirst('#', '');
+            color = Color(int.parse(hex, radix: 16));
+          }
+
+          if (uiMap['isExpanded'] != null) {
+            isExpanded = uiMap['isExpanded'] as bool;
+          }
+        } catch (_) {
+          // no-op
         }
       }
 
@@ -154,6 +176,7 @@ extension FalconGraphSerializerX on FalconGraph {
           position: position,
           lastModified: lastModified,
           color: color,
+          isExpanded: isExpanded,
         ),
       );
     }
@@ -170,11 +193,11 @@ extension FalconGraphSerializerX on FalconGraph {
       } else if (connectionsEntry is YamlMap) {
         // Handle map format where keys and values form the connection
         for (final connEntry in connectionsEntry.entries) {
-          final srcPart = (connEntry.key ?? '').toString().trim();
-          final dstPart = (connEntry.value ?? '').toString().trim();
+          final inPart = (connEntry.key ?? '').toString().trim();
+          final outPart = (connEntry.value ?? '').toString().trim();
 
-          if (srcPart.isNotEmpty && dstPart.isNotEmpty) {
-            final line = '$srcPart = $dstPart';
+          if (inPart.isNotEmpty && outPart.isNotEmpty) {
+            final line = '$inPart = $outPart';
             _parseAndValidateConnection(line, processors, connections);
           }
         }
@@ -225,88 +248,89 @@ extension FalconGraphSerializerX on FalconGraph {
 
     if (left.length < 2) {
       throw FalconGraphYamlParserException(
-        'Invalid source format: "$leftSide". Expected "processorId.portName"',
+        'Invalid input port format: "$leftSide". '
+        'Expected "processorId.portName"',
       );
     }
 
     if (right.length < 2) {
       throw FalconGraphYamlParserException(
-        'Invalid destination format: "$rightSide". Expected '
+        'Invalid output port format: "$rightSide". Expected '
         '"processorId.portName"',
       );
     }
 
-    final srcProcessorId = left[0].trim();
-    final srcPortName = left.sublist(1).join('.');
-    final dstProcessorId = right[0].trim();
-    final dstPortName = right.sublist(1).join('.');
+    final inProcessorId = left[0].trim();
+    final inPortName = left.sublist(1).join('.');
+    final outProcessorId = right[0].trim();
+    final outPortName = right.sublist(1).join('.');
 
     // Validate processors exist
-    final srcProcessor = processors[srcProcessorId];
-    if (srcProcessor == null) {
+    final inProcessor = processors[inProcessorId];
+    if (inProcessor == null) {
       throw FalconGraphYamlParserException(
-        'Source processor "$srcProcessorId" not found in '
+        'Input processor "$inProcessorId" not found in '
         'connection "$trimmedLine".',
       );
     }
 
-    final dstProcessor = processors[dstProcessorId];
-    if (dstProcessor == null) {
+    final outProcessor = processors[outProcessorId];
+    if (outProcessor == null) {
       throw FalconGraphYamlParserException(
-        'Destination processor "$dstProcessorId" not found in '
+        'Output processor "$outProcessorId" not found in '
         'connection "$trimmedLine".',
       );
     }
 
     // Validate ports exist
-    final srcPort = srcProcessor.ports.firstWhere(
-      (p) => p.name == srcPortName,
+    final inPort = inProcessor.ports.firstWhere(
+      (p) => p.name == inPortName,
       orElse: () => throw FalconGraphYamlParserException(
-        'Source port "$srcPortName" not found in processor "$srcProcessorId". '
-        'Available ports: ${srcProcessor.ports.map((p) => p.name).join(", ")}',
+        'Input port "$inPortName" not found in processor "$inProcessorId". '
+        'Available ports: ${inProcessor.ports.map((p) => p.name).join(", ")}',
       ),
     );
 
-    final dstPort = dstProcessor.ports.firstWhere(
-      (p) => p.name == dstPortName,
+    final outPort = outProcessor.ports.firstWhere(
+      (p) => p.name == outPortName,
       orElse: () => throw FalconGraphYamlParserException(
-        'Destination port "$dstPortName" not found in processor '
-        '"$dstProcessorId". '
-        'Available ports: ${dstProcessor.ports.map((p) => p.name).join(", ")}',
+        'Output port "$outPortName" not found in processor '
+        '"$outProcessorId". '
+        'Available ports: ${outProcessor.ports.map((p) => p.name).join(", ")}',
       ),
     );
 
-    // Validate port types - source must be source, dst must be dst
-    if (!srcPort.isSrc) {
+    // Validate port types - input must be input, output must be output
+    if (!inPort.isIn) {
       throw FalconGraphYamlParserException(
-        'Connection "$trimmedLine" is invalid: source port "$srcPortName" must '
-        'be a source port.',
+        'Connection "$trimmedLine" is invalid: input port "$inPortName" must '
+        'be an input port.',
       );
     }
 
-    if (dstPort.isSrc) {
+    if (outPort.isIn) {
       throw FalconGraphYamlParserException(
-        'Connection "$trimmedLine" is invalid: destination port "$dstPortName" '
-        'must be a destination port.',
+        'Connection "$trimmedLine" is invalid: output port "$outPortName" '
+        'must be an output port.',
       );
     }
 
     // Validate port type compatibility
-    if (srcPort.type != 'AnyType' &&
-        dstPort.type != 'AnyType' &&
-        srcPort.type != dstPort.type) {
+    if (inPort.type != 'AnyType' &&
+        outPort.type != 'AnyType' &&
+        inPort.type != outPort.type) {
       throw FalconGraphYamlParserException(
         'Connection "$trimmedLine" is invalid: port types do not match '
-        '(${srcPort.type} != ${dstPort.type}).',
+        '(${inPort.type} != ${outPort.type}).',
       );
     }
 
     connections.add(
       Connection(
-        srcProcessor: srcProcessorId,
-        srcPort: srcPortName,
-        dstProcessor: dstProcessorId,
-        dstPort: dstPortName,
+        inProcessor: inProcessorId,
+        inPort: inPortName,
+        outProcessor: outProcessorId,
+        outPort: outPortName,
       ),
     );
   }

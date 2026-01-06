@@ -6,7 +6,17 @@ import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 
 class GraphToolbar extends StatelessWidget {
-  const GraphToolbar({super.key});
+  const GraphToolbar({
+    required this.onProcessorPanelClicked,
+    required this.onYamlPanelClicked,
+    required this.isYamlCollapsed,
+    required this.isProcessorsCollapsed,
+    super.key,
+  });
+  final VoidCallback onProcessorPanelClicked;
+  final bool isYamlCollapsed;
+  final bool isProcessorsCollapsed;
+  final VoidCallback onYamlPanelClicked;
 
   @override
   Widget build(BuildContext context) {
@@ -31,17 +41,38 @@ class GraphToolbar extends StatelessWidget {
                   },
                 ),
                 const SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: () async {},
-                  child: const Text('Save'),
+
+                // alter background color when panel is visible
+                IconButton(
+                  icon: const Icon(Icons.account_tree),
+                  style: IconButton.styleFrom(
+                    backgroundColor: isProcessorsCollapsed
+                        ? null
+                        : context.c.primary,
+                    foregroundColor: isProcessorsCollapsed
+                        ? null
+                        : context.c.onPrimary,
+                  ),
+                  tooltip: isProcessorsCollapsed
+                      ? 'Show Processors Panel'
+                      : 'Hide Processors Panel',
+                  onPressed: onProcessorPanelClicked,
                 ),
                 const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    debugPrint('Reset pressed');
-                  },
-                  child: const Text('Reset'),
+                IconButton(
+                  icon: const Icon(Icons.code),
+                  style: IconButton.styleFrom(
+                    backgroundColor: isYamlCollapsed ? null : context.c.primary,
+                    foregroundColor: isYamlCollapsed
+                        ? null
+                        : context.c.onPrimary,
+                  ),
+                  tooltip: isYamlCollapsed
+                      ? 'Show YAML Panel'
+                      : 'Hide YAML Panel',
+                  onPressed: onYamlPanelClicked,
                 ),
+
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.undo),
