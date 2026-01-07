@@ -20,7 +20,11 @@ class FalconManager extends ChangeNotifier {
 
   String get _falconPath {
     final home = Platform.environment['HOME'] ?? '';
-    return '~/falcon/bin/falcon'.replaceFirst('~', home);
+    return '/home/device/.local/share/org.falcon-eyrie.falcon_gui/bin/falcon'
+        .replaceFirst(
+          '~',
+          home,
+        );
   }
 
   Process? _falconProcess;

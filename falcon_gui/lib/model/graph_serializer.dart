@@ -260,10 +260,10 @@ extension FalconGraphSerializerX on FalconGraph {
       );
     }
 
-    final inProcessorId = left[0].trim();
-    final inPortName = left.sublist(1).join('.');
-    final outProcessorId = right[0].trim();
-    final outPortName = right.sublist(1).join('.');
+    final outProcessorId = left[0].trim();
+    final outPortName = left.sublist(1).join('.');
+    final inProcessorId = right[0].trim();
+    final inPortName = right.sublist(1).join('.');
 
     // Validate processors exist
     final inProcessor = processors[inProcessorId];
