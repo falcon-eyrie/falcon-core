@@ -469,18 +469,6 @@ class GraphManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCursorPosition(Offset position) {
-    if (_selectedPortUniqueId != null) {
-      // Apply same transformation as processor drag to get canvas coordinates
-      final canvasPosition = MatrixUtils.transformPoint(
-        graphManager.transformationController.value.clone()..invert(),
-        position,
-      );
-      _cursorPosition = canvasPosition;
-      notifyListeners();
-    }
-  }
-
   void onPortPositionUpdated({
     required String processorId,
     required String portName,
@@ -488,6 +476,8 @@ class GraphManager extends ChangeNotifier {
   }) {
     final uniquePortId = '$processorId-$portName';
     _portPositions[uniquePortId] = newPosition;
+
+    // print(newPosition);
   }
 
   void cancelPortSelection() {
@@ -548,8 +538,76 @@ class GraphManager extends ChangeNotifier {
     }).toList();
   }
 
-  void removeConnectionAtPosition(Offset position) {
-    const threshold = 5.0; // Distance threshold in pixels
+  Connection? _hoveredConnection;
+  Connection? get hoveredConnection => _hoveredConnection;
+
+  void updateCursorPosition(Offset position) {
+    if (_selectedPortUniqueId != null) {
+      // Apply same transformation as processor drag to get canvas coordinates
+      final canvasPosition = MatrixUtils.transformPoint(
+        graphManager.transformationController.value.clone()..invert(),
+        position,
+      );
+      _cursorPosition = canvasPosition;
+    }
+    _hoveredConnection = _getHoveredConnection(position);
+    notifyListeners();
+  }
+
+  void maybeRemoveConnectionAtPosition() {
+    if (_hoveredConnection != null) {
+      _graph.removeConnection(connectionToRemove: _hoveredConnection!);
+      _hoveredConnection = null;
+      notifyListeners();
+    }
+  }
+
+  Connection? _getHoveredConnection(Offset position) {
+    Offset cubicBezierPoint(
+      double t,
+      Offset p0,
+      Offset p1,
+      Offset p2,
+      Offset p3,
+    ) {
+      final u = 1 - t;
+      final tt = t * t;
+      final uu = u * u;
+      final uuu = uu * u;
+      final ttt = tt * t;
+
+      return Offset(
+        uuu * p0.dx + 3 * uu * t * p1.dx + 3 * u * tt * p2.dx + ttt * p3.dx,
+        uuu * p0.dy + 3 * uu * t * p1.dy + 3 * u * tt * p2.dy + ttt * p3.dy,
+      );
+    }
+
+    bool isPointNearCubicBezier(
+      Offset point,
+      Offset start,
+      Offset end,
+      double threshold,
+    ) {
+      // Sample points along the cubic bezier curve
+      // Use more samples for better accuracy
+      final curveLength = (end - start).distance;
+      final samples = (curveLength / 10).ceil().clamp(20, 100);
+
+      final ctrl1 = Offset(start.dx + 100, start.dy);
+      final ctrl2 = Offset(end.dx - 100, end.dy);
+
+      for (var i = 0; i <= samples; i++) {
+        final t = i / samples;
+        final curvePoint = cubicBezierPoint(t, start, ctrl1, ctrl2, end);
+
+        if ((curvePoint - point).distance < threshold) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    const threshold = 8.0; // Distance threshold in pixels
 
     // Transform position to canvas coordinates
     final canvasPosition = MatrixUtils.transformPoint(
@@ -559,62 +617,17 @@ class GraphManager extends ChangeNotifier {
 
     for (final connPos in connectionPositions) {
       // Check if position is near the connection curve
-      if (_isPointNearCubicBezier(
+      if (isPointNearCubicBezier(
         canvasPosition,
         connPos.startPos,
         connPos.endPos,
         threshold,
       )) {
-        // Find and remove the corresponding connection
-        _graph.removeConnection(connectionToRemove: connPos.connection);
-        notifyListeners();
-        return;
+        return connPos.connection;
       }
     }
-  }
 
-  bool _isPointNearCubicBezier(
-    Offset point,
-    Offset start,
-    Offset end,
-    double threshold,
-  ) {
-    // Sample points along the cubic bezier curve
-    // Use more samples for better accuracy
-    final curveLength = (end - start).distance;
-    final samples = (curveLength / 10).ceil().clamp(20, 100);
-
-    final ctrl1 = Offset(start.dx + 100, start.dy);
-    final ctrl2 = Offset(end.dx - 100, end.dy);
-
-    for (var i = 0; i <= samples; i++) {
-      final t = i / samples;
-      final curvePoint = _cubicBezierPoint(t, start, ctrl1, ctrl2, end);
-
-      if ((curvePoint - point).distance < threshold) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  Offset _cubicBezierPoint(
-    double t,
-    Offset p0,
-    Offset p1,
-    Offset p2,
-    Offset p3,
-  ) {
-    final u = 1 - t;
-    final tt = t * t;
-    final uu = u * u;
-    final uuu = uu * u;
-    final ttt = tt * t;
-
-    return Offset(
-      uuu * p0.dx + 3 * uu * t * p1.dx + 3 * u * tt * p2.dx + ttt * p3.dx,
-      uuu * p0.dy + 3 * uu * t * p1.dy + 3 * u * tt * p2.dy + ttt * p3.dy,
-    );
+    return null;
   }
 
   String? newProcessorNameValidator(String? newId) {

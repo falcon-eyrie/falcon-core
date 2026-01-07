@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
 import 'package:falcon_gui/utils/regex.dart';
 
 class FalconGraph {
@@ -282,8 +283,8 @@ class UIMetadata {
   }
 }
 
-class Connection {
-  Connection({
+class Connection extends Equatable {
+  const Connection({
     required this.inProcessor,
     required this.inPort,
     required this.outProcessor,
@@ -298,4 +299,12 @@ class Connection {
   @override
   String toString() =>
       'Connection($inProcessor:$inPort -> $outProcessor:$outPort)';
+
+  @override
+  List<Object?> get props => [
+    inProcessor,
+    inPort,
+    outProcessor,
+    outPort,
+  ];
 }

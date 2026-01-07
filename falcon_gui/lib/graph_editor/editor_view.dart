@@ -57,7 +57,9 @@ class _EditorViewState extends State<EditorView> {
         return MouseRegion(
           cursor: isCreatingConnection
               ? SystemMouseCursors.alias
-              : MouseCursor.defer,
+              : graphManager.hoveredConnection != null
+              ? SystemMouseCursors.noDrop
+              : SystemMouseCursors.basic,
           onHover: (event) {
             final scenePosition = _toScene(event.position, context);
             graphManager.updateCursorPosition(scenePosition);
@@ -65,11 +67,9 @@ class _EditorViewState extends State<EditorView> {
           child: Listener(
             onPointerDown: (event) {
               if (event.buttons == kSecondaryMouseButton) {
-                graphManager.cancelPortSelection();
-
-                // Check if clicking on a connection line
-                final scenePosition = _toScene(event.position, context);
-                graphManager.removeConnectionAtPosition(scenePosition);
+                graphManager
+                  ..cancelPortSelection()
+                  ..maybeRemoveConnectionAtPosition();
               }
             },
             child: InteractiveViewer(
@@ -177,6 +177,11 @@ class ConnectionPainter extends CustomPainter {
 
     // Draw existing connections
     for (final connPos in graphManager.connectionPositions) {
+      if (connPos.connection == graphManager.hoveredConnection) {
+        paint.color = Colors.yellow;
+      } else {
+        paint.color = connectedColor;
+      }
       final path = Path()
         ..moveTo(connPos.startPos.dx, connPos.startPos.dy)
         ..cubicTo(
