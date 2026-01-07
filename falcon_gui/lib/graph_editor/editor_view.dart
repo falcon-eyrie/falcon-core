@@ -185,9 +185,9 @@ class ConnectionPainter extends CustomPainter {
       final path = Path()
         ..moveTo(connPos.startPos.dx, connPos.startPos.dy)
         ..cubicTo(
-          connPos.startPos.dx + 100,
+          connPos.startPos.dx + 200,
           connPos.startPos.dy,
-          connPos.endPos.dx - 100,
+          connPos.endPos.dx - 200,
           connPos.endPos.dy,
           connPos.endPos.dx,
           connPos.endPos.dy,

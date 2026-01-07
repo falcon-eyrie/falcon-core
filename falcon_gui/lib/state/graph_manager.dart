@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
+import 'package:falcon_gui/utils/curve_hittest.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,8 @@ class GraphManager extends ChangeNotifier {
 
   final TransformationController transformationController =
       TransformationController(topLeftMatrix);
+
+  Timer? _hoverDebounceTimer;
 
   List<Processor> get processors => _graph.processors.values.toList()
     ..sort(
@@ -531,14 +535,15 @@ class GraphManager extends ChangeNotifier {
         portName: connection.outPort,
       );
 
-      final fromPos = inProcessor.uiMetadata.position + fromPortOffset;
-      final toPos = outProcessor.uiMetadata.position + toPortOffset;
+      final fromPos = outProcessor.uiMetadata.position + toPortOffset;
+      final toPos = inProcessor.uiMetadata.position + fromPortOffset;
 
       return (startPos: fromPos, endPos: toPos, connection: connection);
     }).toList();
   }
 
   Connection? _hoveredConnection;
+  DateTime? _lastHoverTime;
   Connection? get hoveredConnection => _hoveredConnection;
 
   void updateCursorPosition(Offset position) {
@@ -549,9 +554,24 @@ class GraphManager extends ChangeNotifier {
         position,
       );
       _cursorPosition = canvasPosition;
+      notifyListeners();
     }
-    _hoveredConnection = _getHoveredConnection(position);
-    notifyListeners();
+
+    final newHoveredConnection = _getHoveredConnection(position);
+
+    if (newHoveredConnection != null) {
+      // Cancel any pending clear operation
+      _hoverDebounceTimer?.cancel();
+      _hoveredConnection = newHoveredConnection;
+      notifyListeners();
+    } else {
+      // Debounce clearing the hover state
+      _hoverDebounceTimer?.cancel();
+      _hoverDebounceTimer = Timer(const Duration(milliseconds: 16), () {
+        _hoveredConnection = null;
+        notifyListeners();
+      });
+    }
   }
 
   void maybeRemoveConnectionAtPosition() {
@@ -563,51 +583,7 @@ class GraphManager extends ChangeNotifier {
   }
 
   Connection? _getHoveredConnection(Offset position) {
-    Offset cubicBezierPoint(
-      double t,
-      Offset p0,
-      Offset p1,
-      Offset p2,
-      Offset p3,
-    ) {
-      final u = 1 - t;
-      final tt = t * t;
-      final uu = u * u;
-      final uuu = uu * u;
-      final ttt = tt * t;
-
-      return Offset(
-        uuu * p0.dx + 3 * uu * t * p1.dx + 3 * u * tt * p2.dx + ttt * p3.dx,
-        uuu * p0.dy + 3 * uu * t * p1.dy + 3 * u * tt * p2.dy + ttt * p3.dy,
-      );
-    }
-
-    bool isPointNearCubicBezier(
-      Offset point,
-      Offset start,
-      Offset end,
-      double threshold,
-    ) {
-      // Sample points along the cubic bezier curve
-      // Use more samples for better accuracy
-      final curveLength = (end - start).distance;
-      final samples = (curveLength / 10).ceil().clamp(20, 100);
-
-      final ctrl1 = Offset(start.dx + 100, start.dy);
-      final ctrl2 = Offset(end.dx - 100, end.dy);
-
-      for (var i = 0; i <= samples; i++) {
-        final t = i / samples;
-        final curvePoint = cubicBezierPoint(t, start, ctrl1, ctrl2, end);
-
-        if ((curvePoint - point).distance < threshold) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    const threshold = 8.0; // Distance threshold in pixels
+    const threshold = 12.0; // Distance threshold in pixels
 
     // Transform position to canvas coordinates
     final canvasPosition = MatrixUtils.transformPoint(
@@ -709,6 +685,12 @@ class GraphManager extends ChangeNotifier {
       }
     }
     return false;
+  }
+
+  @override
+  void dispose() {
+    _hoverDebounceTimer?.cancel();
+    super.dispose();
   }
 }
 
