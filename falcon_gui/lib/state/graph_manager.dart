@@ -91,6 +91,7 @@ class GraphManager extends ChangeNotifier {
         uiMetadata: processor.uiMetadata.copyWith(
           position: newPosition,
           lastModified: DateTime.now(),
+          isExpanded: true,
         ),
       ),
     );
@@ -309,7 +310,14 @@ class GraphManager extends ChangeNotifier {
   }) {
     // If we are not in the create connection mode, all ports are idle
     if (_selectedPortUniqueId == null) {
-      return PortSelectabilityStatus.idle;
+      if (_graph.isPortInAConnection(
+        processorId: processorId,
+        portName: portName,
+      )) {
+        return PortSelectabilityStatus.connectedIdle;
+      } else {
+        return PortSelectabilityStatus.idle;
+      }
     }
 
     final uniquePortId = '$processorId-$portName';
@@ -360,7 +368,9 @@ class GraphManager extends ChangeNotifier {
       _alreadyConnectedPortIds.clear();
       _sameProcessorPortIds.clear();
 
-      for (final otherProcessor in _graph.processors.values) {
+      for (final otherProcessor in [
+        ..._graph.processors.values,
+      ]) {
         for (final otherPort in otherProcessor.ports) {
           final otherUniqueId = '${otherProcessor.id}-${otherPort.name}';
 
@@ -670,6 +680,23 @@ class GraphManager extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  bool isProcessorCompatibleForSelectedPort(String processorId) {
+    if (_selectedPortUniqueId == null) {
+      return true;
+    }
+
+    if (_selectedPortUniqueId!.startsWith('$processorId-')) {
+      return true;
+    }
+
+    for (final uniquePortId in _validOutPortIds) {
+      if (uniquePortId.startsWith('$processorId-')) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
 
 enum PortSelectabilityStatus {
@@ -681,4 +708,5 @@ enum PortSelectabilityStatus {
   sameProcessor,
   compatible,
   idle,
+  connectedIdle,
 }

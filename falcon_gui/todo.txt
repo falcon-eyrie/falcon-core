@@ -6,3 +6,4 @@
 - Replace temporary absolute paths with correct paths
 - Use InteractiveViewer.builder
 - Change falcon's config.yaml from GUI settings
+- Processor name should not be changeable if already exists

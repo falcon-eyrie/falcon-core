@@ -4,9 +4,14 @@ import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 
 class ProcessorPortsView extends StatelessWidget {
-  const ProcessorPortsView({required this.processor, super.key});
+  const ProcessorPortsView({
+    required this.processor,
+    required this.isExpanded,
+    super.key,
+  });
 
   final Processor processor;
+  final bool isExpanded;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +28,7 @@ class ProcessorPortsView extends StatelessWidget {
                 _PortRow(
                   processor: processor,
                   port: port,
+                  isExpanded: isExpanded,
                 ),
             ],
           ),
@@ -34,6 +40,7 @@ class ProcessorPortsView extends StatelessWidget {
                 _PortRow(
                   processor: processor,
                   port: port,
+                  isExpanded: isExpanded,
                 ),
             ],
           ),
@@ -43,28 +50,40 @@ class ProcessorPortsView extends StatelessWidget {
   }
 }
 
-class _PortRow extends StatelessWidget {
+class _PortRow extends StatefulWidget {
   const _PortRow({
     required this.processor,
     required this.port,
+    required this.isExpanded,
   });
 
   final Processor processor;
   final Port port;
+  final bool isExpanded;
 
+  @override
+  State<_PortRow> createState() => _PortRowState();
+}
+
+class _PortRowState extends State<_PortRow> {
+  bool _isHovering = false;
   @override
   Widget build(BuildContext context) {
     final portSelectionStatus = graphManager.getPortSelectabilityStatus(
-      processorId: processor.id,
-      portName: port.name,
+      processorId: widget.processor.id,
+      portName: widget.port.name,
     );
 
     final isEnabled =
+        portSelectionStatus == PortSelectabilityStatus.selectedAsInput ||
         portSelectionStatus == PortSelectabilityStatus.compatible ||
-        portSelectionStatus == PortSelectabilityStatus.idle;
+        portSelectionStatus == PortSelectabilityStatus.idle ||
+        portSelectionStatus == PortSelectabilityStatus.connectedIdle;
 
     final tooltipMessage = switch (portSelectionStatus) {
-      PortSelectabilityStatus.idle => 'Click to start a connection',
+      PortSelectabilityStatus.idle => 'Click once to start a connection',
+      PortSelectabilityStatus.connectedIdle =>
+        'Click once to start a connection',
       PortSelectabilityStatus.compatible => 'Click to create a connection',
       PortSelectabilityStatus.alreadyConnected => 'Connection already exists',
       PortSelectabilityStatus.selectedAsInput => 'Cannot connect to self',
@@ -77,68 +96,93 @@ class _PortRow extends StatelessWidget {
     };
 
     final text = Column(
-      crossAxisAlignment: port.isIn
+      crossAxisAlignment: widget.port.isIn
           ? CrossAxisAlignment.start
           : CrossAxisAlignment.end,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          port.name,
+          widget.port.name,
           style: TextStyle(
             color: isEnabled ? context.c.onSurface : Colors.grey,
             fontWeight: FontWeight.w500,
             fontSize: 16,
           ),
         ),
-        Text(
-          port.type,
-          style: TextStyle(
-            color: isEnabled ? context.c.onSurface.withAlpha(200) : Colors.grey,
-            fontSize: 14,
-            fontStyle: FontStyle.italic,
-            fontWeight: FontWeight.w400,
+        if (widget.isExpanded) ...[
+          Text(
+            widget.port.type,
+            style: TextStyle(
+              color: isEnabled
+                  ? context.c.onSurface.withAlpha(200)
+                  : Colors.grey,
+              fontSize: 14,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.w400,
+            ),
           ),
-        ),
+        ],
       ],
     );
 
     final dot = _PortHalfDot(
-      processorId: processor.id,
-      portName: port.name,
-      isIn: port.isIn,
+      processorId: widget.processor.id,
+      portName: widget.port.name,
+      isIn: widget.port.isIn,
       isEnabled: isEnabled,
-      isTemplate: processor.isTemplate,
+      isTemplate: widget.processor.isTemplate,
+      showFullDot:
+          portSelectionStatus == PortSelectabilityStatus.connectedIdle ||
+          portSelectionStatus == PortSelectabilityStatus.selectedAsInput ||
+          _isHovering,
     );
 
-    return GestureDetector(
-      onTapDown: isEnabled
-          ? (_) => graphManager.onPortClicked(
-              processorId: processor.id,
-              port: port,
-            )
-          : null,
-      onVerticalDragStart: (_) {},
-      onVerticalDragUpdate: (_) {},
-      onHorizontalDragStart: (_) {},
-      onHorizontalDragUpdate: (_) {},
-      onHorizontalDragCancel: () {},
-      onHorizontalDragEnd: (_) {},
-      onHorizontalDragDown: (_) {},
-      onVerticalDragCancel: () {},
-      onVerticalDragEnd: (_) {},
-      onVerticalDragDown: (_) {},
-      child: Tooltip(
-        mouseCursor: isEnabled
-            ? SystemMouseCursors.alias
-            : SystemMouseCursors.forbidden,
-        message: processor.isTemplate ? '' : tooltipMessage,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: port.isIn
-                ? [dot, const SizedBox(width: 4), text]
-                : [text, const SizedBox(width: 4), dot],
+    void onPortTouched() {
+      if (isEnabled) {
+        graphManager.onPortClicked(
+          processorId: widget.processor.id,
+          port: widget.port,
+        );
+      }
+    }
+
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() {
+          _isHovering = true;
+        });
+      },
+      onExit: (_) {
+        setState(() {
+          _isHovering = false;
+        });
+      },
+      child: GestureDetector(
+        onTapDown: (_) => onPortTouched(),
+        onVerticalDragStart: (_) {},
+        onVerticalDragUpdate: (_) {},
+        onHorizontalDragStart: (_) {},
+        onHorizontalDragUpdate: (_) {},
+        onHorizontalDragCancel: () {},
+        onHorizontalDragEnd: (_) {},
+        onHorizontalDragDown: (_) {},
+        onVerticalDragCancel: () {},
+        onVerticalDragEnd: (_) {},
+        onVerticalDragDown: (_) {},
+        child: Tooltip(
+          mouseCursor: isEnabled
+              ? SystemMouseCursors.alias
+              : SystemMouseCursors.forbidden,
+          message: widget.processor.isTemplate ? '' : tooltipMessage,
+          verticalOffset: 20,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: widget.port.isIn
+                  ? [dot, const SizedBox(width: 4), text]
+                  : [text, const SizedBox(width: 4), dot],
+            ),
           ),
         ),
       ),
@@ -153,6 +197,7 @@ class _PortHalfDot extends StatelessWidget {
     required this.portName,
     required this.isIn,
     required this.isEnabled,
+    required this.showFullDot,
   });
 
   final String processorId;
@@ -160,6 +205,7 @@ class _PortHalfDot extends StatelessWidget {
   final bool isIn;
   final bool isEnabled;
   final bool isTemplate;
+  final bool showFullDot;
 
   void _reportPosition(BuildContext context) {
     final renderBox = context.findRenderObject() as RenderBox?;
@@ -204,21 +250,34 @@ class _PortHalfDot extends StatelessWidget {
         _reportPosition(context);
       });
     }
+    // if connected, show full , otherwise border without inside
 
-    return ClipRect(
-      child: Align(
-        alignment: isIn ? Alignment.centerRight : Alignment.centerLeft,
-        widthFactor: 0.5,
-        child: Container(
-          width: isEnabled ? 16 : 12,
-          height: isEnabled ? 16 : 12,
-          decoration: BoxDecoration(
-            color: !isEnabled
-                ? Colors.grey
-                : isIn
-                ? Colors.green
-                : Colors.blue,
-            shape: BoxShape.circle,
+    final decoration = BoxDecoration(
+      color: showFullDot
+          ? (isEnabled
+                ? (isIn ? Colors.blueAccent : Colors.greenAccent)
+                : Colors.grey)
+          : null,
+      shape: BoxShape.circle,
+      border: showFullDot
+          ? null
+          : Border.all(
+              color: isEnabled
+                  ? (isIn ? Colors.blueAccent : Colors.greenAccent)
+                  : Colors.grey,
+              width: 2,
+            ),
+    );
+    return MouseRegion(
+      onHover: (event) {},
+      child: ClipRect(
+        child: Align(
+          alignment: isIn ? Alignment.centerRight : Alignment.centerLeft,
+          widthFactor: 0.5,
+          child: Container(
+            width: isEnabled ? 16 : 12,
+            height: isEnabled ? 16 : 12,
+            decoration: decoration,
           ),
         ),
       ),

@@ -73,21 +73,24 @@ class _ProcessorItemState extends State<ProcessorItem> {
                 onFocused: () => widget.onTapDown?.call(),
               ),
             ),
-            if (showPorts) ...[
-              IgnorePointer(
-                ignoring: widget.processor.isTemplate,
-                child: ColorFiltered(
-                  colorFilter: widget.processor.isTemplate
-                      ? greyScaleFilter
-                      : const ColorFilter.mode(
-                          Colors.transparent,
-                          BlendMode.multiply,
-                        ),
+            // if (showPorts) ...[
+            IgnorePointer(
+              ignoring: widget.processor.isTemplate,
+              child: ColorFiltered(
+                colorFilter: widget.processor.isTemplate
+                    ? greyScaleFilter
+                    : const ColorFilter.mode(
+                        Colors.transparent,
+                        BlendMode.multiply,
+                      ),
 
-                  child: ProcessorPortsView(processor: widget.processor),
+                child: ProcessorPortsView(
+                  processor: widget.processor,
+                  isExpanded: _isExpanded,
                 ),
               ),
-            ],
+            ),
+            // ],
             if (_isExpanded) ...[
               const Divider(),
               IgnorePointer(
@@ -145,11 +148,18 @@ class _HeaderState extends State<_Header> {
 
   @override
   Widget build(BuildContext context) {
-    final color =
+    final processorColor =
         widget.processor.uiMetadata.color ??
         DefaultProcessorColor.byClassName(
           className: widget.processor.className,
         );
+
+    final headerColor =
+        graphManager.isProcessorCompatibleForSelectedPort(
+          widget.processor.id,
+        )
+        ? processorColor
+        : Colors.grey;
     return MouseRegion(
       cursor: widget.processor.isTemplate
           ? MouseCursor.defer
@@ -157,7 +167,7 @@ class _HeaderState extends State<_Header> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
-          color: color,
+          color: headerColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
         ),
         child: Row(

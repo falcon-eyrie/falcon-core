@@ -37,6 +37,17 @@ class FalconGraph {
     );
   }
 
+  bool isPortInAConnection({
+    required String processorId,
+    required String portName,
+  }) {
+    return _connections.any(
+      (conn) =>
+          (conn.inProcessor == processorId && conn.inPort == portName) ||
+          (conn.outProcessor == processorId && conn.outPort == portName),
+    );
+  }
+
   void addConnection({required Connection newConnection}) {
     final isNotDuplicate = !connectionExists(connection: newConnection);
     if (isNotDuplicate) {
@@ -258,10 +269,15 @@ class UIMetadata {
     _isExpanded = !_isExpanded;
   }
 
-  UIMetadata copyWith({Offset? position, DateTime? lastModified}) {
+  UIMetadata copyWith({
+    Offset? position,
+    DateTime? lastModified,
+    bool? isExpanded,
+  }) {
     return UIMetadata(
       position: position ?? this.position,
       lastModified: lastModified ?? this.lastModified,
+      isExpanded: isExpanded ?? this.isExpanded,
     );
   }
 }

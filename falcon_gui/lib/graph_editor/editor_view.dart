@@ -88,7 +88,8 @@ class _EditorViewState extends State<EditorView> {
                     if (_showConnectionsPainter) ...[
                       CustomPaint(
                         painter: ConnectionPainter(
-                          lineColor: const Color(0xFF208991),
+                          connectedColor: Colors.green,
+                          newConnectionColor: Colors.grey,
                         ),
                         size: Size(
                           graphManager.canvasSize.width,
@@ -143,19 +144,22 @@ class _EditorViewState extends State<EditorView> {
 
 class ConnectionPainter extends CustomPainter {
   ConnectionPainter({
-    required this.lineColor,
+    required this.connectedColor,
+    required this.newConnectionColor,
   });
-  final Color lineColor;
+  final Color connectedColor;
+  final Color newConnectionColor;
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = lineColor
+      ..color = newConnectionColor
       ..strokeWidth = 6
       ..style = PaintingStyle.stroke;
 
     // Draw temporary connection line
     final tempLine = graphManager.tempConnectionLinePosition;
+
     if (tempLine != null) {
       final path = Path()
         ..moveTo(tempLine.startPos.dx, tempLine.startPos.dy)
@@ -169,6 +173,7 @@ class ConnectionPainter extends CustomPainter {
         );
       canvas.drawPath(path, paint);
     }
+    paint.color = connectedColor;
 
     // Draw existing connections
     for (final connPos in graphManager.connectionPositions) {
