@@ -543,7 +543,6 @@ class GraphManager extends ChangeNotifier {
   }
 
   Connection? _hoveredConnection;
-  DateTime? _lastHoverTime;
   Connection? get hoveredConnection => _hoveredConnection;
 
   void updateCursorPosition(Offset position) {
@@ -559,14 +558,12 @@ class GraphManager extends ChangeNotifier {
 
     final newHoveredConnection = _getHoveredConnection(position);
 
+    _hoverDebounceTimer?.cancel();
+
     if (newHoveredConnection != null) {
-      // Cancel any pending clear operation
-      _hoverDebounceTimer?.cancel();
       _hoveredConnection = newHoveredConnection;
       notifyListeners();
     } else {
-      // Debounce clearing the hover state
-      _hoverDebounceTimer?.cancel();
       _hoverDebounceTimer = Timer(const Duration(milliseconds: 16), () {
         _hoveredConnection = null;
         notifyListeners();

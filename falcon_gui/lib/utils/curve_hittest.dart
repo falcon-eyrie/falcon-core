@@ -57,8 +57,8 @@ bool isPointNearCubicBezier(
   if (py > maxY) return false;
 
   // Test endpoints
-  double dx = start.dx - px;
-  double dy = start.dy - py;
+  var dx = start.dx - px;
+  var dy = start.dy - py;
   if (dx * dx + dy * dy < thresholdSq) return true;
 
   dx = end.dx - px;
@@ -81,9 +81,9 @@ bool isPointNearCubicBezier(
     if (lineLength < 0.01) return false;
 
     final t = math.max(
-      0.0,
+      0,
       math.min(
-        1.0,
+        1,
         ((px - start.dx) * (end.dx - start.dx) +
                 (py - start.dy) * (end.dy - start.dy)) /
             lineLength,
@@ -120,8 +120,8 @@ bool isPointNearCubicBezier(
   final step = 1.0 / samples;
 
   // Track previous point to check line segments between samples
-  double prevX = start.dx;
-  double prevY = start.dy;
+  var prevX = start.dx;
+  var prevY = start.dy;
 
   for (var i = 1; i <= samples; i++) {
     final t = i * step;
@@ -145,9 +145,9 @@ bool isPointNearCubicBezier(
     final segLenSq = (cx - prevX) * (cx - prevX) + (cy - prevY) * (cy - prevY);
     if (segLenSq > 0.01) {
       final segT = math.max(
-        0.0,
+        0,
         math.min(
-          1.0,
+          1,
           ((px - prevX) * (cx - prevX) + (py - prevY) * (cy - prevY)) /
               segLenSq,
         ),
