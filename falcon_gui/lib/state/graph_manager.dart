@@ -50,6 +50,7 @@ class GraphManager extends ChangeNotifier {
   List<Connection> get connections => _graph.connections;
 
   String get graphAsYaml => _graph.toYaml();
+  String get graphAsYamlWithoutUI => _graph.toYaml(excludeUIMetadata: true);
 
   void loadGraph(FalconGraph graph) {
     _graph = graph;

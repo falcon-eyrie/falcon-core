@@ -1,5 +1,4 @@
 enum FalconState {
-  falconOffline,
   noGraph,
   constructing,
   preparing,
@@ -7,13 +6,14 @@ enum FalconState {
   starting,
   processing,
   stopping,
-  error
+  error,
+  unknown
   ;
 
-  FalconState fromString(String stateStr) {
+  factory FalconState.fromString(String stateStr) {
     switch (stateStr) {
-      case 'FALCON_OFFLINE':
-        return FalconState.falconOffline;
+      case 'UNKNOWN':
+        return FalconState.unknown;
       case 'NOGRAPH':
         return FalconState.noGraph;
       case 'CONSTRUCTING':
@@ -38,8 +38,8 @@ enum FalconState {
   @override
   String toString() {
     switch (this) {
-      case FalconState.falconOffline:
-        return 'FALCON_OFFLINE';
+      case FalconState.unknown:
+        return 'UNKNOWN';
       case FalconState.noGraph:
         return 'NOGRAPH';
       case FalconState.constructing:

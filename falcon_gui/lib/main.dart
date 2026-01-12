@@ -34,7 +34,10 @@ void main() async {
   });
 
   graphManager.addListener(() {
-    unawaited(falconManager.saveYaml(graphManager.graphAsYaml));
+    unawaited(falconManager.onYamlEdited(graphManager.graphAsYaml));
+    unawaited(
+      falconManager.onNonUIYamlEdited(graphManager.graphAsYamlWithoutUI),
+    );
   });
 
   await loadThemeModeFromSharedPreferences();
@@ -98,7 +101,7 @@ class _RootPageState extends State<RootPage> with WindowListener {
     debugPrint('Window close requested, calling killFalcon()...');
     await falconManager.killFalcon();
     debugPrint('killFalcon() completed, destroying window...');
-    await windowManager.destroy();
+    unawaited(windowManager.destroy());
   }
 
   @override

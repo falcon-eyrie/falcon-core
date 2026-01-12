@@ -12,12 +12,16 @@ class GraphToolbar extends StatelessWidget {
     required this.onYamlPanelClicked,
     required this.isYamlCollapsed,
     required this.isProcessorsCollapsed,
+    required this.isLogsCollapsed,
+    required this.onLogsPanelClicked,
     super.key,
   });
   final VoidCallback onProcessorPanelClicked;
   final bool isYamlCollapsed;
   final bool isProcessorsCollapsed;
+  final bool isLogsCollapsed;
   final VoidCallback onYamlPanelClicked;
+  final VoidCallback onLogsPanelClicked;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +47,20 @@ class GraphToolbar extends StatelessWidget {
                       ? 'Show Processors Panel'
                       : 'Hide Processors Panel',
                   onPressed: onProcessorPanelClicked,
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.list),
+                  style: IconButton.styleFrom(
+                    backgroundColor: isLogsCollapsed ? null : context.c.primary,
+                    foregroundColor: isLogsCollapsed
+                        ? null
+                        : context.c.onPrimary,
+                  ),
+                  tooltip: isLogsCollapsed
+                      ? 'Show Logs Panel'
+                      : 'Hide Logs Panel',
+                  onPressed: onLogsPanelClicked,
                 ),
                 const SizedBox(width: 8),
                 IconButton(
@@ -103,26 +121,24 @@ class GraphToolbar extends StatelessWidget {
                   onPressed: graphManager.zoomIn,
                 ),
                 const SizedBox(width: 8),
-                if (falconManager.falconState == FalconState.ready) ...[
-                  IconButton(
-                    icon: const Icon(
-                      Icons.play_arrow,
-                    ),
-                    tooltip: 'Run Pipeline',
-                    onPressed: falconManager.toggleProcessingState,
+                IconButton(
+                  icon: Icon(
+                    falconManager.falconState == FalconState.processing
+                        ? Icons.stop
+                        : Icons.play_arrow,
                   ),
-                ] else if (falconManager.falconState ==
-                    FalconState.processing) ...[
-                  IconButton(
-                    icon: const Icon(
-                      Icons.stop,
-                    ),
-                    tooltip: 'Stop Pipeline',
-                    onPressed: falconManager.toggleProcessingState,
-                  ),
-                ],
+                  tooltip: 'Run Pipeline',
+                  onPressed:
+                      falconManager.falconState == FalconState.ready ||
+                          falconManager.falconState == FalconState.processing
+                      ? falconManager.toggleProcessingState
+                      : null,
+                ),
                 const SizedBox(width: 8),
-
+                _FalconStateIndicator(
+                  falconState: falconManager.falconState,
+                ),
+                const SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.settings),
                   tooltip: 'Settings',
@@ -159,6 +175,45 @@ class _MultiListener extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+class _FalconStateIndicator extends StatelessWidget {
+  const _FalconStateIndicator({required this.falconState});
+
+  final FalconState falconState;
+
+  static const Map<FalconState, Color> _stateColors = {
+    FalconState.unknown: Colors.grey,
+    FalconState.ready: Colors.blue,
+    FalconState.processing: Colors.green,
+    FalconState.noGraph: Colors.orange,
+    FalconState.constructing: Colors.purple,
+    FalconState.preparing: Colors.indigo,
+    FalconState.stopping: Colors.red,
+    FalconState.error: Colors.redAccent,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _stateColors[falconState] ?? Colors.grey;
+    return Row(
+      children: [
+        Icon(
+          Icons.circle,
+          color: color,
+          size: 12,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          falconState.name.toUpperCase(),
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

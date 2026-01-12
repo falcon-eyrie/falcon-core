@@ -1,5 +1,6 @@
 import 'package:falcon_gui/graph_editor/editor_view.dart';
 import 'package:falcon_gui/graph_editor/graph_controls.dart';
+import 'package:falcon_gui/graph_editor/logs_panel.dart';
 import 'package:falcon_gui/graph_editor/processors_panel.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
@@ -16,6 +17,7 @@ class GraphEditor extends StatefulWidget {
 class _GraphEditorState extends State<GraphEditor> {
   bool _isProcessorsCollapsed = false;
   bool _isYamlCollapsed = true;
+  bool _isLogsCollapsed = false;
 
   void _onYamlCollapseToggled() {
     setState(() {
@@ -29,6 +31,12 @@ class _GraphEditorState extends State<GraphEditor> {
     });
   }
 
+  void _onLogsCollapseToggled() {
+    setState(() {
+      _isLogsCollapsed = !_isLogsCollapsed;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,29 +44,36 @@ class _GraphEditorState extends State<GraphEditor> {
         GraphToolbar(
           isProcessorsCollapsed: _isProcessorsCollapsed,
           isYamlCollapsed: _isYamlCollapsed,
+          isLogsCollapsed: _isLogsCollapsed,
           onProcessorPanelClicked: _onProcessorPanelCollapseToggled,
           onYamlPanelClicked: _onYamlCollapseToggled,
+          onLogsPanelClicked: _onLogsCollapseToggled,
         ),
         Expanded(
-          child: Stack(
+          child: Column(
             children: [
-              Row(
-                children: [
-                  // Processors Panel (left)
-                  if (!_isProcessorsCollapsed) ...[
-                    const ProcessorsPanel(),
-                  ],
+              Expanded(
+                child: Row(
+                  children: [
+                    // Processors Panel (left)
+                    if (!_isProcessorsCollapsed) ...[
+                      const ProcessorsPanel(),
+                    ],
 
-                  const Expanded(
-                    child: EditorView(),
-                  ),
+                    const Expanded(
+                      child: EditorView(),
+                    ),
 
-                  // YAML Editor (right)
-                  if (!_isYamlCollapsed) ...[
-                    const _YamlEditor(),
+                    // YAML Editor (right)
+                    if (!_isYamlCollapsed) ...[
+                      const _YamlEditor(),
+                    ],
                   ],
-                ],
-              ),
+                ),
+              ), // Logs Panel left
+              if (!_isLogsCollapsed) ...[
+                const LogsPanel(),
+              ],
             ],
           ),
         ),

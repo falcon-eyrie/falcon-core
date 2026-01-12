@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
 
 extension FalconGraphSerializerX on FalconGraph {
-  String toYaml() {
+  String toYaml({bool excludeUIMetadata = false}) {
     final buffer = StringBuffer()..writeln('graph:');
 
     if (processors.isNotEmpty) {
@@ -27,7 +27,10 @@ extension FalconGraphSerializerX on FalconGraph {
             );
           }
         }
-
+        if (excludeUIMetadata) {
+          buffer.writeln();
+          continue;
+        }
         buffer
           ..writeln('      ui:')
           ..writeln('        position:')

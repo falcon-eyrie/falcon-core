@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:falcon_gui/model/falcon_log.dart';
+import 'package:falcon_gui/model/falcon_zmq_command.dart';
 import 'package:falcon_gui/state/falcon_state.dart';
 import 'package:falcon_gui/state/falcon_zmq.dart';
 import 'package:falcon_gui/utils/killing_falcon_banner.dart';
@@ -8,15 +10,12 @@ import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';
 import 'package:flutter/foundation.dart';
 
 final FalconManager falconManager = FalconManager.instance;
+const bool _debugUseExistingFalconInstance = false;
 
 class FalconManager extends ChangeNotifier {
   FalconManager._internal();
 
   static final FalconManager instance = FalconManager._internal();
-
-  FalconState _falconState = FalconState.ready;
-
-  FalconState get falconState => _falconState;
 
   String get _falconPath {
     final home = Platform.environment['HOME'] ?? '';
@@ -80,6 +79,13 @@ class FalconManager extends ChangeNotifier {
     }
 
     if (_falconProcess != null) return;
+
+    await _initializeZMQ();
+
+    if (_debugUseExistingFalconInstance) {
+      notifyListeners();
+      return;
+    }
 
     try {
       // tmp solution, will fix on CPP side later
@@ -156,6 +162,8 @@ class FalconManager extends ChangeNotifier {
   Future<void> _initializeZMQ() async {
     try {
       _falconZMQ = FalconZMQ();
+
+      _falconZMQ!.addListener(notifyListeners);
 
       final connected = await _falconZMQ!.connect();
       if (!connected) {
@@ -235,8 +243,32 @@ class FalconManager extends ChangeNotifier {
   }
 
   String _lastSavedGraphYaml = '';
+  String _lastBuiltYaml = '';
   final _p = File('/home/device/falcon/resources/graphs/current.yaml');
-  Future<void> saveYaml(String graphAsYaml) async {
+
+  List<FalconLog> get logs => _falconZMQ?.logs ?? [];
+  FalconState get falconState => _falconZMQ?.falconState ?? FalconState.unknown;
+
+  Future<void> onNonUIYamlEdited(String graphAsYaml) async {
+    if (falconState == FalconState.unknown) {
+      Future.delayed(
+        const Duration(milliseconds: 100),
+        () => onNonUIYamlEdited(graphAsYaml),
+      );
+      return;
+    }
+
+    if (graphAsYaml == _lastBuiltYaml) return;
+    _lastBuiltYaml = graphAsYaml;
+    if (falconState != FalconState.noGraph) {
+      await sendCommand(FalconZmqCommand.graphDestroy);
+    }
+    await _falconZMQ!.sendCommandParts(
+      FalconZmqCommand.graphBuild(_p.path),
+    );
+  }
+
+  Future<void> onYamlEdited(String graphAsYaml) async {
     if (graphAsYaml == _lastSavedGraphYaml) return;
     _lastSavedGraphYaml = graphAsYaml;
     await _p.writeAsString(graphAsYaml);
@@ -253,16 +285,11 @@ class FalconManager extends ChangeNotifier {
   }
 
   Future<void> toggleProcessingState() async {
-    await sendCommand(FalconZmqCommand.graphDestroy);
-    await sendCommandParts(FalconZmqCommand.graphBuild(_p.path));
-    if (_falconState == FalconState.processing) {
+    if (falconState == FalconState.processing) {
       await sendCommand(FalconZmqCommand.graphStop);
-      _falconState = FalconState.ready;
     } else {
       await sendCommand(FalconZmqCommand.graphStart);
-      _falconState = FalconState.processing;
     }
-    notifyListeners();
   }
 }
 
