@@ -82,6 +82,15 @@ class FalconManager extends ChangeNotifier {
     if (_falconProcess != null) return;
 
     try {
+      // tmp solution, will fix on CPP side later
+      if (kDebugMode) {
+        final logDir = Directory('./build/falcon/logs');
+        // ignore: avoid_slow_async_io
+        if (!await logDir.exists()) {
+          await logDir.create(recursive: true);
+        }
+      }
+
       _falconProcess = await Process.start(
         _falconPath,
         [
@@ -178,7 +187,7 @@ class FalconManager extends ChangeNotifier {
 
           if (!_processExitCompleter!.isCompleted) {
             debugPrint(
-              'Process did not exit gracefully after 5 seconds, force killing',
+              'Process did not exit gracefully after 15 seconds, force killing',
             );
             _falconProcess!.kill(ProcessSignal.sigkill);
           } else {

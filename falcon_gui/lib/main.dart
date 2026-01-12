@@ -95,8 +95,9 @@ class _RootPageState extends State<RootPage> with WindowListener {
 
   @override
   Future<void> onWindowClose() async {
+    debugPrint('Window close requested, calling killFalcon()...');
     await falconManager.killFalcon();
-
+    debugPrint('killFalcon() completed, destroying window...');
     await windowManager.destroy();
   }
 

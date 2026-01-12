@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:falcon_gui/graph_editor/processor_item.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:flutter/gestures.dart';
@@ -9,14 +7,9 @@ import 'package:flutter/material.dart';
 ///
 /// Main canvas/editor view for Linux desktop. Users can pan,
 /// zoom, and drag processors.
-class EditorView extends StatefulWidget {
+class EditorView extends StatelessWidget {
   const EditorView({super.key});
 
-  @override
-  State<EditorView> createState() => _EditorViewState();
-}
-
-class _EditorViewState extends State<EditorView> {
   /// Converts global screen position to world coordinates
   Offset _toScene(Offset globalPosition, BuildContext context) {
     final renderBox = context.findRenderObject() as RenderBox?;
