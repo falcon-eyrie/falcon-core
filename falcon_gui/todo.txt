@@ -6,4 +6,4 @@
 - Replace temporary absolute paths with correct paths
 - Use InteractiveViewer.builder
 - Change falcon's config.yaml from GUI settings
-- Processor name should not be changeable if already exists
+- Find out what happens if processing data from 256 channels. Do we need 256 processor instances?

@@ -29,6 +29,14 @@ class GraphManager extends ChangeNotifier {
 
   Offset? _grabOffset;
 
+  // Whether to wait for port positions to be reported from the UI
+  // before rendering connections. Port positions are needed for
+  // start and end points of connections.
+  bool _shouldWaitForPortPositions = true;
+
+  bool get shouldRenderConnections =>
+      _graph.processors.isNotEmpty && !_shouldWaitForPortPositions;
+
   final TransformationController transformationController =
       TransformationController(topLeftMatrix);
 
@@ -610,7 +618,7 @@ class GraphManager extends ChangeNotifier {
     if (!processorIdRegex.hasMatch(newId)) {
       return 'Invalid name format';
     }
-    if (_graph.processors.values.where((p) => p.id == newId).length >= 2) {
+    if (_graph.processors.values.where((p) => p.id == newId).isNotEmpty) {
       return 'Name already exists';
     }
     return null;
@@ -633,7 +641,7 @@ class GraphManager extends ChangeNotifier {
       // Remove old processor after renaming the connections.
       // Otherwise the connections will be removed with the old processor.
       ..removeProcessor(id: oldId);
-
+    _shouldWaitForPortPositions = true;
     notifyListeners();
   }
 
@@ -688,6 +696,25 @@ class GraphManager extends ChangeNotifier {
   void dispose() {
     _hoverDebounceTimer?.cancel();
     super.dispose();
+  }
+
+  // Hook called when the editor view has been rendered.
+  void onEditorViewRendered() {
+    // If there are port positions and we were waiting for them,
+    // we can now stop waiting and render connections using these port
+    // positions.
+    if (_shouldWaitForPortPositions) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(
+          Future.microtask(() {
+            if (_portPositions.isNotEmpty && _shouldWaitForPortPositions) {
+              _shouldWaitForPortPositions = false;
+              notifyListeners();
+            }
+          }),
+        );
+      });
+    }
   }
 }
 

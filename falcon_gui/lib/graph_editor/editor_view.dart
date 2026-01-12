@@ -17,29 +17,6 @@ class EditorView extends StatefulWidget {
 }
 
 class _EditorViewState extends State<EditorView> {
-  bool _canRenderConnections = false;
-
-  bool get _showConnectionsPainter =>
-      graphManager.processors.isNotEmpty && _canRenderConnections;
-
-  void _checkCanRenderConnections() {
-    if (!_canRenderConnections) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        unawaited(
-          Future.microtask(() {
-            if (!_canRenderConnections &&
-                mounted &&
-                graphManager.hasAnyPortPositions) {
-              setState(() {
-                _canRenderConnections = true;
-              });
-            }
-          }),
-        );
-      });
-    }
-  }
-
   /// Converts global screen position to world coordinates
   Offset _toScene(Offset globalPosition, BuildContext context) {
     final renderBox = context.findRenderObject() as RenderBox?;
@@ -51,7 +28,7 @@ class _EditorViewState extends State<EditorView> {
     return AnimatedBuilder(
       animation: graphManager,
       builder: (context, _) {
-        _checkCanRenderConnections();
+        graphManager.onEditorViewRendered();
 
         final isCreatingConnection = graphManager.selectedPortUniqueId != null;
         return MouseRegion(
@@ -85,7 +62,7 @@ class _EditorViewState extends State<EditorView> {
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    if (_showConnectionsPainter) ...[
+                    if (graphManager.shouldRenderConnections) ...[
                       CustomPaint(
                         painter: ConnectionPainter(
                           connectedColor: Colors.green,

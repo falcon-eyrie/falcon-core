@@ -71,23 +71,17 @@ class FalconGraph {
     required String newProcessorId,
   }) {
     for (var i = 0; i < _connections.length; i++) {
-      final conn = _connections[i];
-      if (conn.inProcessor == oldProcessorId) {
-        _connections[i] = Connection(
-          inProcessor: newProcessorId,
-          inPort: conn.inPort,
-          outProcessor: conn.outProcessor,
-          outPort: conn.outPort,
-        );
-      }
-      if (conn.outProcessor == oldProcessorId) {
-        _connections[i] = Connection(
-          inProcessor: conn.inProcessor,
-          inPort: conn.inPort,
-          outProcessor: newProcessorId,
-          outPort: conn.outPort,
-        );
-      }
+      final c = _connections[i];
+      _connections[i] = Connection(
+        inProcessor: c.inProcessor == oldProcessorId
+            ? newProcessorId
+            : c.inProcessor,
+        inPort: c.inPort,
+        outProcessor: c.outProcessor == oldProcessorId
+            ? newProcessorId
+            : c.outProcessor,
+        outPort: c.outPort,
+      );
     }
   }
 
