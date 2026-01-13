@@ -1,10 +1,14 @@
-- Address processor option renaming such as "message/detection" to "message_detection" in Falcon Core.
-- Polish/improve UI
+Missing:
 - Add processor states
+- Address processor option renaming such as "message/detection" to "message_detection" in Falcon Core.
 - Document readme.md for how to compile and run Falcon GUI
 - Use absolute paths for config files
 - Replace temporary absolute paths with correct paths
-- Use InteractiveViewer.builder
 - Change falcon's config.yaml from GUI settings
+- Use config.yaml for everything, remove shared_preferences
 - Find out what happens if processing data from 256 channels. Do we need 256 processor instances?
 - When exiting, ask user if they wanna let falcon run in background or kill it
+
+Nice to have:
+- Use InteractiveViewer.builder
+- Polish/improve UI
