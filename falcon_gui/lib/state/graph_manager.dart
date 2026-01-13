@@ -83,9 +83,9 @@ class GraphManager extends ChangeNotifier {
       final match = processorIdSuffixRegex.firstMatch(newId);
       if (match != null) {
         final number = int.parse(match.group(1)!);
-        newId = newId.replaceFirst(processorIdSuffixRegex, '_${number + 1}');
+        newId = newId.replaceFirst(processorIdSuffixRegex, '${number + 1}');
       } else {
-        newId = '${newId}_1';
+        newId = '${newId}1';
       }
     }
 

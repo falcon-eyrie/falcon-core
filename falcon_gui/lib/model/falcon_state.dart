@@ -39,23 +39,23 @@ enum FalconState {
   String toString() {
     switch (this) {
       case FalconState.unknown:
-        return 'UNKNOWN';
+        return 'Unknown';
       case FalconState.noGraph:
-        return 'NOGRAPH';
+        return 'NoGraph';
       case FalconState.constructing:
-        return 'CONSTRUCTING';
+        return 'Constructing';
       case FalconState.preparing:
-        return 'PREPARING';
+        return 'Preparing';
       case FalconState.ready:
-        return 'READY';
+        return 'Ready';
       case FalconState.starting:
-        return 'STARTING';
+        return 'Starting';
       case FalconState.processing:
-        return 'PROCESSING';
+        return 'Processing';
       case FalconState.stopping:
-        return 'STOPPING';
+        return 'Stopping';
       case FalconState.error:
-        return 'ERROR';
+        return 'Error';
     }
   }
 }

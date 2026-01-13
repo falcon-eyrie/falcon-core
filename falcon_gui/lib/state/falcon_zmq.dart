@@ -1,8 +1,9 @@
 import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:falcon_gui/model/falcon_log.dart';
+import 'package:falcon_gui/model/falcon_state.dart';
 import 'package:falcon_gui/model/falcon_zmq_command.dart';
-import 'package:falcon_gui/state/falcon_state.dart';
 import 'package:falcon_gui/utils/zmq/zmq_constants.dart';
 import 'package:falcon_gui/utils/zmq/zmq_ffi.dart';
 import 'package:falcon_gui/utils/zmq/zmq_isolate_receiver.dart';

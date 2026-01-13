@@ -7,3 +7,4 @@
 - Use InteractiveViewer.builder
 - Change falcon's config.yaml from GUI settings
 - Find out what happens if processing data from 256 channels. Do we need 256 processor instances?
+- When exiting, ask user if they wanna let falcon run in background or kill it

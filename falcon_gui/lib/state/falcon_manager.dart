@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:falcon_gui/model/falcon_log.dart';
+import 'package:falcon_gui/model/falcon_state.dart';
 import 'package:falcon_gui/model/falcon_zmq_command.dart';
-import 'package:falcon_gui/state/falcon_state.dart';
 import 'package:falcon_gui/state/falcon_zmq.dart';
 import 'package:falcon_gui/utils/killing_falcon_banner.dart';
 import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';

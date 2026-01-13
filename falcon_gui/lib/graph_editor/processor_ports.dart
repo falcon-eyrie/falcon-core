@@ -7,45 +7,75 @@ class ProcessorPortsView extends StatelessWidget {
   const ProcessorPortsView({
     required this.processor,
     required this.isExpanded,
+    required this.onExpandToggle,
     super.key,
   });
 
   final Processor processor;
   final bool isExpanded;
-
+  final VoidCallback onExpandToggle;
   @override
   Widget build(BuildContext context) {
     final inPorts = processor.ports.where((port) => port.isIn);
     final outPorts = processor.ports.where((port) => port.isOut);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      children: [
+        IgnorePointer(
+          ignoring: processor.isTemplate,
+          child: Row(
             children: [
-              for (final port in inPorts)
-                _PortRow(
-                  processor: processor,
-                  port: port,
-                  isExpanded: isExpanded,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (final port in inPorts)
+                    _PortRow(
+                      processor: processor,
+                      port: port,
+                    ),
+                ],
+              ),
+              const Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  for (final port in outPorts)
+                    _PortRow(
+                      processor: processor,
+                      port: port,
+                    ),
+                ],
+              ),
             ],
           ),
-          const Spacer(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              for (final port in outPorts)
-                _PortRow(
-                  processor: processor,
-                  port: port,
-                  isExpanded: isExpanded,
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          left: 0,
+          child: Center(
+            child: GestureDetector(
+              onTap: onExpandToggle,
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Tooltip(
+                  message: isExpanded ? 'Collapse Options' : 'Expand Options',
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 8,
+                      right: 8,
+                      left: 8,
+                    ),
+                    child: Icon(
+                      isExpanded ? Icons.expand_less : Icons.expand_more,
+                      size: 16,
+                    ),
+                  ),
                 ),
-            ],
+              ),
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -54,12 +84,10 @@ class _PortRow extends StatefulWidget {
   const _PortRow({
     required this.processor,
     required this.port,
-    required this.isExpanded,
   });
 
   final Processor processor;
   final Port port;
-  final bool isExpanded;
 
   @override
   State<_PortRow> createState() => _PortRowState();
@@ -109,19 +137,15 @@ class _PortRowState extends State<_PortRow> {
             fontSize: 16,
           ),
         ),
-        if (widget.isExpanded) ...[
-          Text(
-            widget.port.type,
-            style: TextStyle(
-              color: isEnabled
-                  ? context.c.onSurface.withAlpha(200)
-                  : Colors.grey,
-              fontSize: 14,
-              fontStyle: FontStyle.italic,
-              fontWeight: FontWeight.w400,
-            ),
+        Text(
+          widget.port.type,
+          style: TextStyle(
+            color: isEnabled ? context.c.onSurface.withAlpha(200) : Colors.grey,
+            fontSize: 14,
+            fontStyle: FontStyle.italic,
+            fontWeight: FontWeight.w400,
           ),
-        ],
+        ),
       ],
     );
 
@@ -132,9 +156,10 @@ class _PortRowState extends State<_PortRow> {
       isEnabled: isEnabled,
       isTemplate: widget.processor.isTemplate,
       showFullDot:
-          portSelectionStatus == PortSelectabilityStatus.connectedIdle ||
-          portSelectionStatus == PortSelectabilityStatus.selectedAsInput ||
-          _isHovering,
+          !widget.processor.isTemplate &&
+          (portSelectionStatus == PortSelectabilityStatus.connectedIdle ||
+              portSelectionStatus == PortSelectabilityStatus.selectedAsInput ||
+              _isHovering),
     );
 
     void onPortTouched() {

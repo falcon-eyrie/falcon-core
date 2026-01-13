@@ -80,19 +80,19 @@ enum FalconLogType {
   String toString() {
     switch (this) {
       case FalconLogType.state:
-        return 'STATE';
+        return 'State';
       case FalconLogType.update:
-        return 'UPDATE';
+        return 'Update';
       case FalconLogType.error:
-        return 'ERROR';
+        return 'Error';
       case FalconLogType.warning:
-        return 'WARNING';
+        return 'Warning';
       case FalconLogType.info:
-        return 'INFO';
+        return 'Info';
       case FalconLogType.fatal:
-        return 'FATAL';
+        return 'Fatal';
       case FalconLogType.unknown:
-        return 'UNKNOWN';
+        return 'Unknown';
     }
   }
 }

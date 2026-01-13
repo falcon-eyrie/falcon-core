@@ -68,29 +68,15 @@ class _ProcessorItemState extends State<ProcessorItem> {
               onPanEnd: widget.onPanEnd,
               child: _Header(
                 processor: widget.processor,
-                onExpandToggle: _toggleExpanded,
-                isExpanded: _isExpanded,
                 onFocused: () => widget.onTapDown?.call(),
               ),
             ),
             // if (showPorts) ...[
-            IgnorePointer(
-              ignoring: widget.processor.isTemplate,
-              child: ColorFiltered(
-                colorFilter: widget.processor.isTemplate
-                    ? greyScaleFilter
-                    : const ColorFilter.mode(
-                        Colors.transparent,
-                        BlendMode.multiply,
-                      ),
-
-                child: ProcessorPortsView(
-                  processor: widget.processor,
-                  isExpanded: _isExpanded,
-                ),
-              ),
+            ProcessorPortsView(
+              processor: widget.processor,
+              isExpanded: _isExpanded,
+              onExpandToggle: _toggleExpanded,
             ),
-            // ],
             if (_isExpanded) ...[
               const Divider(),
               IgnorePointer(
@@ -116,14 +102,10 @@ class _ProcessorItemState extends State<ProcessorItem> {
 class _Header extends StatefulWidget {
   const _Header({
     required this.processor,
-    required this.onExpandToggle,
-    required this.isExpanded,
     required this.onFocused,
   });
 
   final Processor processor;
-  final VoidCallback onExpandToggle;
-  final bool isExpanded;
   final VoidCallback onFocused;
 
   @override
@@ -223,15 +205,7 @@ class _HeaderState extends State<_Header> {
               ),
               const SizedBox(width: 4),
             ],
-            IconButton(
-              icon: Icon(
-                widget.isExpanded ? Icons.expand_less : Icons.expand_more,
-                size: 20,
-                color: const Color(0xffffffff),
-              ),
-              color: context.c.onPrimary,
-              onPressed: widget.onExpandToggle,
-            ),
+
             IconButton(
               icon: Icon(
                 widget.processor.isTemplate ? Icons.add : Icons.copy,

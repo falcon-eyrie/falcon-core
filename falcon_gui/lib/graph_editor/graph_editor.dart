@@ -1,7 +1,8 @@
+import 'package:falcon_gui/graph_editor/controls_bar.dart';
 import 'package:falcon_gui/graph_editor/editor_view.dart';
-import 'package:falcon_gui/graph_editor/graph_controls.dart';
 import 'package:falcon_gui/graph_editor/logs_panel.dart';
 import 'package:falcon_gui/graph_editor/processors_panel.dart';
+import 'package:falcon_gui/graph_editor/status_bar.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/theme.dart';
@@ -41,13 +42,11 @@ class _GraphEditorState extends State<GraphEditor> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        GraphToolbar(
+        ControlsBar(
           isProcessorsCollapsed: _isProcessorsCollapsed,
           isYamlCollapsed: _isYamlCollapsed,
-          isLogsCollapsed: _isLogsCollapsed,
           onProcessorPanelClicked: _onProcessorPanelCollapseToggled,
           onYamlPanelClicked: _onYamlCollapseToggled,
-          onLogsPanelClicked: _onLogsCollapseToggled,
         ),
         Expanded(
           child: Column(
@@ -72,10 +71,14 @@ class _GraphEditorState extends State<GraphEditor> {
                 ),
               ), // Logs Panel left
               if (!_isLogsCollapsed) ...[
-                const LogsPanel(),
+                LogsPanel(onHidden: _onLogsCollapseToggled),
               ],
             ],
           ),
+        ),
+        StatusBar(
+          isLogsCollapsed: _isLogsCollapsed,
+          onLogsPanelClicked: _onLogsCollapseToggled,
         ),
       ],
     );
