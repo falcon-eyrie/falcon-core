@@ -57,7 +57,7 @@ class _LogsPanelState extends State<LogsPanel> {
                         color: context.c.onSurfaceVariant,
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 8),
                     Tooltip(
                       message:
                           'The logs from falcon. Logs provide information\n'
@@ -70,7 +70,7 @@ class _LogsPanelState extends State<LogsPanel> {
                         color: context.c.onSurfaceVariant,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const Spacer(),
                     Material(
                       color: Colors.transparent,
                       child: InkWell(

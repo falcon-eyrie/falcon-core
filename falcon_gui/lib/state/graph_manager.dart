@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:collection/collection.dart';
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/utils/curve_hittest.dart';
@@ -148,7 +149,7 @@ class GraphManager extends ChangeNotifier {
     return position;
   }
 
-  void onOnProcessorDragStart({
+  void onProcessorDragStart({
     required String id,
     required Offset scenePosition,
   }) {
@@ -510,7 +511,11 @@ class GraphManager extends ChangeNotifier {
     final portName = parts.sublist(1).join('-');
 
     final processor = _graph.processors[processorId];
-    if (processor == null) return null;
+
+    final port = processor?.ports.firstWhereOrNull(
+      (p) => p.name == portName,
+    );
+    if (processor == null || port == null) return null;
 
     final portPos = getPortPosition(
       processorId: processorId,
@@ -518,7 +523,11 @@ class GraphManager extends ChangeNotifier {
     );
     final startPos = processor.uiMetadata.position + portPos;
 
-    return (startPos: startPos, endPos: _cursorPosition!);
+    final connectionLine = port.isOut
+        ? (startPos: startPos, endPos: _cursorPosition!)
+        : (startPos: _cursorPosition!, endPos: startPos);
+
+    return connectionLine;
   }
 
   List<({Offset startPos, Offset endPos, Connection connection})>

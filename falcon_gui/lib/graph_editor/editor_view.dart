@@ -78,7 +78,7 @@ class EditorView extends StatelessWidget {
                               details.globalPosition,
                               context,
                             );
-                            graphManager.onOnProcessorDragStart(
+                            graphManager.onProcessorDragStart(
                               id: processor.id,
                               scenePosition: scenePosition,
                             );

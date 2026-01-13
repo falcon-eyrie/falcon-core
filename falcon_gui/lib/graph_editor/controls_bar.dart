@@ -24,115 +24,111 @@ class ControlsBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiListener(
       builder: (context) {
-        return ColoredBox(
+        return Container(
           color: context.c.surfaceContainer,
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.account_tree),
-                  style: IconButton.styleFrom(
-                    backgroundColor: isProcessorsCollapsed
-                        ? null
-                        : context.c.primary,
-                    foregroundColor: isProcessorsCollapsed
-                        ? null
-                        : context.c.onPrimary,
-                  ),
-                  tooltip: isProcessorsCollapsed
-                      ? 'Show Processors Panel'
-                      : 'Hide Processors Panel',
-                  onPressed: onProcessorPanelClicked,
+          height: 48,
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.account_tree),
+                style: IconButton.styleFrom(
+                  backgroundColor: isProcessorsCollapsed
+                      ? null
+                      : context.c.primary,
+                  foregroundColor: isProcessorsCollapsed
+                      ? null
+                      : context.c.onPrimary,
                 ),
-                const SizedBox(width: 8),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.code),
-                  style: IconButton.styleFrom(
-                    backgroundColor: isYamlCollapsed ? null : context.c.primary,
-                    foregroundColor: isYamlCollapsed
-                        ? null
-                        : context.c.onPrimary,
-                  ),
-                  tooltip: isYamlCollapsed
-                      ? 'Show YAML Panel'
-                      : 'Hide YAML Panel',
-                  onPressed: onYamlPanelClicked,
+                tooltip: isProcessorsCollapsed
+                    ? 'Show Processors Panel'
+                    : 'Hide Processors Panel',
+                onPressed: onProcessorPanelClicked,
+              ),
+              const SizedBox(width: 8),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.code),
+                style: IconButton.styleFrom(
+                  backgroundColor: isYamlCollapsed ? null : context.c.primary,
+                  foregroundColor: isYamlCollapsed ? null : context.c.onPrimary,
                 ),
+                tooltip: isYamlCollapsed
+                    ? 'Show YAML Panel'
+                    : 'Hide YAML Panel',
+                onPressed: onYamlPanelClicked,
+              ),
 
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.undo),
-                  tooltip: 'Undo',
-                  onPressed: () {
-                    debugPrint('Undo pressed');
-                  },
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.undo),
+                tooltip: 'Undo',
+                onPressed: () {
+                  debugPrint('Undo pressed');
+                },
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.redo),
+                tooltip: 'Redo',
+                onPressed: () {
+                  debugPrint('Redo pressed');
+                },
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: Icon(
+                  graphManager.isAllCollapsed
+                      ? Remix.arrow_down_double_fill
+                      : Remix.arrow_up_double_fill,
                 ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.redo),
-                  tooltip: 'Redo',
-                  onPressed: () {
-                    debugPrint('Redo pressed');
-                  },
+                tooltip: 'Toggle collapse all',
+                onPressed: graphManager.toggleCollapseAll,
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.zoom_in_map),
+                tooltip: 'Reset zoom',
+                onPressed: graphManager.resetZoom,
+              ),
+              IconButton(
+                icon: const Icon(Icons.zoom_out),
+                tooltip: 'Zoom out',
+                onPressed: graphManager.zoomOut,
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.zoom_in),
+                tooltip: 'Zoom in',
+                onPressed: graphManager.zoomIn,
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: Icon(
+                  falconManager.falconState == FalconState.processing
+                      ? Icons.stop
+                      : Icons.play_arrow,
                 ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: Icon(
-                    graphManager.isAllCollapsed
-                        ? Remix.arrow_down_double_fill
-                        : Remix.arrow_up_double_fill,
-                  ),
-                  tooltip: 'Toggle collapse all',
-                  onPressed: graphManager.toggleCollapseAll,
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.zoom_in_map),
-                  tooltip: 'Reset zoom',
-                  onPressed: graphManager.resetZoom,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.zoom_out),
-                  tooltip: 'Zoom out',
-                  onPressed: graphManager.zoomOut,
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(Icons.zoom_in),
-                  tooltip: 'Zoom in',
-                  onPressed: graphManager.zoomIn,
-                ),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: Icon(
-                    falconManager.falconState == FalconState.processing
-                        ? Icons.stop
-                        : Icons.play_arrow,
-                  ),
-                  tooltip: 'Run Pipeline',
-                  onPressed:
-                      falconManager.falconState == FalconState.ready ||
-                          falconManager.falconState == FalconState.processing
-                      ? falconManager.toggleProcessingState
-                      : null,
-                ),
-                const SizedBox(width: 8),
+                tooltip: 'Run Pipeline',
+                onPressed:
+                    falconManager.falconState == FalconState.ready ||
+                        falconManager.falconState == FalconState.processing
+                    ? falconManager.toggleProcessingState
+                    : null,
+              ),
+              const SizedBox(width: 8),
 
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  tooltip: 'Settings',
-                  onPressed: () async {
-                    await showDialog<void>(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => const SettingsView(),
-                    );
-                  },
-                ),
-              ],
-            ),
+              IconButton(
+                icon: const Icon(Icons.settings),
+                tooltip: 'Settings',
+                onPressed: () async {
+                  await showDialog<void>(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => const SettingsView(),
+                  );
+                },
+              ),
+            ],
           ),
         );
       },
