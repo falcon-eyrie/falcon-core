@@ -1,0 +1,1085 @@
+fb84d44 | Performance lints (#133)
+
+https://github.com/falcon-eyrie/falcon-core/commit/fb84d44d7e49649ea6f2d747dcc9a5965e1258c7
+---
+6e19f5c | Integrate clang-tidy (#132)
+
+https://github.com/falcon-eyrie/falcon-core/commit/6e19f5cae9159a97eba88114c85e1f187b3ec81f
+---
+041cf85 | Upgrade dependencies (#130)
+
+https://github.com/falcon-eyrie/falcon-core/commit/041cf8509cba20a0aa22c21432f27d4d9221a9a3
+---
+1c6fb83 | Format codebase (#131)
+
+https://github.com/falcon-eyrie/falcon-core/commit/1c6fb83ecd9a794b984f8c8750943ba0cb4cba2f
+---
+5a13c9f | Add log to print graph file path (#129)
+
+https://github.com/falcon-eyrie/falcon-core/commit/5a13c9fe7ae8be7d16b5347a7ebb81243c627186
+---
+06c07c1 | Move extension parser to a separate CMake script (#127)
+
+https://github.com/falcon-eyrie/falcon-core/commit/06c07c1218a29d1420867556317b543b98d2a28b
+---
+1be23e1 | Create CHANGELOG.md (#126)
+
+https://github.com/falcon-eyrie/falcon-core/commit/1be23e17932485774a9cff677f43d0df104405f4
+---
+5dff4ae | Fix compilation errors (#125)
+
+https://github.com/falcon-eyrie/falcon-core/commit/5dff4aef059e2956c20cec42531de57dcbb7b6bd
+---
+18644b2 | Format codebase (#122)
+
+https://github.com/falcon-eyrie/falcon-core/commit/18644b270e433e885d5120841f5a46fc807ab490
+---
+a897171 | Add name to CI step (#121)
+
+https://github.com/falcon-eyrie/falcon-core/commit/a8971716d8e02a5e25dc3d1e6a66a1ce79324d41
+---
+32a4030 | Add build and clang-format CI #120
+
+https://github.com/falcon-eyrie/falcon-core/commit/32a4030268eb43b74aeaa36ecbc91aa2a03db0b5
+---
+e09cae1 | Update branch name
+
+https://github.com/falcon-eyrie/falcon-core/commit/e09cae14f5738d3247121850c1076df6123a17ea
+---
+cea041d | clang-format
+
+https://github.com/falcon-eyrie/falcon-core/commit/cea041dc4b0acc40035bfa54a923db8b6629d891
+---
+5075944 | Add CPP build CI
+
+https://github.com/falcon-eyrie/falcon-core/commit/50759441359311dbefd90f56205fa1f678b8a62e
+---
+76efe2a | Merged in issue70_fix_shared_state_bug (pull request #47)
+Compilation failure when sharing pointer (or any not stringifiable object) through shared state
+
+Approved-by: Fabian Kloosterman
+https://github.com/falcon-eyrie/falcon-core/commit/76efe2a1bc1dc49b3d71ee0784195e65ae9c2f7c
+---
+3d3ca26 | add a constrexp isconvertible check to remove the compilation failed due to the templating object
+
+https://github.com/falcon-eyrie/falcon-core/commit/3d3ca26acdb650b6f2236c59d303295222260a1a
+---
+d2fd155 | Merge branch 'master' into develop
+
+https://github.com/falcon-eyrie/falcon-core/commit/d2fd155cbbd193e71dfa48333f685286cd338b80
+---
+e1193da | remove typo
+
+https://github.com/falcon-eyrie/falcon-core/commit/e1193daa33f42f07fd3edae923dbdc97d9bf0672
+---
+04428a3 | Merge branch 'master' into develop
+
+https://github.com/falcon-eyrie/falcon-core/commit/04428a318cc321b37d9736fa1735ea8590b8aeab
+---
+c68c82d | add docker installation doc
+
+https://github.com/falcon-eyrie/falcon-core/commit/c68c82dff47b2778c0f734de5e3a063144c4f453
+---
+2c9e058 | update core extension version to integrate fix on the event delayed processor
+
+https://github.com/falcon-eyrie/falcon-core/commit/2c9e0583fbf26f10d579449cf2e4ca9ed135cdea
+---
+dd5b951 | Merge branch 'master' into develop
+
+https://github.com/falcon-eyrie/falcon-core/commit/dd5b95174db7291f0c5457c807c387e4171ad1b6
+---
+f0c6dcb | update version 1.3.0
+
+https://github.com/falcon-eyrie/falcon-core/commit/f0c6dcb9ddfa3d503f0159ab1edff95f1c40157b
+---
+94169e6 | Merge branch 'release-1.3.0'
+
+https://github.com/falcon-eyrie/falcon-core/commit/94169e68ac7b9e846e125c36755062281908ff07
+---
+46c5796 | Merged in issue64_add_documentation (pull request #46)
+Add C++ api reference + update developer documentation
+https://github.com/falcon-eyrie/falcon-core/commit/46c5796f3fe93db2e2210c083744baa607c4512a
+---
+bbb1b27 | update index
+
+https://github.com/falcon-eyrie/falcon-core/commit/bbb1b277fa8ccc483e7fb8e8dd58b7150bfcf411
+---
+a43cf3a | update developper documentation + add C++ reference api
+
+https://github.com/falcon-eyrie/falcon-core/commit/a43cf3a235cf44014f390b22aac7c820ec52d6a8
+---
+7e28874 | update documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/7e288746b32d815525a7dbeac0a1490587174ed2
+---
+a6505d8 | Merged in issue66_add_stream_name (pull request #44)
+add a stream name in the streaminfo object
+
+Approved-by: Fabian Kloosterman
+https://github.com/falcon-eyrie/falcon-core/commit/a6505d8109cfd01fcf43505b6da4f13815998686
+---
+bd208ea | add a stream name in the streaminfo object
+
+https://github.com/falcon-eyrie/falcon-core/commit/bd208ea591f2545579be517b5117970db58eaa95
+---
+10bd2d9 | Merged in add_type_in_the_flatbuffer_format (pull request #43)
+add the type as part of the flatbuffers
+
+Approved-by: Fabian Kloosterman
+https://github.com/falcon-eyrie/falcon-core/commit/10bd2d99db6c4fd5426cb3b0394521f2058d2c1a
+---
+d13c0f9 | fix/IData for call on the parent class
+
+https://github.com/falcon-eyrie/falcon-core/commit/d13c0f9d2ccc364340eb9c368d56bd50fc4932ac
+---
+0423e29 | add the type as part of the flatbuffers
+
+https://github.com/falcon-eyrie/falcon-core/commit/0423e29936403e2d5c0f1a058dcd9fbb2c3b2836
+---
+4cdf0c5 | Merged in issue65-data-type-methods (pull request #42)
+Add static member functions to retrieve data type and data name strings. Simplify data type class definition.
+
+Approved-by: marine chaput
+https://github.com/falcon-eyrie/falcon-core/commit/4cdf0c572bb351b450c93629fcbc948934c459c4
+---
+636fcfb | Fix documentation.
+
+https://github.com/falcon-eyrie/falcon-core/commit/636fcfb1b177d44ca281fa67ea0dde8f0a4ba74b
+---
+5fc8af2 | Add static member functions to retrieve data type and data name strings. Simplify data type class definition.
+
+https://github.com/falcon-eyrie/falcon-core/commit/5fc8af2a5f6c1125a55291954841c7976fe6470e
+---
+320e708 | fix/typo remove by error the CleanData method
+
+https://github.com/falcon-eyrie/falcon-core/commit/320e70817e0626d9876aeea46c667a373b6aa85c
+---
+a773c2e | update extension to point behavior extension on the develop branch
+
+https://github.com/falcon-eyrie/falcon-core/commit/a773c2eceee0cf39bdc05308b8b80da77a256469
+---
+b4606e4 | Merged in issue63-datatype-improvements (pull request #41)
+Issue63 datatype improvements
+close #63
+Approved-by: Fabian Kloosterman
+https://github.com/falcon-eyrie/falcon-core/commit/b4606e435e6459f41fde810f3935973bbfd654ac
+---
+2edc9fe | remove eos + update docstring
+
+https://github.com/falcon-eyrie/falcon-core/commit/2edc9fe475a5e89eea53acb340f2c589d21b75b1
+---
+1075b7c | add docstring
+
+https://github.com/falcon-eyrie/falcon-core/commit/1075b7c03ea779d4a8acacba620eda4e6732246e
+---
+433123f | Removed Initialize methods on data classes. With new ringbuffer implementation, initialization is done through constructor.
+
+https://github.com/falcon-eyrie/falcon-core/commit/433123f525a9d969c610a0b76f1c6002f810af68
+---
+13141f3 | Clean up commented code.
+
+https://github.com/falcon-eyrie/falcon-core/commit/13141f3aa2765ec3c3d28900eb2ddea141e1f026
+---
+a3af8fa | (wip) first pass to improve data type system.
+- upstream and downstream data type compatibilty check is done with a prototype object
+- downstream slots can access (upcasted) upstream prototype data object to get parameters
+- output port/slot capabilities are removed
+- Parameter and Capabilities classes are not required to form a parallel hierarchy with Data object classes
+- New RingBuffer class that internally uses a vector that is initialized with prototype objects
+- Removed data factory class (used with old RingBuffer class) because it could lead to memory leaks
+
+https://github.com/falcon-eyrie/falcon-core/commit/a3af8fa9bb28ab8cb02f4602bbdac9ffa66eb214
+---
+6c11afd | fix bug uint instead of int for the streamport timeout
+
+https://github.com/falcon-eyrie/falcon-core/commit/6c11afde8ae0ab46c832741d4d63f13d91e11ff4
+---
+8c59ca4 | Merged in refactor_slot_class (pull request #40)
+Refactor SlotIn class
+
+Approved-by: Fabian Kloosterman
+https://github.com/falcon-eyrie/falcon-core/commit/8c59ca48b7e2f8ba5dfcde07e5c9c728bfbb8abf
+---
+e432db8 | add docstring
+
+https://github.com/falcon-eyrie/falcon-core/commit/e432db83bf22fa08525cd38cc3106ee06d49a29e
+---
+b7f38ee | create FlushData method + remove time_out as a propriety and add it as an option in retrieveData methods
+
+https://github.com/falcon-eyrie/falcon-core/commit/b7f38ee1724028aa427d0d14b8ca531005cf1eec
+---
+2367fb9 | update documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/2367fb90a90fe4b012c340c47d1c896fd7c8ce10
+---
+4facbfd | keep only open-source extension in this release
+
+https://github.com/falcon-eyrie/falcon-core/commit/4facbfd7e804a4984ac5034de0022ee4cdc49ba6
+---
+3268369 | Merge branch 'develop' into release-1.3.0
+
+https://github.com/falcon-eyrie/falcon-core/commit/32683693923f49df10e5d0c180a3f443de781fb0
+---
+1538cf1 | change version of core-extension to incorporate memory leak hotfix
+
+https://github.com/falcon-eyrie/falcon-core/commit/1538cf1bb4d966db83d97b12e062c7d759e27a17
+---
+6e1d120 | update extension version to point on the develop version
+
+https://github.com/falcon-eyrie/falcon-core/commit/6e1d120d4adbcab645d39641668af3d6380c7509
+---
+ee0ab91 | Merged in issue55_stream_data_format (pull request #38)
+New flatbuffer serializer
+
+Approved-by: Fabian Kloosterman
+Approved-by: James Collier
+
+https://github.com/falcon-eyrie/falcon-core/commit/ee0ab914fb4ea19527f154c9b641c327402b9bef
+---
+5af317f | pass by reference
+
+https://github.com/falcon-eyrie/falcon-core/commit/5af317f45fa65c833c4ceaa8215da7fbf4ecd4e5
+---
+a6c0f9b | remove allocation/dealloc of flatbuffer builder
+
+https://github.com/falcon-eyrie/falcon-core/commit/a6c0f9b836f5e8c9c56df86c9a7c8a2f5de468c7
+---
+7c6af80 | fix flexbuffer construction
+
+https://github.com/falcon-eyrie/falcon-core/commit/7c6af800333c5aaca7ab4de07db0824769494832
+---
+b230973 | cleanup
+
+https://github.com/falcon-eyrie/falcon-core/commit/b2309734d454a76eb17c3ea87d6c2569d07c4801
+---
+e7c640c | update for format using flexbuffer for datatype
+
+https://github.com/falcon-eyrie/falcon-core/commit/e7c640c359abd0f9a049506dce3ed4914d108fd2
+---
+486503a | update cmake files
+
+https://github.com/falcon-eyrie/falcon-core/commit/486503abc0f74d1f7732e4518c3adcfced8e99cd
+---
+fb6641e | WIP - generate schema at build time
+
+https://github.com/falcon-eyrie/falcon-core/commit/fb6641e6c6b64f5c2da56cb8994171aee18d28d3
+---
+f8befea | schema version 2
+
+https://github.com/falcon-eyrie/falcon-core/commit/f8befeae10fc550f138664f7c0efd7eddd6826f5
+---
+c12ce20 | add flatbuffer serialize
+
+https://github.com/falcon-eyrie/falcon-core/commit/c12ce20a5abb73d83f96c9c50be024b6fccf5e96
+---
+c69b5b5 | fix flatlib version and remove log
+
+https://github.com/falcon-eyrie/falcon-core/commit/c69b5b5594009700be2b653cf22fc8bb383426cd
+---
+ea90714 | add flatbuffers lib
+
+https://github.com/falcon-eyrie/falcon-core/commit/ea90714eededff687f253534b4c13917ba93d2e8
+---
+30e24d4 | proof of concept - flatbuffer packaging
+
+https://github.com/falcon-eyrie/falcon-core/commit/30e24d4a20a9a813db2dc27eb11d9125f31e1e46
+---
+59cef09 | fix boolean shared state not loaded correctly with true or false string
+
+https://github.com/falcon-eyrie/falcon-core/commit/59cef0989cd621ddcd40219e3b7f73e6296fcb98
+---
+28aab03 | fix how the graph is retrieve by looping on the saved yaml_ and then expand processor name instead of directly on the processor list
+
+https://github.com/falcon-eyrie/falcon-core/commit/28aab038bd16d49e39db3cd798aaa0ece015bfa3
+---
+0d268c3 | removing flexible format for state name
+
+https://github.com/falcon-eyrie/falcon-core/commit/0d268c3a234657d9d1fb0d2318ee2ea04cd56b2b
+---
+2665979 | remove flexible processor name syntax to keep only this feature for the port
+
+https://github.com/falcon-eyrie/falcon-core/commit/26659792f95fa168ba340e4ea4b5b47b0520eb7c
+---
+430bc24 | transform server-side graph in user-side graph when requested with the command resources graphs
+
+https://github.com/falcon-eyrie/falcon-core/commit/430bc24bb6c2f6b22f2e12efce027e041437aecc
+---
+c2a67a3 | add error messages + resources type for resources list command
+
+https://github.com/falcon-eyrie/falcon-core/commit/c2a67a3196b16118158977213dda039f2bfe0b31
+---
+04c5644 | add missing space
+
+https://github.com/falcon-eyrie/falcon-core/commit/04c5644c4469e43a65f901ce417664f549f1ad3e
+---
+8b27bb4 | clean the documentation command and remove the documentation command requesting only processor in the running graph as it is never used
+
+https://github.com/falcon-eyrie/falcon-core/commit/8b27bb481acacf3b846f45317865afdefcc45f34
+---
+61bf8a3 | use the Template value to check the type of the variable
+
+https://github.com/falcon-eyrie/falcon-core/commit/61bf8a300c33eb6ca40228ecc13eea014296dc02
+---
+fc820d9 | replace 0 or 1 value for boolean variable by true/false for the yaml serialization
+
+https://github.com/falcon-eyrie/falcon-core/commit/fc820d9b54571a1d2a8e2e7c074ce6e9e8f4e1f6
+---
+8122acf | change for user-side format
+
+https://github.com/falcon-eyrie/falcon-core/commit/8122acff0f237ad04084cdc65a92d16d65dd568b
+---
+17bb8ba | fix/memory leak due to missing virtual destructor close #60
+
+https://github.com/falcon-eyrie/falcon-core/commit/17bb8ba84e295c77b1fe8fe9104a633f6d62139e
+---
+63f521b | Merged in issue56_debug_release_build (pull request #35)
+add different Release/Debug build
+
+Approved-by: Fabian Kloosterman
+
+https://github.com/falcon-eyrie/falcon-core/commit/63f521b02a59fdc69cf4fff3fe6537c3b788223d
+---
+7f180f4 | add different Release/Debug build
+
+https://github.com/falcon-eyrie/falcon-core/commit/7f180f42beeaf644f8d5992ebf593120ed41e3f9
+---
+ae41cba | fix connection parser for slot part
+
+https://github.com/falcon-eyrie/falcon-core/commit/ae41cbaa4021d4a5bb50bf88ecee7517e97cc165
+---
+f8b2341 | hotfix: remove regex for options as it does not always work with the option lib in the actual state.
+
+https://github.com/falcon-eyrie/falcon-core/commit/f8b23415ae6f2ef6002a15ccdba269d23f0b928f
+---
+a75ffc5 | Merged in issue54_raise_error_for_unknow_options (pull request #31)
+verify if all options given in input are valable
+
+Approved-by: Fabian Kloosterman
+
+https://github.com/falcon-eyrie/falcon-core/commit/a75ffc52cc54cb6dad3039bcae2c889e071ebf0b
+---
+6b47449 | Merged in issue51_fix_multi_processor_spec (pull request #28)
+fix parsing bug in parsing processor name and parsing connection rule
+
+Approved-by: Fabian Kloosterman
+
+https://github.com/falcon-eyrie/falcon-core/commit/6b474492a8d6d147a0a14ce8be96f41b61c26d56
+---
+6984fee | change for local group name variable
+
+https://github.com/falcon-eyrie/falcon-core/commit/6984fee9cc6b131674ab12d2339d1db954a3a793
+---
+0db00a3 | throw exception one level upper
+
+https://github.com/falcon-eyrie/falcon-core/commit/0db00a366b8a1e71347a90cf0f97e483366a49e3
+---
+475035d | put the conversion option name in the add method
+
+https://github.com/falcon-eyrie/falcon-core/commit/475035d2cde4bf547a6f5e65f567add27556a1d2
+---
+6f5969b | add group name and documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/6f5969b1e6b32fbdf0df4800ce0cab466f85614b
+---
+74f87e6 | verify if all options given in input are valable
+
+https://github.com/falcon-eyrie/falcon-core/commit/74f87e6aa84b4c6a93311b789fd0ccbfb8656c69
+---
+de8f790 | fix parsing bug in parsing processor name and parsing connection rule
+
+https://github.com/falcon-eyrie/falcon-core/commit/de8f790ee8b8a366668304e685d0c09f54b3f677
+---
+e10e18e | bump extension version by default to 1.0.0
+
+https://github.com/falcon-eyrie/falcon-core/commit/e10e18e3cb43dcb66660b608aae56f84617ff478
+---
+0b4d22d | Remove trailing new line in resource command - close #45
+
+https://github.com/falcon-eyrie/falcon-core/commit/0b4d22d0696ababb74519752fed5c9a2801fae8a
+---
+58cbcbb | fix resources command
+
+https://github.com/falcon-eyrie/falcon-core/commit/58cbcbb20ecdf0ed4cb76d635ab6826a0ed77eca
+---
+0aa9e03 | add doc
+
+https://github.com/falcon-eyrie/falcon-core/commit/0aa9e03a899d887381bdf1d8515bb1393e3a9ec4
+---
+9c0fcf1 | add doc for building new client
+
+https://github.com/falcon-eyrie/falcon-core/commit/9c0fcf18da0d1204f5476bb77ed3e3fdc6a1b2f2
+---
+14a3308 | update docs
+
+https://github.com/falcon-eyrie/falcon-core/commit/14a330808b341e65c907c19fdd910edb074c67a8
+---
+78d0aa4 | fix zmq communication - instable communication since upgradeé
+
+https://github.com/falcon-eyrie/falcon-core/commit/78d0aa423183cb33d34d74b7e4f44e769fa2d3e6
+---
+a9364aa | Merged in add_version_info (pull request #26)
+add extension info in versionning
+
+Approved-by: Fabian Kloosterman
+
+https://github.com/falcon-eyrie/falcon-core/commit/a9364aaa02a45b2a83a5c77b55c2a90334d80eb9
+---
+99bc75d | add extension info in versionning + refactor the cmake
+
+https://github.com/falcon-eyrie/falcon-core/commit/99bc75de0dcef4ddaa4a1223060001c55e752f5c
+---
+57bc082 | Merged in remove_ZMQ_deprecated_warnings (pull request #24)
+refactor zmq lib to remove deprecated warnings
+
+Approved-by: Fabian Kloosterman
+
+https://github.com/falcon-eyrie/falcon-core/commit/57bc082d05fba8f053f1d4711fc0e1be531a92a5
+---
+2995276 | Merged in issue_41_refactor_log (pull request #25)
+close #41 + add color in the console
+
+Approved-by: Fabian Kloosterman
+
+https://github.com/falcon-eyrie/falcon-core/commit/2995276489cb2640f0eb08ce9c1a42d1b0fc8439
+---
+9cf46a3 | fix command port changed in the config but fixed to 5555 when creating the socket - close #38
+
+https://github.com/falcon-eyrie/falcon-core/commit/9cf46a3cd68c58cc486c3e8bcde429bd845a4225
+---
+b9cbcd3 | refactor Configure method since the options lib changed the way to load them in the processor fix #40
+
+https://github.com/falcon-eyrie/falcon-core/commit/b9cbcd3c91ec1c5597e9db781a1861686de1ccc0
+---
+5a200b5 | remove overload create state with option name - close #35
+
+https://github.com/falcon-eyrie/falcon-core/commit/5a200b58e7e5eb7d42769a781dd2bdc42090ee20
+---
+186795e | close #41 + add color in the console
+
+https://github.com/falcon-eyrie/falcon-core/commit/186795e87ab65abbec20cbbdca8eb0c471132e76
+---
+d3d64cf | refactor zmq lib to remove deprecated warnings
+
+https://github.com/falcon-eyrie/falcon-core/commit/d3d64cf7e75283bffeb9d5a81352ad72f8f9b46d
+---
+4498d30 | add the name of the value already existing in the error message
+
+https://github.com/falcon-eyrie/falcon-core/commit/4498d30d09fafe3bcb4bcb25764fb44d1f42cfb8
+---
+488aa93 | update readme
+
+https://github.com/falcon-eyrie/falcon-core/commit/488aa9323d8458e86450f5a6c62e2dfeb0d32981
+---
+4f9588c | gupdate documentations
+
+https://github.com/falcon-eyrie/falcon-core/commit/4f9588c05c0c54ed052f0822ba84cc94a2b38247
+---
+7f00c16 | add doc build requirement
+
+https://github.com/falcon-eyrie/falcon-core/commit/7f00c16b69ae41d626e8be39393866c3d0411578
+---
+8614a95 | Merged in improve_Falcon_CLI (pull request #22)
+Improve Falcon CLI
+
+https://github.com/falcon-eyrie/falcon-core/commit/8614a951d0e6b7c2427ae657ecefe2f1d05b07eb
+---
+17a25a3 | update the doc
+
+https://github.com/falcon-eyrie/falcon-core/commit/17a25a36e9635a6e454e31c10122c5f6e058b92a
+---
+ff83fe4 | add resources command
+
+https://github.com/falcon-eyrie/falcon-core/commit/ff83fe400618caa517b2b7175259e63c87faedec
+---
+23554ba | cpplint code cleaning
+
+https://github.com/falcon-eyrie/falcon-core/commit/23554baca489356e55429ad79a8ef4079ac5e600
+---
+0412174 | Merge branch 'master' of https://bitbucket.org/kloostermannerflab/falcon-core
+
+https://github.com/falcon-eyrie/falcon-core/commit/041217466ccf1bc79f396e73ec26cd53aa6bbf37
+---
+fcfdbe0 | Merged update_g3log_lib into master
+
+https://github.com/falcon-eyrie/falcon-core/commit/fcfdbe0f4a8862423d96d6c9812d742eaba40eb3
+---
+29652c8 | export logging implementation as a library
+
+https://github.com/falcon-eyrie/falcon-core/commit/29652c801d1fe4fbda7f6728d53c53cb7c67825f
+---
+dbcde54 | fix the shared library error
+
+https://github.com/falcon-eyrie/falcon-core/commit/dbcde54740cc5237b378d8b22d5797394c12e515
+---
+7161c74 | doc + remove events level not used
+
+https://github.com/falcon-eyrie/falcon-core/commit/7161c746e0f5fbf55366e7f989b01c474588c0e3
+---
+6700fc4 | docs + change logging path by default to follow filesystem hierarchie standard
+
+https://github.com/falcon-eyrie/falcon-core/commit/6700fc4945c59f417adfe1266da665f5374f2d0b
+---
+197095b | docs
+
+https://github.com/falcon-eyrie/falcon-core/commit/197095b5d0573fce2b3eac15470fa033ec99da3b
+---
+ce66411 | Update the logging library to use g3log
+fetchContent of  the library g3log + replace the custom std2::make_unique by the standard std::make_unique - close #32
+
+https://github.com/falcon-eyrie/falcon-core/commit/ce664110dbf71c621773d99e558db4ed59043cf0
+---
+eb3a1e2 | fix multichannelfilter crashing when unprepare
+
+https://github.com/falcon-eyrie/falcon-core/commit/eb3a1e27bbc3fb1a7aac0d29e08f0b44abc58888
+---
+49ec497 | fix bug of remote graph path not resolve when send from the client
+
+https://github.com/falcon-eyrie/falcon-core/commit/49ec4973779aab979a63dc788bf7c0d166f2d0fa
+---
+66c743c | move resources in the install path /share folder
+
+https://github.com/falcon-eyrie/falcon-core/commit/66c743c363e54b8d096d06200fe46799c428c8bc
+---
+cdec159 | fix config + resource default path
+
+https://github.com/falcon-eyrie/falcon-core/commit/cdec1591eb8dfc18bdc05fbdd5fe6b1d59ca7980
+---
+b889c0a | update doc install and fix resource path bug
+
+https://github.com/falcon-eyrie/falcon-core/commit/b889c0a041cacee161274c440fc32631785408bd
+---
+11a76f5 | Merged in issue1-documentation (pull request #9)
+Issue1 documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/11a76f5a7b12c4b900f1431a111ac2172662c298
+---
+8c7643e | fix default path for resource folder
+
+https://github.com/falcon-eyrie/falcon-core/commit/8c7643ed9d57687cce1b75e3e676a73133b2c8ff
+---
+8002e8b | remove documentations specific to the extension
+
+https://github.com/falcon-eyrie/falcon-core/commit/8002e8b170aecc77e8b8e582f043516773501ab3
+---
+1cafdab | hotfix/catch bad documentation format + refactor string combination
+
+https://github.com/falcon-eyrie/falcon-core/commit/1cafdabe8a6e017dea76c0d1c76652e054f2d056
+---
+4c9c6b6 | add readme and lib doc
+
+https://github.com/falcon-eyrie/falcon-core/commit/4c9c6b66178c15f7d21db6b802213bf06e449762
+---
+422d31b | update installation
+
+https://github.com/falcon-eyrie/falcon-core/commit/422d31b95b55ac4223ff497de62a4bb7ce309962
+---
+ec8f5d2 | Merged in issue21_export_state_alias (pull request #20)
+add in state alias export yaml the description and the value if the permission of the state is at least readable for the user
+
+Approved-by: Fabian Kloosterman
+
+https://github.com/falcon-eyrie/falcon-core/commit/ec8f5d2ad486aee8e7c73d12407daae59dab4abd
+---
+49b8a46 | update doc
+
+https://github.com/falcon-eyrie/falcon-core/commit/49b8a4604e1a6a21c58ddf103dd74817620389cd
+---
+e2b0748 | update the processors documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/e2b0748f73783e88c4864b222f1ee06b5fef878b
+---
+82c6ef3 | add ripple detection example
+
+https://github.com/falcon-eyrie/falcon-core/commit/82c6ef3273018e029cff8c4caf7dced0f644adec
+---
+d3dd1b1 | refactor the documentation organization
+
+https://github.com/falcon-eyrie/falcon-core/commit/d3dd1b18a03f78618dea55e03ce426334795d8d4
+---
+d3f8fa6 | separate readable/writable state
+
+https://github.com/falcon-eyrie/falcon-core/commit/d3f8fa64cf3bf3036519b6d21946d1c95686e373
+---
+d09931b | datatype description
+
+https://github.com/falcon-eyrie/falcon-core/commit/d09931b050212715edc66a73a5ee8343525e5b2d
+---
+3ff3d9f | graph system docé
+
+https://github.com/falcon-eyrie/falcon-core/commit/3ff3d9f3204a4ddeeff343c0cac8d51189dd2bbc
+---
+5eb3534 | processor description in table format
+
+https://github.com/falcon-eyrie/falcon-core/commit/5eb353424eff9251e361465eca2d2c854274cb73
+---
+59ed4b9 | refactor processor categories
+
+https://github.com/falcon-eyrie/falcon-core/commit/59ed4b91725d44557bc89e12a00190a0836b019b
+---
+2dbaeac | documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/2dbaeac4aa45343cad8e586edd0985755f1deca2
+---
+a4cbbe5 | update documentation link and add data type documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/a4cbbe5f6a913d6a5b90d34e56b9b774f38a8e6c
+---
+b455536 | add documentation processors
+
+https://github.com/falcon-eyrie/falcon-core/commit/b455536596a782c7e112d5e0cf7d8b821cb8ff02
+---
+c8c3f01 | add doc
+
+https://github.com/falcon-eyrie/falcon-core/commit/c8c3f015805d0113120c99db770d68f932709409
+---
+cd6761e | update manual doc
+
+https://github.com/falcon-eyrie/falcon-core/commit/cd6761efaea0675f477737abdd452717783a6731
+---
+adadd3f | update doc
+
+https://github.com/falcon-eyrie/falcon-core/commit/adadd3fe3c54e1590aef5781d7ce60ba921a7ad5
+---
+9429f31 | update the documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/9429f3129285e5b9a78a049754faef47e555f2a1
+---
+6a23406 | Updated documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/6a234060f03c6908542337c2c604e8a562b89b69
+---
+1a33105 | WIP. Add to documentation.
+
+https://github.com/falcon-eyrie/falcon-core/commit/1a331059559c70dae92f3eb0c511b3f9e16849bf
+---
+c1cf97e | Updated documentation.
+
+https://github.com/falcon-eyrie/falcon-core/commit/c1cf97efb665b6456cb87bd554fbab2bbf31c299
+---
+26f2b92 | Add documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/26f2b928f5cf09608e8b62c7539a2f5e60429444
+---
+3eb218b | WIP: create documentation
+
+https://github.com/falcon-eyrie/falcon-core/commit/3eb218b6905674b40848635d56482d0f7544e6e9
+---
+c929939 | Set up structure for doxygen and sphinx documentation.
+
+https://github.com/falcon-eyrie/falcon-core/commit/c929939f6138cd2115b3a912d81dfc130b3593da
+---
+4a69fa2 | used value and description from the alias instead of the dependent
+
+https://github.com/falcon-eyrie/falcon-core/commit/4a69fa2954ce08bf2c64942e707e8b3cb8db4c1c
+---
+992a609 | Merged in issue26-internal_documentation_processors (pull request #19)
+Issue26 internal documentation processors
+
+Approved-by: Fabian Kloosterman
+
+close #26
+
+https://github.com/falcon-eyrie/falcon-core/commit/992a609cfc25c9e64f8bc8a81b1e332efd8dc876
+---
+0c230d0 | change method name
+
+https://github.com/falcon-eyrie/falcon-core/commit/0c230d0bbca912f466c7a8576b5a831e423c8467
+---
+483110b | add in state alias export yaml the description and the value if the permission of the state is at least readable for the user
+
+https://github.com/falcon-eyrie/falcon-core/commit/483110bdb8546bb19904cc7f7d563078bd05a24c
+---
+b235ae7 | remove shortcut doc and add documentation at the registration
+
+https://github.com/falcon-eyrie/falcon-core/commit/b235ae7d6512d1a89620cf5e7de08c8e00da460b
+---
+23cae0c | add documentation in cache
+
+https://github.com/falcon-eyrie/falcon-core/commit/23cae0cd4301b23298394cfd19d6533148e99b92
+---
+6091c60 | remove internal step to retrieve the doc of the processor and focus on the graph manager to do it
+
+https://github.com/falcon-eyrie/falcon-core/commit/6091c60d8e08d9daefce0521ae45ecbdbfb9db11
+---
+04d8086 | add documentation command from the user -- docs or d or D
+
+https://github.com/falcon-eyrie/falcon-core/commit/04d8086cc04e543d2913ee7060f64e76b3caf7b9
+---
+6c8bff5 | Added char overload to get_type_string.
+
+https://github.com/falcon-eyrie/falcon-core/commit/6c8bff5794ca98cd2d1382a338983cb5e9f270f2
+---
+fd47b19 | Improved error messages in parseConnectionRule. Fixed bug in Value class.
+
+https://github.com/falcon-eyrie/falcon-core/commit/fd47b19cec6455978d660bc0bc2262f2c9b249f6
+---
+37a17bd | Feature/ register processor documentation to be used from falcon
+
+https://github.com/falcon-eyrie/falcon-core/commit/37a17bd9e218afc51e6fe7062b6d3da5ef20ad20
+---
+73415de | Merged in issue30-validated_options (pull request #15)
+Issue30 validated options
+
+close #30
+close #19
+
+https://github.com/falcon-eyrie/falcon-core/commit/73415de6e7a1d271db898e86457ca7f6b0d01e05
+---
+f9cdff6 | Merged in refactor_state_options_validation (pull request #18)
+Refactor state options validation
+
+https://github.com/falcon-eyrie/falcon-core/commit/f9cdff6501c7389dbad99c2797fd6e2fcd8ef3e0
+---
+cea133d | fix/parsing format
+
+https://github.com/falcon-eyrie/falcon-core/commit/cea133d3c36b8882522b5979ea9ac959d2985690
+---
+e626372 | add flexibility in processor name
+
+https://github.com/falcon-eyrie/falcon-core/commit/e6263724a987dbe9b8f6d5d3c6ab6e7de39cb978
+---
+2ee4681 | fix/trailing space removed
+
+https://github.com/falcon-eyrie/falcon-core/commit/2ee46815fe09b4fffe38d78051372536758a2c06
+---
+8a410aa | add flexibility in port name
+
+https://github.com/falcon-eyrie/falcon-core/commit/8a410aa7adec7a2ca695ed1e60a0cff4abd97cfd
+---
+2137a65 | add variable name flexibility for states name and exposed method with different equivalent separation: space, -, _ in the code and graph config file.
+
+https://github.com/falcon-eyrie/falcon-core/commit/2137a6564fe3b4561bbcabebb3378e136a16f392
+---
+26cde58 | Merged in add_falcon_version_from_git_tag (pull request #17)
+add version from the last git tag + timestamp of the last build #34
+
+https://github.com/falcon-eyrie/falcon-core/commit/26cde58c4f19563fc45bd17443d08b48af93f14d
+---
+f136b77 | change headers file
+
+https://github.com/falcon-eyrie/falcon-core/commit/f136b774e8d01bbc35c00ad5fbf17ac10ed70d8e
+---
+d231185 | Moved common configuration code to utilities lib for use by other tools (e.g. nlxtestbench).
+
+https://github.com/falcon-eyrie/falcon-core/commit/d231185f1f7ac286f9f4a30eb975bb71c7e20863
+---
+9374e24 | Merge branch 'master' into issue30-validated_options
+
+https://github.com/falcon-eyrie/falcon-core/commit/9374e2434195c778657743c5fd0e8a4497ea1440
+---
+ddd50c5 | Improved configuration loading with new filesystem support and validation. If default config path does not exist, it is now created. Changed default resource location to ./
+
+https://github.com/falcon-eyrie/falcon-core/commit/ddd50c5fce0d1742985214171bce2276e51739ef
+---
+e179961 | Added filesystem library support. Added file and directory validation.
+
+https://github.com/falcon-eyrie/falcon-core/commit/e1799612ea5f8042e331475d4e917cac620357e6
+---
+70dce44 | Added state creation overloads that look up default value in corresponding option. It is now an error if no option is found. Changed default external permission for static states to write. Started adding doxygen documentation to methods.
+
+https://github.com/falcon-eyrie/falcon-core/commit/70dce44df9038f03664ee7b9138a90af005de1da
+---
+5564c0f | add versioning info on request
+
+https://github.com/falcon-eyrie/falcon-core/commit/5564c0fc76f5a6c86f5dcc5a5b613f8f7a4ca7bd
+---
+36838ae | fix/error in the resource path
+
+https://github.com/falcon-eyrie/falcon-core/commit/36838ae16d3bcec57ca258dfed8de7c274e20017
+---
+1694827 | add version from the last git tag + timestamp of the last build
+
+https://github.com/falcon-eyrie/falcon-core/commit/169482715327d03cb88a90c587da2810705c5878
+---
+55d30ed | Merged in issue23_handle_ressources (pull request #16)
+close #23 handle resources
+
+Approved-by: Fabian Kloosterman
+
+https://github.com/falcon-eyrie/falcon-core/commit/55d30ed4306f4f03f222b3d41c897ac1848bf44b
+---
+4a36fa0 | Merged in issue24_refactor_graph_file (pull request #14)
+close #24 Refactor/ read the new format of the graph yaml file
+
+Approved-by: Fabian Kloosterman
+
+https://github.com/falcon-eyrie/falcon-core/commit/4a36fa060f4f6b34cb2498de89dfcbf23ddca689
+---
+a6e047a | add yaml extensions
+
+https://github.com/falcon-eyrie/falcon-core/commit/a6e047a8d470d56d1a15c3e226fc3a4db4bc2c8a
+---
+6c61a14 | copy the ressources in the installation path when using make install
+
+https://github.com/falcon-eyrie/falcon-core/commit/6c61a147eebaa072ac5ad8ca2e3325c29c1b6438
+---
+9882488 | Add create state overloads that look up default value in options map. Add create port overloads that use datatype default name.
+
+https://github.com/falcon-eyrie/falcon-core/commit/9882488394478e09837a04750f746e5c90453de8
+---
+73e3c49 | First attempt to adopt options for configuration.
+
+https://github.com/falcon-eyrie/falcon-core/commit/73e3c4984d84a24e649baf0145b1898f23a0486b
+---
+ddabb0f | Added ValueMap for a map of validated values (of the same type).
+
+https://github.com/falcon-eyrie/falcon-core/commit/ddabb0fdc93d6de76b2f5864ed7a73837b8f4d60
+---
+44f8b3a | Fixed use of removed classes ConstrainedValue and ClampedValue.
+
+https://github.com/falcon-eyrie/falcon-core/commit/44f8b3afe193706fa15e351d080c4ec894640e22
+---
+c7412f4 | Added string utilities. In Value class, from/to yaml conversion is now handled by virtual methods, rather than function handles.
+
+https://github.com/falcon-eyrie/falcon-core/commit/c7412f489240e34cc5d94dac8cf5c0df81050d9c
+---
+2be9ed2 | Bug fix.
+
+https://github.com/falcon-eyrie/falcon-core/commit/2be9ed23b448b91e06cf8f90de2d19313365f789
+---
+b0b4523 | Add Serialization Encoding enum. Add support for yaml conversion for serialization enums.
+
+https://github.com/falcon-eyrie/falcon-core/commit/b0b4523aa35686b4894663475fd43d3dad80575f
+---
+0c5e6c9 | Added measurement values with units, custom units that are defined in main.cpp, separated validation code into own header.
+
+https://github.com/falcon-eyrie/falcon-core/commit/0c5e6c9c69f0440b145437688065d8895ebb68a3
+---
+d95865b | Add dependency on LLNL/units library.
+
+https://github.com/falcon-eyrie/falcon-core/commit/d95865b108727cd5d90f653fdc117b7d78af9d41
+---
+cbe2e9e | Copy ressource file only in post-build with the falcon target (after make or make install command)
+
+https://github.com/falcon-eyrie/falcon-core/commit/cbe2e9e7e2e691d7eaf9130783e82575ea9c27e5
+---
+baa72e1 | combine ressources from all extensions and put it in the server_side_storage_ressource path used by falcon
+
+https://github.com/falcon-eyrie/falcon-core/commit/baa72e1d6c182e7f3ba6f884b29c69a377942ced
+---
+7d6becb | remove log message for debug
+
+https://github.com/falcon-eyrie/falcon-core/commit/7d6becbeaa28ed0f6d4f89478e018cdc7b3fd9c7
+---
+392999f | remove the level definition useless / pass by reference the node
+
+https://github.com/falcon-eyrie/falcon-core/commit/392999f3160cf9fc55813e10de6e81c0eadf4e6b
+---
+4c6a717 | WIP. updating and refactoring.
+
+https://github.com/falcon-eyrie/falcon-core/commit/4c6a7170d1c1496e91213217377049a79ecbc93d
+---
+142411c | WIP. First implementation of validated options.
+
+https://github.com/falcon-eyrie/falcon-core/commit/142411c864b211bc0c32e0b23372c5c84d91f773
+---
+4a1f499 | add manage both version of graph format with warnings
+
+https://github.com/falcon-eyrie/falcon-core/commit/4a1f499e1b6e852101c18fd5b68b0946aee1bb2b
+---
+e23b1a3 | parse two types of inputs to the build command: filename or already string graph description
+
+https://github.com/falcon-eyrie/falcon-core/commit/e23b1a379f747eec9f6be41b9052eca147b35dfd
+---
+4e52493 | merge the command buildfile and build
+
+https://github.com/falcon-eyrie/falcon-core/commit/4e5249325bc29c27c0fc8ecc6d116cd01a2fcccc
+---
+cda40a3 | Refactor/ read the new format of the graph yaml file
+merge template yaml file with its options
+
+https://github.com/falcon-eyrie/falcon-core/commit/cda40a3ffaee0a1d9bf4303b6499e98aa5c81be7
+---
+120b1a4 | add extensions to .gitignore
+
+https://github.com/falcon-eyrie/falcon-core/commit/120b1a4e340846e18460134ddc2ca837b95db1f3
+---
+c6049e5 | Merged in issue27-separate_datatype_and_data (pull request #12)
+Separate data type class from the data payload class
+
+https://github.com/falcon-eyrie/falcon-core/commit/c6049e5c0211d2781cb5547f5fcc53410903915a
+---
+42fb7db | Merged master into issue27-separate_datatype_and_data
+
+https://github.com/falcon-eyrie/falcon-core/commit/42fb7dbd38090d5041148cc9345ab725236e4d00
+---
+40c8e62 | manage extension file
+
+https://github.com/falcon-eyrie/falcon-core/commit/40c8e6252ff9e6c412e9cadad84e037ad69e2f1b
+---
+2360f3a | Refactor create shared state --- naming problem
+close issue #25
+
+https://github.com/falcon-eyrie/falcon-core/commit/2360f3aa2bb2c385dcec3b797d1771c5a780d917
+---
+70b1d35 | add convenience shared type state
+
+https://github.com/falcon-eyrie/falcon-core/commit/70b1d35b7d7d73e35b1367645edfdd69af47e84e
+---
+adfc8ea | Merge branch 'master' of https://bitbucket.org/kloostermannerflab/falcon-core
+
+https://github.com/falcon-eyrie/falcon-core/commit/adfc8ea9487aa199fc906b11f85582e9baeca590
+---
+18cf842 | Move from C++11 to C++17.
+
+https://github.com/falcon-eyrie/falcon-core/commit/18cf842c7a28d8e77a7f7a10dd7080c00ea9bc6d
+---
+9b8f768 | Merged in issue29-extension_development_mode (pull request #13)
+Adds development mode to cmake
+
+Approved-by: Marine Chaput
+
+https://github.com/falcon-eyrie/falcon-core/commit/9b8f7684a28de838ea319705c68d0869b514e74f
+---
+0d2ff64 | Refactor create share state #25
+
+https://github.com/falcon-eyrie/falcon-core/commit/0d2ff64b3c7183cdb116fa153749c6fe06b18ee3
+---
+9b2fb3f | Added development mode.
+
+https://github.com/falcon-eyrie/falcon-core/commit/9b2fb3f541b95c0ee3cffac358d4ad2f59472153
+---
+c989a86 | Fix issues to make core extensions compile.
+
+https://github.com/falcon-eyrie/falcon-core/commit/c989a86c11e8b8352441472824f74da9a51426d3
+---
+a5680cf | Merge branch 'master' into issue27-separate_datatype_and_data
+
+https://github.com/falcon-eyrie/falcon-core/commit/a5680cfd588c28b3ec3f5fb0c65109d208849f9f
+---
+67f1abf | Merged in issue28-simplify_enabling_extensions (pull request #11)
+Extensions are specified in text file and will be handled automatically by cmake.
+
+Approved-by: Marine Chaput
+
+Closes issue #28
+
+https://github.com/falcon-eyrie/falcon-core/commit/67f1abf369598fa0e1891b42cb13459bd1876572
+---
+2e83ad8 | Separate data type class from the data payload class.
+
+https://github.com/falcon-eyrie/falcon-core/commit/2e83ad8dc58652d8c671dd33196802160d7a1738
+---
+e70a6a3 | Extensions can be specified in text file and will be handled automatically by cmake.
+
+https://github.com/falcon-eyrie/falcon-core/commit/e70a6a32ce4ceff45702494ccc0b19234271000c
+---
+b44c2d8 | Merged in cmake (pull request #7)
+Cmake
+
+Approved-by: Fabian Kloosterman
+
+https://github.com/falcon-eyrie/falcon-core/commit/b44c2d88ecf92e845990787ed95429cc994aa8af
+---
+b9f8305 | remove build file
+
+https://github.com/falcon-eyrie/falcon-core/commit/b9f83057d85ff0f2ee70ab96f4446fdc0230734f
+---
+47062f2 | deplace extensions in another repository + setup the repo to use the fklab-cmake-gui tool
+
+https://github.com/falcon-eyrie/falcon-core/commit/47062f2dd34202fb3f12d3083235bfb48807f5a5
+---
+e6bf295 | manage library and extension with Fetch_content + change for using last version zmq and yamlcpp (>0.6 no need of Boost library anymore)
+
+https://github.com/falcon-eyrie/falcon-core/commit/e6bf29544d7b0a61d0208de96494f1e69d6ca958
+---
+9151689 | Enhanced port/slot address with processor class and port datatype to provide more information in address string. Add string with processor type (class) to IProcessor. Fix verification of port compatibility so that data type hierarchy is respected.
+
+https://github.com/falcon-eyrie/falcon-core/commit/91516892591acb0ffb464bf9fab0d352143d2628
+---
+1a63d63 | small bug fixes.
+
+https://github.com/falcon-eyrie/falcon-core/commit/1a63d636beb43f88a795f3b59cbb760ea91d497b
+---
+37881a2 | Merged in issue3-refactor-data-type-system (pull request #6)
+closes issue #3
+refactor data type system
+
+https://github.com/falcon-eyrie/falcon-core/commit/37881a2d8fcd10ccd247652494983ed402dabd6c
+---
+8249b6b | Merged in issue8-refactor-states (pull request #5)
+closes issue #8
+refactoring of shared state system
+
+https://github.com/falcon-eyrie/falcon-core/commit/8249b6b1afeeaa6561b5c26e6c869c5381a45f04
+---
+d646f67 | removed commented line
+
+https://github.com/falcon-eyrie/falcon-core/commit/d646f67e188c96f6d77f8680cc61c257e0291440
+---
+516d44c | major refactoring of data type system
+removed *DataType classes, and replaced with nested Parameter and Capabilities
+classes inside *Data classes
+
+https://github.com/falcon-eyrie/falcon-core/commit/516d44c56ab738ceaf48c5f3854257df95b8fe9c
+---
+447ae9f | Adds to_string method for Range class. Remove unnecessary include.
+
+https://github.com/falcon-eyrie/falcon-core/commit/447ae9f6e1562bc64c0947e78158be5aeb3d69df
+---
+395ac7c | Add possibility to exclude data types and processors from compilation.
+
+https://github.com/falcon-eyrie/falcon-core/commit/395ac7c4dc33eaab3c2646db8eaf6d1f7b8a260f
+---
+5b6aa4e | refactoring of shared state system
+ProcessorGraph now manages a map of state aliases that represent groups of shared processor states.
+Shared states agree on an external read/write permission that is compatible with all.
+Shared states cache their value locally on each set/get operation, so that processors can easily check
+if a state value was changed by another processor (or externally)
+
+use shared_ptr everywhere for both IState and the shared atomic value
+Readable and Writable State classes are now clonable, and protect internals with locks for thread-safe access
+
+exported yaml of states takes external permission into account
+added 'y' keyboard command to check exported yaml description of graph
+
+state update/retrieval methods removed from IProcessor, so that IProcessor does not have to be friend of IState
+IProcessor create state methods have additional description argument
+
+methods added to ProcessorGraph to look up processors and states by name
+ProcessorGraph state update/retrieve methods now also deal with state aliases
+
+https://github.com/falcon-eyrie/falcon-core/commit/5b6aa4e75095c3d58e4be0cc586295cedc21f088
+---
+35bf913 | Merged in issue2-merge-iprocessor (pull request #4)
+closes issue #2
+Merged IProcessor and ProcessorEngine classes.
+
+https://github.com/falcon-eyrie/falcon-core/commit/35bf913b59cd669a988dff495bcd8afe4d495e8b
+---
+f1cbe60 | Merged IProcessor and ProcessorEngine classes.
+
+https://github.com/falcon-eyrie/falcon-core/commit/f1cbe60205dcb26c0c537788989cbb08becaa6d2
+---
+4b12590 | Merged in issue6-remove-streamconnection (pull request #3)
+closes issue #6
+Removed StreamConnection classes, ports/slots gained pointers to their parents.
+
+https://github.com/falcon-eyrie/falcon-core/commit/4b1259010d72aa6b1038bfe7ec3864266f6a44be
+---
+ccda54f | Removed StreamConnection classes, ports/slots gained pointers to their parents.
+
+https://github.com/falcon-eyrie/falcon-core/commit/ccda54fc31eb2e1b0a07d18d3439c99a97749453
+---
+4431cce | Merged in issue4-serialization (pull request #2)
+closes issue #4 Put common serialization code into separate file.
+
+https://github.com/falcon-eyrie/falcon-core/commit/4431cce37d6611d52d6d8851104403bf5820c7fe
+---
+9cb24d8 | Put common serialization code into separate file.
+
+https://github.com/falcon-eyrie/falcon-core/commit/9cb24d8a972e00a37a2faca86d964a5d046ee5eb
+---
+1029464 | Merged in issue5-streaminfo-class (pull request #1)
+closes issue #5 Separate StreamInfo class into own file.
+
+https://github.com/falcon-eyrie/falcon-core/commit/1029464d9192c6f524a04b9c61efed7dabab0d27
+---
+c4f1f39 | Separate StreamInfo class into own file.
+
+https://github.com/falcon-eyrie/falcon-core/commit/c4f1f39b37d6f00591ded7ca18386f6a98adbf96
+---
+8f147fd | initial commit of cleaned-up falcon
+
+https://github.com/falcon-eyrie/falcon-core/commit/8f147fd8f24ad3051d839fbdc3cd1268ef41992d
+---
