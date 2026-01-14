@@ -7,8 +7,8 @@ import 'package:falcon_gui/utils/zmq/zmq_ffi.dart';
 
 /// Long-lived isolate for continuous ZMQ message reception.
 /// Reuses the same isolate for multiple receive operations.
-class ZMQIsolateReceiver {
-  ZMQIsolateReceiver(this.socketAddress);
+class ZMQIsolateWorker {
+  ZMQIsolateWorker(this.socketAddress);
 
   final int socketAddress;
   Isolate? _isolate;

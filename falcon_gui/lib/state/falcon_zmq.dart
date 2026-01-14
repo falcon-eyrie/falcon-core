@@ -6,7 +6,7 @@ import 'package:falcon_gui/model/falcon_state.dart';
 import 'package:falcon_gui/model/falcon_zmq_command.dart';
 import 'package:falcon_gui/utils/zmq/zmq_constants.dart';
 import 'package:falcon_gui/utils/zmq/zmq_ffi.dart';
-import 'package:falcon_gui/utils/zmq/zmq_isolate_receiver.dart';
+import 'package:falcon_gui/utils/zmq/zmq_isolate_worker.dart';
 import 'package:flutter/foundation.dart';
 
 /// ZMQ connection wrapper for Falcon
@@ -25,7 +25,7 @@ class FalconZMQ extends ChangeNotifier {
   ZMQContext? _context;
   ZMQSocket? _commandSocket;
   ZMQSocket? _logSocket;
-  ZMQIsolateReceiver? _logReceiver;
+  ZMQIsolateWorker? _zmqIsolateWorker;
 
   bool _isConnected = false;
   bool get isConnected => _isConnected;
@@ -107,8 +107,8 @@ class FalconZMQ extends ChangeNotifier {
         debugPrint('FalconZMQ: Connected log socket to $address:$logPort');
 
         // Start long-lived isolate receiver for logs
-        _logReceiver = ZMQIsolateReceiver(_logSocket!.address);
-        await _logReceiver!.start();
+        _zmqIsolateWorker = ZMQIsolateWorker(_logSocket!.address);
+        await _zmqIsolateWorker!.start();
         unawaited(startLogListener());
       } catch (e) {
         debugPrint(
@@ -164,14 +164,14 @@ class FalconZMQ extends ChangeNotifier {
 
   /// Start listening for log messages using long-lived isolate
   Future<void> startLogListener() async {
-    if (_logReceiver == null || !_isConnected) {
+    if (_zmqIsolateWorker == null || !_isConnected) {
       return;
     }
 
     try {
-      while (_isConnected && _logReceiver != null) {
+      while (_isConnected && _zmqIsolateWorker != null) {
         try {
-          final logMessage = await _logReceiver!.recvMultipartStrings();
+          final logMessage = await _zmqIsolateWorker!.recvMultipartStrings();
           if (logMessage.isNotEmpty) {
             _logs.add(FalconLog.fromZmqParts(logMessage));
             notifyListeners();
@@ -191,8 +191,8 @@ class FalconZMQ extends ChangeNotifier {
     _isConnected = false;
 
     // Stop long-lived isolate
-    await _logReceiver?.stop();
-    _logReceiver = null;
+    await _zmqIsolateWorker?.stop();
+    _zmqIsolateWorker = null;
 
     if (_commandSocket != null) {
       _zmq?.close(_commandSocket!);
