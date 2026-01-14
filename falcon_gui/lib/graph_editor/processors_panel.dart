@@ -1,6 +1,6 @@
 import 'package:falcon_gui/graph_editor/processor_item.dart';
 import 'package:falcon_gui/model/falcon_graph.dart';
-import 'package:falcon_gui/model/processor_definitions.dart';
+import 'package:falcon_gui/model/processor_templates.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -9,12 +9,12 @@ class ProcessorsPanel extends StatelessWidget {
 
   bool isFirstIntermediateProcessor(int index, Processor processor) {
     return processor.isIntermediate &&
-        processorDefinitions.values.where((p) => p.isSource).length == index;
+        processorTemplates.values.where((p) => p.isSource).length == index;
   }
 
   bool isFirstSinkProcessor(int index, Processor processor) {
     return processor.isSink &&
-        processorDefinitions.values
+        processorTemplates.values
                 .where((p) => p.isSource || p.isIntermediate)
                 .length ==
             index;
@@ -41,7 +41,7 @@ class ProcessorsPanel extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               itemBuilder: (context, index) {
-                final processor = processorDefinitions.values.elementAtOrNull(
+                final processor = processorTemplates.values.elementAtOrNull(
                   index,
                 );
 

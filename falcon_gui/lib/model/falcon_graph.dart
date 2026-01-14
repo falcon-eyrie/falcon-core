@@ -3,13 +3,14 @@ import 'dart:ui';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:falcon_gui/utils/regex.dart';
+import 'package:yaml/yaml.dart' as yaml;
 
-class FalconGraph {
-  FalconGraph({
+class FalconGraph extends Equatable {
+  const FalconGraph({
     required Map<String, Processor> processors,
     required List<Connection> connections,
-  }) : _processors = Map.of(processors),
-       _connections = List.of(connections);
+  }) : _processors = processors,
+       _connections = connections;
 
   final Map<String, Processor> _processors;
   final List<Connection> _connections;
@@ -94,9 +95,12 @@ class FalconGraph {
       connections: connections ?? List.of(_connections),
     );
   }
+
+  @override
+  List<Object?> get props => [_processors, _connections];
 }
 
-class Processor {
+class Processor extends Equatable {
   Processor({
     required this.id,
     required this.className,
@@ -154,16 +158,29 @@ class Processor {
       uiMetadata: uiMetadata ?? this.uiMetadata,
     );
   }
+
+  @override
+  List<Object?> get props => [
+    id,
+    className,
+    _options,
+    _ports,
+    uiMetadata,
+    isTemplate,
+  ];
 }
 
-sealed class OptionValue<T> {
-  OptionValue({required this.value, required this.displayName});
+sealed class OptionValue<T> extends Equatable {
+  const OptionValue({required this.value, required this.displayName});
   final T value;
   final String displayName;
+
+  @override
+  List<Object?> get props => [value, displayName];
 }
 
 final class IntOption extends OptionValue<int> {
-  IntOption({required super.value, required super.displayName});
+  const IntOption({required super.value, required super.displayName});
 
   IntOption copyWith({required int newValue}) {
     return IntOption(value: newValue, displayName: displayName);
@@ -171,7 +188,7 @@ final class IntOption extends OptionValue<int> {
 }
 
 final class DoubleOption extends OptionValue<double> {
-  DoubleOption({required super.value, required super.displayName});
+  const DoubleOption({required super.value, required super.displayName});
 
   DoubleOption copyWith({required double newValue}) {
     return DoubleOption(value: newValue, displayName: displayName);
@@ -179,7 +196,7 @@ final class DoubleOption extends OptionValue<double> {
 }
 
 final class StringOption extends OptionValue<String> {
-  StringOption({required super.value, required super.displayName});
+  const StringOption({required super.value, required super.displayName});
 
   StringOption copyWith({required String newValue}) {
     return StringOption(value: newValue, displayName: displayName);
@@ -187,10 +204,18 @@ final class StringOption extends OptionValue<String> {
 }
 
 final class BoolOption extends OptionValue<bool> {
-  BoolOption({required super.value, required super.displayName});
+  const BoolOption({required super.value, required super.displayName});
 
   BoolOption copyWith({required bool newValue}) {
     return BoolOption(value: newValue, displayName: displayName);
+  }
+}
+
+final class YamlMapOption extends OptionValue<yaml.YamlMap> {
+  const YamlMapOption({required super.value, required super.displayName});
+
+  YamlMapOption copyWith({required yaml.YamlMap newValue}) {
+    return YamlMapOption(value: newValue, displayName: displayName);
   }
 }
 
@@ -216,12 +241,15 @@ final class OneOfOption extends OptionValue<String> {
   }
 }
 
-class Port {
-  Port({required this.isIn, required this.name, required this.type});
+class Port extends Equatable {
+  const Port({required this.isIn, required this.name, required this.type});
   final String name;
   final String type; // e.g. "AnyType", "TimeSeriesType<double>", "int"
   final bool isIn;
   bool get isOut => !isIn;
+
+  @override
+  List<Object?> get props => [name, type, isIn];
 }
 
 class UIMetadata {
@@ -231,7 +259,6 @@ class UIMetadata {
     Color? color,
     bool isExpanded = false,
   }) : _position = position,
-
        _lastModified = lastModified ?? DateTime(1970),
        _color = color,
        _isExpanded = isExpanded;

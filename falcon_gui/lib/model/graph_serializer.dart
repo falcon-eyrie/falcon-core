@@ -1,5 +1,5 @@
 import 'package:falcon_gui/model/falcon_graph.dart';
-import 'package:falcon_gui/model/processor_definitions.dart';
+import 'package:falcon_gui/model/processor_templates.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
@@ -64,7 +64,7 @@ extension FalconGraphSerializerX on FalconGraph {
     return buffer.toString().trimRight();
   }
 
-  String _yamlScalar(Object? value) {
+  String _yamlScalar(Object? value, [int depth = 0]) {
     if (value is String) return '"${value.replaceAll('"', r'\"')}"';
     if (value is num || value is bool) return value.toString();
     if (value == null) return 'null';
@@ -72,12 +72,24 @@ extension FalconGraphSerializerX on FalconGraph {
     if (value is Color) {
       return '#${value.toARGB32().toRadixString(16).padLeft(8, '0')}';
     }
+    if (value is YamlMap) {
+      final buffer = StringBuffer();
+      for (final entry in value.entries) {
+        buffer
+          ..write('\n        ${'  ' * (depth + 1)}')
+          ..write('${entry.key}: ${_yamlScalar(entry.value, depth + 1)}');
+      }
+      return buffer.toString();
+    }
+    if (value is YamlList) {
+      return '[${value.map(_yamlScalar).join(', ')}]';
+    }
     return '"$value"';
   }
 
   static FalconGraph fromYaml(String yamlString) {
     if (yamlString.trim().isEmpty) {
-      return FalconGraph(processors: {}, connections: []);
+      return const FalconGraph(processors: {}, connections: []);
     }
 
     var doc = loadYaml(yamlString) as YamlMap;
@@ -102,7 +114,7 @@ extension FalconGraphSerializerX on FalconGraph {
       final map = entry.value as YamlMap;
       final className = map['class'] as String;
 
-      final templateProcessor = processorDefinitions.values.firstWhere(
+      final templateProcessor = processorTemplates.values.firstWhere(
         (t) => t.className == className,
         orElse: () => throw FalconGraphYamlParserException(
           'Invalid processor class: $className. '
@@ -372,6 +384,12 @@ OptionValue<dynamic> _optionFromScalar(
   if (templateOption is StringOption) {
     return StringOption(
       value: value as String,
+      displayName: templateOption.displayName,
+    );
+  }
+  if (templateOption is YamlMapOption) {
+    return YamlMapOption(
+      value: value as YamlMap,
       displayName: templateOption.displayName,
     );
   }
