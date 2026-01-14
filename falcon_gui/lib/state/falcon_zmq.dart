@@ -5,7 +5,6 @@ import 'package:falcon_gui/model/falcon_log.dart';
 import 'package:falcon_gui/model/falcon_state.dart';
 import 'package:falcon_gui/model/falcon_zmq_command.dart';
 import 'package:falcon_gui/utils/zmq/zmq_constants.dart';
-import 'package:falcon_gui/utils/zmq/zmq_ffi.dart';
 import 'package:falcon_gui/utils/zmq/zmq_isolate_worker.dart';
 import 'package:flutter/foundation.dart';
 
@@ -21,14 +20,11 @@ class FalconZMQ extends ChangeNotifier {
   final int commandPort;
   final int logPort;
 
-  ZMQFFi? _zmq;
-  ZMQContext? _context;
-  ZMQSocket? _commandSocket;
-  ZMQSocket? _logSocket;
-  ZMQIsolateWorker? _zmqIsolateWorker;
+  ZMQIsolateWorker? _zmqWorker;
+  StreamSubscription<List<String>>? _logSubscription;
+  Completer<void>? _socketsReadyCompleter;
 
-  bool _isConnected = false;
-  bool get isConnected => _isConnected;
+  bool get isConnected => _socketsReadyCompleter?.isCompleted ?? false;
 
   final _logs = <FalconLog>[];
 
@@ -61,64 +57,61 @@ class FalconZMQ extends ChangeNotifier {
 
   Future<void> _getStateViaCommand() async {
     try {
+      await _socketsReadyCompleter?.future;
+
       final zmqStateResponseParts = await sendCommand(
         FalconZmqCommand.graphState,
       );
 
-      _stateFromResponse = FalconState.fromString(
-        zmqStateResponseParts!.first,
-      );
+      _stateFromResponse = FalconState.fromString(zmqStateResponseParts!.first);
     } catch (e) {
-      _stateFromResponse = FalconState.unknown;
+      debugPrint('FalconZMQ: Failed to get state via command: $e');
     } finally {
       _isWaitingForStateResponse = false;
       notifyListeners();
     }
   }
 
+  static const _commandSocketName = 'command';
+  static const _logSocketName = 'log';
+
   /// Initialize ZMQ and connect all sockets
   Future<bool> connect() async {
-    if (_isConnected) return true;
+    if (isConnected) return true;
 
     try {
-      _zmq = ZMQFFi();
-      _context = _zmq!.ctxNew();
+      _socketsReadyCompleter = Completer<void>();
+      _zmqWorker = ZMQIsolateWorker();
+      await _zmqWorker!.start();
 
-      // Connect command socket (REQ)
-      _commandSocket = _zmq!.socket(_context!, ZMQ_REQ);
-      _zmq!.setSocketOption(_commandSocket!, ZMQ_RCVTIMEO, 5000);
-      final cmdResult = _zmq!.connect(_commandSocket!, '$address:$commandPort');
-      if (cmdResult != 0) {
-        throw Exception('Failed to connect command socket');
-      }
+      // Setup command socket (REQ)
+      await _zmqWorker!.createSocket(
+        socketId: _commandSocketName,
+        endpoint: '$address:$commandPort',
+        socketType: ZMQ_REQ,
+        receiveTimeout: 5000,
+      );
 
-      debugPrint('FalconZMQ: Connected to $address:$commandPort');
-      _isConnected = true;
+      // Setup log socket (SUB)
+      await _zmqWorker!.createSocket(
+        socketId: _logSocketName,
+        endpoint: '$address:$logPort',
+        socketType: ZMQ_SUB,
+        receiveTimeout: 1000,
+        subscribeAll: true,
+      );
 
-      try {
-        _logSocket = _zmq!.socket(_context!, ZMQ_SUB);
-        _zmq!.setSocketOption(_logSocket!, ZMQ_RCVTIMEO, 1000);
-        final logResult = _zmq!.connect(_logSocket!, '$address:$logPort');
-        if (logResult != 0) {
-          throw Exception('Failed to connect log socket');
-        }
-        // Subscribe to all messages (empty topic filter)
-        _zmq!.subscribeAll(_logSocket!);
-        debugPrint('FalconZMQ: Connected log socket to $address:$logPort');
+      debugPrint(
+        'FalconZMQ: Connected to $address:$commandPort and $address:$logPort',
+      );
+      _socketsReadyCompleter!.complete();
 
-        // Start long-lived isolate receiver for logs
-        _zmqIsolateWorker = ZMQIsolateWorker(_logSocket!.address);
-        await _zmqIsolateWorker!.start();
-        unawaited(startLogListener());
-      } catch (e) {
-        debugPrint(
-          'FalconZMQ: Failed to connect log socket at $address:$logPort: $e',
-        );
-      }
+      unawaited(startLogListener());
 
       return true;
     } catch (e) {
-      debugPrint('FalconZMQ: Connection to $address:$commandPort failed: $e');
+      debugPrint('FalconZMQ: Connection to $address failed: $e');
+      _socketsReadyCompleter?.completeError(e);
       await disconnect();
       return false;
     }
@@ -144,18 +137,16 @@ class FalconZMQ extends ChangeNotifier {
     List<String> parts, {
     required Duration timeout,
   }) async {
-    if (_commandSocket == null || _zmq == null || !_isConnected) {
+    if (_zmqWorker == null || !isConnected) {
       return null;
     }
 
     try {
-      // Use ZMQ FFI to send/receive multipart strings
-      _zmq!.sendMultipartStrings(_commandSocket!, parts);
-      final responseStr = await _zmq!.recvMultipartStrings(
-        _commandSocket!,
+      final response = await _zmqWorker!.sendAndReceive(
+        _commandSocketName,
+        parts,
       );
-
-      return responseStr;
+      return response;
     } catch (e) {
       debugPrint('FalconZMQ: Command failed: $e');
       return null;
@@ -164,49 +155,38 @@ class FalconZMQ extends ChangeNotifier {
 
   /// Start listening for log messages using long-lived isolate
   Future<void> startLogListener() async {
-    if (_zmqIsolateWorker == null || !_isConnected) {
+    if (_zmqWorker == null || !isConnected) {
       return;
     }
 
     try {
-      while (_isConnected && _zmqIsolateWorker != null) {
-        try {
-          final logMessage = await _zmqIsolateWorker!.recvMultipartStrings();
-          if (logMessage.isNotEmpty) {
-            _logs.add(FalconLog.fromZmqParts(logMessage));
-            notifyListeners();
-          }
-        } catch (e) {
-          // Timeout or error, continue loop if still connected
-          if (!_isConnected) break;
-        }
-      }
+      _logSubscription = _zmqWorker!
+          .receiveStream(_logSocketName)
+          .listen(
+            (logMessage) {
+              if (logMessage.isNotEmpty) {
+                _logs.add(FalconLog.fromZmqParts(logMessage));
+                notifyListeners();
+              }
+            },
+            onError: (dynamic e) {
+              debugPrint('FalconZMQ: Log listener error: $e');
+            },
+          );
     } catch (e) {
-      debugPrint('FalconZMQ: Log listener error: $e');
+      debugPrint('FalconZMQ: Failed to start log listener: $e');
     }
   }
 
   /// Disconnect all sockets and cleanup
   Future<void> disconnect() async {
-    _isConnected = false;
+    _socketsReadyCompleter = null;
 
-    // Stop long-lived isolate
-    await _zmqIsolateWorker?.stop();
-    _zmqIsolateWorker = null;
+    await _logSubscription?.cancel();
+    _logSubscription = null;
 
-    if (_commandSocket != null) {
-      _zmq?.close(_commandSocket!);
-      _commandSocket = null;
-    }
-    if (_logSocket != null) {
-      _zmq?.close(_logSocket!);
-      _logSocket = null;
-    }
-    if (_context != null) {
-      _zmq?.ctxTerm(_context!);
-      _context = null;
-    }
-    _zmq = null;
+    await _zmqWorker?.stop();
+    _zmqWorker = null;
   }
 
   @override

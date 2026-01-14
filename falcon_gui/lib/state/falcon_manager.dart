@@ -107,11 +107,9 @@ class FalconManager extends ChangeNotifier {
             '/home/device/.local/share/org.falcon-eyrie.falcon_gui/config.yaml',
           ],
         ],
-        mode: ProcessStartMode.inheritStdio,
       );
       _processExitCompleter = Completer<void>();
       _listenForExitCode();
-      await _initializeZMQ();
       notifyListeners();
     } catch (e) {
       debugPrint('Error creating falcon instance: $e');

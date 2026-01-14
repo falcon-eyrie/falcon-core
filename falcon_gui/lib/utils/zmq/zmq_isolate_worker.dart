@@ -1,160 +1,245 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:ffi';
 import 'dart:isolate';
 
+import 'package:falcon_gui/utils/zmq/zmq_constants.dart';
 import 'package:falcon_gui/utils/zmq/zmq_ffi.dart';
 
-/// Long-lived isolate for continuous ZMQ message reception.
-/// Reuses the same isolate for multiple receive operations.
+/// Generic ZMQ isolate worker
 class ZMQIsolateWorker {
-  ZMQIsolateWorker(this.socketAddress);
-
-  final int socketAddress;
   Isolate? _isolate;
-  SendPort? _commandPort;
-  ReceivePort? _responsePort;
-  final _responseController = StreamController<_IsolateResponse>.broadcast();
-  int _requestId = 0;
+  late SendPort _sendPort;
+  final _receivePort = ReceivePort();
+  final _responseCompleters = <int, Completer<dynamic>>{};
+  final _streamControllers = <int, StreamController<List<String>>>{};
+  int _nextRequestId = 0;
 
-  /// Start the long-lived isolate
   Future<void> start() async {
-    if (_isolate != null) return;
+    _isolate = await Isolate.spawn(_mainHandler, _receivePort.sendPort);
 
-    _responsePort = ReceivePort();
-    _responsePort!.listen((message) {
+    final completer = Completer<SendPort>();
+    _receivePort.listen((message) {
       if (message is SendPort) {
-        _commandPort = message;
-      } else if (message is _IsolateResponse) {
-        _responseController.add(message);
-      }
-    });
+        completer.complete(message);
+      } else if (message is Map) {
+        final requestId = message['id'] as int;
 
-    _isolate = await Isolate.spawn(
-      _continuousReceiveIsolate,
-      _IsolateInit(
-        socketAddress: socketAddress,
-        sendPort: _responsePort!.sendPort,
-      ),
-    );
-
-    // Wait for isolate to send back its command port
-    await _responseController.stream.firstWhere(
-      (response) => response.requestId == -1,
-    );
-  }
-
-  /// Receive a multipart message
-  Future<List<List<int>>> recvMultipart() async {
-    if (_commandPort == null) {
-      throw Exception('Isolate not started');
-    }
-
-    final requestId = _requestId++;
-    final completer = Completer<List<List<int>>>();
-
-    // Listen for this specific response
-    late StreamSubscription<_IsolateResponse> subscription;
-    subscription = _responseController.stream.listen((response) {
-      if (response.requestId == requestId) {
-        unawaited(subscription.cancel());
-        if (response.error != null) {
-          completer.completeError(response.error!);
+        if (message['stream'] == true) {
+          final controller = _streamControllers[requestId];
+          if (message.containsKey('error')) {
+            controller?.addError(message['error'] as Object);
+            unawaited(controller?.close());
+            _streamControllers.remove(requestId);
+          } else if (message['done'] == true) {
+            unawaited(controller?.close());
+            _streamControllers.remove(requestId);
+          } else {
+            controller?.add(message['result'] as List<String>);
+          }
         } else {
-          completer.complete(response.data as List<List<int>>);
+          final completer = _responseCompleters.remove(requestId);
+          if (message.containsKey('error')) {
+            completer?.completeError(message['error'] as String);
+          } else {
+            completer?.complete(message['result']);
+          }
         }
       }
     });
 
-    // Send request
-    _commandPort!.send(_IsolateRequest(requestId: requestId));
+    _sendPort = await completer.future;
+  }
 
+  Future<void> createSocket({
+    required String socketId,
+    required String endpoint,
+    required int socketType,
+    int? receiveTimeout,
+    bool subscribeAll = false,
+  }) {
+    return _send({
+      'op': 'create',
+      'socketId': socketId,
+      'endpoint': endpoint,
+      'socketType': socketType,
+      'receiveTimeout': receiveTimeout,
+      'subscribeAll': subscribeAll,
+    });
+  }
+
+  Future<List<String>> sendAndReceive(String socketId, List<String> parts) {
+    return _send({
+      'op': 'sendRecv',
+      'socketId': socketId,
+      'parts': parts,
+    });
+  }
+
+  Stream<List<String>> receiveStream(String socketId) {
+    final id = _nextRequestId++;
+    final controller = StreamController<List<String>>();
+    _streamControllers[id] = controller;
+    _sendPort.send({'id': id, 'op': 'recvStream', 'socketId': socketId});
+    return controller.stream;
+  }
+
+  Future<T> _send<T>(Map<String, dynamic> data) {
+    final id = _nextRequestId++;
+    final completer = Completer<T>();
+    _responseCompleters[id] = completer;
+    _sendPort.send({'id': id, ...data});
     return completer.future;
   }
 
-  /// Receive and decode multipart message as strings
-  Future<List<String>> recvMultipartStrings() async {
-    final parts = await recvMultipart();
-    return parts.map((bytes) {
-      try {
-        return utf8.decode(bytes, allowMalformed: false);
-      } catch (e) {
-        return utf8.decode(bytes, allowMalformed: true);
-      }
-    }).toList();
-  }
-
-  /// Stop the isolate
   Future<void> stop() async {
+    _sendPort.send({'op': 'stop'});
+    await Future<void>.delayed(const Duration(milliseconds: 100));
     _isolate?.kill(priority: Isolate.immediate);
     _isolate = null;
-    _commandPort = null;
-    _responsePort?.close();
-    _responsePort = null;
-    await _responseController.close();
+    _receivePort.close();
   }
 
-  /// Isolate entry point for continuous receiving
-  static void _continuousReceiveIsolate(_IsolateInit init) {
-    final commandPort = ReceivePort();
-    final zmq = ZMQFFi();
-    final sock = Pointer<Void>.fromAddress(init.socketAddress);
+  static void _mainHandler(SendPort mainSendPort) {
+    final receivePort = ReceivePort();
+    mainSendPort.send(receivePort.sendPort);
 
-    // Send command port back to main isolate
-    init.sendPort.send(commandPort.sendPort);
-    init.sendPort.send(_IsolateResponse(requestId: -1, data: null));
+    ZMQFFi? zmq;
+    ZMQContext? context;
+    final sockets = <String, ZMQSocket>{};
+    final socketConfigs = <String, _SocketConfig>{};
+    final streamIsolates = <int, Isolate>{};
 
-    // Listen for receive requests
-    commandPort.listen((message) {
-      if (message is _IsolateRequest) {
-        try {
-          final result = zmq.recvMultipartSync(sock);
-          init.sendPort.send(
-            _IsolateResponse(
-              requestId: message.requestId,
-              data: result,
-            ),
-          );
-        } catch (e) {
-          init.sendPort.send(
-            _IsolateResponse(
-              requestId: message.requestId,
-              data: null,
-              error: e.toString(),
-            ),
-          );
+    receivePort.listen((message) async {
+      if (message is! Map) return;
+
+      final id = message['id'] as int?;
+      final op = message['op'] as String;
+
+      try {
+        switch (op) {
+          case 'create':
+            zmq ??= ZMQFFi();
+            context ??= zmq!.ctxNew();
+
+            final socket = zmq!.socket(context!, message['socketType'] as int);
+
+            if (message['receiveTimeout'] != null) {
+              zmq!.setSocketOption(
+                socket,
+                ZMQ_RCVTIMEO,
+                message['receiveTimeout'] as int,
+              );
+            }
+
+            zmq!.connect(socket, message['endpoint'] as String);
+
+            if (message['subscribeAll'] == true &&
+                message['socketType'] == ZMQ_SUB) {
+              zmq!.subscribeAll(socket);
+            }
+
+            final socketId = message['socketId'] as String;
+            sockets[socketId] = socket;
+            socketConfigs[socketId] = _SocketConfig(
+              endpoint: message['endpoint'] as String,
+              socketType: message['socketType'] as int,
+              receiveTimeout: message['receiveTimeout'] as int?,
+              subscribeAll: message['subscribeAll'] as bool? ?? false,
+            );
+            mainSendPort.send({'id': id, 'result': null});
+
+          case 'sendRecv':
+            final socket = sockets[message['socketId']];
+            if (socket == null) throw Exception('Socket not found');
+
+            zmq!.sendMultipartStrings(socket, message['parts'] as List<String>);
+            final result = zmq!.recvMultipartStringsSync(socket);
+            mainSendPort.send({'id': id, 'result': result});
+
+          case 'recvStream':
+            final socketId = message['socketId'] as String;
+            final config = socketConfigs[socketId];
+            if (config == null) throw Exception('Socket config not found');
+
+            // Spawn separate isolate for streaming
+            streamIsolates[id!] = await Isolate.spawn(
+              _subscriptionLoop,
+              _StreamIsolateData(
+                mainSendPort,
+                id,
+                config,
+              ),
+            );
+
+          case 'stop':
+            for (final isolate in streamIsolates.values) {
+              isolate.kill(priority: Isolate.immediate);
+            }
+            streamIsolates.clear();
+            receivePort.close();
         }
+      } catch (e) {
+        mainSendPort.send({'id': id, 'error': e.toString()});
       }
     });
   }
+
+  static void _subscriptionLoop(_StreamIsolateData data) {
+    final zmq = ZMQFFi();
+    final context = zmq.ctxNew();
+    final socket = zmq.socket(context, data.config.socketType);
+
+    if (data.config.receiveTimeout != null) {
+      zmq.setSocketOption(socket, ZMQ_RCVTIMEO, data.config.receiveTimeout!);
+    }
+
+    zmq.connect(socket, data.config.endpoint);
+
+    if (data.config.subscribeAll && data.config.socketType == ZMQ_SUB) {
+      zmq.subscribeAll(socket);
+    }
+
+    while (true) {
+      try {
+        final result = zmq.recvMultipartStringsSync(socket);
+        data.sendPort.send({
+          'id': data.id,
+          'stream': true,
+          'result': result,
+        });
+      } catch (e) {
+        if (!e.toString().contains('Resource temporarily unavailable')) {
+          data.sendPort.send({
+            'id': data.id,
+            'stream': true,
+            'error': e.toString(),
+          });
+          break;
+        }
+      }
+    }
+
+    data.sendPort.send({'id': data.id, 'stream': true, 'done': true});
+  }
 }
 
-/// Initialization parameters for long-lived isolate
-class _IsolateInit {
-  _IsolateInit({
-    required this.socketAddress,
-    required this.sendPort,
+class _SocketConfig {
+  const _SocketConfig({
+    required this.endpoint,
+    required this.socketType,
+    this.receiveTimeout,
+    this.subscribeAll = false,
   });
 
-  final int socketAddress;
+  final String endpoint;
+  final int socketType;
+  final int? receiveTimeout;
+  final bool subscribeAll;
+}
+
+class _StreamIsolateData {
+  _StreamIsolateData(this.sendPort, this.id, this.config);
+
   final SendPort sendPort;
-}
-
-/// Request to isolate
-class _IsolateRequest {
-  _IsolateRequest({required this.requestId});
-  final int requestId;
-}
-
-/// Response from isolate
-class _IsolateResponse {
-  _IsolateResponse({
-    required this.requestId,
-    required this.data,
-    this.error,
-  });
-
-  final int requestId;
-  final dynamic data;
-  final String? error;
+  final int id;
+  final _SocketConfig config;
 }
