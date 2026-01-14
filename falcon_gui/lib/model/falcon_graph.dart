@@ -6,11 +6,11 @@ import 'package:falcon_gui/utils/regex.dart';
 import 'package:yaml/yaml.dart' as yaml;
 
 class FalconGraph extends Equatable {
-  const FalconGraph({
+  FalconGraph({
     required Map<String, Processor> processors,
     required List<Connection> connections,
-  }) : _processors = processors,
-       _connections = connections;
+  }) : _processors = Map.of(processors),
+       _connections = List.of(connections);
 
   final Map<String, Processor> _processors;
   final List<Connection> _connections;

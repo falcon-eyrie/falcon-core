@@ -20,7 +20,7 @@ class GraphManager extends ChangeNotifier {
 
   static final GraphManager instance = GraphManager._internal();
 
-  FalconGraph _graph = const FalconGraph(processors: {}, connections: []);
+  FalconGraph _graph = FalconGraph(processors: const {}, connections: const []);
 
   double _minX = 0;
   double _minY = 0;

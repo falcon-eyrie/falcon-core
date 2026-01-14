@@ -76,7 +76,7 @@ extension FalconGraphSerializerX on FalconGraph {
 
   static FalconGraph fromYaml(String yamlString) {
     if (yamlString.trim().isEmpty) {
-      return const FalconGraph(processors: {}, connections: []);
+      return FalconGraph(processors: const {}, connections: const []);
     }
 
     var doc = loadYaml(yamlString) as YamlMap;
