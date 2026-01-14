@@ -1,90 +1,77 @@
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/processor_templates.dart';
 import 'package:falcon_gui/utils/regex.dart';
+import 'package:falcon_gui/utils/yaml_scalar.dart';
 import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
+import 'package:yaml_writer/yaml_writer.dart';
 
 extension FalconGraphSerializerX on FalconGraph {
   String toYaml({bool excludeUIMetadata = false}) {
-    final buffer = StringBuffer()..writeln('graph:');
+    final graph = <String, Object?>{};
 
     if (processors.isNotEmpty) {
-      buffer.writeln('  processors:');
+      final processorsMap = <String, Object?>{};
+
       for (final processor in processors.values) {
-        if (processor.isTemplate) continue;
-
-        final ui = processor.uiMetadata;
-
-        buffer
-          ..writeln('    ${processor.id}:')
-          ..writeln('      class: ${processor.className}');
+        final processorMap = <String, Object?>{
+          'class': processor.className,
+        };
 
         if (processor.options.isNotEmpty) {
-          buffer.writeln('      options:');
-          for (final entry in processor.options.entries) {
-            buffer.writeln(
-              '        ${entry.key}: ${_yamlScalar(entry.value.value)}',
-            );
-          }
-        }
-        if (excludeUIMetadata) {
-          buffer.writeln();
-          continue;
-        }
-        buffer
-          ..writeln('      ui:')
-          ..writeln('        position:')
-          ..writeln('          x: ${_yamlScalar(ui.position.dx.toInt())}')
-          ..writeln('          y: ${_yamlScalar(ui.position.dy.toInt())}')
-          ..writeln(
-            '        lastModified: "${_yamlScalar(ui.lastModified.toUtc())}"',
-          )
-          ..writeln(
-            '        isExpanded: ${_yamlScalar(ui.isExpanded)}',
-          );
-
-        if (ui.color != null) {
-          buffer.writeln('        color: ${_yamlScalar(ui.color)}');
+          processorMap['options'] = {
+            for (final entry in processor.options.entries)
+              entry.key: entry.value.value,
+          };
         }
 
-        buffer.writeln();
+        processorsMap[processor.id] = processorMap;
+      }
+
+      if (processorsMap.isNotEmpty) {
+        graph['processors'] = processorsMap;
       }
     }
 
     if (connections.isNotEmpty) {
-      buffer.writeln('  connections:');
-      for (final conn in connections) {
-        buffer.writeln(
-          '    - ${conn.outProcessor}.${conn.outPort} = '
-          '${conn.inProcessor}.${conn.inPort}',
-        );
-      }
+      graph['connections'] = [
+        for (final conn in connections)
+          '''${conn.outProcessor}.${conn.outPort} = ${conn.inProcessor}.${conn.inPort}''',
+      ];
     }
 
-    return buffer.toString().trimRight();
-  }
+    final root = <String, Object?>{
+      'graph': graph,
+    };
 
-  String _yamlScalar(Object? value, [int depth = 0]) {
-    if (value is String) return '"${value.replaceAll('"', r'\"')}"';
-    if (value is num || value is bool) return value.toString();
-    if (value == null) return 'null';
-    if (value is DateTime) return value.toIso8601String();
-    if (value is Color) {
-      return '#${value.toARGB32().toRadixString(16).padLeft(8, '0')}';
-    }
-    if (value is YamlMap) {
-      final buffer = StringBuffer();
-      for (final entry in value.entries) {
-        buffer
-          ..write('\n        ${'  ' * (depth + 1)}')
-          ..write('${entry.key}: ${_yamlScalar(entry.value, depth + 1)}');
+    if (!excludeUIMetadata) {
+      final uiMetadata = <String, Object?>{};
+
+      for (final processor in processors.values) {
+        final ui = processor.uiMetadata;
+
+        final uiMap = <String, Object?>{
+          'position': {
+            'x': ui.position.dx.toInt(),
+            'y': ui.position.dy.toInt(),
+          },
+          'lastModified': ui.lastModified.toUtc().toIso8601String(),
+          'isExpanded': ui.isExpanded,
+        };
+
+        if (ui.color != null) {
+          uiMap['color'] = ui.color;
+        }
+
+        uiMetadata[processor.id] = uiMap;
       }
-      return buffer.toString();
+
+      root['uiMetadata'] = uiMetadata;
     }
-    if (value is YamlList) {
-      return '[${value.map(_yamlScalar).join(', ')}]';
-    }
-    return '"$value"';
+
+    final yamlWriter = YamlWriter();
+
+    return yamlWriter.write(root);
   }
 
   static FalconGraph fromYaml(String yamlString) {
@@ -94,7 +81,8 @@ extension FalconGraphSerializerX on FalconGraph {
 
     var doc = loadYaml(yamlString) as YamlMap;
 
-    // Extract graph content if it's wrapped in 'graph:' key
+    final uiMetadataMap = doc['uiMetadata'] as YamlMap?;
+
     if (doc['graph'] != null) {
       doc = doc['graph'] as YamlMap;
     }
@@ -135,43 +123,12 @@ extension FalconGraphSerializerX on FalconGraph {
           );
         }
         try {
-          options[name] = _optionFromScalar(templateOption, optMap[name]);
+          options[name] = optionFromScalar(templateOption, optMap[name]);
         } catch (e) {
           throw FalconGraphYamlParserException(
             '"${optMap[name]}" is not a valid value for option "$name" for '
             'processor "$className".',
           );
-        }
-      }
-
-      var position = Offset.zero;
-      var lastModified = DateTime(1970);
-      Color? color;
-      var isExpanded = false;
-
-      final uiMap = map['ui'] as YamlMap?;
-      if (uiMap != null) {
-        try {
-          final pos = uiMap['position'] as YamlMap?;
-          if (pos != null) {
-            position = Offset(
-              (pos['x'] as num).toDouble(),
-              (pos['y'] as num).toDouble(),
-            );
-          }
-          if (uiMap['lastModified'] != null) {
-            lastModified = DateTime.parse(uiMap['lastModified'] as String);
-          }
-          if (uiMap['color'] != null) {
-            final hex = (uiMap['color'] as String).replaceFirst('#', '');
-            color = Color(int.parse(hex, radix: 16));
-          }
-
-          if (uiMap['isExpanded'] != null) {
-            isExpanded = uiMap['isExpanded'] as bool;
-          }
-        } catch (_) {
-          // no-op
         }
       }
 
@@ -187,12 +144,7 @@ extension FalconGraphSerializerX on FalconGraph {
         className: className,
         options: options,
         ports: List.of(templateProcessor.ports),
-        uiMetadata: UIMetadata(
-          position: position,
-          lastModified: lastModified,
-          color: color,
-          isExpanded: isExpanded,
-        ),
+        uiMetadata: UIMetadata(),
       );
     }
 
@@ -226,6 +178,55 @@ extension FalconGraphSerializerX on FalconGraph {
         for (final line in lines) {
           _parseAndValidateConnection(line, processors, connections);
         }
+      }
+    }
+
+    // Third pass: parse UI metadata if present
+    if (uiMetadataMap != null) {
+      for (final entry in uiMetadataMap.entries) {
+        final processorId = entry.key as String;
+        final uiMap = entry.value as YamlMap?;
+
+        final processor = processors[processorId];
+        if (processor == null) continue;
+
+        var position = Offset.zero;
+        var lastModified = DateTime(1970);
+        Color? color;
+        var isExpanded = false;
+        if (uiMap != null) {
+          try {
+            final pos = uiMap['position'] as YamlMap?;
+            if (pos != null) {
+              position = Offset(
+                (pos['x'] as num).toDouble(),
+                (pos['y'] as num).toDouble(),
+              );
+            }
+            if (uiMap['lastModified'] != null) {
+              lastModified = DateTime.parse(uiMap['lastModified'] as String);
+            }
+            if (uiMap['color'] != null) {
+              final hex = (uiMap['color'] as String).replaceFirst('#', '');
+              color = Color(int.parse(hex, radix: 16));
+            }
+
+            if (uiMap['isExpanded'] != null) {
+              isExpanded = uiMap['isExpanded'] as bool;
+            }
+          } catch (_) {
+            // no-op
+          }
+        }
+
+        processors[processor.id] = processor.copyWith(
+          uiMetadata: UIMetadata(
+            position: position,
+            lastModified: lastModified,
+            color: color,
+            isExpanded: isExpanded,
+          ),
+        );
       }
     }
 
@@ -357,59 +358,4 @@ class FalconGraphYamlParserException implements Exception {
 
   @override
   String toString() => 'FalconGraphYamlParserException: $message';
-}
-
-OptionValue<dynamic> _optionFromScalar(
-  OptionValue<dynamic> templateOption,
-  dynamic value,
-) {
-  if (templateOption is IntOption) {
-    return IntOption(
-      value: value as int,
-      displayName: templateOption.displayName,
-    );
-  }
-  if (templateOption is DoubleOption) {
-    return DoubleOption(
-      value: value as double,
-      displayName: templateOption.displayName,
-    );
-  }
-  if (templateOption is BoolOption) {
-    return BoolOption(
-      value: value as bool,
-      displayName: templateOption.displayName,
-    );
-  }
-  if (templateOption is StringOption) {
-    return StringOption(
-      value: value as String,
-      displayName: templateOption.displayName,
-    );
-  }
-  if (templateOption is YamlMapOption) {
-    return YamlMapOption(
-      value: value as YamlMap,
-      displayName: templateOption.displayName,
-    );
-  }
-  if (templateOption is OneOfOption) {
-    final v = value as String;
-    if (!templateOption.allowed
-        .map((allowed) => allowed.toLowerCase())
-        .contains(v.toLowerCase())) {
-      throw FalconGraphYamlParserException(
-        'Value "$v" is not allowed for option "${templateOption.displayName}". '
-        'Allowed values: ${templateOption.allowed.join(", ")}',
-      );
-    }
-    return OneOfOption(
-      value: v,
-      allowed: templateOption.allowed,
-      displayName: templateOption.displayName,
-    );
-  }
-  throw FalconGraphYamlParserException(
-    'Unsupported option type for "${templateOption.displayName}".',
-  );
 }
