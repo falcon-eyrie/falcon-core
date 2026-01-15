@@ -1,7 +1,9 @@
 import 'package:falcon_gui/graph_editor/processor_item.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
+import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
 
 /// EditorView
 ///
@@ -42,72 +44,123 @@ class EditorView extends StatelessWidget {
                   ..maybeRemoveConnectionAtPosition();
               }
             },
-            child: InteractiveViewer(
-              interactionEndFrictionCoefficient: 0.000000001,
-              transformationController: graphManager.transformationController,
-              minScale: 0.01,
-              maxScale: 5,
-              boundaryMargin: const EdgeInsets.all(double.infinity),
-              constrained: false,
-              child: SizedBox(
-                height: graphManager.canvasSize.height,
-                width: graphManager.canvasSize.width,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    if (graphManager.shouldRenderConnections) ...[
-                      CustomPaint(
-                        painter: ConnectionPainter(
-                          connectedColor: Colors.green,
-                          newConnectionColor: Colors.grey,
-                        ),
-                        size: Size(
-                          graphManager.canvasSize.width,
-                          graphManager.canvasSize.height,
-                        ),
-                      ),
-                    ],
-                    ...graphManager.processors.map((processor) {
-                      return Positioned(
-                        key: ValueKey(processor.id),
-                        left: processor.uiMetadata.position.dx,
-                        top: processor.uiMetadata.position.dy,
-                        child: ProcessorItem(
-                          onPanStart: (details) {
-                            final scenePosition = _toScene(
-                              details.globalPosition,
-                              context,
-                            );
-                            graphManager.onProcessorDragStart(
-                              id: processor.id,
-                              scenePosition: scenePosition,
-                            );
-                          },
-                          onPanUpdate: (details) {
-                            final scenePosition = _toScene(
-                              details.globalPosition,
-                              context,
-                            );
-                            graphManager.onProcessorDragUpdate(
-                              id: processor.id,
-                              newPos: scenePosition,
-                            );
-                          },
-                          onPanEnd: (_) =>
-                              graphManager.onProcessorDragEnd(id: processor.id),
-                          onTapDown: () =>
-                              graphManager.onProcessorClicked(id: processor.id),
-                          processor: processor,
-                        ),
-                      );
-                    }),
-                  ],
+            child: Stack(
+              children: [
+                InteractiveViewer(
+                  interactionEndFrictionCoefficient: 0.000000001,
+                  transformationController:
+                      graphManager.transformationController,
+                  minScale: 0.01,
+                  maxScale: 5,
+                  boundaryMargin: const EdgeInsets.all(double.infinity),
+                  constrained: false,
+                  child: SizedBox(
+                    height: graphManager.canvasSize.height,
+                    width: graphManager.canvasSize.width,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        if (graphManager.shouldRenderConnections) ...[
+                          CustomPaint(
+                            painter: ConnectionPainter(
+                              connectedColor: Colors.green,
+                              newConnectionColor: Colors.grey,
+                            ),
+                            size: Size(
+                              graphManager.canvasSize.width,
+                              graphManager.canvasSize.height,
+                            ),
+                          ),
+                        ],
+                        ...graphManager.processors.map((processor) {
+                          return Positioned(
+                            key: ValueKey(processor.id),
+                            left: processor.uiMetadata.position.dx,
+                            top: processor.uiMetadata.position.dy,
+                            child: ProcessorItem(
+                              onPanStart: (details) {
+                                final scenePosition = _toScene(
+                                  details.globalPosition,
+                                  context,
+                                );
+                                graphManager.onProcessorDragStart(
+                                  id: processor.id,
+                                  scenePosition: scenePosition,
+                                );
+                              },
+                              onPanUpdate: (details) {
+                                final scenePosition = _toScene(
+                                  details.globalPosition,
+                                  context,
+                                );
+                                graphManager.onProcessorDragUpdate(
+                                  id: processor.id,
+                                  newPos: scenePosition,
+                                );
+                              },
+                              onPanEnd: (_) => graphManager.onProcessorDragEnd(
+                                id: processor.id,
+                              ),
+                              onTapDown: () => graphManager.onProcessorClicked(
+                                id: processor.id,
+                              ),
+                              processor: processor,
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                if (graphManager.tempConnectionLinePosition != null) ...[
+                  const Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 12,
+                    child: _CancelNewConnectionModeInfo(),
+                  ),
+                ],
+              ],
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _CancelNewConnectionModeInfo extends StatelessWidget {
+  const _CancelNewConnectionModeInfo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: context.c.secondary,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              RemixIcons.mouse_line,
+              size: 16,
+              color: context.c.onSecondary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Select another port to create connection. '
+              'Right click to cancel',
+              style: TextStyle(
+                color: context.c.onSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

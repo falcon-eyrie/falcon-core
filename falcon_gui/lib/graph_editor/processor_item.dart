@@ -210,7 +210,7 @@ class _HeaderState extends State<_Header> {
             IconButton(
               icon: Icon(
                 widget.processor.isTemplate
-                    ? RemixIcons.add_box_line
+                    ? RemixIcons.add_line
                     : RemixIcons.file_copy_line,
                 size: 20,
                 color: const Color(0xffffffff),

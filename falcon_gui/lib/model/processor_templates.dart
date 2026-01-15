@@ -61,15 +61,15 @@ final _processorTemplatesUnsorted = {
       'encoding': _createEncodingOption(),
       'format': _createFormatOption(),
       'overwrite': const BoolOption(value: false, displayName: 'Overwrite'),
-      'throttle/enabled': const BoolOption(
+      'throttle_enabled': const BoolOption(
         value: false,
         displayName: 'Throttle',
       ),
-      'throttle/threshold': const DoubleOption(
+      'throttle_threshold': const DoubleOption(
         value: 0.3,
         displayName: 'Throttle Threshold',
       ),
-      'throttle/smooth': const DoubleOption(
+      'throttle_smooth': const DoubleOption(
         value: 0.5,
         displayName: 'Throttle Smooth',
       ),
@@ -112,27 +112,27 @@ final _processorTemplatesUnsorted = {
     className: 'BurstDetector',
     isTemplate: true,
     options: const {
-      'threshold dev': DoubleOption(
+      'threshold_dev': DoubleOption(
         value: 3,
         displayName: 'Threshold Dev',
       ),
-      'smooth time': DoubleOption(
+      'smooth_time': DoubleOption(
         value: 1,
         displayName: 'Smooth Time',
       ),
-      'detection lockout time': DoubleOption(
+      'detection_lockout_time': DoubleOption(
         value: 1,
         displayName: 'Detection Lockout Time',
       ),
-      'stream events': BoolOption(
+      'stream_events': BoolOption(
         value: true,
         displayName: 'Stream Events',
       ),
-      'stream statistics': BoolOption(
+      'stream_statistics': BoolOption(
         value: false,
         displayName: 'Stream Statistics',
       ),
-      'statistics buffer size': DoubleOption(
+      'statistics_buffer_size': DoubleOption(
         value: 1,
         displayName: 'Statistics Buffer Size',
       ),
@@ -161,15 +161,15 @@ final _processorTemplatesUnsorted = {
     className: 'DigitalOutput',
     isTemplate: true,
     options: {
-      'pulse width': const IntOption(
+      'pulse_width': const IntOption(
         value: 400,
         displayName: 'Pulse Width',
       ),
-      'device/type': const StringOption(
+      'device_type': const StringOption(
         value: 'dummy',
         displayName: 'Device Type',
       ),
-      'device/nchannels': const IntOption(
+      'device_nchannels': const IntOption(
         value: 16,
         displayName: 'Device Channels',
       ),
@@ -181,7 +181,7 @@ final _processorTemplatesUnsorted = {
         }),
         displayName: 'Protocols',
       ),
-      'event logging': const BoolOption(
+      'event_logging': const BoolOption(
         value: true,
         displayName: 'Event Logging',
       ),
