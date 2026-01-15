@@ -130,7 +130,7 @@ class EditorView extends StatelessWidget {
 }
 
 class _CancelNewConnectionModeInfo extends StatelessWidget {
-  const _CancelNewConnectionModeInfo({super.key});
+  const _CancelNewConnectionModeInfo();
 
   @override
   Widget build(BuildContext context) {

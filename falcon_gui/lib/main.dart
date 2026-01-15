@@ -46,7 +46,7 @@ Future<void> _tempLoadGraph() async {
     final yaml = await p.readAsString();
     final graph = FalconGraphSerializerX.fromYaml(yaml);
     graphManager.loadGraph(graph);
-    falconManager.onGraphChanged(graph);
+    unawaited(falconManager.onGraphChanged(graph));
   } catch (_) {}
 }
 
