@@ -27,37 +27,40 @@ class ThemeModeSetting extends StatelessWidget {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
       builder: (context, mode, _) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Theme Mode',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            SegmentedButton<ThemeMode>(
-              segments: const [
-                ButtonSegment<ThemeMode>(
-                  value: ThemeMode.light,
-                  label: Text('Light'),
-                ),
-                ButtonSegment<ThemeMode>(
-                  value: ThemeMode.dark,
-                  label: Text('Dark'),
-                ),
-                ButtonSegment<ThemeMode>(
-                  value: ThemeMode.system,
-                  label: Text('System'),
-                ),
-              ],
-              selected: <ThemeMode>{mode},
-              onSelectionChanged: (newSelection) {
-                final newMode = newSelection.first;
-                themeNotifier.value = newMode;
-                unawaited(saveThemeModeToSharedPreferences(newMode));
-              },
-            ),
-          ],
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Theme Mode',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              SegmentedButton<ThemeMode>(
+                segments: const [
+                  ButtonSegment<ThemeMode>(
+                    value: ThemeMode.light,
+                    label: Text('Light'),
+                  ),
+                  ButtonSegment<ThemeMode>(
+                    value: ThemeMode.dark,
+                    label: Text('Dark'),
+                  ),
+                  ButtonSegment<ThemeMode>(
+                    value: ThemeMode.system,
+                    label: Text('System'),
+                  ),
+                ],
+                selected: <ThemeMode>{mode},
+                onSelectionChanged: (newSelection) {
+                  final newMode = newSelection.first;
+                  themeNotifier.value = newMode;
+                  unawaited(saveThemeModeToSharedPreferences(newMode));
+                },
+              ),
+            ],
+          ),
         );
       },
     );

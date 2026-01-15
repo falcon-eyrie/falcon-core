@@ -124,7 +124,7 @@ class _FalconProcessPriorityStatusState
                           child: Row(
                             children: [
                               const Icon(
-                                RemixIcons.check_fill,
+                                RemixIcons.check_line,
                                 color: Colors.green,
                                 size: 20,
                               ),

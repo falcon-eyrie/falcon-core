@@ -17,37 +17,39 @@ class DialogView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: IntrinsicWidth(
         child: IntrinsicHeight(
           child: Center(
             child: Column(
               children: [
-                ColoredBox(
-                  color: context.c.surfaceContainer,
+                Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: context.c.surfaceContainer,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                  ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        child: Text(
-                          title,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
+                      const SizedBox(width: 16),
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
+                      const Spacer(),
                       IconButton(
                         icon: const Icon(RemixIcons.close_line),
                         onPressed: onClose ?? () => Navigator.of(context).pop(),
                       ),
+                      const SizedBox(width: 16),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(8),
                   child: content,
                 ),
               ],

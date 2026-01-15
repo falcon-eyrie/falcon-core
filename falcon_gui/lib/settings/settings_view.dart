@@ -14,9 +14,9 @@ class SettingsView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FalconProcessPriorityStatus(),
-          SizedBox(height: 20),
+          SizedBox(height: 12),
           ThemeModeSetting(),
-          SizedBox(height: 20),
+          SizedBox(height: 12),
         ],
       ),
     );

@@ -58,8 +58,8 @@ class ControlsBar extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   graphManager.isAllCollapsed
-                      ? Remix.arrow_down_double_fill
-                      : Remix.arrow_up_double_fill,
+                      ? Remix.arrow_down_double_line
+                      : Remix.arrow_down_double_line,
                 ),
                 tooltip: 'Toggle collapse all',
                 onPressed: graphManager.toggleCollapseAll,
@@ -88,7 +88,9 @@ class ControlsBar extends StatelessWidget {
                       ? RemixIcons.stop_line
                       : RemixIcons.play_line,
                 ),
-                tooltip: 'Run Pipeline',
+                tooltip: falconManager.falconState == FalconState.processing
+                    ? 'Stop Pipeline'
+                    : 'Run Pipeline',
                 onPressed:
                     falconManager.falconState == FalconState.ready ||
                         falconManager.falconState == FalconState.processing

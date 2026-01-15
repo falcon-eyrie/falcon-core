@@ -199,7 +199,7 @@ IconData _logIcon(FalconLogType type) {
     case FalconLogType.info:
       return RemixIcons.information_line;
     case FalconLogType.update:
-      return RemixIcons.refresh_line;
+      return RemixIcons.exchange_2_line;
     case FalconLogType.state:
       return RemixIcons.settings_3_line;
     case FalconLogType.unknown:
