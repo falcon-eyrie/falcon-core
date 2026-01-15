@@ -4,7 +4,9 @@ import 'dart:math' as math;
 import 'package:collection/collection.dart';
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
+import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/utils/curve_hittest.dart';
+import 'package:falcon_gui/utils/debounce.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +40,9 @@ class GraphManager extends ChangeNotifier {
   final TransformationController transformationController =
       TransformationController(topLeftMatrix);
 
-  Timer? _hoverDebounceTimer;
+  final _hoverDebounce = Debounce(
+    delay: const Duration(milliseconds: 16),
+  );
 
   List<Processor> get processors => _graph.processors.values.toList()
     ..sort(
@@ -52,7 +56,6 @@ class GraphManager extends ChangeNotifier {
 
   void loadGraph(FalconGraph graph) {
     _graph = graph;
-
     notifyListeners();
   }
 
@@ -75,6 +78,7 @@ class GraphManager extends ChangeNotifier {
   String duplicateProcessor({
     required Processor processor,
   }) {
+    _selectedPortUniqueId = null;
     var newId = processor.id;
     while (_graph.processors.containsKey(newId)) {
       // parse the last _* segment, increment id
@@ -150,6 +154,7 @@ class GraphManager extends ChangeNotifier {
     required String id,
     required Offset scenePosition,
   }) {
+    _selectedPortUniqueId = null;
     final processor = _graph.processors[id];
     if (processor == null) return;
 
@@ -161,6 +166,7 @@ class GraphManager extends ChangeNotifier {
   }
 
   void onProcessorDragUpdate({required String id, required Offset newPos}) {
+    _selectedPortUniqueId = null;
     final processor = _graph.processors[id];
     if (processor == null) return;
 
@@ -198,12 +204,15 @@ class GraphManager extends ChangeNotifier {
 
   void onProcessorDragEnd({required String id}) {
     _grabOffset = null;
+    unawaited(falconManager.onUIMetadataChanged(_graph));
   }
 
   void onProcessorClicked({required String id}) {
+    _selectedPortUniqueId = null;
     final processor = _graph.processors[id];
     if (processor == null) return;
     _graph.processors[id]?.uiMetadata.updateLastModified();
+    unawaited(falconManager.onUIMetadataChanged(_graph));
     notifyListeners();
   }
 
@@ -268,10 +277,12 @@ class GraphManager extends ChangeNotifier {
     required String optionName,
     required OptionValue<dynamic> newValue,
   }) {
-    final processor = _graph.processors[processorId];
-    if (processor == null) return;
-
-    processor.updateOption(name: optionName, value: newValue);
+    _selectedPortUniqueId = null;
+    _graph.updateOption(
+      processorId: processorId,
+      optionName: optionName,
+      newValue: newValue,
+    );
 
     notifyListeners();
   }
@@ -569,20 +580,18 @@ class GraphManager extends ChangeNotifier {
       );
       _cursorPosition = canvasPosition;
       notifyListeners();
-    }
-
-    final newHoveredConnection = _getHoveredConnection(position);
-
-    _hoverDebounceTimer?.cancel();
-
-    if (newHoveredConnection != null) {
-      _hoveredConnection = newHoveredConnection;
-      notifyListeners();
     } else {
-      _hoverDebounceTimer = Timer(const Duration(milliseconds: 16), () {
-        _hoveredConnection = null;
+      final newHoveredConnection = _getHoveredConnection(position);
+
+      if (newHoveredConnection != null) {
+        _hoveredConnection = newHoveredConnection;
         notifyListeners();
-      });
+      } else {
+        _hoverDebounce(() {
+          _hoveredConnection = null;
+          notifyListeners();
+        });
+      }
     }
   }
 
@@ -657,6 +666,8 @@ class GraphManager extends ChangeNotifier {
     if (processor == null) return;
 
     processor.uiMetadata.toggleExpanded();
+    unawaited(falconManager.onUIMetadataChanged(_graph));
+
     notifyListeners();
   }
 
@@ -679,6 +690,8 @@ class GraphManager extends ChangeNotifier {
         processor.uiMetadata.toggleExpanded();
       }
     }
+    unawaited(falconManager.onUIMetadataChanged(_graph));
+
     notifyListeners();
   }
 
@@ -701,7 +714,7 @@ class GraphManager extends ChangeNotifier {
 
   @override
   void dispose() {
-    _hoverDebounceTimer?.cancel();
+    _hoverDebounce.dispose();
     super.dispose();
   }
 

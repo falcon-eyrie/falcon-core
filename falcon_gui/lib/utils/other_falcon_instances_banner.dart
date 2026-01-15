@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
 
 void showOtherFalconInstancesBanner({required List<int> pids}) {
   unawaited(
@@ -19,7 +20,7 @@ void showOtherFalconInstancesBanner({required List<int> pids}) {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(
-                    Icons.warning_amber_rounded,
+                    RemixIcons.error_warning_line,
                     color: Colors.orange,
                     size: 48,
                   ),

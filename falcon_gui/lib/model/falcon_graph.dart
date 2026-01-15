@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:yaml/yaml.dart' as yaml;
 
@@ -20,6 +22,7 @@ class FalconGraph extends Equatable {
 
   void setProcessor({required String id, required Processor newValue}) {
     _processors[id] = newValue;
+    unawaited(falconManager.onGraphChanged(this));
   }
 
   void removeProcessor({required String id}) {
@@ -27,6 +30,63 @@ class FalconGraph extends Equatable {
       (conn) => conn.inProcessor == id || conn.outProcessor == id,
     );
     _processors.remove(id);
+    unawaited(falconManager.onGraphChanged(this));
+  }
+
+  void updateOption({
+    required String processorId,
+    required String optionName,
+    required OptionValue<dynamic> newValue,
+  }) {
+    final processor = _processors[processorId];
+    if (processor == null) return;
+
+    final newOptions = Map<String, OptionValue<dynamic>>.from(
+      processor.options,
+    );
+    newOptions[optionName] = newValue;
+    _processors[processorId] = processor.copyWith(options: newOptions);
+
+    unawaited(falconManager.onGraphChanged(this));
+  }
+
+  void addConnection({required Connection newConnection}) {
+    final isNotDuplicate = !connectionExists(connection: newConnection);
+    if (isNotDuplicate) {
+      _connections.add(newConnection);
+    }
+    unawaited(falconManager.onGraphChanged(this));
+  }
+
+  void removeConnection({required Connection connectionToRemove}) {
+    _connections.removeWhere(
+      (connection) =>
+          connection.inProcessor == connectionToRemove.inProcessor &&
+          connection.inPort == connectionToRemove.inPort &&
+          connection.outProcessor == connectionToRemove.outProcessor &&
+          connection.outPort == connectionToRemove.outPort,
+    );
+    unawaited(falconManager.onGraphChanged(this));
+  }
+
+  void renameConnections({
+    required String oldProcessorId,
+    required String newProcessorId,
+  }) {
+    for (var i = 0; i < _connections.length; i++) {
+      final c = _connections[i];
+      _connections[i] = Connection(
+        inProcessor: c.inProcessor == oldProcessorId
+            ? newProcessorId
+            : c.inProcessor,
+        inPort: c.inPort,
+        outProcessor: c.outProcessor == oldProcessorId
+            ? newProcessorId
+            : c.outProcessor,
+        outPort: c.outPort,
+      );
+    }
+    unawaited(falconManager.onGraphChanged(this));
   }
 
   bool connectionExists({required Connection connection}) {
@@ -48,42 +108,6 @@ class FalconGraph extends Equatable {
           (conn.inProcessor == processorId && conn.inPort == portName) ||
           (conn.outProcessor == processorId && conn.outPort == portName),
     );
-  }
-
-  void addConnection({required Connection newConnection}) {
-    final isNotDuplicate = !connectionExists(connection: newConnection);
-    if (isNotDuplicate) {
-      _connections.add(newConnection);
-    }
-  }
-
-  void removeConnection({required Connection connectionToRemove}) {
-    _connections.removeWhere(
-      (connection) =>
-          connection.inProcessor == connectionToRemove.inProcessor &&
-          connection.inPort == connectionToRemove.inPort &&
-          connection.outProcessor == connectionToRemove.outProcessor &&
-          connection.outPort == connectionToRemove.outPort,
-    );
-  }
-
-  void renameConnections({
-    required String oldProcessorId,
-    required String newProcessorId,
-  }) {
-    for (var i = 0; i < _connections.length; i++) {
-      final c = _connections[i];
-      _connections[i] = Connection(
-        inProcessor: c.inProcessor == oldProcessorId
-            ? newProcessorId
-            : c.inProcessor,
-        inPort: c.inPort,
-        outProcessor: c.outProcessor == oldProcessorId
-            ? newProcessorId
-            : c.outProcessor,
-        outPort: c.outPort,
-      );
-    }
   }
 
   FalconGraph copyWith({
@@ -129,13 +153,6 @@ class Processor extends Equatable {
 
   Port? getPort(String name) => ports.firstWhereOrNull((p) => p.name == name);
 
-  void updateOption({
-    required String name,
-    required OptionValue<dynamic> value,
-  }) {
-    _options[name] = value;
-  }
-
   bool get isSource => _ports.every((port) => port.isOut);
 
   bool get isSink => _ports.every((port) => port.isIn);
@@ -153,7 +170,13 @@ class Processor extends Equatable {
       id: id ?? this.id,
       className: className,
       isTemplate: isTemplate ?? this.isTemplate,
-      options: options ?? Map.of(_options),
+      options:
+          options ??
+          Map.of(
+            _options.map((key, value) {
+              return MapEntry(key, value);
+            }),
+          ),
       ports: ports ?? List.of(_ports),
       uiMetadata: uiMetadata ?? this.uiMetadata,
     );

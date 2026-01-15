@@ -44,9 +44,7 @@ class _GraphEditorState extends State<GraphEditor> {
       children: [
         ControlsBar(
           isProcessorsCollapsed: _isProcessorsCollapsed,
-          isYamlCollapsed: _isYamlCollapsed,
           onProcessorPanelClicked: _onProcessorPanelCollapseToggled,
-          onYamlPanelClicked: _onYamlCollapseToggled,
         ),
         Expanded(
           child: Column(
@@ -79,6 +77,8 @@ class _GraphEditorState extends State<GraphEditor> {
         StatusBar(
           isLogsCollapsed: _isLogsCollapsed,
           onLogsPanelClicked: _onLogsCollapseToggled,
+          isYamlEditorCollapsed: _isYamlCollapsed,
+          onYamlEditorClicked: _onYamlCollapseToggled,
         ),
       ],
     );

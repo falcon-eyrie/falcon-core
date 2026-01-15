@@ -2,6 +2,7 @@ import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
 
 class ProcessorPortsView extends StatelessWidget {
   const ProcessorPortsView({
@@ -66,7 +67,9 @@ class ProcessorPortsView extends StatelessWidget {
                       left: 8,
                     ),
                     child: Icon(
-                      isExpanded ? Icons.expand_less : Icons.expand_more,
+                      isExpanded
+                          ? RemixIcons.arrow_up_wide_line
+                          : RemixIcons.arrow_down_wide_line,
                       size: 16,
                     ),
                   ),

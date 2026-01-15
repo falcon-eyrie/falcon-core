@@ -10,14 +10,10 @@ import 'package:remixicon/remixicon.dart';
 class ControlsBar extends StatelessWidget {
   const ControlsBar({
     required this.onProcessorPanelClicked,
-    required this.onYamlPanelClicked,
-    required this.isYamlCollapsed,
     required this.isProcessorsCollapsed,
     super.key,
   });
   final bool isProcessorsCollapsed;
-  final bool isYamlCollapsed;
-  final VoidCallback onYamlPanelClicked;
   final VoidCallback onProcessorPanelClicked;
 
   @override
@@ -29,8 +25,9 @@ class ControlsBar extends StatelessWidget {
           height: 48,
           child: Row(
             children: [
+              const SizedBox(width: 8),
               IconButton(
-                icon: const Icon(Icons.account_tree),
+                icon: const Icon(RemixIcons.flow_chart),
                 style: IconButton.styleFrom(
                   backgroundColor: isProcessorsCollapsed
                       ? null
@@ -44,35 +41,18 @@ class ControlsBar extends StatelessWidget {
                     : 'Hide Processors Panel',
                 onPressed: onProcessorPanelClicked,
               ),
-              const SizedBox(width: 8),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.code),
-                style: IconButton.styleFrom(
-                  backgroundColor: isYamlCollapsed ? null : context.c.primary,
-                  foregroundColor: isYamlCollapsed ? null : context.c.onPrimary,
-                ),
-                tooltip: isYamlCollapsed
-                    ? 'Show YAML Panel'
-                    : 'Hide YAML Panel',
-                onPressed: onYamlPanelClicked,
-              ),
 
               const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.undo),
+              const IconButton(
+                icon: Icon(RemixIcons.arrow_go_back_line),
                 tooltip: 'Undo',
-                onPressed: () {
-                  debugPrint('Undo pressed');
-                },
+                onPressed: null,
               ),
               const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.redo),
+              const IconButton(
+                icon: Icon(RemixIcons.arrow_go_forward_line),
                 tooltip: 'Redo',
-                onPressed: () {
-                  debugPrint('Redo pressed');
-                },
+                onPressed: null,
               ),
               const SizedBox(width: 8),
               IconButton(
@@ -86,18 +66,18 @@ class ControlsBar extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               IconButton(
-                icon: const Icon(Icons.zoom_in_map),
+                icon: const Icon(RemixIcons.contract_left_right_line),
                 tooltip: 'Reset zoom',
                 onPressed: graphManager.resetZoom,
               ),
               IconButton(
-                icon: const Icon(Icons.zoom_out),
+                icon: const Icon(RemixIcons.zoom_out_line),
                 tooltip: 'Zoom out',
                 onPressed: graphManager.zoomOut,
               ),
               const SizedBox(width: 8),
               IconButton(
-                icon: const Icon(Icons.zoom_in),
+                icon: const Icon(RemixIcons.zoom_in_line),
                 tooltip: 'Zoom in',
                 onPressed: graphManager.zoomIn,
               ),
@@ -105,8 +85,8 @@ class ControlsBar extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   falconManager.falconState == FalconState.processing
-                      ? Icons.stop
-                      : Icons.play_arrow,
+                      ? RemixIcons.stop_line
+                      : RemixIcons.play_line,
                 ),
                 tooltip: 'Run Pipeline',
                 onPressed:
@@ -118,7 +98,7 @@ class ControlsBar extends StatelessWidget {
               const SizedBox(width: 8),
 
               IconButton(
-                icon: const Icon(Icons.settings),
+                icon: const Icon(RemixIcons.settings_3_line),
                 tooltip: 'Settings',
                 onPressed: () async {
                   await showDialog<void>(

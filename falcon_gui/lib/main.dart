@@ -33,13 +33,6 @@ void main() async {
     // await windowManager.focus();
   });
 
-  graphManager.addListener(() {
-    unawaited(falconManager.onYamlEdited(graphManager.graphAsYaml));
-    unawaited(
-      falconManager.onNonUIYamlEdited(graphManager.graphAsYamlWithoutUI),
-    );
-  });
-
   await loadThemeModeFromSharedPreferences();
   unawaited(_tempLoadGraph());
 

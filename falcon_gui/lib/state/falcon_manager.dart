@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/falcon_log.dart';
 import 'package:falcon_gui/model/falcon_state.dart';
 import 'package:falcon_gui/model/falcon_zmq_command.dart';
+import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/falcon_zmq.dart';
+import 'package:falcon_gui/utils/debounce.dart';
 import 'package:falcon_gui/utils/killing_falcon_banner.dart';
 import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';
 import 'package:flutter/foundation.dart';
@@ -240,36 +243,40 @@ class FalconManager extends ChangeNotifier {
     return _falconZMQ!.sendCommandParts(parts, timeout: timeout);
   }
 
-  String _lastSavedGraphYaml = '';
-  String _lastBuiltYaml = '';
-  final _p = File('/home/device/falcon/resources/graphs/current.yaml');
-
   List<FalconLog> get logs => _falconZMQ?.logs ?? [];
+
+  bool get isLastLogAnError =>
+      logs.isNotEmpty && logs.last.type == FalconLogType.error;
   FalconState get falconState => _falconZMQ?.falconState ?? FalconState.unknown;
 
-  Future<void> onNonUIYamlEdited(String graphAsYaml) async {
+  // TODO(ben):   dont use hardcoded path
+  final _p = File('/home/device/falcon/resources/graphs/current.yaml');
+
+  final _fileWriteDebounce = Debounce(delay: const Duration(milliseconds: 500));
+
+  Future<void> onGraphChanged(FalconGraph graph) async {
     if (falconState == FalconState.unknown) {
       Future.delayed(
         const Duration(milliseconds: 100),
-        () => onNonUIYamlEdited(graphAsYaml),
+        () => onGraphChanged(graph),
       );
       return;
     }
 
-    if (graphAsYaml == _lastBuiltYaml) return;
-    _lastBuiltYaml = graphAsYaml;
     if (falconState != FalconState.noGraph) {
       await sendCommand(FalconZmqCommand.graphDestroy);
     }
+
+    await _p.writeAsString(graph.toYaml());
     await _falconZMQ!.sendCommandParts(
       FalconZmqCommand.graphBuild(_p.path),
     );
   }
 
-  Future<void> onYamlEdited(String graphAsYaml) async {
-    if (graphAsYaml == _lastSavedGraphYaml) return;
-    _lastSavedGraphYaml = graphAsYaml;
-    await _p.writeAsString(graphAsYaml);
+  Future<void> onUIMetadataChanged(FalconGraph graph) async {
+    _fileWriteDebounce(() async {
+      await _p.writeAsString(graph.toYaml());
+    });
   }
 
   void debugConnectionStatus() {

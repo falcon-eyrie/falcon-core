@@ -1,5 +1,6 @@
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
 
 class DialogView extends StatelessWidget {
   const DialogView({
@@ -39,7 +40,7 @@ class DialogView extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close),
+                        icon: const Icon(RemixIcons.close_line),
                         onPressed: onClose ?? () => Navigator.of(context).pop(),
                       ),
                     ],

@@ -75,10 +75,11 @@ class _LogsPanelState extends State<LogsPanel> {
                           message: 'Hide Logs Panel',
                           child: SizedBox(
                             height: 24,
+                            width: 32,
                             child: Align(
                               alignment: Alignment.bottomCenter,
                               child: Icon(
-                                RemixIcons.subtract_fill,
+                                RemixIcons.subtract_line,
                                 size: 16,
                                 color: context.c.onSurfaceVariant,
                               ),
@@ -87,7 +88,6 @@ class _LogsPanelState extends State<LogsPanel> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 4),
                   ],
                 ),
               ),

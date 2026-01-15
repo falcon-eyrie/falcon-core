@@ -96,11 +96,29 @@ abstract class OptionFieldBase<T extends OptionValue<dynamic>>
 class _OptionFieldBaseState<T extends OptionValue<dynamic>>
     extends State<OptionFieldBase<T>> {
   late final TextEditingController _controller;
+  late FocusNode _focusNode;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.option.value.toString());
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus) {
+      _onSubmitted(_controller.text);
+    }
+  }
+
+  void _onSubmitted(String value) {
+    try {
+      final newOption = widget.parseValue(value);
+      widget.onChanged(newOption);
+    } catch (_) {
+      // no-op
+    }
   }
 
   @override
@@ -124,18 +142,13 @@ class _OptionFieldBaseState<T extends OptionValue<dynamic>>
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicWidth(
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 32),
       child: TextFormField(
+        focusNode: _focusNode,
         controller: _controller,
         keyboardType: widget.keyboardType,
         inputFormatters: widget.inputFormatters,
-        onChanged: (v) {
-          try {
-            final parsed = widget.parseValue(v);
-            widget.onChanged(parsed);
-            // ignore: avoid_catches_without_on_clauses
-          } catch (_) {}
-        },
       ),
     );
   }
@@ -234,7 +247,8 @@ class OneOfOptionField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicWidth(
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 64),
       child: DropdownButtonFormField<String>(
         initialValue: option.value.toLowerCase(),
         items: option.allowed

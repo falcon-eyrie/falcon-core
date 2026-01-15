@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:falcon_gui/model/falcon_state.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/utils/misc.dart';
@@ -9,9 +11,13 @@ class StatusBar extends StatelessWidget {
   const StatusBar({
     required this.isLogsCollapsed,
     required this.onLogsPanelClicked,
+    required this.isYamlEditorCollapsed,
+    required this.onYamlEditorClicked,
     super.key,
   });
   final bool isLogsCollapsed;
+  final bool isYamlEditorCollapsed;
+  final VoidCallback onYamlEditorClicked;
   final VoidCallback onLogsPanelClicked;
 
   @override
@@ -24,22 +30,23 @@ class StatusBar extends StatelessWidget {
           child: Row(
             children: [
               const Spacer(),
-              Container(
-                color: isLogsCollapsed ? null : context.c.onPrimary,
-                width: 32,
-                height: 24,
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: onLogsPanelClicked,
-                    child: Tooltip(
-                      message: isLogsCollapsed
-                          ? 'Show Logs Panel'
-                          : 'Hide Logs Panel',
-                      child: const Icon(RemixIcons.list_view, size: 18),
-                    ),
-                  ),
-                ),
+
+              _StatusBarButton(
+                icon: RemixIcons.list_settings_fill,
+                hasError: falconManager.isLastLogAnError,
+                tooltip: isLogsCollapsed
+                    ? 'Show Logs Panel'
+                    : 'Hide Logs Panel',
+                onPressed: onLogsPanelClicked,
+                isActive: !isLogsCollapsed,
+              ),
+              _StatusBarButton(
+                icon: RemixIcons.code_block,
+                tooltip: isYamlEditorCollapsed
+                    ? 'Show YAML Editor'
+                    : 'Hide YAML Editor',
+                onPressed: onYamlEditorClicked,
+                isActive: !isYamlEditorCollapsed,
               ),
               const SizedBox(width: 8),
               _FalconStateIndicator(falconState: falconManager.falconState),
@@ -48,6 +55,96 @@ class StatusBar extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _StatusBarButton extends StatelessWidget {
+  const _StatusBarButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+    required this.isActive,
+    this.hasError = false,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onPressed;
+  final bool isActive;
+  final bool hasError;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Tooltip(
+          message: tooltip,
+          child: Container(
+            color: isActive ? context.c.onPrimary : null,
+            width: 32,
+            height: 24,
+            child: Stack(
+              children: [
+                Center(
+                  child: Icon(
+                    icon,
+                    size: 18,
+                  ),
+                ),
+
+                if (hasError) ...[
+                  const Align(
+                    alignment: Alignment.topLeft,
+                    child: _BlinkingErrorIcon(),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BlinkingErrorIcon extends StatefulWidget {
+  const _BlinkingErrorIcon();
+
+  @override
+  State<_BlinkingErrorIcon> createState() => _BlinkingErrorIconState();
+}
+
+class _BlinkingErrorIconState extends State<_BlinkingErrorIcon>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    unawaited(_controller.repeat(reverse: true));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: Tween<double>(begin: 0, end: 1).animate(_controller),
+      child: const Icon(
+        RemixIcons.error_warning_fill,
+        color: Colors.red,
+        size: 12,
+      ),
     );
   }
 }
@@ -65,7 +162,7 @@ class _FalconStateIndicator extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            Icons.circle,
+            RemixIcons.circle_fill,
             color: color,
             size: 14,
           ),

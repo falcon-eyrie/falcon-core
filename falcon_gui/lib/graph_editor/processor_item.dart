@@ -5,6 +5,7 @@ import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
 
 class ProcessorItem extends StatefulWidget {
   const ProcessorItem({
@@ -195,7 +196,7 @@ class _HeaderState extends State<_Header> {
             if (!widget.processor.isTemplate) ...[
               IconButton(
                 icon: const Icon(
-                  Icons.delete,
+                  RemixIcons.delete_bin_2_line,
                   size: 16,
                   color: Color(0xffffffff),
                 ),
@@ -208,7 +209,9 @@ class _HeaderState extends State<_Header> {
 
             IconButton(
               icon: Icon(
-                widget.processor.isTemplate ? Icons.add : Icons.copy,
+                widget.processor.isTemplate
+                    ? RemixIcons.add_box_line
+                    : RemixIcons.file_copy_line,
                 size: 20,
                 color: const Color(0xffffffff),
               ),

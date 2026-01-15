@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:remixicon/remixicon.dart';
 
 class FalconProcessPriorityStatus extends StatefulWidget {
   const FalconProcessPriorityStatus({super.key});
@@ -54,7 +55,7 @@ class _FalconProcessPriorityStatusState
               Row(
                 children: [
                   Icon(
-                    Icons.speed,
+                    RemixIcons.dashboard_3_line,
                     color: Theme.of(context).colorScheme.primary,
                     size: 28,
                   ),
@@ -101,7 +102,10 @@ class _FalconProcessPriorityStatusState
                               onPressed: () => _copyCommand(
                                 falconManager.processPriorityCommand,
                               ),
-                              icon: const Icon(Icons.content_copy, size: 18),
+                              icon: const Icon(
+                                RemixIcons.clipboard_line,
+                                size: 18,
+                              ),
                               label: Text(_justCopied ? 'Copied!' : 'Copy'),
                             ),
                           ],
@@ -120,7 +124,7 @@ class _FalconProcessPriorityStatusState
                           child: Row(
                             children: [
                               const Icon(
-                                Icons.check_circle,
+                                RemixIcons.check_fill,
                                 color: Colors.green,
                                 size: 20,
                               ),
