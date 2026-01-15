@@ -39,6 +39,7 @@ class FalconZMQ extends ChangeNotifier {
       (log) => log.type == FalconLogType.state,
     );
 
+    // If no state log found, try to get state via command
     if (lastState == null) {
       if (_stateFromResponse != null) {
         return _stateFromResponse!;

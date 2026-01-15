@@ -205,6 +205,7 @@ void ParseConnectionRules(const YAML::Node& node, StreamConnections& connections
 
 ProcessorGraph::ProcessorGraph(GlobalContext& context)
     : global_context_(context), terminate_signal_(false) {
+    LOG(STATE) << state_string();
     // log list of registered processors
     std::vector<std::string> processors = ProcessorFactory::instance().listEntries();
     for (const auto& item : processors) {
