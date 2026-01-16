@@ -83,19 +83,31 @@ class ControlsBar extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               IconButton(
-                icon: Icon(
-                  falconManager.falconState == FalconState.processing
-                      ? RemixIcons.stop_line
-                      : RemixIcons.play_line,
-                ),
-                tooltip: falconManager.falconState == FalconState.processing
-                    ? 'Stop Pipeline'
-                    : 'Run Pipeline',
-                onPressed:
-                    falconManager.falconState == FalconState.ready ||
-                        falconManager.falconState == FalconState.processing
-                    ? falconManager.toggleProcessingState
-                    : null,
+                icon: switch (falconManager.falconState) {
+                  FalconState.processing => const Icon(RemixIcons.stop_line),
+                  FalconState.starting => const SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  FalconState.stopping => const SizedBox(
+                    height: 16,
+                    width: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+
+                  _ => const Icon(RemixIcons.play_line),
+                },
+                tooltip: switch (falconManager.falconState) {
+                  FalconState.processing => 'Stop Processing',
+                  FalconState.ready => 'Start Processing',
+                  _ => null,
+                },
+                onPressed: switch (falconManager.falconState) {
+                  FalconState.processing => falconManager.toggleProcessingState,
+                  FalconState.ready => falconManager.toggleProcessingState,
+                  _ => null,
+                },
               ),
               const SizedBox(width: 8),
 

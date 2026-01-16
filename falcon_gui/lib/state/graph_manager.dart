@@ -166,7 +166,6 @@ class GraphManager extends ChangeNotifier {
   }
 
   void onProcessorDragUpdate({required String id, required Offset newPos}) {
-    _selectedPortUniqueId = null;
     final processor = _graph.processors[id];
     if (processor == null) return;
 
@@ -208,7 +207,6 @@ class GraphManager extends ChangeNotifier {
   }
 
   void onProcessorClicked({required String id}) {
-    _selectedPortUniqueId = null;
     final processor = _graph.processors[id];
     if (processor == null) return;
     _graph.processors[id]?.uiMetadata.updateLastModified();
@@ -378,7 +376,6 @@ class GraphManager extends ChangeNotifier {
 
   void onPortClicked({required String processorId, required Port port}) {
     final uniquePortId = '$processorId-${port.name}';
-
     if (_selectedPortUniqueId == null) {
       _selectedPortUniqueId = uniquePortId;
 

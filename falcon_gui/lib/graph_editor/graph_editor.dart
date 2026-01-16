@@ -16,9 +16,9 @@ class GraphEditor extends StatefulWidget {
 }
 
 class _GraphEditorState extends State<GraphEditor> {
-  bool _isProcessorsCollapsed = false;
+  bool _isProcessorsCollapsed = true;
   bool _isYamlCollapsed = true;
-  bool _isLogsCollapsed = false;
+  bool _isLogsCollapsed = true;
 
   void _onYamlCollapseToggled() {
     setState(() {

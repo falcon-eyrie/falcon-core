@@ -187,16 +187,16 @@ class _PortRowState extends State<_PortRow> {
       },
       child: GestureDetector(
         onTapDown: (_) => onPortTouched(),
+        onVerticalDragDown: (_) {},
         onVerticalDragStart: (_) {},
-        onVerticalDragUpdate: (_) {},
         onHorizontalDragStart: (_) {},
+        onHorizontalDragDown: (_) {},
+        onVerticalDragUpdate: (_) {},
         onHorizontalDragUpdate: (_) {},
         onHorizontalDragCancel: () {},
         onHorizontalDragEnd: (_) {},
-        onHorizontalDragDown: (_) {},
         onVerticalDragCancel: () {},
         onVerticalDragEnd: (_) {},
-        onVerticalDragDown: (_) {},
         child: Tooltip(
           mouseCursor: isEnabled
               ? SystemMouseCursors.alias

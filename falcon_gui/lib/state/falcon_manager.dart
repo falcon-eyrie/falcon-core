@@ -13,7 +13,7 @@ import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';
 import 'package:flutter/foundation.dart';
 
 final FalconManager falconManager = FalconManager.instance;
-const bool _debugUseExistingFalconInstance = true;
+const bool _debugUseExistingFalconInstance = false;
 
 class FalconManager extends ChangeNotifier {
   FalconManager._internal();
@@ -85,7 +85,7 @@ class FalconManager extends ChangeNotifier {
 
     await _initializeZMQ();
 
-    if (_debugUseExistingFalconInstance) {
+    if (kDebugMode && _debugUseExistingFalconInstance) {
       notifyListeners();
       return;
     }

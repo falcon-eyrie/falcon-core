@@ -32,10 +32,6 @@ class EditorView extends StatelessWidget {
               : graphManager.hoveredConnection != null
               ? SystemMouseCursors.noDrop
               : SystemMouseCursors.basic,
-          onHover: (event) {
-            final scenePosition = _toScene(event.position, context);
-            graphManager.updateCursorPosition(scenePosition);
-          },
           child: Listener(
             onPointerDown: (event) {
               if (event.buttons == kSecondaryMouseButton) {
@@ -43,6 +39,10 @@ class EditorView extends StatelessWidget {
                   ..cancelPortSelection()
                   ..maybeRemoveConnectionAtPosition();
               }
+            },
+            onPointerHover: (event) {
+              final scenePosition = _toScene(event.position, context);
+              graphManager.updateCursorPosition(scenePosition);
             },
             child: Stack(
               children: [
@@ -112,7 +112,7 @@ class EditorView extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (graphManager.tempConnectionLinePosition != null) ...[
+                if (graphManager.selectedPortUniqueId != null) ...[
                   const Positioned(
                     left: 0,
                     right: 0,
