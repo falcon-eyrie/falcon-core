@@ -8,6 +8,10 @@ import 'package:yaml_writer/yaml_writer.dart';
 
 extension FalconGraphSerializerX on FalconGraph {
   String toYaml({bool excludeUIMetadata = false}) {
+    if (processors.isEmpty && connections.isEmpty) {
+      return '';
+    }
+
     final graph = <String, Object?>{};
 
     if (processors.isNotEmpty) {

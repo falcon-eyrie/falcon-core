@@ -274,8 +274,13 @@ class FalconManager extends ChangeNotifier {
     if (falconState != FalconState.noGraph) {
       await sendCommand(FalconZmqCommand.graphDestroy);
     }
+    final graphAsYaml = graph.toYaml();
 
-    await _p.writeAsString(graph.toYaml());
+    if (graphAsYaml.trim().isEmpty) {
+      return;
+    }
+
+    await _p.writeAsString(graphAsYaml);
     await _falconZMQ!.sendCommandParts(
       FalconZmqCommand.graphBuild(_p.path),
     );
