@@ -27,6 +27,7 @@ class GraphManager extends ChangeNotifier {
   double _minX = 0;
   double _minY = 0;
 
+  Size _viewportSize = Size.zero;
   Offset? _grabOffset;
 
   // Whether to wait for port positions to be reported from the UI
@@ -64,6 +65,11 @@ class GraphManager extends ChangeNotifier {
     _graph.removeProcessor(id: id);
 
     notifyListeners();
+  }
+
+  // ignore: avoid_setters_without_getters
+  set viewportSize(Size newSize) {
+    _viewportSize = newSize;
   }
 
   /// Duplicates a processor, returning the new processor's ID
@@ -112,6 +118,8 @@ class GraphManager extends ChangeNotifier {
       ),
     );
 
+    focusOnProcessor(id: newId);
+
     notifyListeners();
     return newId;
   }
@@ -149,6 +157,24 @@ class GraphManager extends ChangeNotifier {
     }
 
     return position;
+  }
+
+  void focusOnProcessor({required String id}) {
+    final processor = _graph.processors[id];
+    if (processor == null) return;
+
+    final processorPos = processor.uiMetadata.position;
+
+    // Calculate the target transformation to center it on the screen
+    final targetX = -(processorPos.dx - _viewportSize.width / 2) - 600;
+    final targetY = -(processorPos.dy - _viewportSize.height / 2) - 300;
+
+    // Create new transformation matrix with translation to center the processor
+    final targetMatrix = Matrix4.identity()
+      ..translateByDouble(targetX, targetY, 0, 1);
+
+    transformationController.value = targetMatrix;
+    notifyListeners();
   }
 
   void onProcessorDragStart({

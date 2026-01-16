@@ -21,6 +21,8 @@ class EditorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    graphManager.viewportSize = MediaQuery.of(context).size;
+
     return AnimatedBuilder(
       animation: graphManager,
       builder: (context, _) {

@@ -46,6 +46,7 @@ Future<void> _entrypoint() async {
   unawaited(_tempLoadGraph());
 
   Future.delayed(const Duration(milliseconds: 1000), maybeShowPriorityDialog);
+
   runApp(const DesktopApp());
 }
 

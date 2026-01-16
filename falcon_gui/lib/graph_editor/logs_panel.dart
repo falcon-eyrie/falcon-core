@@ -28,9 +28,12 @@ class _LogsPanelState extends State<LogsPanel> {
       animation: falconManager,
       builder: (context, _) {
         final logs = falconManager.logs.reversed;
-
+        final panelHeight = _panelHeight.clamp(
+          100.0,
+          MediaQuery.of(context).size.height * 0.8,
+        );
         return SizedBox(
-          height: _panelHeight,
+          height: panelHeight,
           child: Stack(
             children: [
               Positioned(
@@ -39,7 +42,7 @@ class _LogsPanelState extends State<LogsPanel> {
                 right: 0,
                 bottom: 0,
                 child: Container(
-                  height: _panelHeight,
+                  height: panelHeight,
                   color: context.c.surface,
                   child: Column(
                     children: [
