@@ -14,11 +14,12 @@ class ProcessorItem extends StatefulWidget {
     this.onPanUpdate,
     this.onPanEnd,
     this.onTapDown,
+    this.readonly = false,
     super.key,
   });
 
   final Processor processor;
-
+  final bool readonly;
   final void Function(DragStartDetails)? onPanStart;
   final void Function(DragUpdateDetails)? onPanUpdate;
   final void Function(DragEndDetails)? onPanEnd;
@@ -69,19 +70,23 @@ class _ProcessorItemState extends State<ProcessorItem> {
               onPanEnd: widget.onPanEnd,
               child: _Header(
                 processor: widget.processor,
+                readonly: widget.readonly,
                 onFocused: () => widget.onTapDown?.call(),
               ),
             ),
-            // if (showPorts) ...[
-            ProcessorPortsView(
-              processor: widget.processor,
-              isExpanded: _isExpanded,
-              onExpandToggle: _toggleExpanded,
+
+            _PreventEdit(
+              isPreventing: widget.readonly,
+              child: ProcessorPortsView(
+                processor: widget.processor,
+                isExpanded: _isExpanded,
+                onExpandToggle: _toggleExpanded,
+              ),
             ),
             if (_isExpanded) ...[
               const Divider(),
-              IgnorePointer(
-                ignoring: widget.processor.isTemplate,
+              _PreventEdit(
+                isPreventing: widget.readonly || widget.processor.isTemplate,
                 child: ColorFiltered(
                   colorFilter: widget.processor.isTemplate
                       ? greyScaleFilter
@@ -102,12 +107,14 @@ class _ProcessorItemState extends State<ProcessorItem> {
 
 class _Header extends StatefulWidget {
   const _Header({
+    required this.readonly,
     required this.processor,
     required this.onFocused,
   });
 
   final Processor processor;
   final VoidCallback onFocused;
+  final bool readonly;
 
   @override
   State<_Header> createState() => _HeaderState();
@@ -166,20 +173,11 @@ class _HeaderState extends State<_Header> {
                       onNameChanged: _onNameChanged,
                       onFocused: widget.onFocused,
                     ),
-                  ] else ...[
-                    MouseRegion(
-                      cursor: SystemMouseCursors.text,
-                      child: GestureDetector(
-                        onTap: _startEditing,
-                        child: Text(
-                          widget.processor.id,
-                          style: const TextStyle(
-                            color: Color(0xffffffff),
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                      ),
+                  ] else if (!widget.processor.isTemplate) ...[
+                    _ProcessorName(
+                      processorName: widget.processor.id,
+                      onClicked: _startEditing,
+                      readonly: widget.readonly,
                     ),
                   ],
                   Text(
@@ -194,32 +192,93 @@ class _HeaderState extends State<_Header> {
               ),
             ),
             if (!widget.processor.isTemplate) ...[
-              IconButton(
-                icon: const Icon(
-                  RemixIcons.delete_bin_2_line,
-                  size: 16,
-                  color: Color(0xffffffff),
+              _PreventEdit(
+                isPreventing: widget.readonly,
+                child: IconButton(
+                  icon: const Icon(
+                    RemixIcons.delete_bin_2_line,
+                    size: 16,
+                    color: Color(0xffffffff),
+                  ),
+                  color: context.c.onPrimary,
+                  onPressed: () =>
+                      graphManager.removeProcessor(id: widget.processor.id),
                 ),
-                color: context.c.onPrimary,
-                onPressed: () =>
-                    graphManager.removeProcessor(id: widget.processor.id),
               ),
               const SizedBox(width: 4),
             ],
 
-            IconButton(
-              icon: Icon(
-                widget.processor.isTemplate
-                    ? RemixIcons.add_line
-                    : RemixIcons.file_copy_line,
-                size: 20,
-                color: const Color(0xffffffff),
+            _PreventEdit(
+              isPreventing: widget.readonly,
+              child: IconButton(
+                icon: Icon(
+                  widget.processor.isTemplate
+                      ? RemixIcons.add_line
+                      : RemixIcons.file_copy_line,
+                  size: 20,
+                  color: const Color(0xffffffff),
+                ),
+                color: context.c.onPrimary,
+                onPressed: () => graphManager.duplicateProcessor(
+                  processor: widget.processor,
+                ),
               ),
-              color: context.c.onPrimary,
-              onPressed: () =>
-                  graphManager.duplicateProcessor(processor: widget.processor),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProcessorName extends StatefulWidget {
+  const _ProcessorName({
+    required this.processorName,
+    required this.onClicked,
+    required this.readonly,
+  });
+
+  final String processorName;
+  final bool readonly;
+  final VoidCallback onClicked;
+
+  @override
+  State<_ProcessorName> createState() => _ProcessorNameState();
+}
+
+class _ProcessorNameState extends State<_ProcessorName> {
+  bool _isHovering = false;
+  @override
+  Widget build(BuildContext context) {
+    return _PreventEdit(
+      isPreventing: widget.readonly,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.text,
+        onEnter: (event) => setState(() => _isHovering = true),
+        onExit: (event) => setState(() => _isHovering = false),
+        child: GestureDetector(
+          onTap: widget.onClicked,
+          child: Row(
+            children: [
+              Text(
+                widget.processorName,
+                style: const TextStyle(
+                  color: Color(0xffffffff),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+
+              if (_isHovering) ...[
+                const SizedBox(width: 4),
+                Icon(
+                  RemixIcons.edit_line,
+                  size: 16,
+                  color: context.c.onPrimary,
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -304,6 +363,27 @@ class _ProcessorNameEditorState extends State<_ProcessorNameEditor> {
       onFieldSubmitted: (value) {
         _onNameSubmitted();
       },
+    );
+  }
+}
+
+class _PreventEdit extends StatelessWidget {
+  const _PreventEdit({
+    required this.isPreventing,
+    required this.child,
+  });
+  final Widget child;
+  final bool isPreventing;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isPreventing) {
+      return child;
+    }
+
+    return Tooltip(
+      message: 'Editing is disabled while pipeline is running',
+      child: IgnorePointer(child: child),
     );
   }
 }

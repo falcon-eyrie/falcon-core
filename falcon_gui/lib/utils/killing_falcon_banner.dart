@@ -3,10 +3,15 @@ import 'dart:async';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:flutter/material.dart';
 
+bool _isKillingFalconBannerActive = false;
+
 void showKillingFalconBanner() {
   // This is just to show a non-dismissible dialog while killing Falcon.
   // Don't wait for the dialog to close, because it will never be closed.
-
+  if (_isKillingFalconBannerActive) {
+    return;
+  }
+  _isKillingFalconBannerActive = true;
   unawaited(
     showDialog<void>(
       context: globalNavigatorKey.currentContext!,

@@ -139,7 +139,6 @@ class FalconZMQ extends ChangeNotifier {
     List<String> parts, {
     required Duration timeout,
   }) async {
-    logInfo('sendCommandParts: $parts');
     if (_zmqWorker == null || !isConnected) {
       return null;
     }

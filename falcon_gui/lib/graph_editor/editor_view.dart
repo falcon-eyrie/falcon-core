@@ -1,4 +1,5 @@
 import 'package:falcon_gui/graph_editor/processor_item.dart';
+import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/gestures.dart';
@@ -78,6 +79,7 @@ class EditorView extends StatelessWidget {
                             left: processor.uiMetadata.position.dx,
                             top: processor.uiMetadata.position.dy,
                             child: ProcessorItem(
+                              readonly: !falconManager.canEditGraph,
                               onPanStart: (details) {
                                 final scenePosition = _toScene(
                                   details.globalPosition,

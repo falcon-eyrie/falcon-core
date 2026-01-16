@@ -255,6 +255,13 @@ class FalconManager extends ChangeNotifier {
 
   final _fileWriteDebounce = Debounce(delay: const Duration(milliseconds: 500));
 
+  bool get canEditGraph {
+    final state = falconState;
+    return state != FalconState.processing &&
+        state != FalconState.starting &&
+        state != FalconState.stopping;
+  }
+
   Future<void> onGraphChanged(FalconGraph graph) async {
     if (falconState == FalconState.unknown) {
       Future.delayed(

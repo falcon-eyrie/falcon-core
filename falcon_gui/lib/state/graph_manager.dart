@@ -60,6 +60,7 @@ class GraphManager extends ChangeNotifier {
   }
 
   void removeProcessor({required String id}) {
+    _selectedPortUniqueId = null;
     _graph.removeProcessor(id: id);
 
     notifyListeners();
@@ -79,7 +80,7 @@ class GraphManager extends ChangeNotifier {
     required Processor processor,
   }) {
     _selectedPortUniqueId = null;
-    var newId = processor.id;
+    var newId = '${processor.id}1';
     while (_graph.processors.containsKey(newId)) {
       // parse the last _* segment, increment id
       final match = processorIdSuffixRegex.firstMatch(newId);
