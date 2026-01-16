@@ -16,7 +16,7 @@ class ZMQIsolateWorker {
 
   Future<void> start() async {
     _isolate = await Isolate.spawn(
-      _brokerWorker,
+      _broker,
       _WorkerInitData(
         loggerSendPort,
         _receivePort.sendPort,
@@ -91,7 +91,6 @@ class ZMQIsolateWorker {
   }
 
   Future<T> _send<T>(Map<String, dynamic> data) {
-    logInfo('ZMQIsolateWorker _send: $data');
     final id = _nextRequestId++;
     final completer = Completer<T>();
     _responseCompleters[id] = completer;
@@ -107,7 +106,7 @@ class ZMQIsolateWorker {
     _receivePort.close();
   }
 
-  static void _brokerWorker(_WorkerInitData workerInitData) {
+  static void _broker(_WorkerInitData workerInitData) {
     attachLogger(workerInitData.loggerPort);
     final mainSendPort = workerInitData.mainPort;
 
@@ -174,7 +173,7 @@ class ZMQIsolateWorker {
 
             // Spawn separate isolate for streaming
             streamIsolates[id!] = await Isolate.spawn(
-              _subscriptionWorker,
+              _subscriber,
               _StreamIsolateData(
                 mainSendPort,
                 workerInitData.loggerPort,
@@ -197,7 +196,7 @@ class ZMQIsolateWorker {
     });
   }
 
-  static void _subscriptionWorker(_StreamIsolateData data) {
+  static void _subscriber(_StreamIsolateData data) {
     attachLogger(data.loggerPort);
 
     final zmq = ZMQFFi();
@@ -211,13 +210,15 @@ class ZMQIsolateWorker {
     zmq.connect(socket, data.config.endpoint);
 
     if (data.config.subscribeAll && data.config.socketType == ZMQ_SUB) {
-      zmq.subscribeAll(socket);
+      if (zmq.subscribeAll(socket)) {
+        logInfo('Subscribed to all topics on ${data.config.endpoint}');
+      }
     }
 
     while (true) {
       try {
         final result = zmq.recvMultipartStringsSync(socket);
-        logInfo('received $result');
+
         data.sendPort.send({
           'id': data.id,
           'stream': true,

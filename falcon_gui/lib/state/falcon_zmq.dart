@@ -99,7 +99,7 @@ class FalconZMQ extends ChangeNotifier {
         socketId: _logSocketName,
         endpoint: '$address:$logPort',
         socketType: ZMQ_SUB,
-        receiveTimeout: 1000,
+        receiveTimeout: 5000,
         subscribeAll: true,
       );
 

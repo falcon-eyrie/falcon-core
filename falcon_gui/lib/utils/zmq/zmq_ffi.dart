@@ -130,13 +130,19 @@ class ZMQFFi {
   }
 
   /// Subscribe to all messages on a SUB socket (empty topic filter).
-  void subscribeAll(ZMQSocket sock) {
-    setSocketOptionBinary(sock, ZMQ_SUBSCRIBE, []);
+  bool subscribeAll(ZMQSocket sock) {
+    final result = setSocketOptionBinary(sock, ZMQ_SUBSCRIBE, []);
+    return result == 0;
   }
 
   /// Subscribe to a specific topic on a SUB socket.
-  void subscribe(ZMQSocket sock, String topic) {
-    setSocketOptionBinary(sock, ZMQ_SUBSCRIBE, utf8.encode(topic));
+  bool subscribe(ZMQSocket sock, String topic) {
+    final result = setSocketOptionBinary(
+      sock,
+      ZMQ_SUBSCRIBE,
+      utf8.encode(topic),
+    );
+    return result == 0;
   }
 
   /// Gets a socket option as an integer.
@@ -196,7 +202,7 @@ class ZMQFFi {
     while (true) {
       final part = recvSync(sock);
       if (part == null) {
-        throw Exception('recvMultipart failed: no data received');
+        return parts;
       }
       // Add all parts, including empty ones for protocol correctness
       parts.add(part);

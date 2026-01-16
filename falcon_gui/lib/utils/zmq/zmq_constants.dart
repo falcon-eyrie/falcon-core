@@ -99,6 +99,8 @@ typedef ZmqErrnoDart = int Function();
 typedef ZmqStrerrorNative = Pointer<Utf8> Function(Int32 errnum);
 typedef ZmqStrerrorDart = Pointer<Utf8> Function(int errnum);
 
+typedef ZmqTSize = IntPtr;
+
 // ZMQ socket types
 const int ZMQ_SUB = 2;
 const int ZMQ_REQ = 3;
