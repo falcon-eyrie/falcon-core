@@ -6,13 +6,22 @@ import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/settings/theme_mode_setting.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
+import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/priority_dialog.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
-void main() async {
+Future<void> main() async {
+  await initLoggerIsolate();
+  await runZonedGuarded(
+    _entrypoint,
+    (error, stackTrace) => logError('Uncaught error: $error\n$stackTrace'),
+  );
+}
+
+Future<void> _entrypoint() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   await windowManager.setBackgroundColor(Colors.transparent);
@@ -93,9 +102,9 @@ class _RootPageState extends State<RootPage> with WindowListener {
 
   @override
   Future<void> onWindowClose() async {
-    debugPrint('Window close requested, calling killFalcon()...');
+    logInfo('Window close requested, calling killFalcon()...');
     await falconManager.killFalcon();
-    debugPrint('killFalcon() completed, destroying window...');
+    logInfo('killFalcon() completed, destroying window...');
     unawaited(windowManager.destroy());
   }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/zmq/zmq_constants.dart';
 import 'package:falcon_gui/utils/zmq/zmq_ffi.dart';
 
@@ -14,7 +15,14 @@ class ZMQIsolateWorker {
   int _nextRequestId = 0;
 
   Future<void> start() async {
-    _isolate = await Isolate.spawn(_mainHandler, _receivePort.sendPort);
+    _isolate = await Isolate.spawn(
+      _brokerWorker,
+      _WorkerInitData(
+        loggerSendPort,
+        _receivePort.sendPort,
+      ),
+      onError: loggerSendPort,
+    );
 
     final completer = Completer<SendPort>();
     _receivePort.listen((message) {
@@ -83,6 +91,7 @@ class ZMQIsolateWorker {
   }
 
   Future<T> _send<T>(Map<String, dynamic> data) {
+    logInfo('ZMQIsolateWorker _send: $data');
     final id = _nextRequestId++;
     final completer = Completer<T>();
     _responseCompleters[id] = completer;
@@ -98,10 +107,12 @@ class ZMQIsolateWorker {
     _receivePort.close();
   }
 
-  static void _mainHandler(SendPort mainSendPort) {
+  static void _brokerWorker(_WorkerInitData workerInitData) {
+    attachLogger(workerInitData.loggerPort);
+    final mainSendPort = workerInitData.mainPort;
+
     final receivePort = ReceivePort();
     mainSendPort.send(receivePort.sendPort);
-
     ZMQFFi? zmq;
     ZMQContext? context;
     final sockets = <String, ZMQSocket>{};
@@ -109,6 +120,7 @@ class ZMQIsolateWorker {
     final streamIsolates = <int, Isolate>{};
 
     receivePort.listen((message) async {
+      logInfo('Received: $message');
       if (message is! Map) return;
 
       final id = message['id'] as int?;
@@ -162,9 +174,10 @@ class ZMQIsolateWorker {
 
             // Spawn separate isolate for streaming
             streamIsolates[id!] = await Isolate.spawn(
-              _subscriptionLoop,
+              _subscriptionWorker,
               _StreamIsolateData(
                 mainSendPort,
+                workerInitData.loggerPort,
                 id,
                 config,
               ),
@@ -177,13 +190,16 @@ class ZMQIsolateWorker {
             streamIsolates.clear();
             receivePort.close();
         }
-      } catch (e) {
+      } catch (e, s) {
+        logError('ZMQIsolateWorker _brokerWorker error: $e', s);
         mainSendPort.send({'id': id, 'error': e.toString()});
       }
     });
   }
 
-  static void _subscriptionLoop(_StreamIsolateData data) {
+  static void _subscriptionWorker(_StreamIsolateData data) {
+    attachLogger(data.loggerPort);
+
     final zmq = ZMQFFi();
     final context = zmq.ctxNew();
     final socket = zmq.socket(context, data.config.socketType);
@@ -201,12 +217,14 @@ class ZMQIsolateWorker {
     while (true) {
       try {
         final result = zmq.recvMultipartStringsSync(socket);
+        logInfo('received $result');
         data.sendPort.send({
           'id': data.id,
           'stream': true,
           'result': result,
         });
-      } catch (e) {
+      } catch (e, s) {
+        logError('ZMQIsolateWorker _subscriptionLoop error: $e', s);
         if (!e.toString().contains('Resource temporarily unavailable')) {
           data.sendPort.send({
             'id': data.id,
@@ -236,10 +254,17 @@ class _SocketConfig {
   final bool subscribeAll;
 }
 
+class _WorkerInitData {
+  _WorkerInitData(this.loggerPort, this.mainPort);
+  final SendPort loggerPort;
+  final SendPort mainPort;
+}
+
 class _StreamIsolateData {
-  _StreamIsolateData(this.sendPort, this.id, this.config);
+  _StreamIsolateData(this.sendPort, this.loggerPort, this.id, this.config);
 
   final SendPort sendPort;
+  final SendPort loggerPort;
   final int id;
   final _SocketConfig config;
 }

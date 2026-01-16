@@ -1,10 +1,9 @@
 // ignore_for_file: public_member_api_docs
 
-import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
-import 'dart:isolate';
 
+import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/zmq/zmq_constants.dart';
 import 'package:ffi/ffi.dart';
 
@@ -224,12 +223,6 @@ class ZMQFFi {
     return parts.map(_decodeString).toList();
   }
 
-  /// Receives a multipart message and decodes parts as UTF-8 strings (async).
-  Future<List<String>> recvMultipartStrings(ZMQSocket sock) async {
-    final parts = await recvMultipart(sock);
-    return parts.map(_decodeString).toList();
-  }
-
   /// Encodes a string to UTF-8 bytes using UTF-8 encoding.
   static List<int> _encodeString(String str) {
     return utf8.encode(str);
@@ -239,82 +232,10 @@ class ZMQFFi {
   static String _decodeString(List<int> bytes) {
     try {
       return utf8.decode(bytes, allowMalformed: false);
-    } catch (e) {
+    } catch (e, s) {
+      logError('UTF-8 decoding error: $e', s);
       // Fallback for malformed UTF-8
       return utf8.decode(bytes, allowMalformed: true);
-    }
-  }
-
-  /// Receives a message from the socket (async version).
-  ///
-  /// WARNING: This creates a new isolate per call. For continuous receiving,
-  /// use ZMQIsolateReceiver instead.
-  ///
-  /// The receive timeout should be configured via `setSocketOption` with
-  /// `ZMQ_RCVTIMEO` before calling this method.
-  Future<List<int>?> recv(ZMQSocket sock, {int flags = 0}) async {
-    final receivePort = ReceivePort();
-    try {
-      await Isolate.spawn(
-        _recvIsolate,
-        _RecvParams(
-          sendPort: receivePort.sendPort,
-          socketAddress: sock.address,
-          flags: flags,
-        ),
-      );
-      final result = await receivePort.first as List<int>?;
-      return result;
-    } finally {
-      receivePort.close();
-    }
-  }
-
-  /// Receives a multipart message as a list of frames (async version).
-  ///
-  /// WARNING: This creates a new isolate per call. For continuous receiving,
-  /// use ZMQIsolateReceiver instead.
-  Future<List<List<int>>> recvMultipart(ZMQSocket sock) async {
-    final receivePort = ReceivePort();
-    try {
-      await Isolate.spawn(
-        _recvMultipartIsolate,
-        _RecvParams(
-          sendPort: receivePort.sendPort,
-          socketAddress: sock.address,
-          flags: 0,
-        ),
-      );
-      final result = await receivePort.first as List<List<int>>;
-      return result;
-    } finally {
-      receivePort.close();
-    }
-  }
-
-  /// Isolate entry point for async recv.
-  static void _recvIsolate(_RecvParams params) {
-    try {
-      final zmq = ZMQFFi();
-      final sock = Pointer<Void>.fromAddress(params.socketAddress);
-      final result = zmq.recvSync(sock, flags: params.flags);
-      params.sendPort.send(result);
-    } catch (e) {
-      // Send null on error to prevent isolate hanging
-      params.sendPort.send(null);
-    }
-  }
-
-  /// Isolate entry point for async recvMultipart.
-  static void _recvMultipartIsolate(_RecvParams params) {
-    try {
-      final zmq = ZMQFFi();
-      final sock = Pointer<Void>.fromAddress(params.socketAddress);
-      final result = zmq.recvMultipartSync(sock);
-      params.sendPort.send(result);
-    } catch (e) {
-      // Send empty list on error to prevent isolate hanging
-      params.sendPort.send(<List<int>>[]);
     }
   }
 
@@ -384,17 +305,4 @@ class ZMQFFi {
 
   /// Returns the value of `errno` for the calling thread.
   int getErrno() => _fns.zmq_errno();
-}
-
-/// Parameters for isolate-based receive operations.
-class _RecvParams {
-  _RecvParams({
-    required this.sendPort,
-    required this.socketAddress,
-    required this.flags,
-  });
-
-  final SendPort sendPort;
-  final int socketAddress;
-  final int flags;
 }

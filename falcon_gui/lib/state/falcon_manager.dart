@@ -9,6 +9,7 @@ import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/falcon_zmq.dart';
 import 'package:falcon_gui/utils/debounce.dart';
 import 'package:falcon_gui/utils/killing_falcon_banner.dart';
+import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';
 import 'package:flutter/foundation.dart';
 
@@ -48,20 +49,20 @@ class FalconManager extends ChangeNotifier {
           : PriorityStatus.notPrioritized;
       if (_priorityStatus != PriorityStatus.prioritized &&
           newStatus == PriorityStatus.prioritized) {
-        debugPrint('Falcon process has been prioritized.');
+        logInfo('Falcon process has been prioritized.');
 
         if (_falconProcess != null) {
-          debugPrint('Restarting falcon to apply new priority settings.');
+          logInfo('Restarting falcon to apply new priority settings.');
           unawaited(killFalcon().then((_) => createFalcon()));
         } else {
-          debugPrint('Spawning falcon with prioritized settings.');
+          logInfo('Spawning falcon with prioritized settings.');
           unawaited(createFalcon());
         }
       }
 
       _priorityStatus = newStatus;
-    } catch (e) {
-      debugPrint('Error checking priority: $e');
+    } catch (e, s) {
+      logError('Error checking priority: $e', s);
       _priorityStatus = PriorityStatus.unknown;
     }
     notifyListeners();
@@ -72,7 +73,7 @@ class FalconManager extends ChangeNotifier {
     final pids = await _getExistingFalconPIDs();
 
     if (pids.isNotEmpty) {
-      debugPrint('Existing Falcon instances detected: $pids');
+      logInfo('Existing Falcon instances detected: $pids');
       if (kDebugMode) {
         unawaited(killOthersAndSpawnNew());
       } else {
@@ -114,15 +115,15 @@ class FalconManager extends ChangeNotifier {
       _processExitCompleter = Completer<void>();
       _listenForExitCode();
       notifyListeners();
-    } catch (e) {
-      debugPrint('Error creating falcon instance: $e');
+    } catch (e, s) {
+      logError('Error creating falcon instance: $e', s);
     }
   }
 
   void _listenForExitCode() {
     unawaited(
       _falconProcess!.exitCode.then((_) {
-        debugPrint('Falcon process exitCode received');
+        logInfo('Falcon process exitCode received');
         if (_processExitCompleter != null &&
             !_processExitCompleter!.isCompleted) {
           _processExitCompleter!.complete();
@@ -148,12 +149,12 @@ class FalconManager extends ChangeNotifier {
     for (final pid in pids) {
       try {
         final result = Process.killPid(pid, ProcessSignal.sigkill);
-        debugPrint(
+        logInfo(
           'Killed existing Falcon process with PID: $pid '
           'Result: $result',
         );
-      } catch (e) {
-        debugPrint('Error killing existing process $pid: $e');
+      } catch (e, s) {
+        logError('Error killing existing process $pid: $e', s);
       }
     }
 
@@ -171,15 +172,15 @@ class FalconManager extends ChangeNotifier {
         throw Exception('Failed to connect to Falcon via ZMQ');
       }
 
-      debugPrint('FalconManager: Connected to Falcon');
-    } catch (e) {
-      debugPrint('Error initializing ZMQ: $e');
+      logInfo('FalconManager: Connected to Falcon');
+    } catch (e, s) {
+      logError('Error initializing ZMQ: $e', s);
       rethrow;
     }
   }
 
   Future<void> killFalcon() async {
-    debugPrint('killFalcon called');
+    logInfo('killFalcon called');
     try {
       showKillingFalconBanner();
       await Future<void>.delayed(const Duration(milliseconds: 100));
@@ -195,15 +196,15 @@ class FalconManager extends ChangeNotifier {
           ]);
 
           if (!_processExitCompleter!.isCompleted) {
-            debugPrint(
+            logInfo(
               'Process did not exit gracefully after 15 seconds, force killing',
             );
             _falconProcess!.kill(ProcessSignal.sigkill);
           } else {
-            debugPrint('Process exited successfully');
+            logInfo('Process exited successfully');
           }
-        } catch (e) {
-          debugPrint('Error waiting for process to exit: $e');
+        } catch (e, s) {
+          logError('Error waiting for process to exit: $e', s);
         }
       }
 
@@ -215,8 +216,8 @@ class FalconManager extends ChangeNotifier {
       _processExitCompleter = null;
 
       notifyListeners();
-    } catch (e) {
-      debugPrint('Error killing falcon instance: $e');
+    } catch (e, s) {
+      logError('Error killing falcon instance: $e', s);
     }
   }
 
@@ -225,7 +226,7 @@ class FalconManager extends ChangeNotifier {
     FalconZmqCommand command,
   ) async {
     if (_falconZMQ == null || !_falconZMQ!.isConnected) {
-      debugPrint('FalconManager: ZMQ not connected');
+      logInfo('FalconManager: ZMQ not connected');
       return null;
     }
     return _falconZMQ!.sendCommand(command);
@@ -237,7 +238,7 @@ class FalconManager extends ChangeNotifier {
     Duration timeout = const Duration(seconds: 5),
   }) async {
     if (_falconZMQ == null || !_falconZMQ!.isConnected) {
-      debugPrint('FalconManager: ZMQ not connected');
+      logInfo('FalconManager: ZMQ not connected');
       return null;
     }
     return _falconZMQ!.sendCommandParts(parts, timeout: timeout);
@@ -279,17 +280,8 @@ class FalconManager extends ChangeNotifier {
     });
   }
 
-  void debugConnectionStatus() {
-    if (_falconZMQ == null) {
-      debugPrint('FalconZMQ is null');
-      return;
-    }
-    debugPrint(
-      'FalconZMQ is ${_falconZMQ!.isConnected ? "connected" : "disconnected"}',
-    );
-  }
-
   Future<void> toggleProcessingState() async {
+    logInfo('toggleProcessingState called');
     if (falconState == FalconState.processing) {
       await sendCommand(FalconZmqCommand.graphStop);
     } else {

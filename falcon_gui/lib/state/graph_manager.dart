@@ -495,8 +495,6 @@ class GraphManager extends ChangeNotifier {
   }) {
     final uniquePortId = '$processorId-$portName';
     _portPositions[uniquePortId] = newPosition;
-
-    // print(newPosition);
   }
 
   void cancelPortSelection() {

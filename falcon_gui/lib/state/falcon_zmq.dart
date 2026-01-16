@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:falcon_gui/model/falcon_log.dart';
 import 'package:falcon_gui/model/falcon_state.dart';
 import 'package:falcon_gui/model/falcon_zmq_command.dart';
+import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/zmq/zmq_constants.dart';
 import 'package:falcon_gui/utils/zmq/zmq_isolate_worker.dart';
 import 'package:flutter/foundation.dart';
@@ -65,8 +66,8 @@ class FalconZMQ extends ChangeNotifier {
       );
 
       _stateFromResponse = FalconState.fromString(zmqStateResponseParts!.first);
-    } catch (e) {
-      debugPrint('FalconZMQ: Failed to get state via command: $e');
+    } catch (e, s) {
+      logError('FalconZMQ: Failed to get state via command: $e', s);
     } finally {
       _isWaitingForStateResponse = false;
       notifyListeners();
@@ -102,7 +103,7 @@ class FalconZMQ extends ChangeNotifier {
         subscribeAll: true,
       );
 
-      debugPrint(
+      logInfo(
         'FalconZMQ: Connected to $address:$commandPort and $address:$logPort',
       );
       _socketsReadyCompleter!.complete();
@@ -110,8 +111,8 @@ class FalconZMQ extends ChangeNotifier {
       unawaited(startLogListener());
 
       return true;
-    } catch (e) {
-      debugPrint('FalconZMQ: Connection to $address failed: $e');
+    } catch (e, s) {
+      logError('FalconZMQ: Connection to $address failed: $e', s);
       _socketsReadyCompleter?.completeError(e);
       await disconnect();
       return false;
@@ -138,6 +139,7 @@ class FalconZMQ extends ChangeNotifier {
     List<String> parts, {
     required Duration timeout,
   }) async {
+    logInfo('sendCommandParts: $parts');
     if (_zmqWorker == null || !isConnected) {
       return null;
     }
@@ -148,8 +150,8 @@ class FalconZMQ extends ChangeNotifier {
         parts,
       );
       return response;
-    } catch (e) {
-      debugPrint('FalconZMQ: Command failed: $e');
+    } catch (e, s) {
+      logError('FalconZMQ: Command failed: $e', s);
       return null;
     }
   }
@@ -170,12 +172,12 @@ class FalconZMQ extends ChangeNotifier {
                 notifyListeners();
               }
             },
-            onError: (dynamic e) {
-              debugPrint('FalconZMQ: Log listener error: $e');
+            onError: (dynamic e, StackTrace s) {
+              logError('FalconZMQ: Log listener error: $e', s);
             },
           );
-    } catch (e) {
-      debugPrint('FalconZMQ: Failed to start log listener: $e');
+    } catch (e, s) {
+      logError('FalconZMQ: Failed to start log listener: $e', s);
     }
   }
 
