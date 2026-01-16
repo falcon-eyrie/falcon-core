@@ -32,7 +32,7 @@ class StatusBar extends StatelessWidget {
               const Spacer(),
 
               _StatusBarButton(
-                icon: RemixIcons.list_settings_fill,
+                icon: RemixIcons.list_unordered,
                 hasError: falconManager.isLastLogAnError,
                 tooltip: isLogsCollapsed
                     ? 'Show Logs Panel'

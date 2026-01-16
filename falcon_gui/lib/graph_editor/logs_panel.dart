@@ -14,6 +14,8 @@ class LogsPanel extends StatefulWidget {
 class _LogsPanelState extends State<LogsPanel> {
   final ScrollController _scrollController = ScrollController();
 
+  double _panelHeight = 200;
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -27,85 +29,72 @@ class _LogsPanelState extends State<LogsPanel> {
       builder: (context, _) {
         final logs = falconManager.logs.reversed;
 
-        return Container(
-          height: 400,
-          decoration: BoxDecoration(
-            color: context.c.surface,
-            border: Border(
-              top: BorderSide(color: context.c.outlineVariant),
-            ),
-          ),
-          child: Column(
+        return SizedBox(
+          height: _panelHeight,
+          child: Stack(
             children: [
-              Container(
-                height: 24,
-                decoration: BoxDecoration(
-                  color: context.c.surfaceContainer,
-                  border: Border(
-                    bottom: BorderSide(color: context.c.outlineVariant),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    const SizedBox(width: 8),
-                    Text(
-                      'Falcon Logs',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.4,
-                        color: context.c.onSurfaceVariant,
+              Positioned(
+                top: 4,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  height: _panelHeight,
+                  color: context.c.surface,
+                  child: Column(
+                    children: [
+                      _LogPanelHeader(
+                        onHidden: widget.onHidden,
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Tooltip(
-                      message: _logsDescription,
-                      child: Icon(
-                        RemixIcons.information_line,
-                        size: 16,
-                        color: context.c.onSurfaceVariant,
-                      ),
-                    ),
-                    const Spacer(),
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: widget.onHidden,
-                        child: Tooltip(
-                          message: 'Hide Logs Panel',
-                          child: SizedBox(
-                            height: 24,
-                            width: 32,
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Icon(
-                                RemixIcons.subtract_line,
-                                size: 16,
-                                color: context.c.onSurfaceVariant,
-                              ),
-                            ),
+                      Expanded(
+                        child: Scrollbar(
+                          controller: _scrollController,
+                          thumbVisibility: true,
+                          child: ListView.builder(
+                            reverse: true,
+                            controller: _scrollController,
+                            itemCount: logs.length,
+                            itemBuilder: (context, index) {
+                              final log = logs.elementAt(index);
+
+                              return _LogRow(
+                                log: log,
+                              );
+                            },
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              Expanded(
-                child: Scrollbar(
-                  controller: _scrollController,
-                  thumbVisibility: true,
-                  child: ListView.builder(
-                    reverse: true,
-                    controller: _scrollController,
-                    itemCount: logs.length,
-                    itemBuilder: (context, index) {
-                      final log = logs.elementAt(index);
-
-                      return _LogRow(
-                        log: log,
-                      );
+              // This is an overengineered way to make the resizable handle
+              // height 8 instead of 1 for easier mouse interaction
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: _panelHeight - 8,
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.resizeUpDown,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onVerticalDragUpdate: (details) {
+                      setState(() {
+                        _panelHeight -= details.delta.dy;
+                        if (_panelHeight < 100) {
+                          _panelHeight = 100;
+                        } else if (_panelHeight >
+                            MediaQuery.of(context).size.height * 0.8) {
+                          _panelHeight =
+                              MediaQuery.of(context).size.height * 0.8;
+                        }
+                      });
                     },
+                    child: Container(
+                      height: 8,
+                      color: Colors.transparent,
+                    ),
                   ),
                 ),
               ),
@@ -117,9 +106,73 @@ class _LogsPanelState extends State<LogsPanel> {
   }
 }
 
+class _LogPanelHeader extends StatelessWidget {
+  const _LogPanelHeader({required this.onHidden});
+
+  final VoidCallback onHidden;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 24,
+      decoration: BoxDecoration(
+        color: context.c.surfaceContainer,
+        border: Border.symmetric(
+          horizontal: BorderSide(color: context.c.outlineVariant),
+        ),
+      ),
+      child: Row(
+        children: [
+          const SizedBox(width: 8),
+          Text(
+            'Falcon Logs',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+              color: context.c.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Tooltip(
+            message: _logsDescription,
+            child: Icon(
+              RemixIcons.information_line,
+              size: 16,
+              color: context.c.onSurfaceVariant,
+            ),
+          ),
+          const Spacer(),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onHidden,
+              child: Tooltip(
+                message: 'Hide Logs Panel',
+                child: SizedBox(
+                  height: 24,
+                  width: 32,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Icon(
+                      RemixIcons.subtract_line,
+                      size: 16,
+                      color: context.c.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 const _logsDescription =
     'These logs are generated by the Falcon\n'
-    'and current processors in the graph.';
+    'and current processors in the pipeline.';
 
 class _LogRow extends StatelessWidget {
   const _LogRow({
