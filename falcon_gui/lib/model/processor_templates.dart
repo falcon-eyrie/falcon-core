@@ -144,7 +144,7 @@ final _processorTemplatesUnsorted = {
         isIn: true,
       ),
       Port(
-        name: 'event',
+        name: 'events',
         type: 'EventType',
         isIn: false,
       ),
@@ -173,7 +173,7 @@ final _processorTemplatesUnsorted = {
         value: 16,
         displayName: 'Device Channels',
       ),
-      'protocols': YamlMapOption(
+      'protocols': YamlNodeOption(
         value: YamlMap.wrap({
           'event_a': {
             'high': [0, 1],
@@ -188,9 +188,139 @@ final _processorTemplatesUnsorted = {
     },
     ports: const [
       Port(
-        name: 'event',
+        name: 'events',
         type: 'EventType',
         isIn: true,
+      ),
+    ],
+    uiMetadata: UIMetadata(),
+  ),
+  'event2state': Processor(
+    id: 'event2state',
+    className: 'Event2State',
+    isTemplate: true,
+    options: const {
+      'target_event': StringOption(
+        value: 'DEFAULT_EVENT',
+        displayName: 'Target Event',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: true,
+      ),
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: false,
+      ),
+    ],
+    uiMetadata: UIMetadata(),
+  ),
+  'event_converter': Processor(
+    id: 'event_converter',
+    className: 'EventConverter',
+    isTemplate: true,
+    options: const {
+      'event_name': StringOption(
+        value: 'DEFAULT_EVENT',
+        displayName: 'Event Name',
+      ),
+      'replace': BoolOption(
+        value: true,
+        displayName: 'Replace',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: true,
+      ),
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: false,
+      ),
+    ],
+    uiMetadata: UIMetadata(),
+  ),
+  'event_delayed': Processor(
+    id: 'event_delayed',
+    className: 'EventDelayed',
+    isTemplate: true,
+    options: {
+      'detection_only_mode': const BoolOption(
+        value: false,
+        displayName: 'Detection Only Mode',
+      ),
+      'delayed_mode': const BoolOption(
+        value: false,
+        displayName: 'Delayed Mode',
+      ),
+      'delayed_range': YamlNodeOption(
+        // TODO(ben): change to vector option for
+        // options::Value<std::vector<long int>, true>
+        //      initial_delayed_range_{{150, 200}};
+        value: YamlList.wrap([150, 200]),
+        displayName: 'Delayed Range (ms)',
+      ),
+      'message_detection': const StringOption(
+        value: 'r',
+        displayName: 'Detection Message',
+      ),
+      'message_delayed': const StringOption(
+        value: 'd',
+        displayName: 'Delayed Message',
+      ),
+      'message_ontime': const StringOption(
+        value: 'o',
+        displayName: 'On-time Message',
+      ),
+      'analysis_lockout_time_starting_time': YamlNodeOption(
+        // TODO(ben): change to vector option for
+        // options::Value<std::vector<int>, true>
+        //      when_stop_analysis_period_{{0, 0}};
+        value: YamlList.wrap([0, 0]),
+        displayName: 'Analysis Lockout Start',
+      ),
+      'analysis_lockout_time_period': const DoubleOption(
+        value: 50,
+        displayName: 'Analysis Lockout Period (ms)',
+      ),
+      'event_trigger_lockout_time_period': const DoubleOption(
+        value: 50,
+        displayName: 'Detection Lockout Period (ms)',
+      ),
+      'event_trigger_lockout_time_detection': const BoolOption(
+        value: false,
+        displayName: 'Lockout After Detection',
+      ),
+      'event_trigger_lockout_time_stimulation': const BoolOption(
+        value: true,
+        displayName: 'Lockout After Stimulation',
+      ),
+      'enable_saving': const BoolOption(
+        value: true,
+        displayName: 'Enable Saving',
+      ),
+      'filename_prefix': const StringOption(
+        value: 'stim_',
+        displayName: 'Filename Prefix',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: true,
+      ),
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: false,
       ),
     ],
     uiMetadata: UIMetadata(),

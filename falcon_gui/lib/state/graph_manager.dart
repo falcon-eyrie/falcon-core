@@ -11,10 +11,6 @@ import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
 
-// TODO(ben): when loading from file, fill in the missing ui metadata
-// which will be complex because processors needs to be positioned
-// and aligned with non-overlapping positions.
-
 final GraphManager graphManager = GraphManager.instance;
 
 class GraphManager extends ChangeNotifier {
@@ -328,20 +324,14 @@ class GraphManager extends ChangeNotifier {
   // widget that contains it.
   final _portPositions = <String, Offset>{};
 
-  // Whether any port positions have been reported from the processor widgets.
-  // Used to avoid drawing connections before port positions are known.
-  bool get hasAnyPortPositions => _portPositions.isNotEmpty;
-
-  // Currently selected port unique ID (processorId-portName) for connection
-  // creation.
+  // Currently selected port unique ID (processorId-portDirectionalName) for
+  // connection creation.
   String? _selectedPortUniqueId;
 
   // Cursor position for drawing temporary connection line
   Offset? _cursorPosition;
 
   String? get selectedPortUniqueId => _selectedPortUniqueId;
-
-  Offset? get cursorPosition => _cursorPosition;
 
   // Port selectability status for the currently selected input port.
   final _validOutPortIds = <String>{};
@@ -353,13 +343,13 @@ class GraphManager extends ChangeNotifier {
 
   PortSelectabilityStatus? getPortSelectabilityStatus({
     required String processorId,
-    required String portName,
+    required Port port,
   }) {
     // If we are not in the create connection mode, all ports are idle
     if (_selectedPortUniqueId == null) {
       if (_graph.isPortInAConnection(
         processorId: processorId,
-        portName: portName,
+        port: port,
       )) {
         return PortSelectabilityStatus.connectedIdle;
       } else {
@@ -367,7 +357,7 @@ class GraphManager extends ChangeNotifier {
       }
     }
 
-    final uniquePortId = '$processorId-$portName';
+    final uniquePortId = '$processorId-${port.directionalName}';
 
     // The port itself is selected as input port
     if (_selectedPortUniqueId == uniquePortId) {
@@ -395,14 +385,14 @@ class GraphManager extends ChangeNotifier {
 
   Offset getPortPosition({
     required String processorId,
-    required String portName,
+    required String portDirectionalName,
   }) {
-    final uniquePortId = '$processorId-$portName';
+    final uniquePortId = '$processorId-$portDirectionalName';
     return _portPositions[uniquePortId] ?? Offset.zero;
   }
 
   void onPortClicked({required String processorId, required Port port}) {
-    final uniquePortId = '$processorId-${port.name}';
+    final uniquePortId = '$processorId-${port.directionalName}';
     if (_selectedPortUniqueId == null) {
       _selectedPortUniqueId = uniquePortId;
 
@@ -418,7 +408,8 @@ class GraphManager extends ChangeNotifier {
         ..._graph.processors.values,
       ]) {
         for (final otherPort in otherProcessor.ports) {
-          final otherUniqueId = '${otherProcessor.id}-${otherPort.name}';
+          final otherUniqueId =
+              '${otherProcessor.id}-${otherPort.directionalName}';
 
           // Skip self
           if (otherUniqueId == uniquePortId) continue;
@@ -484,7 +475,7 @@ class GraphManager extends ChangeNotifier {
     } else if (_validOutPortIds.contains(uniquePortId)) {
       final selectedPortParts = _selectedPortUniqueId!.split('-');
       final inProcessorId = selectedPortParts[0];
-      final inPortName = selectedPortParts[1];
+      final inPortName = selectedPortParts[1].split(':')[1];
       final outProcessorId = processorId;
       final outPortName = port.name;
 
@@ -517,10 +508,10 @@ class GraphManager extends ChangeNotifier {
 
   void onPortPositionUpdated({
     required String processorId,
-    required String portName,
+    required Port port,
     required Offset newPosition,
   }) {
-    final uniquePortId = '$processorId-$portName';
+    final uniquePortId = '$processorId-${port.directionalName}';
     _portPositions[uniquePortId] = newPosition;
   }
 
@@ -543,13 +534,13 @@ class GraphManager extends ChangeNotifier {
     final processor = _graph.processors[processorId];
 
     final port = processor?.ports.firstWhereOrNull(
-      (p) => p.name == portName,
+      (p) => p.directionalName == portName,
     );
     if (processor == null || port == null) return null;
 
     final portPos = getPortPosition(
       processorId: processorId,
-      portName: portName,
+      portDirectionalName: port.directionalName,
     );
     final startPos = processor.uiMetadata.position + portPos;
 
@@ -576,11 +567,11 @@ class GraphManager extends ChangeNotifier {
 
       final fromPortOffset = getPortPosition(
         processorId: connection.inProcessor,
-        portName: connection.inPort,
+        portDirectionalName: 'in:${connection.inPort}',
       );
       final toPortOffset = getPortPosition(
         processorId: connection.outProcessor,
-        portName: connection.outPort,
+        portDirectionalName: 'out:${connection.outPort}',
       );
 
       final fromPos = outProcessor.uiMetadata.position + toPortOffset;

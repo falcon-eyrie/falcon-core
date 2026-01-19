@@ -24,20 +24,29 @@ class _LogsPanelState extends State<LogsPanel> {
 
   @override
   Widget build(BuildContext context) {
+    if (mounted && MediaQuery.of(context).size.height < 260) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onHidden();
+      });
+      return const SizedBox.shrink();
+    }
+
+    final panelHeight = _panelHeight.clamp(
+      100.0,
+      MediaQuery.of(context).size.height * 0.7,
+    );
+
     return AnimatedBuilder(
       animation: falconManager,
       builder: (context, _) {
         final logs = falconManager.logs.reversed;
-        final panelHeight = _panelHeight.clamp(
-          100.0,
-          MediaQuery.of(context).size.height * 0.8,
-        );
+
         return SizedBox(
           height: panelHeight,
           child: Stack(
             children: [
               Positioned(
-                top: 4,
+                top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
@@ -46,9 +55,7 @@ class _LogsPanelState extends State<LogsPanel> {
                   color: context.c.surface,
                   child: Column(
                     children: [
-                      _LogPanelHeader(
-                        onHidden: widget.onHidden,
-                      ),
+                      _LogPanelHeader(onHidden: widget.onHidden),
                       Expanded(
                         child: Scrollbar(
                           controller: _scrollController,

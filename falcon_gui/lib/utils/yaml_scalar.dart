@@ -30,9 +30,9 @@ OptionValue<dynamic> optionFromScalar(
       displayName: templateOption.displayName,
     );
   }
-  if (templateOption is YamlMapOption) {
-    return YamlMapOption(
-      value: value as YamlMap,
+  if (templateOption is YamlNodeOption) {
+    return YamlNodeOption(
+      value: value as YamlNode,
       displayName: templateOption.displayName,
     );
   }

@@ -101,12 +101,12 @@ class FalconGraph extends Equatable {
 
   bool isPortInAConnection({
     required String processorId,
-    required String portName,
+    required Port port,
   }) {
     return _connections.any(
       (conn) =>
-          (conn.inProcessor == processorId && conn.inPort == portName) ||
-          (conn.outProcessor == processorId && conn.outPort == portName),
+          (conn.inProcessor == processorId && conn.inPort == port.name) ||
+          (conn.outProcessor == processorId && conn.outPort == port.name),
     );
   }
 
@@ -234,11 +234,11 @@ final class BoolOption extends OptionValue<bool> {
   }
 }
 
-final class YamlMapOption extends OptionValue<yaml.YamlMap> {
-  const YamlMapOption({required super.value, required super.displayName});
+final class YamlNodeOption extends OptionValue<yaml.YamlNode> {
+  const YamlNodeOption({required super.value, required super.displayName});
 
-  YamlMapOption copyWith({required yaml.YamlMap newValue}) {
-    return YamlMapOption(value: newValue, displayName: displayName);
+  YamlNodeOption copyWith({required yaml.YamlNode newValue}) {
+    return YamlNodeOption(value: newValue, displayName: displayName);
   }
 }
 
@@ -270,6 +270,8 @@ class Port extends Equatable {
   final String type; // e.g. "AnyType", "TimeSeriesType<double>", "int"
   final bool isIn;
   bool get isOut => !isIn;
+
+  String get directionalName => isIn ? 'in:$name' : 'out:$name';
 
   @override
   List<Object?> get props => [name, type, isIn];

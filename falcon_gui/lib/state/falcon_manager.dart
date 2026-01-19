@@ -14,7 +14,7 @@ import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';
 import 'package:flutter/foundation.dart';
 
 final FalconManager falconManager = FalconManager.instance;
-const bool _debugUseExistingFalconInstance = false;
+const bool _debugUseExistingFalconInstance = true;
 
 class FalconManager extends ChangeNotifier {
   FalconManager._internal();

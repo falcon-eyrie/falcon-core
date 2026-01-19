@@ -102,7 +102,7 @@ class _PortRowState extends State<_PortRow> {
   Widget build(BuildContext context) {
     final portSelectionStatus = graphManager.getPortSelectabilityStatus(
       processorId: widget.processor.id,
-      portName: widget.port.name,
+      port: widget.port,
     );
 
     final isEnabled =
@@ -154,7 +154,7 @@ class _PortRowState extends State<_PortRow> {
 
     final dot = _PortHalfDot(
       processorId: widget.processor.id,
-      portName: widget.port.name,
+      port: widget.port,
       isIn: widget.port.isIn,
       isEnabled: isEnabled,
       isTemplate: widget.processor.isTemplate,
@@ -222,14 +222,14 @@ class _PortHalfDot extends StatelessWidget {
   const _PortHalfDot({
     required this.isTemplate,
     required this.processorId,
-    required this.portName,
+    required this.port,
     required this.isIn,
     required this.isEnabled,
     required this.showFullDot,
   });
 
   final String processorId;
-  final String portName;
+  final Port port;
   final bool isIn;
   final bool isEnabled;
   final bool isTemplate;
@@ -265,7 +265,7 @@ class _PortHalfDot extends StatelessWidget {
 
       graphManager.onPortPositionUpdated(
         processorId: processorId,
-        portName: portName,
+        port: port,
         newPosition: localOffset,
       );
     }

@@ -56,7 +56,7 @@ class ProcessorOptionsView extends StatelessWidget {
                           onChanged: onChanged,
                         ),
                         // TODO(ben): implement a better YAML editor
-                        final YamlMapOption o => Text(
+                        final YamlNodeOption o => Text(
                           o.value.toString(),
                         ),
                       },

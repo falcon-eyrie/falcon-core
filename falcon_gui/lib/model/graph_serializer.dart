@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_writer/yaml_writer.dart';
 
+// TODO(ben): when loading from file, fill in the missing ui metadata
+// which will be complex because processors needs to be positioned
+// and aligned with non-overlapping positions.
 extension FalconGraphSerializerX on FalconGraph {
   String toYaml({bool excludeUIMetadata = false}) {
     if (processors.isEmpty && connections.isEmpty) {
