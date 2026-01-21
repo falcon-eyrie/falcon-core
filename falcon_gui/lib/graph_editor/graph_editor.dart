@@ -5,6 +5,7 @@ import 'package:falcon_gui/graph_editor/processors_panel.dart';
 import 'package:falcon_gui/graph_editor/status_bar.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
+import 'package:falcon_gui/utils/debounce.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -95,7 +96,9 @@ class _YamlEditor extends StatefulWidget {
 class _YamlEditorState extends State<_YamlEditor> {
   late final TextEditingController controller;
   late final FocusNode focusNode;
-
+  final Debounce _buildGraphDebounce = Debounce(
+    delay: Duration(milliseconds: 500),
+  );
   @override
   void initState() {
     super.initState();
@@ -157,9 +160,9 @@ class _YamlEditorState extends State<_YamlEditor> {
             },
             onChanged: (value) {
               try {
-                graphManager.loadGraph(
-                  FalconGraphSerializerX.fromYaml(value),
-                );
+                final newGraph = FalconGraphSerializerX.fromYaml(value);
+
+                _buildGraphDebounce(() => graphManager.loadGraph(newGraph));
               } catch (_) {}
             },
           ),

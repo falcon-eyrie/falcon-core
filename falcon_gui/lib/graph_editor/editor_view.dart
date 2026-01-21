@@ -21,6 +21,12 @@ class EditorView extends StatefulWidget {
 class _EditorViewState extends State<EditorView> {
   bool _isPanning = false;
 
+  /// Converts global screen position to world coordinates
+  Offset _toScene(Offset globalPosition, BuildContext context) {
+    final renderBox = context.findRenderObject() as RenderBox?;
+    return renderBox?.globalToLocal(globalPosition) ?? Offset.zero;
+  }
+
   @override
   Widget build(BuildContext context) {
     graphManager.viewportSize = MediaQuery.of(context).size;
@@ -67,7 +73,8 @@ class _EditorViewState extends State<EditorView> {
               setState(() => _isPanning = false);
             },
             onPointerHover: (event) {
-              graphManager.updateCursorPosition(event.position);
+              final scenePosition = _toScene(event.position, context);
+              graphManager.updateCursorPosition(scenePosition);
             },
 
             child: Stack(
@@ -106,15 +113,23 @@ class _EditorViewState extends State<EditorView> {
                             child: ProcessorItem(
                               readonly: !falconManager.canEditGraph,
                               onPanStart: (details) {
+                                final scenePosition = _toScene(
+                                  details.globalPosition,
+                                  context,
+                                );
                                 graphManager.onProcessorDragStart(
                                   id: processor.id,
-                                  scenePosition: details.globalPosition,
+                                  scenePosition: scenePosition,
                                 );
                               },
                               onPanUpdate: (details) {
+                                final scenePosition = _toScene(
+                                  details.globalPosition,
+                                  context,
+                                );
                                 graphManager.onProcessorDragUpdate(
                                   id: processor.id,
-                                  newPos: details.globalPosition,
+                                  newPos: scenePosition,
                                 );
                               },
                               onPanEnd: (_) => graphManager.onProcessorDragEnd(

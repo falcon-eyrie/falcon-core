@@ -38,7 +38,7 @@ class GraphManager extends ChangeNotifier {
       TransformationController(topLeftMatrix);
 
   final _hoverDebounce = Debounce(
-    delay: const Duration(milliseconds: 16),
+    delay: const Duration(milliseconds: 1),
   );
 
   List<Processor> get processors => _graph.processors.values.toList()
