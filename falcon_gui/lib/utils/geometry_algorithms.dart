@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:flutter/material.dart';
 
 Offset cubicBezierPoint(
@@ -164,4 +165,64 @@ bool isPointNearCubicBezier(
   }
 
   return false;
+}
+
+/// Finds a non-overlapping position for a new processor in the graph.
+Offset findNonOverlappingPosition({required List<Processor> processors}) {
+  final biggestNodeSize = processors.fold<Size>(
+    Size.zero,
+    (prev, processor) {
+      final processorSize = Size(400, processor.options.length * 40.0 + 300);
+
+      return Size(
+        math.max(prev.width, processorSize.width),
+        math.max(prev.height, processorSize.height),
+      );
+    },
+  );
+  const padding = 20;
+  final existingPositions = processors
+      .map((p) => p.uiMetadata.position & biggestNodeSize)
+      .toList();
+
+  var position = Offset.zero;
+
+  bool overlaps(Offset pos) {
+    final rect = pos & biggestNodeSize;
+    return existingPositions.any((r) => r.overlaps(rect));
+  }
+
+  while (overlaps(position)) {
+    position += Offset(biggestNodeSize.width + padding, 0);
+    // move to next row if exceeding some arbitrary canvas width
+    if (position.dx > 2000) {
+      position = Offset(0, position.dy + biggestNodeSize.height + padding);
+    }
+  }
+
+  return position;
+}
+
+/// Arranges processors with missing UI positions to non-overlapping positions.
+Map<String, Processor> layoutToNonOverlappingPositions(
+  Map<String, Processor> processors,
+) {
+  final updatedProcessors = <String, Processor>{};
+  final processorsList = processors.values.toList();
+
+  for (final processor in processorsList) {
+    if (processor.uiMetadata.position == Offset.zero) {
+      final newPosition = findNonOverlappingPosition(
+        processors: updatedProcessors.values.toList(),
+      );
+      final updatedProcessor = processor.copyWith(
+        uiMetadata: processor.uiMetadata.copyWith(position: newPosition),
+      );
+      updatedProcessors[processor.id] = updatedProcessor;
+    } else {
+      updatedProcessors[processor.id] = processor;
+    }
+  }
+
+  return updatedProcessors;
 }

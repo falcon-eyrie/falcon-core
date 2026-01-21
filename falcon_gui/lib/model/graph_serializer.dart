@@ -1,14 +1,13 @@
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/processor_templates.dart';
+import 'package:falcon_gui/utils/geometry_algorithms.dart';
+import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:falcon_gui/utils/yaml_scalar.dart';
 import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_writer/yaml_writer.dart';
 
-// TODO(ben): when loading from file, fill in the missing ui metadata
-// which will be complex because processors needs to be positioned
-// and aligned with non-overlapping positions.
 extension FalconGraphSerializerX on FalconGraph {
   String toYaml({bool excludeUIMetadata = false}) {
     if (processors.isEmpty && connections.isEmpty) {
@@ -151,7 +150,6 @@ extension FalconGraphSerializerX on FalconGraph {
         className: className,
         options: options,
         ports: List.of(templateProcessor.ports),
-        uiMetadata: UIMetadata(),
       );
     }
 
@@ -221,8 +219,11 @@ extension FalconGraphSerializerX on FalconGraph {
             if (uiMap['isExpanded'] != null) {
               isExpanded = uiMap['isExpanded'] as bool;
             }
-          } catch (_) {
-            // no-op
+          } catch (e, s) {
+            logError(
+              'Error parsing UI metadata for processor $processorId: $e',
+              s,
+            );
           }
         }
 
@@ -235,6 +236,13 @@ extension FalconGraphSerializerX on FalconGraph {
           ),
         );
       }
+    } else {
+      // If no UI metadata provided, initialize with non-overlapping positions
+      final updatedProcessors = layoutToNonOverlappingPositions(processors);
+
+      processors
+        ..clear()
+        ..addAll(updatedProcessors);
     }
 
     return FalconGraph(processors: processors, connections: connections);
@@ -306,20 +314,24 @@ extension FalconGraphSerializerX on FalconGraph {
     }
 
     // Validate ports exist
-    final inPort = inProcessor.ports.firstWhere(
-      (p) => p.name == inPortName,
+
+    // Resolve output port (left side)
+    final outPort = outProcessor.ports.firstWhere(
+      (p) => p.name == outPortName && !p.isIn,
       orElse: () => throw FalconGraphYamlParserException(
-        'Input port "$inPortName" not found in processor "$inProcessorId". '
-        'Available ports: ${inProcessor.ports.map((p) => p.name).join(", ")}',
+        'Output port "$outPortName" not found in processor '
+        '"$outProcessorId". Available output ports: '
+        '''${outProcessor.ports.where((p) => !p.isIn).map((p) => p.name).join(", ")}''',
       ),
     );
 
-    final outPort = outProcessor.ports.firstWhere(
-      (p) => p.name == outPortName,
+    // Resolve input port (right side)
+    final inPort = inProcessor.ports.firstWhere(
+      (p) => p.name == inPortName && p.isIn,
       orElse: () => throw FalconGraphYamlParserException(
-        'Output port "$outPortName" not found in processor '
-        '"$outProcessorId". '
-        'Available ports: ${outProcessor.ports.map((p) => p.name).join(", ")}',
+        'Input port "$inPortName" not found in processor '
+        '"$inProcessorId". Available input ports: '
+        '''${inProcessor.ports.where((p) => p.isIn).map((p) => p.name).join(", ")}''',
       ),
     );
 

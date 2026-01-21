@@ -69,23 +69,32 @@ class FalconGraph extends Equatable {
     unawaited(falconManager.onGraphChanged(this));
   }
 
-  void renameConnections({
-    required String oldProcessorId,
-    required String newProcessorId,
-  }) {
+  void renameProcessor({required String oldId, required String newId}) {
+    final processor = _processors[oldId];
+    if (processor == null) return;
+
+    final updatedProcessor = processor.copyWith(id: newId);
+
+    // Step 1: Add new processor with newId
+    _processors[newId] = updatedProcessor;
+
+    // Step 2: Update connections to use newId
     for (var i = 0; i < _connections.length; i++) {
       final c = _connections[i];
       _connections[i] = Connection(
-        inProcessor: c.inProcessor == oldProcessorId
-            ? newProcessorId
-            : c.inProcessor,
+        inProcessor: c.inProcessor == oldId ? newId : c.inProcessor,
         inPort: c.inPort,
-        outProcessor: c.outProcessor == oldProcessorId
-            ? newProcessorId
-            : c.outProcessor,
+        outProcessor: c.outProcessor == oldId ? newId : c.outProcessor,
         outPort: c.outPort,
       );
     }
+
+    // Step 3: Remove old processor
+    _connections.removeWhere(
+      (conn) => conn.inProcessor == oldId || conn.outProcessor == oldId,
+    );
+    _processors.remove(oldId);
+
     unawaited(falconManager.onGraphChanged(this));
   }
 
@@ -130,10 +139,11 @@ class Processor extends Equatable {
     required this.className,
     required Map<String, OptionValue<dynamic>> options,
     required List<Port> ports,
-    required this.uiMetadata,
+    UIMetadata? uiMetadata,
     this.isTemplate = false,
   }) : _ports = List.of(ports),
        _options = Map.of(options),
+       uiMetadata = uiMetadata ?? UIMetadata(),
        assert(
          processorIdRegex.hasMatch(id),
          '$id is not a valid processor id. '

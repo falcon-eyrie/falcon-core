@@ -51,13 +51,15 @@ Future<void> _entrypoint() async {
 }
 
 Future<void> _tempLoadGraph() async {
+  final p = File('/home/device/falcon/resources/graphs/current.yaml');
   try {
-    final p = File('/home/device/falcon/resources/graphs/current.yaml');
     final yaml = await p.readAsString();
     final graph = FalconGraphSerializerX.fromYaml(yaml);
     graphManager.loadGraph(graph);
     unawaited(falconManager.onGraphChanged(graph));
-  } catch (_) {}
+  } catch (e, s) {
+    logError('Error loading graph from file ${p.absolute.path}: $e', s);
+  }
 }
 
 class DesktopApp extends StatelessWidget {

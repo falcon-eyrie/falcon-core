@@ -3,7 +3,6 @@
 import 'dart:convert';
 import 'dart:ffi';
 
-import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/zmq/zmq_constants.dart';
 import 'package:ffi/ffi.dart';
 
@@ -238,8 +237,7 @@ class ZMQFFi {
   static String _decodeString(List<int> bytes) {
     try {
       return utf8.decode(bytes, allowMalformed: false);
-    } catch (e, s) {
-      logError('UTF-8 decoding error: $e', s);
+    } catch (_) {
       // Fallback for malformed UTF-8
       return utf8.decode(bytes, allowMalformed: true);
     }

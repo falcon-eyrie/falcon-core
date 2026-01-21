@@ -4,6 +4,7 @@ import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/theme.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:remixicon/remixicon.dart';
 
@@ -64,15 +65,13 @@ class _ProcessorItemState extends State<ProcessorItem> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            GestureDetector(
+            _Header(
+              processor: widget.processor,
+              readonly: widget.readonly,
+              onFocused: () => widget.onTapDown?.call(),
               onPanStart: widget.onPanStart,
               onPanUpdate: widget.onPanUpdate,
               onPanEnd: widget.onPanEnd,
-              child: _Header(
-                processor: widget.processor,
-                readonly: widget.readonly,
-                onFocused: () => widget.onTapDown?.call(),
-              ),
             ),
 
             _PreventEdit(
@@ -110,11 +109,17 @@ class _Header extends StatefulWidget {
     required this.readonly,
     required this.processor,
     required this.onFocused,
+    required this.onPanStart,
+    required this.onPanUpdate,
+    required this.onPanEnd,
   });
 
   final Processor processor;
   final VoidCallback onFocused;
   final bool readonly;
+  final void Function(DragStartDetails)? onPanStart;
+  final void Function(DragUpdateDetails)? onPanUpdate;
+  final void Function(DragEndDetails)? onPanEnd;
 
   @override
   State<_Header> createState() => _HeaderState();
@@ -122,6 +127,7 @@ class _Header extends StatefulWidget {
 
 class _HeaderState extends State<_Header> {
   bool _isEditing = false;
+  bool _isGrabbing = false;
 
   void _startEditing() {
     setState(() {
@@ -150,81 +156,109 @@ class _HeaderState extends State<_Header> {
         )
         ? processorColor
         : Colors.grey;
+    final MouseCursor cursor;
+    if (widget.processor.isTemplate) {
+      cursor = MouseCursor.defer;
+    } else if (_isGrabbing) {
+      cursor = SystemMouseCursors.grabbing;
+    } else {
+      cursor = SystemMouseCursors.grab;
+    }
     return MouseRegion(
-      cursor: widget.processor.isTemplate
-          ? MouseCursor.defer
-          : SystemMouseCursors.move,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        decoration: BoxDecoration(
-          color: headerColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (_isEditing) ...[
-                    _ProcessorNameEditor(
-                      processor: widget.processor,
-                      onNameChanged: _onNameChanged,
-                      onFocused: widget.onFocused,
-                    ),
-                  ] else if (!widget.processor.isTemplate) ...[
-                    _ProcessorName(
-                      processorName: widget.processor.id,
-                      onClicked: _startEditing,
-                      readonly: widget.readonly,
-                    ),
-                  ],
-                  Text(
-                    widget.processor.className,
-                    style: const TextStyle(
-                      color: Color(0xffffffff),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w300,
+      cursor: cursor,
+      child: GestureDetector(
+        onPanStart: widget.onPanStart,
+        onPanUpdate: widget.onPanUpdate,
+        onPanEnd: widget.onPanEnd,
+        child: Listener(
+          onPointerDown: (event) {
+            if (event.buttons == kPrimaryMouseButton) {
+              setState(() => _isGrabbing = true);
+            }
+          },
+          onPointerUp: (event) {
+            if (event.buttons == 0) {
+              setState(() => _isGrabbing = false);
+            }
+          },
+          onPointerCancel: (_) {
+            setState(() => _isGrabbing = false);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            decoration: BoxDecoration(
+              color: headerColor,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(8),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (_isEditing) ...[
+                        _ProcessorNameEditor(
+                          processor: widget.processor,
+                          onNameChanged: _onNameChanged,
+                          onFocused: widget.onFocused,
+                        ),
+                      ] else if (!widget.processor.isTemplate) ...[
+                        _ProcessorName(
+                          processorName: widget.processor.id,
+                          onClicked: _startEditing,
+                          readonly: widget.readonly,
+                        ),
+                      ],
+                      Text(
+                        widget.processor.className,
+                        style: const TextStyle(
+                          color: Color(0xffffffff),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (!widget.processor.isTemplate) ...[
+                  _PreventEdit(
+                    isPreventing: widget.readonly,
+                    child: IconButton(
+                      icon: const Icon(
+                        RemixIcons.delete_bin_2_line,
+                        size: 16,
+                        color: Color(0xffffffff),
+                      ),
+                      color: context.c.onPrimary,
+                      onPressed: () =>
+                          graphManager.removeProcessor(id: widget.processor.id),
                     ),
                   ),
+                  const SizedBox(width: 4),
                 ],
-              ),
-            ),
-            if (!widget.processor.isTemplate) ...[
-              _PreventEdit(
-                isPreventing: widget.readonly,
-                child: IconButton(
-                  icon: const Icon(
-                    RemixIcons.delete_bin_2_line,
-                    size: 16,
-                    color: Color(0xffffffff),
-                  ),
-                  color: context.c.onPrimary,
-                  onPressed: () =>
-                      graphManager.removeProcessor(id: widget.processor.id),
-                ),
-              ),
-              const SizedBox(width: 4),
-            ],
 
-            _PreventEdit(
-              isPreventing: widget.readonly,
-              child: IconButton(
-                icon: Icon(
-                  widget.processor.isTemplate
-                      ? RemixIcons.add_line
-                      : RemixIcons.file_copy_line,
-                  size: 20,
-                  color: const Color(0xffffffff),
+                _PreventEdit(
+                  isPreventing: widget.readonly,
+                  child: IconButton(
+                    icon: Icon(
+                      widget.processor.isTemplate
+                          ? RemixIcons.add_line
+                          : RemixIcons.file_copy_line,
+                      size: 20,
+                      color: const Color(0xffffffff),
+                    ),
+                    color: context.c.onPrimary,
+                    onPressed: () => graphManager.duplicateProcessor(
+                      processor: widget.processor,
+                    ),
+                  ),
                 ),
-                color: context.c.onPrimary,
-                onPressed: () => graphManager.duplicateProcessor(
-                  processor: widget.processor,
-                ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

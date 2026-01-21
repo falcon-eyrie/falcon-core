@@ -1,5 +1,6 @@
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
+import 'package:falcon_gui/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -116,8 +117,11 @@ class _OptionFieldBaseState<T extends OptionValue<dynamic>>
     try {
       final newOption = widget.parseValue(value);
       widget.onChanged(newOption);
-    } catch (_) {
-      // no-op
+    } catch (e, s) {
+      logError(
+        'Error parsing option value for ${widget.option}: $e',
+        s,
+      );
     }
   }
 

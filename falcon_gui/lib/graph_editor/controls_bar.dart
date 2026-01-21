@@ -59,7 +59,7 @@ class ControlsBar extends StatelessWidget {
                 icon: Icon(
                   graphManager.isAllCollapsed
                       ? Remix.arrow_down_double_line
-                      : Remix.arrow_down_double_line,
+                      : Remix.arrow_up_double_line,
                 ),
                 tooltip: 'Toggle collapse all',
                 onPressed: graphManager.toggleCollapseAll,

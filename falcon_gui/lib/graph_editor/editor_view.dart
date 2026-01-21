@@ -4,20 +4,22 @@ import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:remixicon/remixicon.dart';
 
 /// EditorView
 ///
 /// Main canvas/editor view for Linux desktop. Users can pan,
 /// zoom, and drag processors.
-class EditorView extends StatelessWidget {
+class EditorView extends StatefulWidget {
   const EditorView({super.key});
 
-  /// Converts global screen position to world coordinates
-  Offset _toScene(Offset globalPosition, BuildContext context) {
-    final renderBox = context.findRenderObject() as RenderBox?;
-    return renderBox?.globalToLocal(globalPosition) ?? Offset.zero;
-  }
+  @override
+  State<EditorView> createState() => _EditorViewState();
+}
+
+class _EditorViewState extends State<EditorView> {
+  bool _isPanning = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +31,21 @@ class EditorView extends StatelessWidget {
         graphManager.onEditorViewRendered();
 
         final isCreatingConnection = graphManager.selectedPortUniqueId != null;
+
+        final SystemMouseCursor cursor;
+
+        if (isCreatingConnection) {
+          cursor = SystemMouseCursors.alias;
+        } else if (_isPanning) {
+          cursor = SystemMouseCursors.move;
+        } else if (graphManager.hoveredConnection != null) {
+          cursor = SystemMouseCursors.noDrop;
+        } else {
+          cursor = SystemMouseCursors.basic;
+        }
+
         return MouseRegion(
-          cursor: isCreatingConnection
-              ? SystemMouseCursors.alias
-              : graphManager.hoveredConnection != null
-              ? SystemMouseCursors.noDrop
-              : SystemMouseCursors.basic,
+          cursor: cursor,
           child: Listener(
             onPointerDown: (event) {
               if (event.buttons == kSecondaryMouseButton) {
@@ -42,11 +53,23 @@ class EditorView extends StatelessWidget {
                   ..cancelPortSelection()
                   ..maybeRemoveConnectionAtPosition();
               }
+
+              if (event.buttons == kPrimaryMouseButton) {
+                setState(() => _isPanning = true);
+              }
+            },
+            onPointerUp: (event) {
+              if (event.buttons == 0) {
+                setState(() => _isPanning = false);
+              }
+            },
+            onPointerCancel: (_) {
+              setState(() => _isPanning = false);
             },
             onPointerHover: (event) {
-              final scenePosition = _toScene(event.position, context);
-              graphManager.updateCursorPosition(scenePosition);
+              graphManager.updateCursorPosition(event.position);
             },
+
             child: Stack(
               children: [
                 InteractiveViewer(
@@ -83,23 +106,15 @@ class EditorView extends StatelessWidget {
                             child: ProcessorItem(
                               readonly: !falconManager.canEditGraph,
                               onPanStart: (details) {
-                                final scenePosition = _toScene(
-                                  details.globalPosition,
-                                  context,
-                                );
                                 graphManager.onProcessorDragStart(
                                   id: processor.id,
-                                  scenePosition: scenePosition,
+                                  scenePosition: details.globalPosition,
                                 );
                               },
                               onPanUpdate: (details) {
-                                final scenePosition = _toScene(
-                                  details.globalPosition,
-                                  context,
-                                );
                                 graphManager.onProcessorDragUpdate(
                                   id: processor.id,
-                                  newPos: scenePosition,
+                                  newPos: details.globalPosition,
                                 );
                               },
                               onPanEnd: (_) => graphManager.onProcessorDragEnd(

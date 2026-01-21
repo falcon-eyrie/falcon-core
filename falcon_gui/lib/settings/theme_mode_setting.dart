@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:falcon_gui/utils/logger.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,7 +11,9 @@ Future<void> loadThemeModeFromSharedPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     final themeIndex = prefs.getInt('theme_mode') ?? 0;
     themeNotifier.value = ThemeMode.values[themeIndex];
-  } catch (_) {}
+  } catch (e, s) {
+    logError('Error loading theme mode from shared preferences: $e', s);
+  }
 }
 
 Future<void> saveThemeModeToSharedPreferences(ThemeMode mode) async {

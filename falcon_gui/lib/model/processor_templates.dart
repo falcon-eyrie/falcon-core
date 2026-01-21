@@ -78,7 +78,6 @@ final _processorTemplatesUnsorted = {
     ports: const [
       Port(name: 'data', type: 'AnyType', isIn: true),
     ],
-    uiMetadata: UIMetadata(),
   ),
   'nlx_pure_reader': Processor(
     id: 'nlx_pure_reader',
@@ -105,7 +104,6 @@ final _processorTemplatesUnsorted = {
     ports: const [
       Port(name: 'udp', type: 'VectorType<uint32_t>', isIn: false),
     ],
-    uiMetadata: UIMetadata(),
   ),
   'burst_detector': Processor(
     id: 'burst_detector',
@@ -154,7 +152,6 @@ final _processorTemplatesUnsorted = {
         isIn: false,
       ),
     ],
-    uiMetadata: UIMetadata(),
   ),
   'digital_output': Processor(
     id: 'digital_output',
@@ -193,7 +190,6 @@ final _processorTemplatesUnsorted = {
         isIn: true,
       ),
     ],
-    uiMetadata: UIMetadata(),
   ),
   'event2state': Processor(
     id: 'event2state',
@@ -217,7 +213,6 @@ final _processorTemplatesUnsorted = {
         isIn: false,
       ),
     ],
-    uiMetadata: UIMetadata(),
   ),
   'event_converter': Processor(
     id: 'event_converter',
@@ -245,7 +240,6 @@ final _processorTemplatesUnsorted = {
         isIn: false,
       ),
     ],
-    uiMetadata: UIMetadata(),
   ),
   'event_delayed': Processor(
     id: 'event_delayed',
@@ -323,6 +317,204 @@ final _processorTemplatesUnsorted = {
         isIn: false,
       ),
     ],
-    uiMetadata: UIMetadata(),
+  ),
+  'ripple_detector': Processor(
+    id: 'ripple_detector',
+    className: 'RippleDetector',
+    isTemplate: true,
+    options: const {
+      'threshold_dev': DoubleOption(
+        value: 6,
+        displayName: 'Threshold Dev',
+      ),
+      'smooth_time': DoubleOption(
+        value: 10,
+        displayName: 'Smooth Time (s)',
+      ),
+      'analysis_lockout_time': DoubleOption(
+        value: 30,
+        displayName: 'Detection Lockout Time (ms)',
+      ),
+      'stream_events': BoolOption(
+        value: true,
+        displayName: 'Stream Events',
+      ),
+      'stream_statistics': BoolOption(
+        value: true,
+        displayName: 'Stream Statistics',
+      ),
+      'statistics_buffer_size': DoubleOption(
+        value: 0.5,
+        displayName: 'Statistics Buffer Size (s)',
+      ),
+      'statistics_downsample_factor': IntOption(
+        value: 1,
+        displayName: 'Statistics Downsample Factor',
+      ),
+      'use_power': BoolOption(
+        value: true,
+        displayName: 'Use Power',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'data',
+        type: 'TimeSeriesType<double>',
+        isIn: true,
+      ),
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: false,
+      ),
+      Port(
+        name: 'statistics',
+        type: 'TimeSeriesType<double>',
+        isIn: false,
+      ),
+    ],
+  ),
+  'event_filter': Processor(
+    id: 'event_filter',
+    className: 'EventFilter',
+    isTemplate: true,
+    options: const {
+      'block_duration': DoubleOption(
+        value: 10,
+        displayName: 'Block Duration (ms)',
+      ),
+      'block_wait_time': DoubleOption(
+        value: 1.5,
+        displayName: 'Block Wait Time (ms)',
+      ),
+      'sync_time': DoubleOption(
+        value: 3.5,
+        displayName: 'Sync Time (ms)',
+      ),
+      'discard_warnings': BoolOption(
+        value: false,
+        displayName: 'Discard Warnings',
+      ),
+      'detection_criterion': IntOption(
+        value: 1,
+        displayName: 'Detection Criterion',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: true,
+      ),
+      Port(
+        name: 'blocking_events',
+        type: 'EventType',
+        isIn: true,
+      ),
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: false,
+      ),
+    ],
+  ),
+  'event_logger': Processor(
+    id: 'event_logger',
+    className: 'EventLogger',
+    isTemplate: true,
+    options: const {
+      'target_event': StringOption(
+        value: 'DEFAULT_EVENT',
+        displayName: 'Target Event',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: true,
+      ),
+    ],
+  ),
+
+  'event_source': Processor(
+    id: 'event_source',
+    className: 'EventSource',
+    isTemplate: true,
+    options: {
+      'events': YamlNodeOption(
+        value: YamlList.wrap(['DEFAULT_EVENT']),
+        displayName: 'Events',
+      ),
+      'rate': const DoubleOption(
+        value: 1,
+        displayName: 'Event Rate (Hz)',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: false,
+      ),
+    ],
+  ),
+  'event_sync': Processor(
+    id: 'event_sync',
+    className: 'EventSync',
+    isTemplate: true,
+    options: const {
+      'target_event': StringOption(
+        value: 'DEFAULT_EVENT',
+        displayName: 'Target Event',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: true,
+      ),
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: false,
+      ),
+    ],
+  ),
+  'level_crossing_detector': Processor(
+    id: 'level_crossing_detector',
+    className: 'LevelCrossingDetector',
+    isTemplate: true,
+    options: const {
+      'threshold': DoubleOption(
+        value: 100,
+        displayName: 'Threshold',
+      ),
+      'upslope': BoolOption(
+        value: true,
+        displayName: 'Upslope',
+      ),
+      'post_detect_block': IntOption(
+        value: 2,
+        displayName: 'Post Detect Block (samples)',
+      ),
+      'event': StringOption(
+        value: 'threshold_crossing',
+        displayName: 'Event Name',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'data',
+        type: 'TimeSeriesType<double>',
+        isIn: true,
+      ),
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: false,
+      ),
+    ],
   ),
 };

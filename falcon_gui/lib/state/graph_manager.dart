@@ -5,8 +5,8 @@ import 'package:collection/collection.dart';
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
-import 'package:falcon_gui/utils/curve_hittest.dart';
 import 'package:falcon_gui/utils/debounce.dart';
+import 'package:falcon_gui/utils/geometry_algorithms.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +53,7 @@ class GraphManager extends ChangeNotifier {
 
   void loadGraph(FalconGraph graph) {
     _graph = graph;
+    unawaited(falconManager.onGraphChanged(graph));
     notifyListeners();
   }
 
@@ -82,7 +83,8 @@ class GraphManager extends ChangeNotifier {
     required Processor processor,
   }) {
     _selectedPortUniqueId = null;
-    var newId = '${processor.id}1';
+    var newId = processor.isTemplate ? '${processor.id}1' : processor.id;
+
     while (_graph.processors.containsKey(newId)) {
       // parse the last _* segment, increment id
       final match = processorIdSuffixRegex.firstMatch(newId);
@@ -96,7 +98,9 @@ class GraphManager extends ChangeNotifier {
 
     final Offset newPosition;
     if (processor.isTemplate) {
-      newPosition = _findNonOverlappingPosition();
+      newPosition = findNonOverlappingPosition(
+        processors: _graph.processors.values.toList(),
+      );
     } else {
       newPosition = processor.uiMetadata.position + const Offset(20, 20);
     }
@@ -120,41 +124,6 @@ class GraphManager extends ChangeNotifier {
     return newId;
   }
 
-  Offset _findNonOverlappingPosition() {
-    final biggestNodeSize = _graph.processors.values.fold<Size>(
-      Size.zero,
-      (prev, processor) {
-        final processorSize = Size(400, processor.options.length * 40.0 + 300);
-
-        return Size(
-          math.max(prev.width, processorSize.width),
-          math.max(prev.height, processorSize.height),
-        );
-      },
-    );
-    const padding = 20;
-    final existingPositions = _graph.processors.values
-        .map((p) => p.uiMetadata.position & biggestNodeSize)
-        .toList();
-
-    var position = Offset.zero;
-
-    bool overlaps(Offset pos) {
-      final rect = pos & biggestNodeSize;
-      return existingPositions.any((r) => r.overlaps(rect));
-    }
-
-    while (overlaps(position)) {
-      position += Offset(biggestNodeSize.width + padding, 0);
-      // move to next row if exceeding some arbitrary canvas width
-      if (position.dx > 2000) {
-        position = Offset(0, position.dy + biggestNodeSize.height + padding);
-      }
-    }
-
-    return position;
-  }
-
   void focusOnProcessor({required String id}) {
     final processor = _graph.processors[id];
     if (processor == null) return;
@@ -170,6 +139,7 @@ class GraphManager extends ChangeNotifier {
       ..translateByDouble(targetX, targetY, 0, 1);
 
     transformationController.value = targetMatrix;
+
     notifyListeners();
   }
 
@@ -659,17 +629,8 @@ class GraphManager extends ChangeNotifier {
 
     final processor = _graph.processors[oldId];
     if (processor == null) return;
+    _graph.renameProcessor(oldId: oldId, newId: newId);
 
-    final updatedProcessor = processor.copyWith(id: newId);
-    _graph
-      ..setProcessor(id: newId, newValue: updatedProcessor)
-      ..renameConnections(
-        oldProcessorId: oldId,
-        newProcessorId: newId,
-      )
-      // Remove old processor after renaming the connections.
-      // Otherwise the connections will be removed with the old processor.
-      ..removeProcessor(id: oldId);
     _shouldWaitForPortPositions = true;
     notifyListeners();
   }
