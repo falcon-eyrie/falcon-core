@@ -97,7 +97,7 @@ class _YamlEditorState extends State<_YamlEditor> {
   late final TextEditingController controller;
   late final FocusNode focusNode;
   final Debounce _buildGraphDebounce = Debounce(
-    delay: Duration(milliseconds: 500),
+    delay: const Duration(milliseconds: 500),
   );
   @override
   void initState() {

@@ -264,6 +264,8 @@ class FalconManager extends ChangeNotifier {
 
   Future<void> onGraphChanged(FalconGraph graph) async {
     if (falconState == FalconState.unknown) {
+      // TODO(ben): dont create infinite Futures, instead, overwrite
+      // the previous one, perhaps just use the debouncer
       Future.delayed(
         const Duration(milliseconds: 100),
         () => onGraphChanged(graph),

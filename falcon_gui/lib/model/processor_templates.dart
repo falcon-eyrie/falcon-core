@@ -517,4 +517,200 @@ final _processorTemplatesUnsorted = {
       ),
     ],
   ),
+  'mua_estimator': Processor(
+    id: 'mua_estimator',
+    className: 'MUAEstimator',
+    isTemplate: true,
+    options: const {
+      'bin_size': DoubleOption(
+        value: 10,
+        displayName: 'Bin Size (ms)',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'spikes',
+        type: 'SpikeType',
+        isIn: true,
+      ),
+      Port(
+        name: 'mua',
+        type: 'MUAType',
+        isIn: false,
+      ),
+    ],
+  ),
+  'nlx_parser': Processor(
+    id: 'nlx_parser',
+    className: 'NlxParser',
+    isTemplate: true,
+    options: const {
+      'batch_size': IntOption(
+        value: 1,
+        displayName: 'Batch Size',
+      ),
+      'update_interval': DoubleOption(
+        value: 0,
+        displayName: 'Update Interval (s)',
+      ),
+      'trigger_enabled': BoolOption(
+        value: false,
+        displayName: 'Trigger Enabled',
+      ),
+      'trigger_channel': IntOption(
+        value: 0,
+        displayName: 'Trigger Channel',
+      ),
+      'gap_fill': StringOption(
+        value: 'none',
+        displayName: 'Gap Fill',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'udp',
+        type: 'VectorType<uint32_t>',
+        isIn: true,
+      ),
+      Port(
+        name: 'data',
+        type: 'TimeSeriesType<double>',
+        isIn: false,
+      ),
+      Port(
+        name: 'ttl',
+        type: 'TimeSeriesType<uint32_t>',
+        isIn: false,
+      ),
+    ],
+  ),
+  'zmq_serializer': Processor(
+    id: 'zmq_serializer',
+    className: 'ZMQSerializer',
+    isTemplate: true,
+    options: {
+      'port': const IntOption(
+        value: 5555,
+        displayName: 'Port',
+      ),
+      'encoding': _createEncodingOption(),
+      'format': _createFormatOption(),
+      'interleave': const BoolOption(
+        value: false,
+        displayName: 'Interleave',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'data',
+        type: 'AnyType',
+        isIn: true,
+      ),
+    ],
+  ),
+  'spike_detector': Processor(
+    id: 'spike_detector',
+    className: 'SpikeDetector',
+    isTemplate: true,
+    options: const {
+      'threshold': DoubleOption(
+        value: 0,
+        displayName: 'Threshold',
+      ),
+      'invert_signal': BoolOption(
+        value: false,
+        displayName: 'Invert Signal',
+      ),
+      'buffer_size': DoubleOption(
+        value: 1,
+        displayName: 'Buffer Size (s)',
+      ),
+      'strict_time_bin_check': BoolOption(
+        value: true,
+        displayName: 'Strict Time Bin Check',
+      ),
+      'peak_lifetime': IntOption(
+        value: 1,
+        displayName: 'Peak Lifetime (samples)',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'data',
+        type: 'TimeSeriesType<double>',
+        isIn: true,
+      ),
+      Port(
+        name: 'spikes',
+        type: 'SpikeType',
+        isIn: false,
+      ),
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: false,
+      ),
+    ],
+  ),
+  'serial_output': Processor(
+    id: 'serial_output',
+    className: 'SerialOutput',
+    isTemplate: true,
+    options: const {
+      'port_address': StringOption(
+        value: '/dev/ttyACM0',
+        displayName: 'Port Address',
+      ),
+      'baud_rate': IntOption(
+        value: 9600,
+        displayName: 'Baudrate',
+      ),
+      'event_logging': BoolOption(
+        value: true,
+        displayName: 'Event Logging',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'events',
+        type: 'EventType',
+        isIn: true,
+      ),
+    ],
+  ),
+  'running_stats': Processor(
+    id: 'running_stats',
+    className: 'RunningStats',
+    isTemplate: true,
+    options: const {
+      'integration_time': DoubleOption(
+        value: 1,
+        displayName: 'Integration Time (s)',
+      ),
+      'outlier_protection': BoolOption(
+        value: false,
+        displayName: 'Outlier Protection',
+      ),
+      'outlier_zscore': DoubleOption(
+        value: 6,
+        displayName: 'Outlier Z-Score',
+      ),
+      'outlier_half_life': DoubleOption(
+        value: 2,
+        displayName: 'Outlier Half-Life',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'data',
+        type: 'TimeSeriesType<double>',
+        isIn: true,
+      ),
+      Port(
+        name: 'data',
+        type: 'TimeSeriesType<double>',
+        isIn: false,
+      ),
+    ],
+  ),
 };
