@@ -62,7 +62,7 @@ class RunContext : public StorageContext {
         run_group_id_ = run_group_id.empty() ? "default" : run_group_id;
 
         // add run group storage site
-        add_storage_context("rungroup", storage_context("runroot") + "/" + run_group_id_);
+        add_storage_context("rungroup", storage_context("runroot") + run_group_id_);
 
         if (!template_id.empty()) {
             add_storage_context("templatebase", storage_context("rungroup") + "/" + template_id);
@@ -113,17 +113,17 @@ class RunContext : public StorageContext {
         }
 
         // create symbolic link rungroup/_last_run pointing to run base folder
-        std::string symlinkname = storage_context("rungroup") + "/_last_run";
+        std::string symlinkname = storage_context("runroot") + "/_last_run";
         // remove old symlink (if present)
         std::remove(symlinkname.c_str());
         // create new symlink
-        if (symlink(storage_context("runbase").c_str(), symlinkname.c_str()) != 0) {
+        if (symlink((storage_context("runbase")).c_str(), symlinkname.c_str()) != 0) {
             LOG(WARNING) << "Could not create symbolic link for last run.";
         }
 
         // create symbolic link runroot/_last_run_group pointing to run group
         // folder
-        symlinkname = storage_context("runroot") + "/_last_run_group";
+        symlinkname = storage_context("runroot") + "_last_run_group";
         // remove old symlink (if present)
         std::remove(symlinkname.c_str());
         // create new symlink

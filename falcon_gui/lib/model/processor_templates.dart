@@ -713,4 +713,31 @@ final _processorTemplatesUnsorted = {
       ),
     ],
   ),
+  'rebuffer': Processor(
+    id: 'rebuffer',
+    className: 'Rebuffer',
+    isTemplate: true,
+    options: const {
+      'downsample_factor': IntOption(
+        value: 1,
+        displayName: 'Downsample Factor',
+      ),
+      'buffer_size': DoubleOption(
+        value: 10,
+        displayName: 'Buffer Size (s)',
+      ),
+    },
+    ports: const [
+      Port(
+        name: 'data',
+        type: 'TimeSeriesType<double>',
+        isIn: true,
+      ),
+      Port(
+        name: 'data',
+        type: 'TimeSeriesType<double>',
+        isIn: false,
+      ),
+    ],
+  ),
 };

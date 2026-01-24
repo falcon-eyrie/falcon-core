@@ -183,12 +183,12 @@ class FalconManager extends ChangeNotifier {
     logInfo('killFalcon called');
     try {
       showKillingFalconBanner();
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-      await sendCommand(FalconZmqCommand.kill);
 
       // Wait for process to terminate
       if (_falconProcess != null && _processExitCompleter != null) {
         try {
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+          await sendCommand(FalconZmqCommand.kill);
           // Wait for process to exit with 5 second timeout
           await Future.any([
             _processExitCompleter!.future,

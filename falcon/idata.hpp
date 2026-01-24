@@ -152,6 +152,26 @@ class Data : public IData<Data, BaseType> {
     void set_serial_number(uint64_t n);
 
     /**
+     * @brief This timestamp is set when the data packet is first 
+     * ingested by Falcon.
+     *
+     * @return int64_t
+     */
+    int64_t ingestion_ns() const;
+
+    /**
+     * @brief Set the ingestion timestamp to now. This should only be called
+     * by a "source" processor when the data packet is first ingested.
+     */
+    void set_ingestion_ns();
+
+    /**
+     * @brief Forward the ingestion timestamp from an upstream data packet
+     * to this data packet.
+     */
+    void forward_ingestion_ns(int64_t t);
+
+    /**
      * @brief set_source_timestamp set the timepoint based on the internal
      * Falcon clock.
      */
@@ -253,6 +273,11 @@ class Data : public IData<Data, BaseType> {
     virtual void SerializeFlatBuffer(flexbuffers::Builder& flex_builder);
 
    protected:
+    /**
+     * @brief timestamp in nanoseconds when the data packet
+     * was first ingested by Falcon.
+     */
+    int64_t ingestion_ns_;
     TimePoint source_timestamp_;
     uint64_t hardware_timestamp_;  // e.g. from Neuralynx
     uint64_t serial_number_;

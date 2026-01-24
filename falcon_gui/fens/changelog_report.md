@@ -1,51 +1,25 @@
-# Falcon Core: Version 2.x to 3.0
+# Falcon Core: Changes from 2017 to present
 
 ## Overview
 
-This document provides a comprehensive changelog from Falcon 2.x to Falcon 3.0. This major version includes significant architectural improvements, refactoring, and new features.
-
----
-
-## Breaking Changes
-
-### Data Type System Overhaul
-- **Major refactoring of data type system** [[516d44c](https://github.com/falcon-eyrie/falcon-core/commit/516d44c56ab738ceaf48c5f3854257df95b8fe9c), [a3af8fa](https://github.com/falcon-eyrie/falcon-core/commit/a3af8fa9bb28ab8cb02f4602bbdac9ffa66eb214)] - Complete redesign of how data types are handled
-- **Separated data type class from data payload class** [[2e83ad8](https://github.com/falcon-eyrie/falcon-core/commit/2e83ad8dc58652d8c671dd33196802160d7a1738)] - Data types and payloads are now distinct entities
-- **Removed `Initialize` methods on data classes** [[433123f](https://github.com/falcon-eyrie/falcon-core/commit/433123f525a9d969c610a0b76f1c6002f810af68)] - Initialization now done through constructors with new ringbuffer implementation
-- **Changed data type serialization format** - Now uses FlatBuffers/FlexBuffers for improved performance:
-  - Schema version 2 introduced [[f8befea](https://github.com/falcon-eyrie/falcon-core/commit/f8befeae10fc550f138664f7c0efd7eddd6826f5)]
-  - Added type information to FlatBuffers format [[0423e29](https://github.com/falcon-eyrie/falcon-core/commit/0423e29936403e2d5c0f1a058dcd9fbb2c3b2836)]
-  - Stream data format updated to use FlexBuffers [[e7c640c](https://github.com/falcon-eyrie/falcon-core/commit/e7c640c359abd0f9a049506dce3ed4914d108fd2), [7c6af80](https://github.com/falcon-eyrie/falcon-core/commit/7c6af800333c5aaca7ab4de07db0824769494832)]
-  - FlatBuffer serialization implementation [[c12ce20](https://github.com/falcon-eyrie/falcon-core/commit/c12ce20a5abb73d83f96c9c50be024b6fccf5e96), [30e24d4](https://github.com/falcon-eyrie/falcon-core/commit/30e24d4a20a9a813db2dc27eb11d9125f31e1e46)]
-
-### API Changes
-- **Merged IProcessor and ProcessorEngine classes** [[f1cbe60](https://github.com/falcon-eyrie/falcon-core/commit/f1cbe60205dcb26c0c537788989cbb08becaa6d2)] - Simplified processor architecture
-- **Removed StreamConnection classes** [[ccda54f](https://github.com/falcon-eyrie/falcon-core/commit/ccda54fc31eb2e1b0a07d18d3439c99a97749453)] - Ports/slots now have direct pointers to their parents
-- **Changed state creation API**:
-  - Removed `create state` overload with option name [[5a200b5](https://github.com/falcon-eyrie/falcon-core/commit/5a200b58e7e5eb7d42769a781dd2bdc42090ee20)]
-  - State creation now requires options lookup; error if option not found [[70dce44](https://github.com/falcon-eyrie/falcon-core/commit/70dce44df9038f03664ee7b9138a90af005de1da), [9882488](https://github.com/falcon-eyrie/falcon-core/commit/9882488394478e09837a04750f746e5c90453de8)]
-  - Default external permission for static states changed to write [[70dce44](https://github.com/falcon-eyrie/falcon-core/commit/70dce44df9038f03664ee7b9138a90af005de1da)]
-- **Removed flexible format for state names** [[0d268c3](https://github.com/falcon-eyrie/falcon-core/commit/0d268c3a234657d9d1fb0d2318ee2ea04cd56b2b), [2665979](https://github.com/falcon-eyrie/falcon-core/commit/26659792f95fa168ba340e4ea4b5b47b0520eb7c)] - Standardized naming convention
-- **Changed graph configuration format** [[cda40a3](https://github.com/falcon-eyrie/falcon-core/commit/cda40a3ffaee0a1d9bf4303b6499e98aa5c81be7), [4e52493](https://github.com/falcon-eyrie/falcon-core/commit/4e5249325bc29c27c0fc8ecc6d116cd01a2fcccc)] - New YAML structure (manages both versions with warnings [[4a1f499](https://github.com/falcon-eyrie/falcon-core/commit/4a1f499e1b6e852101c18fd5b68b0946aee1bb2b)])
-
-### Build System
-- **Moved from C++11 to C++17** [[18cf842](https://github.com/falcon-eyrie/falcon-core/commit/18cf842c7a28d8e77a7f7a10dd7080c00ea9bc6d)] - Requires modern compiler support
-- **Changed CMake structure** [[47062f2](https://github.com/falcon-eyrie/falcon-core/commit/47062f2dd34202fb3f12d3083235bfb48807f5a5), [b9f8305](https://github.com/falcon-eyrie/falcon-core/commit/b9f83057d85ff0f2ee70ab96f4446fdc0230734f)] - Extensions now in separate repository
-- **New extension management** [[e6bf295](https://github.com/falcon-eyrie/falcon-core/commit/e6bf29544d7b0a61d0208de96494f1e69d6ca958)] - Uses `FetchContent` for dependencies
-- **Upgraded dependencies** [[041cf85](https://github.com/falcon-eyrie/falcon-core/commit/041cf8509cba20a0aa22c21432f27d4d9221a9a3)]:
-  - ZMQ updated - removed deprecated warnings [[d3d64cf](https://github.com/falcon-eyrie/falcon-core/commit/d3d64cf7e75283bffeb9d5a81352ad72f8f9b46d)]
-  - yaml-cpp updated to >0.6 - no longer requires Boost [[e6bf295](https://github.com/falcon-eyrie/falcon-core/commit/e6bf29544d7b0a61d0208de96494f1e69d6ca958)]
-  - Added LLNL/units library dependency [[d95865b](https://github.com/falcon-eyrie/falcon-core/commit/d95865b108727cd5d90f653fdc117b7d78af9d41)]
-  - Added FlatBuffers library [[ea90714](https://github.com/falcon-eyrie/falcon-core/commit/ea90714eededff687f253534b4c13917ba93d2e8), [c69b5b5](https://github.com/falcon-eyrie/falcon-core/commit/c69b5b5594009700be2b653cf22fc8bb383426cd)]
-
-### Configuration
-- **Refactored configuration system** [[ddd50c5](https://github.com/falcon-eyrie/falcon-core/commit/ddd50c5fce0d1742985214171bce2276e51739ef), [73e3c49](https://github.com/falcon-eyrie/falcon-core/commit/73e3c4984d84a24e649baf0145b1898f23a0486b), [b9cbcd3](https://github.com/falcon-eyrie/falcon-core/commit/b9cbcd3c91ec1c5597e9db781a1861686de1ccc0)] - New options-based configuration with validation
-- **Changed default resource location** [[ddd50c5](https://github.com/falcon-eyrie/falcon-core/commit/ddd50c5fce0d1742985214171bce2276e51739ef)] to `./` from previous paths
-- **Config port changed** [[9cf46a3](https://github.com/falcon-eyrie/falcon-core/commit/9cf46a3cd68c58cc486c3e8bcde429bd845a4225)] - Fixed to 5555 when creating socket (previously configurable but broken)
+This document provides a comprehensive changelog from 2017 to present (Falcon 3.0). This major version includes significant architectural improvements, refactoring, and new features.
 
 ---
 
 ## New Features
+
+### Falcon Workbench (Under Development)
+- **Visual pipeline designer** - Design and modify signal processing graphs through interactive workbench instead of manual YAML editing
+- **Drag-and-drop interface** - Easily add, connect, and configure processors using intuitive drag-and-drop functionality
+- **Processor library** - Browse and search available processors with descriptions and documentation
+- **Graph validation** - Real-time validation of graph connections and configurations to prevent errors
+- **Pipeline deployment** - Deploy designed pipelines directly to Falcon server instances from the workbench
+- **Live monitoring** - Visualize data flow and processor status in real-time during pipeline execution
+- **Integrated documentation** - Access processor and system documentation directly within the workbench interface
+- **Export and import graphs** - Easily share and reuse signal processing graphs through export/import functionality
+- **Keyboard shortcuts** - Extensive keyboard shortcuts for efficient navigation and operation
+- **Feedback system** - Detailed GUI logs available for troubleshooting in Github issues and user feedback collection
+- **Regular updates** - Update manager to keep the workbench and its components up to date with the latest features and fixes
 
 ### Documentation System
 - **Comprehensive documentation framework** [[c929939](https://github.com/falcon-eyrie/falcon-core/commit/c929939f6138cd2115b3a912d81dfc130b3593da), [3eb218b](https://github.com/falcon-eyrie/falcon-core/commit/3eb218b6905674b40848635d56482d0f7544e6e9)]:
@@ -105,6 +79,45 @@ This document provides a comprehensive changelog from Falcon 2.x to Falcon 3.0. 
   - Flexible port name parsing [[8a410aa](https://github.com/falcon-eyrie/falcon-core/commit/8a410aa7adec7a2ca695ed1e60a0cff4abd97cfd)]
 - **Multi-processor specification** [[de8f790](https://github.com/falcon-eyrie/falcon-core/commit/de8f790ee8b8a366668304e685d0c09f54b3f677), [6984fee](https://github.com/falcon-eyrie/falcon-core/commit/6984fee9cc6b131674ab12d2339d1db954a3a793)] improvements
 - **Stream name** [[bd208ea](https://github.com/falcon-eyrie/falcon-core/commit/bd208ea591f2545579be517b5117970db58eaa95)] added to StreamInfo object
+
+---
+
+## Breaking Changes
+
+### Data Type System Overhaul
+- **Major refactoring of data type system** [[516d44c](https://github.com/falcon-eyrie/falcon-core/commit/516d44c56ab738ceaf48c5f3854257df95b8fe9c), [a3af8fa](https://github.com/falcon-eyrie/falcon-core/commit/a3af8fa9bb28ab8cb02f4602bbdac9ffa66eb214)] - Complete redesign of how data types are handled
+- **Separated data type class from data payload class** [[2e83ad8](https://github.com/falcon-eyrie/falcon-core/commit/2e83ad8dc58652d8c671dd33196802160d7a1738)] - Data types and payloads are now distinct entities
+- **Removed `Initialize` methods on data classes** [[433123f](https://github.com/falcon-eyrie/falcon-core/commit/433123f525a9d969c610a0b76f1c6002f810af68)] - Initialization now done through constructors with new ringbuffer implementation
+- **Changed data type serialization format** - Now uses FlatBuffers/FlexBuffers for improved performance:
+  - Schema version 2 introduced [[f8befea](https://github.com/falcon-eyrie/falcon-core/commit/f8befeae10fc550f138664f7c0efd7eddd6826f5)]
+  - Added type information to FlatBuffers format [[0423e29](https://github.com/falcon-eyrie/falcon-core/commit/0423e29936403e2d5c0f1a058dcd9fbb2c3b2836)]
+  - Stream data format updated to use FlexBuffers [[e7c640c](https://github.com/falcon-eyrie/falcon-core/commit/e7c640c359abd0f9a049506dce3ed4914d108fd2), [7c6af80](https://github.com/falcon-eyrie/falcon-core/commit/7c6af800333c5aaca7ab4de07db0824769494832)]
+  - FlatBuffer serialization implementation [[c12ce20](https://github.com/falcon-eyrie/falcon-core/commit/c12ce20a5abb73d83f96c9c50be024b6fccf5e96), [30e24d4](https://github.com/falcon-eyrie/falcon-core/commit/30e24d4a20a9a813db2dc27eb11d9125f31e1e46)]
+
+### API Changes
+- **Merged IProcessor and ProcessorEngine classes** [[f1cbe60](https://github.com/falcon-eyrie/falcon-core/commit/f1cbe60205dcb26c0c537788989cbb08becaa6d2)] - Simplified processor architecture
+- **Removed StreamConnection classes** [[ccda54f](https://github.com/falcon-eyrie/falcon-core/commit/ccda54fc31eb2e1b0a07d18d3439c99a97749453)] - Ports/slots now have direct pointers to their parents
+- **Changed state creation API**:
+  - Removed `create state` overload with option name [[5a200b5](https://github.com/falcon-eyrie/falcon-core/commit/5a200b58e7e5eb7d42769a781dd2bdc42090ee20)]
+  - State creation now requires options lookup; error if option not found [[70dce44](https://github.com/falcon-eyrie/falcon-core/commit/70dce44df9038f03664ee7b9138a90af005de1da), [9882488](https://github.com/falcon-eyrie/falcon-core/commit/9882488394478e09837a04750f746e5c90453de8)]
+  - Default external permission for static states changed to write [[70dce44](https://github.com/falcon-eyrie/falcon-core/commit/70dce44df9038f03664ee7b9138a90af005de1da)]
+- **Removed flexible format for state names** [[0d268c3](https://github.com/falcon-eyrie/falcon-core/commit/0d268c3a234657d9d1fb0d2318ee2ea04cd56b2b), [2665979](https://github.com/falcon-eyrie/falcon-core/commit/26659792f95fa168ba340e4ea4b5b47b0520eb7c)] - Standardized naming convention
+- **Changed graph configuration format** [[cda40a3](https://github.com/falcon-eyrie/falcon-core/commit/cda40a3ffaee0a1d9bf4303b6499e98aa5c81be7), [4e52493](https://github.com/falcon-eyrie/falcon-core/commit/4e5249325bc29c27c0fc8ecc6d116cd01a2fcccc)] - New YAML structure (manages both versions with warnings [[4a1f499](https://github.com/falcon-eyrie/falcon-core/commit/4a1f499e1b6e852101c18fd5b68b0946aee1bb2b)])
+
+### Build System
+- **Moved from C++11 to C++17** [[18cf842](https://github.com/falcon-eyrie/falcon-core/commit/18cf842c7a28d8e77a7f7a10dd7080c00ea9bc6d)] - Requires modern compiler support
+- **Changed CMake structure** [[47062f2](https://github.com/falcon-eyrie/falcon-core/commit/47062f2dd34202fb3f12d3083235bfb48807f5a5), [b9f8305](https://github.com/falcon-eyrie/falcon-core/commit/b9f83057d85ff0f2ee70ab96f4446fdc0230734f)] - Extensions now in separate repository
+- **New extension management** [[e6bf295](https://github.com/falcon-eyrie/falcon-core/commit/e6bf29544d7b0a61d0208de96494f1e69d6ca958)] - Uses `FetchContent` for dependencies
+- **Upgraded dependencies** [[041cf85](https://github.com/falcon-eyrie/falcon-core/commit/041cf8509cba20a0aa22c21432f27d4d9221a9a3)]:
+  - ZMQ updated - removed deprecated warnings [[d3d64cf](https://github.com/falcon-eyrie/falcon-core/commit/d3d64cf7e75283bffeb9d5a81352ad72f8f9b46d)]
+  - yaml-cpp updated to >0.6 - no longer requires Boost [[e6bf295](https://github.com/falcon-eyrie/falcon-core/commit/e6bf29544d7b0a61d0208de96494f1e69d6ca958)]
+  - Added LLNL/units library dependency [[d95865b](https://github.com/falcon-eyrie/falcon-core/commit/d95865b108727cd5d90f653fdc117b7d78af9d41)]
+  - Added FlatBuffers library [[ea90714](https://github.com/falcon-eyrie/falcon-core/commit/ea90714eededff687f253534b4c13917ba93d2e8), [c69b5b5](https://github.com/falcon-eyrie/falcon-core/commit/c69b5b5594009700be2b653cf22fc8bb383426cd)]
+
+### Configuration
+- **Refactored configuration system** [[ddd50c5](https://github.com/falcon-eyrie/falcon-core/commit/ddd50c5fce0d1742985214171bce2276e51739ef), [73e3c49](https://github.com/falcon-eyrie/falcon-core/commit/73e3c4984d84a24e649baf0145b1898f23a0486b), [b9cbcd3](https://github.com/falcon-eyrie/falcon-core/commit/b9cbcd3c91ec1c5597e9db781a1861686de1ccc0)] - New options-based configuration with validation
+- **Changed default resource location** [[ddd50c5](https://github.com/falcon-eyrie/falcon-core/commit/ddd50c5fce0d1742985214171bce2276e51739ef)] to `./` from previous paths
+- **Config port changed** [[9cf46a3](https://github.com/falcon-eyrie/falcon-core/commit/9cf46a3cd68c58cc486c3e8bcde429bd845a4225)] - Fixed to 5555 when creating socket (previously configurable but broken)
 
 ---
 
@@ -248,53 +261,3 @@ This document provides a comprehensive changelog from Falcon 2.x to Falcon 3.0. 
 - **Documentation fixes** [[636fcfb](https://github.com/falcon-eyrie/falcon-core/commit/636fcfb1b177d44ca281fa67ea0dde8f0a4ba74b), [197095b](https://github.com/falcon-eyrie/falcon-core/commit/197095b5d0573fce2b3eac15470fa033ec99da3b)]
 - **Method name changes** [[0c230d0](https://github.com/falcon-eyrie/falcon-core/commit/0c230d0bbca912f466c7a8576b5a831e423c8467)]
 - **Remove shortcut doc** [[b235ae7](https://github.com/falcon-eyrie/falcon-core/commit/b235ae7d6512d1a89620cf5e7de08c8e00da460b)] - Add documentation at registration
-
----
- 
-## Statistics
-
-- **Total Commits**: 250+ commits analyzed
-- **Major Refactorings**: 5+ architectural changes
-- **New Features**: 25+ significant additions
-- **Bug Fixes**: 35+ issues resolved
-- **Documentation**: Comprehensive system added with 50+ documentation commits
-- **Performance**: Improved through linting and optimizations
-- **Code Quality**: Enhanced via CI/CD and static analysis tools
-
----
-
-## Future Considerations
-
-- Continue performance optimizations
-- Expand documentation coverage
-- Additional validation features
-- More flexible configuration options
-- Enhanced debugging capabilities
-
----
-
-## Support
-
-For issues or questions please refer to:
-- Updated documentation in `/docs`
-- C++ API reference [[a43cf3a](https://github.com/falcon-eyrie/falcon-core/commit/a43cf3a235cf44014f390b22aac7c820ec52d6a8)]
-- Example configurations [[82c6ef3](https://github.com/falcon-eyrie/falcon-core/commit/82c6ef3273018e029cff8c4caf7dced0f644adec)]
-- Community support channels
-
----
-
-## Key Merge Requests
-
-- **Performance lints** - #133 [[fb84d44](https://github.com/falcon-eyrie/falcon-core/commit/fb84d44d7e49649ea6f2d747dcc9a5965e1258c7)]
-- **Integrate clang-tidy** - #132 [[6e19f5c](https://github.com/falcon-eyrie/falcon-core/commit/6e19f5cae9159a97eba88114c85e1f187b3ec81f)]
-- **Format codebase** - #131 [[1c6fb83](https://github.com/falcon-eyrie/falcon-core/commit/1c6fb83ecd9a794b984f8c8750943ba0cb4cba2f)]
-- **Upgrade dependencies** - #130 [[041cf85](https://github.com/falcon-eyrie/falcon-core/commit/041cf8509cba20a0aa22c21432f27d4d9221a9a3)]
-- **Create CHANGELOG.md** - #126 [[1be23e1](https://github.com/falcon-eyrie/falcon-core/commit/1be23e17932485774a9cff677f43d0df104405f4)]
-- **Build and clang-format CI** - #120 [[32a4030](https://github.com/falcon-eyrie/falcon-core/commit/32a4030268eb43b74aeaa36ecbc91aa2a03db0b5)]
-
----
-
-**Version**: Falcon 3.0  
-**Build Date**: Generated from git tag + timestamp [[1694827](https://github.com/falcon-eyrie/falcon-core/commit/169482715327d03cb88a90c587da2810705c5878)]  
-**Last Updated**: Based on commit history  
-**Initial Commit**: [[8f147fd](https://github.com/falcon-eyrie/falcon-core/commit/8f147fd8f24ad3051d839fbdc3cd1268ef41992d)]
