@@ -8,27 +8,41 @@ import 'package:falcon_gui/model/falcon_zmq_command.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/falcon_zmq.dart';
 import 'package:falcon_gui/utils/debounce.dart';
+import 'package:falcon_gui/utils/file_picker.dart';
 import 'package:falcon_gui/utils/killing_falcon_banner.dart';
 import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';
+import 'package:falcon_gui/utils/paths.dart';
+import 'package:falcon_gui/utils/status_dialog.dart';
 import 'package:flutter/foundation.dart';
 
 final FalconManager falconManager = FalconManager.instance;
-const bool _debugUseExistingFalconInstance = true;
+const bool _debugUseExistingFalconInstance = false;
 
 class FalconManager extends ChangeNotifier {
-  FalconManager._internal();
+  FalconManager._internal() {
+    // TODO(ben): load last opened graph from the last session
+    unawaited(loadFile(file: _defaultGraphFile));
+  }
 
   static final FalconManager instance = FalconManager._internal();
 
+  File? _curentGraphFile;
+  File? get curentGraphFile => _curentGraphFile;
+  String? get curentGraphFileName =>
+      _curentGraphFile?.path.split(Platform.pathSeparator).last;
+
+  final graphLoadedNotifier = ValueNotifier<FalconGraph?>(null);
+
+  File get _defaultGraphFile =>
+      File('$ubuntuHomePath/falcon/resources/graphs/my_graph.yaml')
+        ..createSync(recursive: true);
+
   String get _falconPath {
-    final home = Platform.environment['HOME'] ?? '';
-    return '/home/device/.local/share/org.falcon-eyrie.falcon_gui/bin/falcon'
-        .replaceFirst(
-          '~',
-          home,
-        );
+    return '$ubuntuHomePath/.local/share/org.falcon-eyrie.falcon_gui/bin/falcon';
   }
+
+  final _fileWriteDebounce = Debounce(delay: const Duration(milliseconds: 500));
 
   Process? _falconProcess;
   FalconZMQ? _falconZMQ;
@@ -40,6 +54,69 @@ class FalconManager extends ChangeNotifier {
 
   String get processPriorityCommand =>
       'sudo setcap cap_sys_nice=eip $_falconPath';
+
+  List<FalconLog> get logs => _falconZMQ?.logs ?? [];
+
+  bool get isLastLogAnError =>
+      logs.isNotEmpty && logs.last.type == FalconLogType.error;
+
+  FalconState get falconState => _falconZMQ?.falconState ?? FalconState.unknown;
+
+  bool get canEditGraph {
+    final state = falconState;
+    return state != FalconState.processing &&
+        state != FalconState.starting &&
+        state != FalconState.stopping;
+  }
+
+  Future<void> openFile() async {
+    final pickedFile = await FalconFilePicker.pickGraphFile();
+    if (pickedFile != null) {
+      await loadFile(file: pickedFile);
+    }
+  }
+
+  Future<void> newFile() async {
+    final createdFile = await FalconFilePicker.createNewGraphFile();
+    if (createdFile != null) {
+      await loadFile(file: createdFile);
+    }
+  }
+
+  Future<void> loadFile({required File file}) async {
+    try {
+      final yamlAsString = await file.readAsString();
+
+      try {
+        final graph = FalconGraphSerializerX.fromYaml(
+          yamlAsString,
+        );
+
+        _curentGraphFile = file;
+        notifyListeners();
+
+        graphLoadedNotifier.value = graph;
+      } catch (e, s) {
+        logError('Error parsing graph YAML from file ${file.path}: $e', s);
+        showStatusDialog(
+          title: 'Error',
+          message:
+              'The selected file does not appear to be '
+              'a valid Falcon graph. \nError: $e',
+          type: StatusDialogType.error,
+        );
+      }
+    } catch (e, s) {
+      logError('Error loading file ${file.absolute.path}: $e', s);
+
+      showStatusDialog(
+        title: 'Error',
+        message:
+            'Failed to load graph from file: ${file.absolute.path} Error: $e',
+        type: StatusDialogType.error,
+      );
+    }
+  }
 
   Future<PriorityStatus> checkProcessPriority() async {
     try {
@@ -53,10 +130,10 @@ class FalconManager extends ChangeNotifier {
 
         if (_falconProcess != null) {
           logInfo('Restarting falcon to apply new priority settings.');
-          unawaited(killFalcon().then((_) => createFalcon()));
+          unawaited(killFalcon().then((_) => createFalconInstance()));
         } else {
           logInfo('Spawning falcon with prioritized settings.');
-          unawaited(createFalcon());
+          unawaited(createFalconInstance());
         }
       }
 
@@ -69,7 +146,7 @@ class FalconManager extends ChangeNotifier {
     return _priorityStatus;
   }
 
-  Future<void> createFalcon() async {
+  Future<void> createFalconInstance() async {
     final pids = await _getExistingFalconPIDs();
 
     if (pids.isNotEmpty) {
@@ -108,7 +185,7 @@ class FalconManager extends ChangeNotifier {
           if (kDebugMode) ...[
             'falcon/debug_config.yaml',
           ] else ...[
-            '/home/device/.local/share/org.falcon-eyrie.falcon_gui/config.yaml',
+            '$ubuntuHomePath/.local/share/org.falcon-eyrie.falcon_gui/config.yaml',
           ],
         ],
       );
@@ -158,7 +235,7 @@ class FalconManager extends ChangeNotifier {
       }
     }
 
-    await createFalcon();
+    await createFalconInstance();
   }
 
   Future<void> _initializeZMQ() async {
@@ -244,25 +321,15 @@ class FalconManager extends ChangeNotifier {
     return _falconZMQ!.sendCommandParts(parts, timeout: timeout);
   }
 
-  List<FalconLog> get logs => _falconZMQ?.logs ?? [];
-
-  bool get isLastLogAnError =>
-      logs.isNotEmpty && logs.last.type == FalconLogType.error;
-  FalconState get falconState => _falconZMQ?.falconState ?? FalconState.unknown;
-
-  // TODO(ben):   dont use hardcoded path
-  final _p = File('/home/device/falcon/resources/graphs/current.yaml');
-
-  final _fileWriteDebounce = Debounce(delay: const Duration(milliseconds: 500));
-
-  bool get canEditGraph {
-    final state = falconState;
-    return state != FalconState.processing &&
-        state != FalconState.starting &&
-        state != FalconState.stopping;
-  }
-
   Future<void> onGraphChanged(FalconGraph graph) async {
+    if (_curentGraphFile == null) {
+      logError(
+        'onGraphChanged called but no current '
+        'graph file is set ${StackTrace.current}',
+      );
+      return;
+    }
+
     if (falconState == FalconState.unknown) {
       // TODO(ben): dont create infinite Futures, instead, overwrite
       // the previous one, perhaps just use the debouncer
@@ -282,15 +349,22 @@ class FalconManager extends ChangeNotifier {
       return;
     }
 
-    await _p.writeAsString(graphAsYaml);
+    await _curentGraphFile!.writeAsString(graphAsYaml);
     await _falconZMQ!.sendCommandParts(
-      FalconZmqCommand.graphBuild(_p.path),
+      FalconZmqCommand.graphBuild(_curentGraphFile!.absolute.path),
     );
   }
 
   Future<void> onUIMetadataChanged(FalconGraph graph) async {
+    if (_curentGraphFile == null) {
+      logError(
+        'onUIMetadataChanged called but no current '
+        'graph file is set ${StackTrace.current}',
+      );
+      return;
+    }
     _fileWriteDebounce(() async {
-      await _p.writeAsString(graph.toYaml());
+      await _curentGraphFile!.writeAsString(graph.toYaml());
     });
   }
 

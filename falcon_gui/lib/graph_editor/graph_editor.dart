@@ -4,6 +4,7 @@ import 'package:falcon_gui/graph_editor/logs_panel.dart';
 import 'package:falcon_gui/graph_editor/processors_panel.dart';
 import 'package:falcon_gui/graph_editor/status_bar.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
+import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/debounce.dart';
 import 'package:falcon_gui/utils/theme.dart';
@@ -137,13 +138,14 @@ class _YamlEditorState extends State<_YamlEditor> {
           padding: const EdgeInsets.all(8),
           color: context.c.surfaceContainer,
           child: TextFormField(
+            enabled: falconManager.canEditGraph,
             controller: controller,
             focusNode: focusNode,
             maxLines: null,
             expands: true,
-            decoration: const InputDecoration(
-              labelText: 'Graph YAML',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: falconManager.curentGraphFileName,
+              border: const OutlineInputBorder(),
               errorMaxLines: 10,
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,

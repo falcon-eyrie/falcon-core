@@ -42,6 +42,7 @@ class StatusBar extends StatelessWidget {
               ),
               _StatusBarButton(
                 icon: RemixIcons.code_block,
+                label: falconManager.curentGraphFileName ?? 'No Graph File',
                 tooltip: isYamlEditorCollapsed
                     ? 'Show YAML Editor'
                     : 'Hide YAML Editor',
@@ -66,9 +67,11 @@ class _StatusBarButton extends StatelessWidget {
     required this.onPressed,
     required this.isActive,
     this.hasError = false,
+    this.label,
   });
 
   final IconData icon;
+  final String? label;
   final String tooltip;
   final VoidCallback onPressed;
   final bool isActive;
@@ -84,14 +87,24 @@ class _StatusBarButton extends StatelessWidget {
           message: tooltip,
           child: Container(
             color: isActive ? context.c.onPrimary : null,
-            width: 32,
             height: 24,
             child: Stack(
               children: [
                 Center(
-                  child: Icon(
-                    icon,
-                    size: 18,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(width: 8),
+                      Icon(
+                        icon,
+                        size: 18,
+                      ),
+                      if (label != null) ...[
+                        const SizedBox(width: 4),
+                        Text(label!),
+                      ],
+                      const SizedBox(width: 8),
+                    ],
                   ),
                 ),
 

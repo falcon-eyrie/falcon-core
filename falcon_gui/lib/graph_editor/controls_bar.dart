@@ -27,6 +27,30 @@ class ControlsBar extends StatelessWidget {
             children: [
               const SizedBox(width: 8),
               IconButton(
+                icon: const Icon(RemixIcons.folder_open_line),
+                tooltip: 'Load Graph File',
+                onPressed: falconManager.openFile,
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(RemixIcons.file_add_line),
+                tooltip: 'Create a New Graph File',
+                onPressed: falconManager.newFile,
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(RemixIcons.settings_3_line),
+                tooltip: 'Settings',
+                onPressed: () async {
+                  await showDialog<void>(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => const SettingsView(),
+                  );
+                },
+              ),
+              const SizedBox(width: 8),
+              IconButton(
                 icon: const Icon(RemixIcons.flow_chart),
                 style: IconButton.styleFrom(
                   backgroundColor: isProcessorsCollapsed
@@ -110,18 +134,6 @@ class ControlsBar extends StatelessWidget {
                 },
               ),
               const SizedBox(width: 8),
-
-              IconButton(
-                icon: const Icon(RemixIcons.settings_3_line),
-                tooltip: 'Settings',
-                onPressed: () async {
-                  await showDialog<void>(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) => const SettingsView(),
-                  );
-                },
-              ),
             ],
           ),
         );

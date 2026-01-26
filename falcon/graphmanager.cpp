@@ -50,8 +50,9 @@ void GraphManager::HandleCommand(const std::string& command, std::deque<std::str
         }
         ParseGraph(node);
         // save YAML to global_context_.resolve_path( "graphs://_last_graph" )
-        std::ofstream fout(global_context_->resolve_path("graphs://_last_graph.yaml"));
-        fout << node;
+        // Disabled for now
+        // std::ofstream fout(global_context_->resolve_path("graphs://_last_graph.yaml"));
+        // fout << node;
 
     } else if (command == "destroy") {
         graph_.Destroy();

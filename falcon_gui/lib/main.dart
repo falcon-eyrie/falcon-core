@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:falcon_gui/graph_editor/graph_editor.dart';
-import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/settings/theme_mode_setting.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
@@ -43,23 +41,19 @@ Future<void> _entrypoint() async {
   });
 
   await loadThemeModeFromSharedPreferences();
-  unawaited(_tempLoadGraph());
-
+  _listenForLoadedGraphFile();
   Future.delayed(const Duration(milliseconds: 1000), maybeShowPriorityDialog);
 
   runApp(const DesktopApp());
 }
 
-Future<void> _tempLoadGraph() async {
-  final p = File('/home/device/falcon/resources/graphs/current.yaml');
-  try {
-    final yaml = await p.readAsString();
-    final graph = FalconGraphSerializerX.fromYaml(yaml);
-    graphManager.loadGraph(graph);
-    unawaited(falconManager.onGraphChanged(graph));
-  } catch (e, s) {
-    logError('Error loading graph from file ${p.absolute.path}: $e', s);
-  }
+void _listenForLoadedGraphFile() {
+  falconManager.graphLoadedNotifier.addListener(() {
+    final graph = falconManager.graphLoadedNotifier.value;
+    if (graph != null) {
+      graphManager.loadGraph(graph);
+    }
+  });
 }
 
 class DesktopApp extends StatelessWidget {
