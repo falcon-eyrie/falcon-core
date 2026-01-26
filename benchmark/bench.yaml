@@ -1,0 +1,13 @@
+processors:
+  event_source (1-2):
+    class: EventSource
+    options:
+      rate: 1000
+      events:
+        - DEFAULT_EVENT
+        
+  benchmarker:
+    class: LatencyBenchmark
+
+connections:
+  - event_source1.events = benchmarker.data
