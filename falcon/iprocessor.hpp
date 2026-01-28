@@ -47,6 +47,10 @@ GRAPHERROR(ProcessingPrepareError);
 GRAPHERROR(ProcessingPreprocessingError);
 
 void convert_name(std::string& s);
+struct TimingEntry {
+    uint64_t sync_cycles;
+    uint64_t work_cycles;
+};
 
 namespace graph {
 class ProcessorGraph;
@@ -62,12 +66,53 @@ class IProcessor {
         add_option("test", new_test_flag_);
 
         // add advanced options
-        add_advanced_option("threadcore", thread_core_);
+        add_advanced_option("thread_core_range", thread_core_range_);
         add_advanced_option("threadpriority", thread_priority_ = priority);
         add_advanced_option("buffer_sizes", requested_buffer_sizes_);
     }
 
     virtual ~IProcessor() { internal_Stop(); }
+
+    // Thread-local storage to prevent contention between 256 threads
+    // Initialized to nullptr; allocated only on first use
+    static inline thread_local std::vector<TimingEntry>* t_metrics = nullptr;
+    static constexpr size_t MAX_SAMPLES = 100000;
+
+    // Fast, inline recording function
+    inline void record_metrics(uint64_t sync, uint64_t work) noexcept {
+        if (!t_metrics) [[unlikely]] {
+            t_metrics = new std::vector<TimingEntry>();
+            t_metrics->reserve(MAX_SAMPLES);
+        }
+
+        if (t_metrics->size() < MAX_SAMPLES) {
+            t_metrics->push_back({sync, work});
+        }
+    }
+
+    // Dump logic to be called in Postprocess
+    void dump_benchmarks() {
+        if (!t_metrics || t_metrics->empty()) return;
+
+        std::system("mkdir -p bench");
+
+        // Use .bin extension to distinguish from CSV
+        std::string filename = "bench/bench_" + std::string(name()) + "_" +
+                               std::to_string(reinterpret_cast<uintptr_t>(this)) + ".bin";
+
+        std::ofstream f{filename, std::ios::binary};
+        if (f.is_open()) {
+            // Write the entire buffer in one system call
+            f.write(reinterpret_cast<const char*>(t_metrics->data()),
+                    t_metrics->size() * sizeof(TimingEntry));
+            f.close();
+        } else {
+            LOG(ERROR) << "Failed to write binary to " << filename;
+        }
+
+        delete t_metrics;
+        t_metrics = nullptr;
+    }
 
     /**
      * Get processor's name.
@@ -125,7 +170,7 @@ class IProcessor {
     virtual bool isautonomous() const { return (issource() && issink()); }
 
     ThreadPriority thread_priority() const { return thread_priority_(); }
-    ThreadCore thread_core() const { return thread_core_(); }
+    std::pair<ThreadCore, ThreadCore> thread_core_range() const { return thread_core_range_(); }
 
     bool running() const { return running_.load(); }
 
@@ -626,9 +671,7 @@ class IProcessor {
     options::Value<ThreadPriority, false> thread_priority_{
         PRIORITY_NONE, options::inrange<ThreadPriority>(PRIORITY_NONE, PRIORITY_HIGH)};
 
-    options::Value<ThreadCore, false> thread_core_{
-        CORE_NOT_PINNED, options::inrange<ThreadCore>(
-                             CORE_NOT_PINNED, (ThreadCore) sysconf(_SC_NPROCESSORS_ONLN) - 1)};
+    options::Value<std::pair<ThreadCore, ThreadCore>, false> thread_core_range_{{-1, -1}};
 
     options::NullableBool new_test_flag_;
     options::Value<std::map<std::string, int>> requested_buffer_sizes_{};

@@ -38,8 +38,8 @@ void Data::set_ingestion_ns() {
                         .count();
 }
 
-void Data::forward_ingestion_ns(int64_t t) {
-    ingestion_ns_ = t;
+void Data::forward_ingestion_ns(const Data& data) {
+    ingestion_ns_ = data.ingestion_ns_;
 }
 
 void Data::set_source_timestamp() {

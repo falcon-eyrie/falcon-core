@@ -33,4 +33,5 @@ const ThreadCore CORE_NOT_PINNED = -1;
 
 bool set_realtime_priority(pthread_t thread, ThreadPriority priority = PRIORITY_NONE);
 
-bool set_thread_core(pthread_t thread, ThreadCore core);
+std::vector<ThreadCore> set_thread_core_range(pthread_t thread,
+                                              std::pair<ThreadCore, ThreadCore> core_range);

@@ -152,7 +152,7 @@ class Data : public IData<Data, BaseType> {
     void set_serial_number(uint64_t n);
 
     /**
-     * @brief This timestamp is set when the data packet is first 
+     * @brief This timestamp is set when the data packet is first
      * ingested by Falcon.
      *
      * @return int64_t
@@ -169,7 +169,7 @@ class Data : public IData<Data, BaseType> {
      * @brief Forward the ingestion timestamp from an upstream data packet
      * to this data packet.
      */
-    void forward_ingestion_ns(int64_t t);
+    void forward_ingestion_ns(const Data& data);
 
     /**
      * @brief set_source_timestamp set the timepoint based on the internal

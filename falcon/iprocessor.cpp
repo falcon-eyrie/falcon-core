@@ -363,12 +363,26 @@ void IProcessor::internal_Start(RunContext& runcontext) {
             LOG(INFO) << "Successfully set thread priority for " << name_ << " to "
                       << thread_priority() << "%.";
         }
+    }
+    bool is_core_range_set = (thread_core_range().first >= 0) && (thread_core_range().second >= 0);
+    if (is_core_range_set) {
+        auto set_cores = set_thread_core_range(thread_.native_handle(), thread_core_range());
 
-        if (!set_thread_core(thread_.native_handle(), thread_core())) {
-            LOG(WARNING) << "Unable to pin thread for " << name_ << " to core " << thread_core();
-        } else if (thread_core() >= 0) {
-            LOG(INFO) << "Successfully pinned thread for " << name_ << " to core " << thread_core()
-                      << ".";
+        // CPP17 lambda to convert vector to string, will delete later
+        auto vec_to_string = [](const std::vector<int>& v) {
+            std::string s = "[";
+            for (size_t i = 0; i < v.size(); ++i) {
+                s += std::to_string(v[i]) + (i == v.size() - 1 ? "" : ", ");
+            }
+            return s + "]";
+        };
+
+        if (set_cores.empty()) {
+            LOG(WARNING) << "Unable to pin thread for " << name_ << " to cores "
+                         << vec_to_string(set_cores);
+        } else {
+            LOG(INFO) << "Successfully pinned thread for " << name_ << " to cores "
+                      << vec_to_string(set_cores) << ".";
         }
     }
 }

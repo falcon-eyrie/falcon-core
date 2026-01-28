@@ -18,7 +18,9 @@
 // ---------------------------------------------------------------------
 
 #include <unistd.h>
+#include <vector>
 
+#include <g3log/loglevels.hpp>
 #include "threadutilities.hpp"
 
 bool set_realtime_priority(pthread_t thread, ThreadPriority priority) {
@@ -58,24 +60,43 @@ bool set_realtime_priority(pthread_t thread, ThreadPriority priority) {
     return true;
 }
 
-bool set_thread_core(pthread_t thread, ThreadCore core) {
-    int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
+std::vector<ThreadCore> set_thread_core_range(pthread_t thread,
+                                              std::pair<ThreadCore, ThreadCore> core_range) {
+    int num_cores = (int) sysconf(_SC_NPROCESSORS_ONLN);
+    std::vector<ThreadCore> set_cores;
 
-    if (core < 0) {
-        return true;
-    }
+    // Normalize range (handle cases where first > second)
+    ThreadCore start = std::min(core_range.first, core_range.second);
+    ThreadCore end = std::max(core_range.first, core_range.second);
 
-    if (core >= num_cores) {
-        return false;
+    // If the entire range is out of bounds, return empty vector
+    if (start >= num_cores || end < 0) {
+        return {};
     }
 
     cpu_set_t cpuset;
-
     CPU_ZERO(&cpuset);
 
-    CPU_SET(core, &cpuset);
+    // Clamp the range to valid system cores [0, num_cores - 1]
+    ThreadCore actual_start = std::max(0, start);
+    ThreadCore actual_end = std::min(num_cores - 1, end);
 
-    pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+    for (ThreadCore i = actual_start; i <= actual_end; ++i) {
+        CPU_SET(i, &cpuset);
+        set_cores.push_back(i);
+    }
 
-    return true;
+    if (set_cores.empty()) {
+        return {};
+    }
+
+    // Apply the full mask to the thread
+    int result = pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+
+    // If the system call failed, return an empty vector; otherwise return the list of cores
+    if (result != 0) {
+        return {};
+    }
+
+    return set_cores;
 }

@@ -116,9 +116,25 @@ class RunContext : public StorageContext {
         std::string symlinkname = storage_context("runroot") + "/_last_run";
         // remove old symlink (if present)
         std::remove(symlinkname.c_str());
+
         // create new symlink
-        if (symlink((storage_context("runbase")).c_str(), symlinkname.c_str()) != 0) {
-            LOG(WARNING) << "Could not create symbolic link for last run.";
+        auto runbase_path = storage_context("runbase");
+
+        try {
+            // 3. Get absolute paths to ensure calculation is accurate
+            fs::path target_abs = fs::absolute(runbase_path);
+            fs::path link_path_abs = fs::absolute(symlinkname);
+
+            // 4. Calculate relative path from the symlink's PARENT directory to the target
+            // Example: if link is in /root/_last_run and target is /root/runs/run1
+            // The relative path should be "runs/run1"
+            fs::path relative_target = fs::relative(target_abs, link_path_abs.parent_path());
+
+            // 5. Create the relative symlink
+            fs::create_directory_symlink(relative_target, link_path_abs);
+
+        } catch (const fs::filesystem_error& e) {
+            LOG(WARNING) << "Could not create symbolic link for last run: " << e.what();
         }
 
         // create symbolic link runroot/_last_run_group pointing to run group
@@ -127,8 +143,23 @@ class RunContext : public StorageContext {
         // remove old symlink (if present)
         std::remove(symlinkname.c_str());
         // create new symlink
-        if (symlink(storage_context("rungroup").c_str(), symlinkname.c_str()) != 0) {
-            LOG(WARNING) << "Could not create symbolic link for last run group.";
+        auto rungroup_path = storage_context("rungroup");
+
+        try {
+            // 3. Get absolute paths to ensure calculation is accurate
+            fs::path target_abs = fs::absolute(rungroup_path);
+            fs::path link_path_abs = fs::absolute(symlinkname);
+
+            // 4. Calculate relative path from the symlink's PARENT directory to the target
+            // Example: if link is in /root/_last_run_group and target is /root/runs/group1
+            // The relative path should be "runs/group1"
+            fs::path relative_target = fs::relative(target_abs, link_path_abs.parent_path());
+
+            // 5. Create the relative symlink
+            fs::create_directory_symlink(relative_target, link_path_abs);
+
+        } catch (const fs::filesystem_error& e) {
+            LOG(WARNING) << "Could not create symbolic link for last run group: " << e.what();
         }
 
         add_storage_context("lastrunbase", storage_context("rungroup") + "/_last_run");
