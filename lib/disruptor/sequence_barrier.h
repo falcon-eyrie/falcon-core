@@ -55,12 +55,12 @@ class ProcessingSequenceBarrier : SequenceBarrierInterface {
     virtual int64_t GetCursor() const { return cursor_->sequence(); }
 
     virtual bool IsAlerted() const {
-        return alerted_.load(std::memory_order::memory_order_acquire);
+        return alerted_.load(std::memory_order_acquire);
     }
 
-    virtual void Alert() { alerted_.store(true, std::memory_order::memory_order_release); }
+    virtual void Alert() { alerted_.store(true, std::memory_order_release); }
 
-    virtual void ClearAlert() { alerted_.store(false, std::memory_order::memory_order_release); }
+    virtual void ClearAlert() { alerted_.store(false, std::memory_order_release); }
 
     virtual void CheckAlert() const {
         if (IsAlerted()) throw AlertException();
