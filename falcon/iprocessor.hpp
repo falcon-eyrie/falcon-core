@@ -23,6 +23,7 @@
 #include <map>
 #include <memory>
 #include <set>
+#include <span>
 #include <string>
 #include <utility>
 #include <vector>
@@ -73,6 +74,10 @@ class IProcessor {
 
     virtual ~IProcessor() { internal_Stop(); }
 
+    virtual void insertChainProcessor(std::unique_ptr<IProcessor> processor) {
+        throw ProcessorInternalError("Processor " + name() + " does not support chaining.");
+    }
+
     // Thread-local storage to prevent contention between 256 threads
     // Initialized to nullptr; allocated only on first use
     static inline thread_local std::vector<TimingEntry>* t_metrics = nullptr;
@@ -113,6 +118,12 @@ class IProcessor {
         delete t_metrics;
         t_metrics = nullptr;
     }
+
+    virtual void ExecutePrepare() {}
+
+    virtual void ExecuteStep(std::vector<double> input, std::vector<double> output) {}
+    virtual void ExecuteStep(std::vector<double> input, void* data_out) {}
+    virtual void ExecuteCleanup() {}
 
     /**
      * Get processor's name.

@@ -1,0 +1,17 @@
+network:
+  ip: 127.0.0.1
+  port: 5000
+stream:
+  rate: 32000
+  autostart: 1
+sources:
+  - class: "square"
+    options:
+      offset: 0.0
+      amplitude: 50.0
+      frequency: 16.0
+      duty_cycle: 0.5
+      sampling_rate: 32000
+      noise_stdev: 0.0
+      nchannels: 128
+      convert_byte_order: true

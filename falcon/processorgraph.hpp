@@ -108,6 +108,9 @@ class ProcessorGraph {
      */
     void ConstructProcessorEngines(const YAML::Node& node);
 
+    void ConstructProcessorEnginesBench();
+    void ParseConnectionRulesBench();
+
     /**
      * Give the documentation of either all registered processor or only
      * processors used in the running graph

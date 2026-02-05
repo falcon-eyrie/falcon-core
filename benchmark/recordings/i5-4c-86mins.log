@@ -1,0 +1,1337 @@
+		g3log created log at: Tue Feb 03 12:23:07 2026
+		LOG format: [YYYY/MM/DD hh:mm:ss uuu* LEVEL FILE->FUNCTION:LINE] message
+
+		(uuu*: microseconds fractions of the seconds value)
+
+2026/02/03 12:23:07 102833	INFO [main.cpp->main:152]	Enabled logging to screen.
+2026/02/03 12:23:07 303731	INFO [main.cpp->main:161]	Enabled logging to cloud on port 5556
+2026/02/03 12:23:07 303750	INFO [main.cpp->main:164]	Logging initialized. Log file saved to ./logs
+2026/02/03 12:23:07 303773	INFO [main.cpp->main:169]	Resolution of clock used for timing is 0.01 microseconds.
+2026/02/03 12:23:07 303779	STATE [processorgraph.cpp->ProcessorGraph:335]	NOGRAPH
+2026/02/03 12:23:07 308711	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor BurstDetector - Detect population bursts using a threshold crossing algorithm.
+2026/02/03 12:23:07 308940	INFO [processorgraph.cpp->ProcessorGraph:344]	Registered processor ChainProcessor
+2026/02/03 12:23:07 311320	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor DigitalOutput - Take an EventData stream and sets digital outputs according to an event-specific.
+2026/02/03 12:23:07 313057	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor Distributor - Read multi-channel data stream and splits the data across multiple output streams based on a channel mapping
+2026/02/03 12:23:07 314731	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor Event2State - Arrival of target events set state to true, arrival of non-target events set state to false. All events are forwarded to output stream.
+2026/02/03 12:23:07 315846	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor EventConverter - Convert incoming target event into another event.
+2026/02/03 12:23:07 318579	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor EventDelayed - The processor will convert incoming events into a detection event and a stimulation event with optional delay.
+2026/02/03 12:23:07 320094	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor EventFilter - Process neural data by synchronizing, filtering and combining events coming from multiple inputs in one output.
+2026/02/03 12:23:07 320550	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor EventLogger - Log target events
+2026/02/03 12:23:07 321097	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor EventSource - Generate target events following an uniform distribution with a certain rate
+2026/02/03 12:23:07 322068	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor EventSync - Synchronize on the occurrence of a target event on all its input slots, before emitting the same target event
+2026/02/03 12:23:07 324533	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor FileSerializer - Serialize data streams to file
+2026/02/03 12:23:07 324847	INFO [processorgraph.cpp->ProcessorGraph:344]	Registered processor LatencyBenchmark
+2026/02/03 12:23:07 327697	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor LevelCrossingDetector - Detect a threshold crossing on any of the channels in the incoming multi-channel datastream and emits an event in response.
+2026/02/03 12:23:07 329084	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor MUAEstimator - Compute the Multi-Unit Activity from the spike counts provided by the spike detectors and outputs MUAData.
+2026/02/03 12:23:07 330829	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor MultiChannelFilter - Filter each channels from a multichannel datastream
+2026/02/03 12:23:07 332912	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor NlxParser - Read raw Neuralynx Digilynx data packets from a NlxPureReader processor and turns it a single MultiChannelData output stream of all available channels. Optionally, multiple data packets are combined into batches.
+2026/02/03 12:23:07 333871	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor NlxPureReader - Read raw data of a Neuralynx Digilynx data acquisition on a UDP buffer
+2026/02/03 12:23:07 335563	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor NlxReader - Read raw data from a Neuralynx Digilynx data acquisition system and turns it into multiple MultiChannelData output streams based on a channel mapping
+2026/02/03 12:23:07 335635	INFO [processorgraph.cpp->ProcessorGraph:344]	Registered processor OpenEphysZMQ
+2026/02/03 12:23:07 336465	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor Rebuffer - Rebuffer and downsample multiple MultiChannelData streams. No anti-aliasing filter is applied before downsampling.
+2026/02/03 12:23:07 340069	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor RippleDetector - Detect ripples in a MultiChannelData stream and emits a ripple event in response
+2026/02/03 12:23:07 342307	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor RunningStats - Compute running statistics
+2026/02/03 12:23:07 343859	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor SerialOutput - Take an EventData stream and sends as a message over serial port the event name.
+2026/02/03 12:23:07 346165	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor SpikeDetector - Detect spikes in a MultiChannelData stream and emits a spike event and spike data in response
+2026/02/03 12:23:07 347512	INFO [processorgraph.cpp->ProcessorGraph:341]	Registered processor ZMQSerializer - Serialize data streams to be send through the zmq network
+2026/02/03 12:23:07 347720	INFO [main.cpp->main:218]	Enabled keyboard commands.
+2026/02/03 12:23:07 347726	INFO [main.cpp->main:219]	Enabled cloud commands on port 5555
+2026/02/03 12:23:07 347729	INFO [main.cpp->main:221]	Falcon started successfully.
+2026/02/03 12:23:07 459091	WARNING [graphmanager.cpp->ParseGraph:166]	The graph definition seems to have the server-side format. Consider to use a user-side format to override options.
+2026/02/03 12:23:07 459107	STATE [processorgraph.hpp->set_state:157]	CONSTRUCTING
+2026/02/03 12:23:07 476838	INFO [processorgraph.cpp->Build:498]	Constructed and configured all processors
+2026/02/03 12:23:07 525699	INFO [processorgraph.cpp->Build:506]	All ports have been created.
+2026/02/03 12:23:07 529043	INFO [processorgraph.cpp->Build:510]	Parsed all connection rules.
+2026/02/03 12:23:07 530725	INFO [processorgraph.cpp->Build:519]	All connections have been established.
+2026/02/03 12:23:07 531516	INFO [processorgraph.cpp->Build:537]	All data streams have been negotiated.
+2026/02/03 12:23:07 574965	STATE [processorgraph.hpp->set_state:157]	PREPARING
+2026/02/03 12:23:07 575782	INFO [processorgraph.cpp->Build:557]	All processors have been prepared.
+2026/02/03 12:23:07 575798	INFO [processorgraph.cpp->Build:564]	Graph was successfully constructed.
+2026/02/03 12:23:07 575804	STATE [processorgraph.hpp->set_state:157]	READY
+2026/02/03 12:23:07 676645	STATE [processorgraph.hpp->set_state:157]	STARTING
+2026/02/03 12:23:07 677001	INFO [processorgraph.cpp->StartProcessing:622]	Prepared all data stream ports for processing.
+2026/02/03 12:23:07 677116	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for bench to cores [7].
+2026/02/03 12:23:07 677217	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross1 to cores [6].
+2026/02/03 12:23:07 677356	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross10 to cores [6].
+2026/02/03 12:23:07 677421	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross11 to cores [6].
+2026/02/03 12:23:07 677469	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross10. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 677478	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross12 to cores [6].
+2026/02/03 12:23:07 677548	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross1. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 677747	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross13 to cores [6].
+2026/02/03 12:23:07 677843	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross11. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 677915	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross12. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 678031	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross14 to cores [6].
+2026/02/03 12:23:07 678079	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross13. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 678191	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross14. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 678208	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross15 to cores [6].
+2026/02/03 12:23:07 678555	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross16 to cores [6].
+2026/02/03 12:23:07 678569	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross15. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 678654	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross16. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 678676	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross17 to cores [6].
+2026/02/03 12:23:07 678736	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross18 to cores [6].
+2026/02/03 12:23:07 678811	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross19 to cores [6].
+2026/02/03 12:23:07 678857	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross17. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 678902	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross2 to cores [6].
+2026/02/03 12:23:07 678934	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross18. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 679035	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross20 to cores [6].
+2026/02/03 12:23:07 679037	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross19. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 679108	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross2. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 679127	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross21 to cores [6].
+2026/02/03 12:23:07 679207	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross20. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 679271	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross21. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 679535	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross22 to cores [6].
+2026/02/03 12:23:07 679644	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross23 to cores [6].
+2026/02/03 12:23:07 679672	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross22. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 679732	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross24 to cores [6].
+2026/02/03 12:23:07 679830	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross23. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 679875	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross25 to cores [6].
+2026/02/03 12:23:07 679904	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross24. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 679942	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross26 to cores [6].
+2026/02/03 12:23:07 679979	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross25. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 680004	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross27 to cores [6].
+2026/02/03 12:23:07 680061	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross26. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 680076	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross28 to cores [6].
+2026/02/03 12:23:07 680140	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross29 to cores [6].
+2026/02/03 12:23:07 680147	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross27. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 680230	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross28. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 680299	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross29. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 680684	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross3 to cores [6].
+2026/02/03 12:23:07 680765	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross30 to cores [6].
+2026/02/03 12:23:07 680818	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross3. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 680819	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross31 to cores [6].
+2026/02/03 12:23:07 680871	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross32 to cores [6].
+2026/02/03 12:23:07 680896	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross30. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 680938	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross4 to cores [6].
+2026/02/03 12:23:07 680969	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross31. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 680990	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross5 to cores [6].
+2026/02/03 12:23:07 681039	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross32. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 681041	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross6 to cores [6].
+2026/02/03 12:23:07 682531	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross7 to cores [6].
+2026/02/03 12:23:07 682595	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross4. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 682598	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross8 to cores [6].
+2026/02/03 12:23:07 682656	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for levelcross9 to cores [6].
+2026/02/03 12:23:07 682685	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross5. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 682715	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI1 to cores [0].
+2026/02/03 12:23:07 682911	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross6. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 683011	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross7. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 683022	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross8. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 683079	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI10 to cores [0].
+2026/02/03 12:23:07 683157	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI11 to cores [0].
+2026/02/03 12:23:07 683197	INFO [levelcrossingdetector.cpp->post_detection_block_update:238]	levelcross9. Post-detection block is set to 62.5 microseconds.
+2026/02/03 12:23:07 683255	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI12 to cores [0].
+2026/02/03 12:23:07 683324	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI13 to cores [0].
+2026/02/03 12:23:07 683384	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI14 to cores [0].
+2026/02/03 12:23:07 683444	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI15 to cores [0].
+2026/02/03 12:23:07 683502	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI16 to cores [0].
+2026/02/03 12:23:07 683571	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI17 to cores [0].
+2026/02/03 12:23:07 683641	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI18 to cores [0].
+2026/02/03 12:23:07 683719	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI19 to cores [0].
+2026/02/03 12:23:07 683795	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI2 to cores [0].
+2026/02/03 12:23:07 683870	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI20 to cores [0].
+2026/02/03 12:23:07 684159	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI21 to cores [0].
+2026/02/03 12:23:07 684212	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI22 to cores [0].
+2026/02/03 12:23:07 684725	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI23 to cores [0].
+2026/02/03 12:23:07 684852	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI24 to cores [0].
+2026/02/03 12:23:07 684895	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI25 to cores [0].
+2026/02/03 12:23:07 684942	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI26 to cores [0].
+2026/02/03 12:23:07 685059	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI27 to cores [0].
+2026/02/03 12:23:07 685227	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI28 to cores [0].
+2026/02/03 12:23:07 685274	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI29 to cores [0].
+2026/02/03 12:23:07 685318	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI3 to cores [0].
+2026/02/03 12:23:07 685366	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI30 to cores [0].
+2026/02/03 12:23:07 685409	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI31 to cores [0].
+2026/02/03 12:23:07 685453	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI32 to cores [0].
+2026/02/03 12:23:07 685503	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI4 to cores [0].
+2026/02/03 12:23:07 685689	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI5 to cores [0].
+2026/02/03 12:23:07 685737	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI6 to cores [0].
+2026/02/03 12:23:07 685786	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI7 to cores [0].
+2026/02/03 12:23:07 685831	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI8 to cores [0].
+2026/02/03 12:23:07 685874	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passI9 to cores [0].
+2026/02/03 12:23:07 685918	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII1 to cores [1].
+2026/02/03 12:23:07 685961	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII10 to cores [1].
+2026/02/03 12:23:07 686005	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII11 to cores [1].
+2026/02/03 12:23:07 686051	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII12 to cores [1].
+2026/02/03 12:23:07 686093	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII13 to cores [1].
+2026/02/03 12:23:07 686140	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII14 to cores [1].
+2026/02/03 12:23:07 686185	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII15 to cores [1].
+2026/02/03 12:23:07 686228	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII16 to cores [1].
+2026/02/03 12:23:07 686269	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII17 to cores [1].
+2026/02/03 12:23:07 686314	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII18 to cores [1].
+2026/02/03 12:23:07 686362	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII19 to cores [1].
+2026/02/03 12:23:07 686429	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII2 to cores [1].
+2026/02/03 12:23:07 686489	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII20 to cores [1].
+2026/02/03 12:23:07 686546	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII21 to cores [1].
+2026/02/03 12:23:07 686607	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII22 to cores [1].
+2026/02/03 12:23:07 686660	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII23 to cores [1].
+2026/02/03 12:23:07 686714	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII24 to cores [1].
+2026/02/03 12:23:07 686771	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII25 to cores [1].
+2026/02/03 12:23:07 687231	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII26 to cores [1].
+2026/02/03 12:23:07 687274	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII27 to cores [1].
+2026/02/03 12:23:07 687313	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII28 to cores [1].
+2026/02/03 12:23:07 687360	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII29 to cores [1].
+2026/02/03 12:23:07 687400	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII3 to cores [1].
+2026/02/03 12:23:07 687438	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII30 to cores [1].
+2026/02/03 12:23:07 687479	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII31 to cores [1].
+2026/02/03 12:23:07 687518	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII32 to cores [1].
+2026/02/03 12:23:07 687557	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII4 to cores [1].
+2026/02/03 12:23:07 687598	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII5 to cores [1].
+2026/02/03 12:23:07 687642	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII6 to cores [1].
+2026/02/03 12:23:07 687683	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII7 to cores [1].
+2026/02/03 12:23:07 687730	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII8 to cores [1].
+2026/02/03 12:23:07 687772	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passII9 to cores [1].
+2026/02/03 12:23:07 687816	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII1 to cores [2].
+2026/02/03 12:23:07 687866	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII10 to cores [2].
+2026/02/03 12:23:07 687910	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII11 to cores [2].
+2026/02/03 12:23:07 687964	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII12 to cores [2].
+2026/02/03 12:23:07 688020	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII13 to cores [2].
+2026/02/03 12:23:07 688073	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII14 to cores [2].
+2026/02/03 12:23:07 688131	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII15 to cores [2].
+2026/02/03 12:23:07 688186	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII16 to cores [2].
+2026/02/03 12:23:07 688238	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII17 to cores [2].
+2026/02/03 12:23:07 688290	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII18 to cores [2].
+2026/02/03 12:23:07 688345	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII19 to cores [2].
+2026/02/03 12:23:07 688403	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII2 to cores [2].
+2026/02/03 12:23:07 688459	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII20 to cores [2].
+2026/02/03 12:23:07 688516	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII21 to cores [2].
+2026/02/03 12:23:07 689568	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII22 to cores [2].
+2026/02/03 12:23:07 689659	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII23 to cores [2].
+2026/02/03 12:23:07 689742	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII24 to cores [2].
+2026/02/03 12:23:07 689807	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII25 to cores [2].
+2026/02/03 12:23:07 690995	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII26 to cores [2].
+2026/02/03 12:23:07 691120	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII27 to cores [2].
+2026/02/03 12:23:07 691203	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII28 to cores [2].
+2026/02/03 12:23:07 691307	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII29 to cores [2].
+2026/02/03 12:23:07 691389	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII3 to cores [2].
+2026/02/03 12:23:07 691460	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII30 to cores [2].
+2026/02/03 12:23:07 691523	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII31 to cores [2].
+2026/02/03 12:23:07 691592	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII32 to cores [2].
+2026/02/03 12:23:07 691652	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII4 to cores [2].
+2026/02/03 12:23:07 691725	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII5 to cores [2].
+2026/02/03 12:23:07 691809	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII6 to cores [2].
+2026/02/03 12:23:07 691879	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII7 to cores [2].
+2026/02/03 12:23:07 692422	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII8 to cores [2].
+2026/02/03 12:23:07 692525	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIII9 to cores [2].
+2026/02/03 12:23:07 692600	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV1 to cores [3].
+2026/02/03 12:23:07 692667	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV10 to cores [3].
+2026/02/03 12:23:07 692724	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV11 to cores [3].
+2026/02/03 12:23:07 692778	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV12 to cores [3].
+2026/02/03 12:23:07 692830	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV13 to cores [3].
+2026/02/03 12:23:07 692879	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV14 to cores [3].
+2026/02/03 12:23:07 692927	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV15 to cores [3].
+2026/02/03 12:23:07 692980	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV16 to cores [3].
+2026/02/03 12:23:07 693034	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV17 to cores [3].
+2026/02/03 12:23:07 693090	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV18 to cores [3].
+2026/02/03 12:23:07 693144	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV19 to cores [3].
+2026/02/03 12:23:07 693200	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV2 to cores [3].
+2026/02/03 12:23:07 693256	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV20 to cores [3].
+2026/02/03 12:23:07 693303	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV21 to cores [3].
+2026/02/03 12:23:07 693342	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV22 to cores [3].
+2026/02/03 12:23:07 693378	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV23 to cores [3].
+2026/02/03 12:23:07 693414	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV24 to cores [3].
+2026/02/03 12:23:07 693452	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV25 to cores [3].
+2026/02/03 12:23:07 693493	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV26 to cores [3].
+2026/02/03 12:23:07 693527	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV27 to cores [3].
+2026/02/03 12:23:07 693566	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV28 to cores [3].
+2026/02/03 12:23:07 693602	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV29 to cores [3].
+2026/02/03 12:23:07 693639	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV3 to cores [3].
+2026/02/03 12:23:07 693685	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV30 to cores [3].
+2026/02/03 12:23:07 693723	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV31 to cores [3].
+2026/02/03 12:23:07 693759	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV32 to cores [3].
+2026/02/03 12:23:07 693799	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV4 to cores [3].
+2026/02/03 12:23:07 693834	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV5 to cores [3].
+2026/02/03 12:23:07 693879	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV6 to cores [3].
+2026/02/03 12:23:07 693916	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV7 to cores [3].
+2026/02/03 12:23:07 693952	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV8 to cores [3].
+2026/02/03 12:23:07 693989	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passIV9 to cores [3].
+2026/02/03 12:23:07 694029	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV1 to cores [4].
+2026/02/03 12:23:07 694074	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV10 to cores [4].
+2026/02/03 12:23:07 694112	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV11 to cores [4].
+2026/02/03 12:23:07 694152	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV12 to cores [4].
+2026/02/03 12:23:07 694193	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV13 to cores [4].
+2026/02/03 12:23:07 694231	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV14 to cores [4].
+2026/02/03 12:23:07 694276	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV15 to cores [4].
+2026/02/03 12:23:07 694314	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV16 to cores [4].
+2026/02/03 12:23:07 694351	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV17 to cores [4].
+2026/02/03 12:23:07 694391	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV18 to cores [4].
+2026/02/03 12:23:07 694428	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV19 to cores [4].
+2026/02/03 12:23:07 694470	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV2 to cores [4].
+2026/02/03 12:23:07 694510	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV20 to cores [4].
+2026/02/03 12:23:07 694548	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV21 to cores [4].
+2026/02/03 12:23:07 694586	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV22 to cores [4].
+2026/02/03 12:23:07 694630	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV23 to cores [4].
+2026/02/03 12:23:07 694669	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV24 to cores [4].
+2026/02/03 12:23:07 694728	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV25 to cores [4].
+2026/02/03 12:23:07 694776	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV26 to cores [4].
+2026/02/03 12:23:07 694815	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV27 to cores [4].
+2026/02/03 12:23:07 694857	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV28 to cores [4].
+2026/02/03 12:23:07 694897	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV29 to cores [4].
+2026/02/03 12:23:07 694935	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV3 to cores [4].
+2026/02/03 12:23:07 694972	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV30 to cores [4].
+2026/02/03 12:23:07 695012	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV31 to cores [4].
+2026/02/03 12:23:07 695054	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV32 to cores [4].
+2026/02/03 12:23:07 695092	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV4 to cores [4].
+2026/02/03 12:23:07 695131	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV5 to cores [4].
+2026/02/03 12:23:07 695170	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV6 to cores [4].
+2026/02/03 12:23:07 698797	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV7 to cores [4].
+2026/02/03 12:23:07 698850	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV8 to cores [4].
+2026/02/03 12:23:07 698894	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passV9 to cores [4].
+2026/02/03 12:23:07 698937	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI1 to cores [5].
+2026/02/03 12:23:07 698982	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI10 to cores [5].
+2026/02/03 12:23:07 699032	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI11 to cores [5].
+2026/02/03 12:23:07 699074	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI12 to cores [5].
+2026/02/03 12:23:07 699123	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI13 to cores [5].
+2026/02/03 12:23:07 699167	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI14 to cores [5].
+2026/02/03 12:23:07 699210	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI15 to cores [5].
+2026/02/03 12:23:07 699254	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI16 to cores [5].
+2026/02/03 12:23:07 699296	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI17 to cores [5].
+2026/02/03 12:23:07 699344	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI18 to cores [5].
+2026/02/03 12:23:07 699389	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI19 to cores [5].
+2026/02/03 12:23:07 699432	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI2 to cores [5].
+2026/02/03 12:23:07 699474	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI20 to cores [5].
+2026/02/03 12:23:07 699521	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI21 to cores [5].
+2026/02/03 12:23:07 699568	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI22 to cores [5].
+2026/02/03 12:23:07 699611	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI23 to cores [5].
+2026/02/03 12:23:07 699655	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI24 to cores [5].
+2026/02/03 12:23:07 699700	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI25 to cores [5].
+2026/02/03 12:23:07 699744	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI26 to cores [5].
+2026/02/03 12:23:07 699792	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI27 to cores [5].
+2026/02/03 12:23:07 699834	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI28 to cores [5].
+2026/02/03 12:23:07 699879	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI29 to cores [5].
+2026/02/03 12:23:07 699925	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI3 to cores [5].
+2026/02/03 12:23:07 699970	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI30 to cores [5].
+2026/02/03 12:23:07 700031	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI31 to cores [5].
+2026/02/03 12:23:07 700089	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI32 to cores [5].
+2026/02/03 12:23:07 700146	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI4 to cores [5].
+2026/02/03 12:23:07 700199	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI5 to cores [5].
+2026/02/03 12:23:07 700242	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI6 to cores [5].
+2026/02/03 12:23:07 700287	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI7 to cores [5].
+2026/02/03 12:23:07 700326	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI8 to cores [5].
+2026/02/03 12:23:07 700366	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVI9 to cores [5].
+2026/02/03 12:23:07 700404	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII1 to cores [6].
+2026/02/03 12:23:07 700442	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII10 to cores [6].
+2026/02/03 12:23:07 700487	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII11 to cores [6].
+2026/02/03 12:23:07 700526	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII12 to cores [6].
+2026/02/03 12:23:07 700564	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII13 to cores [6].
+2026/02/03 12:23:07 700604	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII14 to cores [6].
+2026/02/03 12:23:07 700642	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII15 to cores [6].
+2026/02/03 12:23:07 700692	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII16 to cores [6].
+2026/02/03 12:23:07 700740	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII17 to cores [6].
+2026/02/03 12:23:07 700779	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII18 to cores [6].
+2026/02/03 12:23:07 700817	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII19 to cores [6].
+2026/02/03 12:23:07 700859	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII2 to cores [6].
+2026/02/03 12:23:07 700901	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII20 to cores [6].
+2026/02/03 12:23:07 700939	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII21 to cores [6].
+2026/02/03 12:23:07 700979	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII22 to cores [6].
+2026/02/03 12:23:07 701017	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII23 to cores [6].
+2026/02/03 12:23:07 701061	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII24 to cores [6].
+2026/02/03 12:23:07 701100	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII25 to cores [6].
+2026/02/03 12:23:07 701137	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII26 to cores [6].
+2026/02/03 12:23:07 701175	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII27 to cores [6].
+2026/02/03 12:23:07 701216	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII28 to cores [6].
+2026/02/03 12:23:07 701254	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII29 to cores [6].
+2026/02/03 12:23:07 701297	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII3 to cores [6].
+2026/02/03 12:23:07 701337	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII30 to cores [6].
+2026/02/03 12:23:07 701375	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII31 to cores [6].
+2026/02/03 12:23:07 701413	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII32 to cores [6].
+2026/02/03 12:23:07 701453	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII4 to cores [6].
+2026/02/03 12:23:07 701494	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII5 to cores [6].
+2026/02/03 12:23:07 701532	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII6 to cores [6].
+2026/02/03 12:23:07 701571	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII7 to cores [6].
+2026/02/03 12:23:07 701616	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII8 to cores [6].
+2026/02/03 12:23:07 701661	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for passVII9 to cores [6].
+2026/02/03 12:23:07 701812	INFO [iprocessor.cpp->internal_Start:363]	Successfully set thread priority for source to 100%.
+2026/02/03 12:23:07 701831	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for source to cores [7].
+2026/02/03 12:23:07 701875	INFO [iprocessor.cpp->internal_Start:384]	Successfully pinned thread for sync to cores [7].
+2026/02/03 12:23:07 701882	INFO [processorgraph.cpp->StartProcessing:630]	Started all processors.
+2026/02/03 12:23:08 701846	UPDATE [nlxreader.cpp->Preprocess:101]	source. Socket created.
+2026/02/03 12:23:08 701866	UPDATE [nlxreader.cpp->Preprocess:106]	source. Socket binding successful.
+2026/02/03 12:23:08 702038	STATE [processorgraph.hpp->set_state:157]	PROCESSING
+2026/02/03 12:23:09 876940	UPDATE [nlxreader.cpp->Process:165]	source: Received first valid data packet (TS = 0).
+2026/02/03 12:23:15 850349	UPDATE [nlxreader.cpp->Process:170]	source. Received 32768 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:23:23 573411	UPDATE [nlxreader.cpp->Process:170]	source. Received 65536 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:23:28 024946	INFO [latency_benchmark.cpp->Process:50]	2_107_494
+2026/02/03 12:23:30 077351	UPDATE [nlxreader.cpp->Process:170]	source. Received 98304 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:23:35 957027	UPDATE [nlxreader.cpp->Process:170]	source. Received 131072 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:23:42 305152	UPDATE [nlxreader.cpp->Process:170]	source. Received 163840 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:23:44 585082	INFO [latency_benchmark.cpp->Process:50]	2_166_074
+2026/02/03 12:23:50 033999	UPDATE [nlxreader.cpp->Process:170]	source. Received 196608 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:23:57 104027	UPDATE [nlxreader.cpp->Process:170]	source. Received 229376 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:24:04 686834	INFO [latency_benchmark.cpp->Process:50]	2_009_936
+2026/02/03 12:24:04 915669	UPDATE [nlxreader.cpp->Process:170]	source. Received 262144 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:24:12 855765	UPDATE [nlxreader.cpp->Process:170]	source. Received 294912 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:24:20 672335	UPDATE [nlxreader.cpp->Process:170]	source. Received 327680 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:24:25 426366	INFO [latency_benchmark.cpp->Process:50]	2_041_346
+2026/02/03 12:24:28 210404	UPDATE [nlxreader.cpp->Process:170]	source. Received 360448 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:24:36 077266	UPDATE [nlxreader.cpp->Process:170]	source. Received 393216 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:24:43 969690	UPDATE [nlxreader.cpp->Process:170]	source. Received 425984 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:24:46 096689	INFO [latency_benchmark.cpp->Process:50]	1_615_137
+2026/02/03 12:24:51 810418	UPDATE [nlxreader.cpp->Process:170]	source. Received 458752 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:24:59 705875	UPDATE [nlxreader.cpp->Process:170]	source. Received 491520 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:25:07 000602	INFO [latency_benchmark.cpp->Process:50]	1_588_694
+2026/02/03 12:25:07 444453	UPDATE [nlxreader.cpp->Process:170]	source. Received 524288 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:25:15 415635	UPDATE [nlxreader.cpp->Process:170]	source. Received 557056 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:25:23 323922	UPDATE [nlxreader.cpp->Process:170]	source. Received 589824 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:25:27 873989	INFO [latency_benchmark.cpp->Process:50]	1_768_524
+2026/02/03 12:25:30 878434	UPDATE [nlxreader.cpp->Process:170]	source. Received 622592 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:25:38 737302	UPDATE [nlxreader.cpp->Process:170]	source. Received 655360 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:25:46 609826	UPDATE [nlxreader.cpp->Process:170]	source. Received 688128 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:25:48 471382	INFO [latency_benchmark.cpp->Process:50]	1_800_367
+2026/02/03 12:25:54 453983	UPDATE [nlxreader.cpp->Process:170]	source. Received 720896 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:26:02 324157	UPDATE [nlxreader.cpp->Process:170]	source. Received 753664 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:26:09 439247	INFO [latency_benchmark.cpp->Process:50]	1_574_565
+2026/02/03 12:26:10 104842	UPDATE [nlxreader.cpp->Process:170]	source. Received 786432 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:26:18 101272	UPDATE [nlxreader.cpp->Process:170]	source. Received 819200 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:26:25 958778	UPDATE [nlxreader.cpp->Process:170]	source. Received 851968 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:26:30 289977	INFO [latency_benchmark.cpp->Process:50]	2_049_078
+2026/02/03 12:26:33 534505	UPDATE [nlxreader.cpp->Process:170]	source. Received 884736 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:26:41 430851	UPDATE [nlxreader.cpp->Process:170]	source. Received 917504 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:26:49 330553	UPDATE [nlxreader.cpp->Process:170]	source. Received 950272 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:26:50 963583	INFO [latency_benchmark.cpp->Process:50]	1_587_081
+2026/02/03 12:26:57 222849	UPDATE [nlxreader.cpp->Process:170]	source. Received 983040 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:27:05 064868	UPDATE [nlxreader.cpp->Process:170]	source. Received 1015808 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:27:11 923709	INFO [latency_benchmark.cpp->Process:50]	1_715_689
+2026/02/03 12:27:12 800917	UPDATE [nlxreader.cpp->Process:170]	source. Received 1048576 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:27:20 759946	UPDATE [nlxreader.cpp->Process:170]	source. Received 1081344 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:27:28 621170	UPDATE [nlxreader.cpp->Process:170]	source. Received 1114112 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:27:32 657424	INFO [latency_benchmark.cpp->Process:50]	2_223_559
+2026/02/03 12:27:36 082770	UPDATE [nlxreader.cpp->Process:170]	source. Received 1146880 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:27:43 962773	UPDATE [nlxreader.cpp->Process:170]	source. Received 1179648 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:27:51 790600	UPDATE [nlxreader.cpp->Process:170]	source. Received 1212416 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:27:53 170932	INFO [latency_benchmark.cpp->Process:50]	1_944_254
+2026/02/03 12:27:59 670783	UPDATE [nlxreader.cpp->Process:170]	source. Received 1245184 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:28:07 557036	UPDATE [nlxreader.cpp->Process:170]	source. Received 1277952 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:28:14 127362	INFO [latency_benchmark.cpp->Process:50]	1_671_335
+2026/02/03 12:28:15 222090	UPDATE [nlxreader.cpp->Process:170]	source. Received 1310720 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:28:23 318114	UPDATE [nlxreader.cpp->Process:170]	source. Received 1343488 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:28:31 279073	UPDATE [nlxreader.cpp->Process:170]	source. Received 1376256 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:28:35 045433	INFO [latency_benchmark.cpp->Process:50]	1_978_897
+2026/02/03 12:28:38 827472	UPDATE [nlxreader.cpp->Process:170]	source. Received 1409024 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:28:46 677068	UPDATE [nlxreader.cpp->Process:170]	source. Received 1441792 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:28:54 508493	UPDATE [nlxreader.cpp->Process:170]	source. Received 1474560 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:28:55 625484	INFO [latency_benchmark.cpp->Process:50]	1_916_783
+2026/02/03 12:29:02 406238	UPDATE [nlxreader.cpp->Process:170]	source. Received 1507328 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:29:10 252575	UPDATE [nlxreader.cpp->Process:170]	source. Received 1540096 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:29:16 543752	INFO [latency_benchmark.cpp->Process:50]	1_924_479
+2026/02/03 12:29:17 913971	UPDATE [nlxreader.cpp->Process:170]	source. Received 1572864 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:29:25 875668	UPDATE [nlxreader.cpp->Process:170]	source. Received 1605632 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:29:33 775568	UPDATE [nlxreader.cpp->Process:170]	source. Received 1638400 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:29:37 269465	INFO [latency_benchmark.cpp->Process:50]	1_796_711
+2026/02/03 12:29:41 279430	UPDATE [nlxreader.cpp->Process:170]	source. Received 1671168 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:29:49 182492	UPDATE [nlxreader.cpp->Process:170]	source. Received 1703936 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:29:57 031952	UPDATE [nlxreader.cpp->Process:170]	source. Received 1736704 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:29:57 905444	INFO [latency_benchmark.cpp->Process:50]	2_067_141
+2026/02/03 12:30:04 838799	UPDATE [nlxreader.cpp->Process:170]	source. Received 1769472 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:30:12 725162	UPDATE [nlxreader.cpp->Process:170]	source. Received 1802240 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:30:18 790502	INFO [latency_benchmark.cpp->Process:50]	1_977_769
+2026/02/03 12:30:20 427364	UPDATE [nlxreader.cpp->Process:170]	source. Received 1835008 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:30:28 492661	UPDATE [nlxreader.cpp->Process:170]	source. Received 1867776 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:30:36 361457	UPDATE [nlxreader.cpp->Process:170]	source. Received 1900544 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:30:39 638625	INFO [latency_benchmark.cpp->Process:50]	1_909_848
+2026/02/03 12:30:43 901736	UPDATE [nlxreader.cpp->Process:170]	source. Received 1933312 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:30:51 758238	UPDATE [nlxreader.cpp->Process:170]	source. Received 1966080 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:30:59 611615	UPDATE [nlxreader.cpp->Process:170]	source. Received 1998848 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:31:00 274788	INFO [latency_benchmark.cpp->Process:50]	1_530_667
+2026/02/03 12:31:07 416567	UPDATE [nlxreader.cpp->Process:170]	source. Received 2031616 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:31:15 130685	UPDATE [nlxreader.cpp->Process:170]	source. Received 2064384 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:31:20 943522	INFO [latency_benchmark.cpp->Process:50]	1_563_262
+2026/02/03 12:31:22 821877	UPDATE [nlxreader.cpp->Process:170]	source. Received 2097152 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:31:30 839721	UPDATE [nlxreader.cpp->Process:170]	source. Received 2129920 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:31:38 740284	UPDATE [nlxreader.cpp->Process:170]	source. Received 2162688 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:31:41 750124	INFO [latency_benchmark.cpp->Process:50]	1_978_926
+2026/02/03 12:31:46 280057	UPDATE [nlxreader.cpp->Process:170]	source. Received 2195456 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:31:54 187831	UPDATE [nlxreader.cpp->Process:170]	source. Received 2228224 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:32:02 081136	UPDATE [nlxreader.cpp->Process:170]	source. Received 2260992 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:32:02 527450	INFO [latency_benchmark.cpp->Process:50]	1_815_871
+2026/02/03 12:32:09 961774	UPDATE [nlxreader.cpp->Process:170]	source. Received 2293760 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:32:17 798198	UPDATE [nlxreader.cpp->Process:170]	source. Received 2326528 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:32:23 365419	INFO [latency_benchmark.cpp->Process:50]	2_209_503
+2026/02/03 12:32:25 505054	UPDATE [nlxreader.cpp->Process:170]	source. Received 2359296 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:32:33 374855	UPDATE [nlxreader.cpp->Process:170]	source. Received 2392064 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:32:41 289623	UPDATE [nlxreader.cpp->Process:170]	source. Received 2424832 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:32:44 102527	INFO [latency_benchmark.cpp->Process:50]	1_651_372
+2026/02/03 12:32:48 919848	UPDATE [nlxreader.cpp->Process:170]	source. Received 2457600 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:32:56 765472	UPDATE [nlxreader.cpp->Process:170]	source. Received 2490368 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:33:04 604759	UPDATE [nlxreader.cpp->Process:170]	source. Received 2523136 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:33:04 833768	INFO [latency_benchmark.cpp->Process:50]	1_521_888
+2026/02/03 12:33:12 514484	UPDATE [nlxreader.cpp->Process:170]	source. Received 2555904 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:33:20 339995	UPDATE [nlxreader.cpp->Process:170]	source. Received 2588672 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:33:25 655416	INFO [latency_benchmark.cpp->Process:50]	1_637_213
+2026/02/03 12:33:27 988018	UPDATE [nlxreader.cpp->Process:170]	source. Received 2621440 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:33:35 851673	UPDATE [nlxreader.cpp->Process:170]	source. Received 2654208 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:33:43 780985	UPDATE [nlxreader.cpp->Process:170]	source. Received 2686976 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:33:46 354709	INFO [latency_benchmark.cpp->Process:50]	2_553_787
+2026/02/03 12:33:51 410363	UPDATE [nlxreader.cpp->Process:170]	source. Received 2719744 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:33:59 306542	UPDATE [nlxreader.cpp->Process:170]	source. Received 2752512 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:34:07 131935	UPDATE [nlxreader.cpp->Process:170]	source. Received 2785280 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:34:07 133409	INFO [latency_benchmark.cpp->Process:50]	1_435_736
+2026/02/03 12:34:14 923950	UPDATE [nlxreader.cpp->Process:170]	source. Received 2818048 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:34:22 804039	UPDATE [nlxreader.cpp->Process:170]	source. Received 2850816 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:34:27 881874	INFO [latency_benchmark.cpp->Process:50]	1_627_308
+2026/02/03 12:34:30 450059	UPDATE [nlxreader.cpp->Process:170]	source. Received 2883584 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:34:38 328755	UPDATE [nlxreader.cpp->Process:170]	source. Received 2916352 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:34:46 208498	UPDATE [nlxreader.cpp->Process:170]	source. Received 2949120 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:34:48 544524	INFO [latency_benchmark.cpp->Process:50]	1_703_347
+2026/02/03 12:34:53 864709	UPDATE [nlxreader.cpp->Process:170]	source. Received 2981888 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:35:01 747406	UPDATE [nlxreader.cpp->Process:170]	source. Received 3014656 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:35:09 354513	INFO [latency_benchmark.cpp->Process:50]	1_454_031
+2026/02/03 12:35:09 580832	UPDATE [nlxreader.cpp->Process:170]	source. Received 3047424 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:35:17 517714	UPDATE [nlxreader.cpp->Process:170]	source. Received 3080192 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:35:25 317148	UPDATE [nlxreader.cpp->Process:170]	source. Received 3112960 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:35:30 134350	INFO [latency_benchmark.cpp->Process:50]	1_946_473
+2026/02/03 12:35:32 915997	UPDATE [nlxreader.cpp->Process:170]	source. Received 3145728 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:35:40 791735	UPDATE [nlxreader.cpp->Process:170]	source. Received 3178496 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:35:48 675904	UPDATE [nlxreader.cpp->Process:170]	source. Received 3211264 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:35:50 775923	INFO [latency_benchmark.cpp->Process:50]	1_649_384
+2026/02/03 12:35:56 338745	UPDATE [nlxreader.cpp->Process:170]	source. Received 3244032 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:36:04 191335	UPDATE [nlxreader.cpp->Process:170]	source. Received 3276800 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:36:11 583417	INFO [latency_benchmark.cpp->Process:50]	1_972_500
+2026/02/03 12:36:12 023906	UPDATE [nlxreader.cpp->Process:170]	source. Received 3309568 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:36:19 972936	UPDATE [nlxreader.cpp->Process:170]	source. Received 3342336 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:36:27 800839	UPDATE [nlxreader.cpp->Process:170]	source. Received 3375104 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:36:32 377094	INFO [latency_benchmark.cpp->Process:50]	2_017_046
+2026/02/03 12:36:35 355258	UPDATE [nlxreader.cpp->Process:170]	source. Received 3407872 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:36:43 238944	UPDATE [nlxreader.cpp->Process:170]	source. Received 3440640 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:36:51 100293	UPDATE [nlxreader.cpp->Process:170]	source. Received 3473408 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:36:52 983668	INFO [latency_benchmark.cpp->Process:50]	1_935_024
+2026/02/03 12:36:58 965829	UPDATE [nlxreader.cpp->Process:170]	source. Received 3506176 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:37:06 806788	UPDATE [nlxreader.cpp->Process:170]	source. Received 3538944 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:37:13 921321	INFO [latency_benchmark.cpp->Process:50]	1_880_710
+2026/02/03 12:37:14 580821	UPDATE [nlxreader.cpp->Process:170]	source. Received 3571712 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:37:22 557599	UPDATE [nlxreader.cpp->Process:170]	source. Received 3604480 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:37:30 431112	UPDATE [nlxreader.cpp->Process:170]	source. Received 3637248 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:37:34 676857	INFO [latency_benchmark.cpp->Process:50]	1_859_748
+2026/02/03 12:37:37 942270	UPDATE [nlxreader.cpp->Process:170]	source. Received 3670016 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:37:45 790115	UPDATE [nlxreader.cpp->Process:170]	source. Received 3702784 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:37:53 663720	UPDATE [nlxreader.cpp->Process:170]	source. Received 3735552 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:37:55 285261	INFO [latency_benchmark.cpp->Process:50]	1_960_183
+2026/02/03 12:38:01 578216	UPDATE [nlxreader.cpp->Process:170]	source. Received 3768320 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:38:09 439717	UPDATE [nlxreader.cpp->Process:170]	source. Received 3801088 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:38:16 277072	INFO [latency_benchmark.cpp->Process:50]	1_670_821
+2026/02/03 12:38:17 154372	UPDATE [nlxreader.cpp->Process:170]	source. Received 3833856 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:38:25 089319	UPDATE [nlxreader.cpp->Process:170]	source. Received 3866624 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:38:32 952960	UPDATE [nlxreader.cpp->Process:170]	source. Received 3899392 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:38:36 954833	INFO [latency_benchmark.cpp->Process:50]	1_834_942
+2026/02/03 12:38:40 477799	UPDATE [nlxreader.cpp->Process:170]	source. Received 3932160 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:38:48 299925	UPDATE [nlxreader.cpp->Process:170]	source. Received 3964928 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:38:56 123910	UPDATE [nlxreader.cpp->Process:170]	source. Received 3997696 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:38:57 484768	INFO [latency_benchmark.cpp->Process:50]	1_757_129
+2026/02/03 12:39:03 994830	UPDATE [nlxreader.cpp->Process:170]	source. Received 4030464 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:39:11 895577	UPDATE [nlxreader.cpp->Process:170]	source. Received 4063232 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:39:18 488583	INFO [latency_benchmark.cpp->Process:50]	1_891_930
+2026/02/03 12:39:19 597896	UPDATE [nlxreader.cpp->Process:170]	source. Received 4096000 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:39:27 608248	UPDATE [nlxreader.cpp->Process:170]	source. Received 4128768 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:39:35 473841	UPDATE [nlxreader.cpp->Process:170]	source. Received 4161536 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:39:39 269330	INFO [latency_benchmark.cpp->Process:50]	1_869_864
+2026/02/03 12:39:43 017125	UPDATE [nlxreader.cpp->Process:170]	source. Received 4194304 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:39:50 864571	UPDATE [nlxreader.cpp->Process:170]	source. Received 4227072 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:39:58 715443	UPDATE [nlxreader.cpp->Process:170]	source. Received 4259840 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:39:59 846536	INFO [latency_benchmark.cpp->Process:50]	1_773_688
+2026/02/03 12:40:06 497164	UPDATE [nlxreader.cpp->Process:170]	source. Received 4292608 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:40:14 323035	UPDATE [nlxreader.cpp->Process:170]	source. Received 4325376 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:40:20 671656	INFO [latency_benchmark.cpp->Process:50]	1_843_443
+2026/02/03 12:40:22 054324	UPDATE [nlxreader.cpp->Process:170]	source. Received 4358144 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:40:30 067885	UPDATE [nlxreader.cpp->Process:170]	source. Received 4390912 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:40:37 933133	UPDATE [nlxreader.cpp->Process:170]	source. Received 4423680 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:40:41 438101	INFO [latency_benchmark.cpp->Process:50]	1_820_561
+2026/02/03 12:40:45 443212	UPDATE [nlxreader.cpp->Process:170]	source. Received 4456448 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:40:53 308107	UPDATE [nlxreader.cpp->Process:170]	source. Received 4489216 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:41:01 202059	UPDATE [nlxreader.cpp->Process:170]	source. Received 4521984 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:41:02 084482	INFO [latency_benchmark.cpp->Process:50]	2_074_685
+2026/02/03 12:41:09 067146	UPDATE [nlxreader.cpp->Process:170]	source. Received 4554752 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:41:16 811668	UPDATE [nlxreader.cpp->Process:170]	source. Received 4587520 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:41:22 861421	INFO [latency_benchmark.cpp->Process:50]	2_051_371
+2026/02/03 12:41:24 450671	UPDATE [nlxreader.cpp->Process:170]	source. Received 4620288 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:41:32 493388	UPDATE [nlxreader.cpp->Process:170]	source. Received 4653056 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:41:40 393740	UPDATE [nlxreader.cpp->Process:170]	source. Received 4685824 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:41:43 655663	INFO [latency_benchmark.cpp->Process:50]	2_092_139
+2026/02/03 12:41:47 993585	UPDATE [nlxreader.cpp->Process:170]	source. Received 4718592 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:41:55 805123	UPDATE [nlxreader.cpp->Process:170]	source. Received 4751360 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:42:03 677174	UPDATE [nlxreader.cpp->Process:170]	source. Received 4784128 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:42:04 349695	INFO [latency_benchmark.cpp->Process:50]	2_045_060
+2026/02/03 12:42:11 596044	UPDATE [nlxreader.cpp->Process:170]	source. Received 4816896 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:42:19 477471	UPDATE [nlxreader.cpp->Process:170]	source. Received 4849664 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:42:25 259261	INFO [latency_benchmark.cpp->Process:50]	1_782_740
+2026/02/03 12:42:27 141917	UPDATE [nlxreader.cpp->Process:170]	source. Received 4882432 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:42:35 184410	UPDATE [nlxreader.cpp->Process:170]	source. Received 4915200 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:42:43 069538	UPDATE [nlxreader.cpp->Process:170]	source. Received 4947968 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:42:46 050545	INFO [latency_benchmark.cpp->Process:50]	2_114_081
+2026/02/03 12:42:50 594965	UPDATE [nlxreader.cpp->Process:170]	source. Received 4980736 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:42:58 425107	UPDATE [nlxreader.cpp->Process:170]	source. Received 5013504 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:43:06 238525	UPDATE [nlxreader.cpp->Process:170]	source. Received 5046272 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:43:06 685207	INFO [latency_benchmark.cpp->Process:50]	2_074_598
+2026/02/03 12:43:14 069208	UPDATE [nlxreader.cpp->Process:170]	source. Received 5079040 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:43:21 928022	UPDATE [nlxreader.cpp->Process:170]	source. Received 5111808 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:43:27 473594	INFO [latency_benchmark.cpp->Process:50]	1_760_619
+2026/02/03 12:43:29 589570	UPDATE [nlxreader.cpp->Process:170]	source. Received 5144576 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:43:37 463051	UPDATE [nlxreader.cpp->Process:170]	source. Received 5177344 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:43:45 345548	UPDATE [nlxreader.cpp->Process:170]	source. Received 5210112 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:43:48 157917	INFO [latency_benchmark.cpp->Process:50]	1_747_637
+2026/02/03 12:43:52 911040	UPDATE [nlxreader.cpp->Process:170]	source. Received 5242880 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:44:00 779368	UPDATE [nlxreader.cpp->Process:170]	source. Received 5275648 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:44:08 628263	UPDATE [nlxreader.cpp->Process:170]	source. Received 5308416 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:44:08 857669	INFO [latency_benchmark.cpp->Process:50]	1_602_607
+2026/02/03 12:44:16 512856	UPDATE [nlxreader.cpp->Process:170]	source. Received 5341184 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:44:24 351147	UPDATE [nlxreader.cpp->Process:170]	source. Received 5373952 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:44:29 660797	INFO [latency_benchmark.cpp->Process:50]	2_155_807
+2026/02/03 12:44:32 018116	UPDATE [nlxreader.cpp->Process:170]	source. Received 5406720 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:44:39 829998	UPDATE [nlxreader.cpp->Process:170]	source. Received 5439488 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:44:47 674545	UPDATE [nlxreader.cpp->Process:170]	source. Received 5472256 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:44:50 240190	INFO [latency_benchmark.cpp->Process:50]	1_759_459
+2026/02/03 12:44:55 193474	UPDATE [nlxreader.cpp->Process:170]	source. Received 5505024 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:45:03 069425	UPDATE [nlxreader.cpp->Process:170]	source. Received 5537792 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:45:10 119328	UPDATE [nlxreader.cpp->Process:170]	source. Received 5570560 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:45:10 121605	INFO [latency_benchmark.cpp->Process:50]	2_241_550
+2026/02/03 12:45:17 191881	UPDATE [nlxreader.cpp->Process:170]	source. Received 5603328 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:45:23 755609	UPDATE [nlxreader.cpp->Process:170]	source. Received 5636096 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:45:28 799444	INFO [latency_benchmark.cpp->Process:50]	1_630_049
+2026/02/03 12:45:31 376923	UPDATE [nlxreader.cpp->Process:170]	source. Received 5668864 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:45:39 260210	UPDATE [nlxreader.cpp->Process:170]	source. Received 5701632 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:45:47 139213	UPDATE [nlxreader.cpp->Process:170]	source. Received 5734400 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:45:49 468167	INFO [latency_benchmark.cpp->Process:50]	1_667_590
+2026/02/03 12:45:54 772000	UPDATE [nlxreader.cpp->Process:170]	source. Received 5767168 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:46:02 675104	UPDATE [nlxreader.cpp->Process:170]	source. Received 5799936 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:46:10 255471	INFO [latency_benchmark.cpp->Process:50]	2_232_145
+2026/02/03 12:46:10 473853	UPDATE [nlxreader.cpp->Process:170]	source. Received 5832704 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:46:18 348313	UPDATE [nlxreader.cpp->Process:170]	source. Received 5865472 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:46:26 266035	UPDATE [nlxreader.cpp->Process:170]	source. Received 5898240 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:46:31 062125	INFO [latency_benchmark.cpp->Process:50]	1_555_595
+2026/02/03 12:46:33 900429	UPDATE [nlxreader.cpp->Process:170]	source. Received 5931008 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:46:41 797596	UPDATE [nlxreader.cpp->Process:170]	source. Received 5963776 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:46:49 632478	UPDATE [nlxreader.cpp->Process:170]	source. Received 5996544 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:46:51 751186	INFO [latency_benchmark.cpp->Process:50]	2_136_393
+2026/02/03 12:46:57 256537	UPDATE [nlxreader.cpp->Process:170]	source. Received 6029312 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:47:05 099670	UPDATE [nlxreader.cpp->Process:170]	source. Received 6062080 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:47:12 473351	INFO [latency_benchmark.cpp->Process:50]	2_315_981
+2026/02/03 12:47:12 917074	UPDATE [nlxreader.cpp->Process:170]	source. Received 6094848 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:47:20 825091	UPDATE [nlxreader.cpp->Process:170]	source. Received 6127616 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:47:28 701535	UPDATE [nlxreader.cpp->Process:170]	source. Received 6160384 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:47:33 232540	INFO [latency_benchmark.cpp->Process:50]	1_819_440
+2026/02/03 12:47:36 237873	UPDATE [nlxreader.cpp->Process:170]	source. Received 6193152 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:47:44 100554	UPDATE [nlxreader.cpp->Process:170]	source. Received 6225920 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:47:51 962979	UPDATE [nlxreader.cpp->Process:170]	source. Received 6258688 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:47:53 826718	INFO [latency_benchmark.cpp->Process:50]	1_869_336
+2026/02/03 12:47:59 828875	UPDATE [nlxreader.cpp->Process:170]	source. Received 6291456 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:48:07 671468	UPDATE [nlxreader.cpp->Process:170]	source. Received 6324224 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:48:14 724876	INFO [latency_benchmark.cpp->Process:50]	2_047_503
+2026/02/03 12:48:15 378270	UPDATE [nlxreader.cpp->Process:170]	source. Received 6356992 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:48:23 363225	UPDATE [nlxreader.cpp->Process:170]	source. Received 6389760 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:48:31 234040	UPDATE [nlxreader.cpp->Process:170]	source. Received 6422528 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:48:35 548287	INFO [latency_benchmark.cpp->Process:50]	1_800_448
+2026/02/03 12:48:38 805217	UPDATE [nlxreader.cpp->Process:170]	source. Received 6455296 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:48:46 630173	UPDATE [nlxreader.cpp->Process:170]	source. Received 6488064 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:48:54 451477	UPDATE [nlxreader.cpp->Process:170]	source. Received 6520832 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:48:56 103271	INFO [latency_benchmark.cpp->Process:50]	1_846_420
+2026/02/03 12:49:02 373436	UPDATE [nlxreader.cpp->Process:170]	source. Received 6553600 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:49:10 254304	UPDATE [nlxreader.cpp->Process:170]	source. Received 6586368 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:49:17 099073	INFO [latency_benchmark.cpp->Process:50]	1_793_072
+2026/02/03 12:49:17 970618	UPDATE [nlxreader.cpp->Process:170]	source. Received 6619136 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:49:25 980207	UPDATE [nlxreader.cpp->Process:170]	source. Received 6651904 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:49:33 880896	UPDATE [nlxreader.cpp->Process:170]	source. Received 6684672 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:49:37 928302	INFO [latency_benchmark.cpp->Process:50]	1_691_931
+2026/02/03 12:49:41 436278	UPDATE [nlxreader.cpp->Process:170]	source. Received 6717440 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:49:49 331165	UPDATE [nlxreader.cpp->Process:170]	source. Received 6750208 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:49:57 156590	UPDATE [nlxreader.cpp->Process:170]	source. Received 6782976 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:49:58 532012	INFO [latency_benchmark.cpp->Process:50]	1_886_528
+2026/02/03 12:50:04 978107	UPDATE [nlxreader.cpp->Process:170]	source. Received 6815744 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:50:12 808193	UPDATE [nlxreader.cpp->Process:170]	source. Received 6848512 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:50:19 405693	INFO [latency_benchmark.cpp->Process:50]	2_288_393
+2026/02/03 12:50:20 506215	UPDATE [nlxreader.cpp->Process:170]	source. Received 6881280 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:50:28 516028	UPDATE [nlxreader.cpp->Process:170]	source. Received 6914048 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:50:36 301043	UPDATE [nlxreader.cpp->Process:170]	source. Received 6946816 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:50:40 084579	INFO [latency_benchmark.cpp->Process:50]	2_168_568
+2026/02/03 12:50:43 833483	UPDATE [nlxreader.cpp->Process:170]	source. Received 6979584 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:50:51 709152	UPDATE [nlxreader.cpp->Process:170]	source. Received 7012352 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:50:59 540228	UPDATE [nlxreader.cpp->Process:170]	source. Received 7045120 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:51:00 652174	INFO [latency_benchmark.cpp->Process:50]	1_383_388
+2026/02/03 12:51:07 421606	UPDATE [nlxreader.cpp->Process:170]	source. Received 7077888 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:51:15 174192	UPDATE [nlxreader.cpp->Process:170]	source. Received 7110656 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:51:21 564070	INFO [latency_benchmark.cpp->Process:50]	1_833_705
+2026/02/03 12:51:22 908684	UPDATE [nlxreader.cpp->Process:170]	source. Received 7143424 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:51:30 898273	UPDATE [nlxreader.cpp->Process:170]	source. Received 7176192 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:51:38 837340	UPDATE [nlxreader.cpp->Process:170]	source. Received 7208960 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:51:42 349496	INFO [latency_benchmark.cpp->Process:50]	2_138_819
+2026/02/03 12:51:46 351263	UPDATE [nlxreader.cpp->Process:170]	source. Received 7241728 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:51:54 226481	UPDATE [nlxreader.cpp->Process:170]	source. Received 7274496 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:52:02 103092	UPDATE [nlxreader.cpp->Process:170]	source. Received 7307264 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:52:02 989433	INFO [latency_benchmark.cpp->Process:50]	1_689_576
+2026/02/03 12:52:09 958101	UPDATE [nlxreader.cpp->Process:170]	source. Received 7340032 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:52:17 849128	UPDATE [nlxreader.cpp->Process:170]	source. Received 7372800 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:52:23 908367	INFO [latency_benchmark.cpp->Process:50]	1_512_225
+2026/02/03 12:52:25 545453	UPDATE [nlxreader.cpp->Process:170]	source. Received 7405568 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:52:33 633453	UPDATE [nlxreader.cpp->Process:170]	source. Received 7438336 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:52:41 533874	UPDATE [nlxreader.cpp->Process:170]	source. Received 7471104 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:52:44 779419	INFO [latency_benchmark.cpp->Process:50]	1_699_913
+2026/02/03 12:52:49 085133	UPDATE [nlxreader.cpp->Process:170]	source. Received 7503872 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:52:56 907891	UPDATE [nlxreader.cpp->Process:170]	source. Received 7536640 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:53:04 742989	UPDATE [nlxreader.cpp->Process:170]	source. Received 7569408 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:53:05 416504	INFO [latency_benchmark.cpp->Process:50]	2_479_955
+2026/02/03 12:53:12 661132	UPDATE [nlxreader.cpp->Process:170]	source. Received 7602176 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:53:20 524334	UPDATE [nlxreader.cpp->Process:170]	source. Received 7634944 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:53:26 332076	INFO [latency_benchmark.cpp->Process:50]	1_842_691
+2026/02/03 12:53:28 235130	UPDATE [nlxreader.cpp->Process:170]	source. Received 7667712 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:53:36 248416	UPDATE [nlxreader.cpp->Process:170]	source. Received 7700480 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:53:44 136365	UPDATE [nlxreader.cpp->Process:170]	source. Received 7733248 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:53:47 168416	INFO [latency_benchmark.cpp->Process:50]	1_993_062
+2026/02/03 12:53:51 710185	UPDATE [nlxreader.cpp->Process:170]	source. Received 7766016 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:53:59 616344	UPDATE [nlxreader.cpp->Process:170]	source. Received 7798784 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:54:07 440243	UPDATE [nlxreader.cpp->Process:170]	source. Received 7831552 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:54:07 883787	INFO [latency_benchmark.cpp->Process:50]	2_278_051
+2026/02/03 12:54:15 317672	UPDATE [nlxreader.cpp->Process:170]	source. Received 7864320 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:54:23 193336	UPDATE [nlxreader.cpp->Process:170]	source. Received 7897088 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:54:28 752432	INFO [latency_benchmark.cpp->Process:50]	1_771_218
+2026/02/03 12:54:30 881756	UPDATE [nlxreader.cpp->Process:170]	source. Received 7929856 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:54:38 801992	UPDATE [nlxreader.cpp->Process:170]	source. Received 7962624 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:54:46 626696	UPDATE [nlxreader.cpp->Process:170]	source. Received 7995392 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:54:49 428521	INFO [latency_benchmark.cpp->Process:50]	1_527_126
+2026/02/03 12:54:54 186997	UPDATE [nlxreader.cpp->Process:170]	source. Received 8028160 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:55:02 089257	UPDATE [nlxreader.cpp->Process:170]	source. Received 8060928 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:55:09 968775	UPDATE [nlxreader.cpp->Process:170]	source. Received 8093696 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:55:10 193773	INFO [latency_benchmark.cpp->Process:50]	1_805_097
+2026/02/03 12:55:17 844382	UPDATE [nlxreader.cpp->Process:170]	source. Received 8126464 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:55:25 677897	UPDATE [nlxreader.cpp->Process:170]	source. Received 8159232 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:55:30 981046	INFO [latency_benchmark.cpp->Process:50]	1_929_454
+2026/02/03 12:55:33 317868	UPDATE [nlxreader.cpp->Process:170]	source. Received 8192000 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:55:41 219594	UPDATE [nlxreader.cpp->Process:170]	source. Received 8224768 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:55:49 149227	UPDATE [nlxreader.cpp->Process:170]	source. Received 8257536 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:55:51 702132	INFO [latency_benchmark.cpp->Process:50]	1_645_590
+2026/02/03 12:55:56 724876	UPDATE [nlxreader.cpp->Process:170]	source. Received 8290304 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:56:04 523782	UPDATE [nlxreader.cpp->Process:170]	source. Received 8323072 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:56:12 425108	UPDATE [nlxreader.cpp->Process:170]	source. Received 8355840 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:56:12 426955	INFO [latency_benchmark.cpp->Process:50]	1_812_555
+2026/02/03 12:56:20 324105	UPDATE [nlxreader.cpp->Process:170]	source. Received 8388608 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:56:28 121023	UPDATE [nlxreader.cpp->Process:170]	source. Received 8421376 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:56:33 175879	INFO [latency_benchmark.cpp->Process:50]	1_626_033
+2026/02/03 12:56:35 737533	UPDATE [nlxreader.cpp->Process:170]	source. Received 8454144 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:56:43 652228	UPDATE [nlxreader.cpp->Process:170]	source. Received 8486912 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:56:51 532179	UPDATE [nlxreader.cpp->Process:170]	source. Received 8519680 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:56:53 874983	INFO [latency_benchmark.cpp->Process:50]	2_336_655
+2026/02/03 12:56:59 156386	UPDATE [nlxreader.cpp->Process:170]	source. Received 8552448 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:57:07 089449	UPDATE [nlxreader.cpp->Process:170]	source. Received 8585216 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:57:14 699022	INFO [latency_benchmark.cpp->Process:50]	1_663_841
+2026/02/03 12:57:14 925935	UPDATE [nlxreader.cpp->Process:170]	source. Received 8617984 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:57:22 887143	UPDATE [nlxreader.cpp->Process:170]	source. Received 8650752 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:57:30 788999	UPDATE [nlxreader.cpp->Process:170]	source. Received 8683520 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:57:35 533573	INFO [latency_benchmark.cpp->Process:50]	2_364_689
+2026/02/03 12:57:38 321504	UPDATE [nlxreader.cpp->Process:170]	source. Received 8716288 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:57:46 180795	UPDATE [nlxreader.cpp->Process:170]	source. Received 8749056 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:57:54 064059	UPDATE [nlxreader.cpp->Process:170]	source. Received 8781824 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:57:56 184382	INFO [latency_benchmark.cpp->Process:50]	1_761_815
+2026/02/03 12:58:01 909899	UPDATE [nlxreader.cpp->Process:170]	source. Received 8814592 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:58:09 759040	UPDATE [nlxreader.cpp->Process:170]	source. Received 8847360 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:58:17 150725	INFO [latency_benchmark.cpp->Process:50]	2_283_717
+2026/02/03 12:58:17 610367	UPDATE [nlxreader.cpp->Process:170]	source. Received 8880128 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:58:25 547418	UPDATE [nlxreader.cpp->Process:170]	source. Received 8912896 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:58:33 437923	UPDATE [nlxreader.cpp->Process:170]	source. Received 8945664 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:58:37 974626	INFO [latency_benchmark.cpp->Process:50]	1_854_048
+2026/02/03 12:58:40 960947	UPDATE [nlxreader.cpp->Process:170]	source. Received 8978432 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:58:48 854761	UPDATE [nlxreader.cpp->Process:170]	source. Received 9011200 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:58:56 702568	UPDATE [nlxreader.cpp->Process:170]	source. Received 9043968 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:58:58 560689	INFO [latency_benchmark.cpp->Process:50]	1_821_988
+2026/02/03 12:59:04 488198	UPDATE [nlxreader.cpp->Process:170]	source. Received 9076736 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:59:12 387406	UPDATE [nlxreader.cpp->Process:170]	source. Received 9109504 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:59:19 485910	INFO [latency_benchmark.cpp->Process:50]	1_913_177
+2026/02/03 12:59:20 149553	UPDATE [nlxreader.cpp->Process:170]	source. Received 9142272 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:59:28 066646	UPDATE [nlxreader.cpp->Process:170]	source. Received 9175040 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:59:35 972714	UPDATE [nlxreader.cpp->Process:170]	source. Received 9207808 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:59:40 326442	INFO [latency_benchmark.cpp->Process:50]	2_385_920
+2026/02/03 12:59:43 588616	UPDATE [nlxreader.cpp->Process:170]	source. Received 9240576 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:59:51 480213	UPDATE [nlxreader.cpp->Process:170]	source. Received 9273344 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 12:59:59 346771	UPDATE [nlxreader.cpp->Process:170]	source. Received 9306112 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:00:00 961347	INFO [latency_benchmark.cpp->Process:50]	1_964_865
+2026/02/03 13:00:07 258847	UPDATE [nlxreader.cpp->Process:170]	source. Received 9338880 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:00:15 055627	UPDATE [nlxreader.cpp->Process:170]	source. Received 9371648 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:00:21 920774	INFO [latency_benchmark.cpp->Process:50]	1_885_368
+2026/02/03 13:00:22 792567	UPDATE [nlxreader.cpp->Process:170]	source. Received 9404416 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:00:30 843952	UPDATE [nlxreader.cpp->Process:170]	source. Received 9437184 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:00:38 733047	UPDATE [nlxreader.cpp->Process:170]	source. Received 9469952 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:00:42 828516	INFO [latency_benchmark.cpp->Process:50]	2_180_853
+2026/02/03 13:00:46 345495	UPDATE [nlxreader.cpp->Process:170]	source. Received 9502720 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:00:54 283565	UPDATE [nlxreader.cpp->Process:170]	source. Received 9535488 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:01:02 294426	UPDATE [nlxreader.cpp->Process:170]	source. Received 9568256 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:01:03 721935	INFO [latency_benchmark.cpp->Process:50]	1_850_406
+2026/02/03 13:01:10 111881	UPDATE [nlxreader.cpp->Process:170]	source. Received 9601024 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:01:17 993752	UPDATE [nlxreader.cpp->Process:170]	source. Received 9633792 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:01:24 708874	INFO [latency_benchmark.cpp->Process:50]	1_777_755
+2026/02/03 13:01:25 858154	UPDATE [nlxreader.cpp->Process:170]	source. Received 9666560 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:01:33 962684	UPDATE [nlxreader.cpp->Process:170]	source. Received 9699328 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:01:41 999921	UPDATE [nlxreader.cpp->Process:170]	source. Received 9732096 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:01:45 859958	INFO [latency_benchmark.cpp->Process:50]	1_869_566
+2026/02/03 13:01:49 774157	UPDATE [nlxreader.cpp->Process:170]	source. Received 9764864 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:01:57 771311	UPDATE [nlxreader.cpp->Process:170]	source. Received 9797632 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:02:05 756983	UPDATE [nlxreader.cpp->Process:170]	source. Received 9830400 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:02:06 927430	INFO [latency_benchmark.cpp->Process:50]	1_924_322
+2026/02/03 13:02:13 730481	UPDATE [nlxreader.cpp->Process:170]	source. Received 9863168 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:02:21 664631	UPDATE [nlxreader.cpp->Process:170]	source. Received 9895936 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:02:28 191370	INFO [latency_benchmark.cpp->Process:50]	1_868_154
+2026/02/03 13:02:29 637763	UPDATE [nlxreader.cpp->Process:170]	source. Received 9928704 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:02:37 770901	UPDATE [nlxreader.cpp->Process:170]	source. Received 9961472 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:02:45 783210	UPDATE [nlxreader.cpp->Process:170]	source. Received 9994240 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:02:49 458063	INFO [latency_benchmark.cpp->Process:50]	1_773_966
+2026/02/03 13:02:53 663738	UPDATE [nlxreader.cpp->Process:170]	source. Received 10027008 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:03:01 676246	UPDATE [nlxreader.cpp->Process:170]	source. Received 10059776 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:03:09 713502	UPDATE [nlxreader.cpp->Process:170]	source. Received 10092544 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:03:10 662913	INFO [latency_benchmark.cpp->Process:50]	2_499_965
+2026/02/03 13:03:17 706497	UPDATE [nlxreader.cpp->Process:170]	source. Received 10125312 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:03:25 668226	UPDATE [nlxreader.cpp->Process:170]	source. Received 10158080 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:03:31 884616	INFO [latency_benchmark.cpp->Process:50]	2_091_661
+2026/02/03 13:03:33 588718	UPDATE [nlxreader.cpp->Process:170]	source. Received 10190848 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:03:41 762473	UPDATE [nlxreader.cpp->Process:170]	source. Received 10223616 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:03:49 799708	UPDATE [nlxreader.cpp->Process:170]	source. Received 10256384 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:03:53 173636	INFO [latency_benchmark.cpp->Process:50]	1_918_330
+2026/02/03 13:03:57 595877	UPDATE [nlxreader.cpp->Process:170]	source. Received 10289152 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:04:05 565982	UPDATE [nlxreader.cpp->Process:170]	source. Received 10321920 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:04:13 668338	UPDATE [nlxreader.cpp->Process:170]	source. Received 10354688 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:04:14 350103	INFO [latency_benchmark.cpp->Process:50]	2_048_997
+2026/02/03 13:04:21 678557	UPDATE [nlxreader.cpp->Process:170]	source. Received 10387456 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:04:29 673656	UPDATE [nlxreader.cpp->Process:170]	source. Received 10420224 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:04:35 628142	INFO [latency_benchmark.cpp->Process:50]	2_221_340
+2026/02/03 13:04:37 596619	UPDATE [nlxreader.cpp->Process:170]	source. Received 10452992 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:04:45 699949	UPDATE [nlxreader.cpp->Process:170]	source. Received 10485760 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:04:53 750584	UPDATE [nlxreader.cpp->Process:170]	source. Received 10518528 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:04:56 881306	INFO [latency_benchmark.cpp->Process:50]	1_891_302
+2026/02/03 13:05:01 516860	UPDATE [nlxreader.cpp->Process:170]	source. Received 10551296 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:05:09 499607	UPDATE [nlxreader.cpp->Process:170]	source. Received 10584064 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:05:17 471075	UPDATE [nlxreader.cpp->Process:170]	source. Received 10616832 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:05:17 946195	INFO [latency_benchmark.cpp->Process:50]	1_994_004
+2026/02/03 13:05:25 467405	UPDATE [nlxreader.cpp->Process:170]	source. Received 10649600 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:05:33 500549	UPDATE [nlxreader.cpp->Process:170]	source. Received 10682368 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:05:39 269621	INFO [latency_benchmark.cpp->Process:50]	2_002_538
+2026/02/03 13:05:41 548459	UPDATE [nlxreader.cpp->Process:170]	source. Received 10715136 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:05:49 559101	UPDATE [nlxreader.cpp->Process:170]	source. Received 10747904 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:05:57 587477	UPDATE [nlxreader.cpp->Process:170]	source. Received 10780672 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:06:00 517029	INFO [latency_benchmark.cpp->Process:50]	13_183_455
+2026/02/03 13:06:05 389064	UPDATE [nlxreader.cpp->Process:170]	source. Received 10813440 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:06:13 414588	UPDATE [nlxreader.cpp->Process:170]	source. Received 10846208 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:06:21 463538	UPDATE [nlxreader.cpp->Process:170]	source. Received 10878976 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:06:21 714443	INFO [latency_benchmark.cpp->Process:50]	2_348_730
+2026/02/03 13:06:29 511412	UPDATE [nlxreader.cpp->Process:170]	source. Received 10911744 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:06:37 491916	UPDATE [nlxreader.cpp->Process:170]	source. Received 10944512 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:06:42 984699	INFO [latency_benchmark.cpp->Process:50]	1_802_262
+2026/02/03 13:06:45 398131	UPDATE [nlxreader.cpp->Process:170]	source. Received 10977280 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:06:53 450970	UPDATE [nlxreader.cpp->Process:170]	source. Received 11010048 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:07:01 530272	UPDATE [nlxreader.cpp->Process:170]	source. Received 11042816 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:07:04 211042	INFO [latency_benchmark.cpp->Process:50]	1_490_855
+2026/02/03 13:07:09 434294	UPDATE [nlxreader.cpp->Process:170]	source. Received 11075584 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:07:17 461717	UPDATE [nlxreader.cpp->Process:170]	source. Received 11108352 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:07:25 492502	UPDATE [nlxreader.cpp->Process:170]	source. Received 11141120 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:07:25 494741	INFO [latency_benchmark.cpp->Process:50]	2_204_499
+2026/02/03 13:07:33 555050	UPDATE [nlxreader.cpp->Process:170]	source. Received 11173888 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:07:41 589634	UPDATE [nlxreader.cpp->Process:170]	source. Received 11206656 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:07:46 787104	INFO [latency_benchmark.cpp->Process:50]	1_862_244
+2026/02/03 13:07:49 453844	UPDATE [nlxreader.cpp->Process:170]	source. Received 11239424 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:07:57 442377	UPDATE [nlxreader.cpp->Process:170]	source. Received 11272192 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:08:05 440378	UPDATE [nlxreader.cpp->Process:170]	source. Received 11304960 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:08:07 879800	INFO [latency_benchmark.cpp->Process:50]	2_027_414
+2026/02/03 13:08:13 359692	UPDATE [nlxreader.cpp->Process:170]	source. Received 11337728 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:08:21 390668	UPDATE [nlxreader.cpp->Process:170]	source. Received 11370496 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:08:29 190852	INFO [latency_benchmark.cpp->Process:50]	1_773_166
+2026/02/03 13:08:29 442525	UPDATE [nlxreader.cpp->Process:170]	source. Received 11403264 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:08:37 455639	UPDATE [nlxreader.cpp->Process:170]	source. Received 11436032 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:08:45 473074	UPDATE [nlxreader.cpp->Process:170]	source. Received 11468800 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:08:50 451712	INFO [latency_benchmark.cpp->Process:50]	2_121_508
+2026/02/03 13:08:53 335428	UPDATE [nlxreader.cpp->Process:170]	source. Received 11501568 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:09:01 363610	UPDATE [nlxreader.cpp->Process:170]	source. Received 11534336 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:09:09 393150	UPDATE [nlxreader.cpp->Process:170]	source. Received 11567104 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:09:11 637151	INFO [latency_benchmark.cpp->Process:50]	1_698_608
+2026/02/03 13:09:17 320840	UPDATE [nlxreader.cpp->Process:170]	source. Received 11599872 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:09:25 345266	UPDATE [nlxreader.cpp->Process:170]	source. Received 11632640 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:09:32 916637	INFO [latency_benchmark.cpp->Process:50]	2_235_369
+2026/02/03 13:09:33 373245	UPDATE [nlxreader.cpp->Process:170]	source. Received 11665408 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:09:41 473457	UPDATE [nlxreader.cpp->Process:170]	source. Received 11698176 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:09:49 521938	UPDATE [nlxreader.cpp->Process:170]	source. Received 11730944 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:09:54 136205	INFO [latency_benchmark.cpp->Process:50]	1_315_611
+2026/02/03 13:09:57 299323	UPDATE [nlxreader.cpp->Process:170]	source. Received 11763712 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:10:05 297880	UPDATE [nlxreader.cpp->Process:170]	source. Received 11796480 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:10:13 402110	UPDATE [nlxreader.cpp->Process:170]	source. Received 11829248 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:10:15 366778	INFO [latency_benchmark.cpp->Process:50]	2_221_602
+2026/02/03 13:10:21 484057	UPDATE [nlxreader.cpp->Process:170]	source. Received 11862016 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:10:29 527092	UPDATE [nlxreader.cpp->Process:170]	source. Received 11894784 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:10:36 774161	INFO [latency_benchmark.cpp->Process:50]	1_811_522
+2026/02/03 13:10:37 470378	UPDATE [nlxreader.cpp->Process:170]	source. Received 11927552 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:10:45 560021	UPDATE [nlxreader.cpp->Process:170]	source. Received 11960320 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:10:53 583910	UPDATE [nlxreader.cpp->Process:170]	source. Received 11993088 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:10:58 012693	INFO [latency_benchmark.cpp->Process:50]	1_914_271
+2026/02/03 13:11:01 449745	UPDATE [nlxreader.cpp->Process:170]	source. Received 12025856 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:11:09 497448	UPDATE [nlxreader.cpp->Process:170]	source. Received 12058624 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:11:17 385342	UPDATE [nlxreader.cpp->Process:170]	source. Received 12091392 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:11:19 100912	INFO [latency_benchmark.cpp->Process:50]	1_835_698
+2026/02/03 13:11:25 421487	UPDATE [nlxreader.cpp->Process:170]	source. Received 12124160 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:11:33 489448	UPDATE [nlxreader.cpp->Process:170]	source. Received 12156928 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:11:40 496734	INFO [latency_benchmark.cpp->Process:50]	1_922_196
+2026/02/03 13:11:41 420319	UPDATE [nlxreader.cpp->Process:170]	source. Received 12189696 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:11:49 530988	UPDATE [nlxreader.cpp->Process:170]	source. Received 12222464 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:11:57 562807	UPDATE [nlxreader.cpp->Process:170]	source. Received 12255232 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:12:01 742426	INFO [latency_benchmark.cpp->Process:50]	1_743_857
+2026/02/03 13:12:05 362789	UPDATE [nlxreader.cpp->Process:170]	source. Received 12288000 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:12:13 418329	UPDATE [nlxreader.cpp->Process:170]	source. Received 12320768 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:12:21 476083	UPDATE [nlxreader.cpp->Process:170]	source. Received 12353536 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:12:22 926464	INFO [latency_benchmark.cpp->Process:50]	1_606_660
+2026/02/03 13:12:29 548311	UPDATE [nlxreader.cpp->Process:170]	source. Received 12386304 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:12:37 601109	UPDATE [nlxreader.cpp->Process:170]	source. Received 12419072 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:12:44 342915	INFO [latency_benchmark.cpp->Process:50]	1_985_591
+2026/02/03 13:12:45 542565	UPDATE [nlxreader.cpp->Process:170]	source. Received 12451840 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:12:53 644494	UPDATE [nlxreader.cpp->Process:170]	source. Received 12484608 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:13:01 692802	UPDATE [nlxreader.cpp->Process:170]	source. Received 12517376 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:13:05 594960	INFO [latency_benchmark.cpp->Process:50]	2_186_436
+2026/02/03 13:13:09 542515	UPDATE [nlxreader.cpp->Process:170]	source. Received 12550144 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:13:17 598037	UPDATE [nlxreader.cpp->Process:170]	source. Received 12582912 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:13:25 659457	UPDATE [nlxreader.cpp->Process:170]	source. Received 12615680 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:13:26 857262	INFO [latency_benchmark.cpp->Process:50]	1_815_268
+2026/02/03 13:13:33 748571	UPDATE [nlxreader.cpp->Process:170]	source. Received 12648448 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:13:41 828887	UPDATE [nlxreader.cpp->Process:170]	source. Received 12681216 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:13:48 292280	INFO [latency_benchmark.cpp->Process:50]	2_392_536
+2026/02/03 13:13:49 738425	UPDATE [nlxreader.cpp->Process:170]	source. Received 12713984 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:13:57 876122	UPDATE [nlxreader.cpp->Process:170]	source. Received 12746752 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:14:05 923932	UPDATE [nlxreader.cpp->Process:170]	source. Received 12779520 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:14:09 601077	INFO [latency_benchmark.cpp->Process:50]	2_071_110
+2026/02/03 13:14:13 830517	UPDATE [nlxreader.cpp->Process:170]	source. Received 12812288 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:14:21 811096	UPDATE [nlxreader.cpp->Process:170]	source. Received 12845056 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:14:29 883927	UPDATE [nlxreader.cpp->Process:170]	source. Received 12877824 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:14:30 810987	INFO [latency_benchmark.cpp->Process:50]	2_191_581
+2026/02/03 13:14:37 935428	UPDATE [nlxreader.cpp->Process:170]	source. Received 12910592 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:14:45 981692	UPDATE [nlxreader.cpp->Process:170]	source. Received 12943360 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:14:52 177702	INFO [latency_benchmark.cpp->Process:50]	2_307_749
+2026/02/03 13:14:53 883860	UPDATE [nlxreader.cpp->Process:170]	source. Received 12976128 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:15:02 066183	UPDATE [nlxreader.cpp->Process:170]	source. Received 13008896 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:15:10 108463	UPDATE [nlxreader.cpp->Process:170]	source. Received 13041664 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:15:13 554095	INFO [latency_benchmark.cpp->Process:50]	1_523_452
+2026/02/03 13:15:18 066317	UPDATE [nlxreader.cpp->Process:170]	source. Received 13074432 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:15:26 083270	UPDATE [nlxreader.cpp->Process:170]	source. Received 13107200 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:15:34 109057	UPDATE [nlxreader.cpp->Process:170]	source. Received 13139968 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:15:34 818880	INFO [latency_benchmark.cpp->Process:50]	1_784_913
+2026/02/03 13:15:42 211148	UPDATE [nlxreader.cpp->Process:170]	source. Received 13172736 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:15:50 214386	UPDATE [nlxreader.cpp->Process:170]	source. Received 13205504 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:15:56 189692	INFO [latency_benchmark.cpp->Process:50]	1_728_407
+2026/02/03 13:15:58 165876	UPDATE [nlxreader.cpp->Process:170]	source. Received 13238272 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:16:06 279799	UPDATE [nlxreader.cpp->Process:170]	source. Received 13271040 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:16:14 324420	UPDATE [nlxreader.cpp->Process:170]	source. Received 13303808 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:16:17 488868	INFO [latency_benchmark.cpp->Process:50]	1_949_811
+2026/02/03 13:16:22 178953	UPDATE [nlxreader.cpp->Process:170]	source. Received 13336576 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:16:30 186357	UPDATE [nlxreader.cpp->Process:170]	source. Received 13369344 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:16:38 236239	UPDATE [nlxreader.cpp->Process:170]	source. Received 13402112 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:16:38 689747	INFO [latency_benchmark.cpp->Process:50]	1_791_026
+2026/02/03 13:16:46 222093	UPDATE [nlxreader.cpp->Process:170]	source. Received 13434880 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:16:54 212918	UPDATE [nlxreader.cpp->Process:170]	source. Received 13467648 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:16:59 939237	INFO [latency_benchmark.cpp->Process:50]	1_581_291
+2026/02/03 13:17:02 172001	UPDATE [nlxreader.cpp->Process:170]	source. Received 13500416 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:17:10 221617	UPDATE [nlxreader.cpp->Process:170]	source. Received 13533184 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:17:18 196081	UPDATE [nlxreader.cpp->Process:170]	source. Received 13565952 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:17:21 074540	INFO [latency_benchmark.cpp->Process:50]	1_243_372
+2026/02/03 13:17:26 058970	UPDATE [nlxreader.cpp->Process:170]	source. Received 13598720 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:17:34 158230	UPDATE [nlxreader.cpp->Process:170]	source. Received 13631488 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:17:42 191904	UPDATE [nlxreader.cpp->Process:170]	source. Received 13664256 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:17:42 408402	INFO [latency_benchmark.cpp->Process:50]	1_851_691
+2026/02/03 13:17:50 263792	UPDATE [nlxreader.cpp->Process:170]	source. Received 13697024 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:17:58 318074	UPDATE [nlxreader.cpp->Process:170]	source. Received 13729792 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:18:03 778703	INFO [latency_benchmark.cpp->Process:50]	1_694_131
+2026/02/03 13:18:06 193872	UPDATE [nlxreader.cpp->Process:170]	source. Received 13762560 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:18:14 230405	UPDATE [nlxreader.cpp->Process:170]	source. Received 13795328 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:18:22 315865	UPDATE [nlxreader.cpp->Process:170]	source. Received 13828096 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:18:24 977990	INFO [latency_benchmark.cpp->Process:50]	1_825_970
+2026/02/03 13:18:30 151116	UPDATE [nlxreader.cpp->Process:170]	source. Received 13860864 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:18:38 177403	UPDATE [nlxreader.cpp->Process:170]	source. Received 13893632 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:18:46 193599	UPDATE [nlxreader.cpp->Process:170]	source. Received 13926400 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:18:46 195125	INFO [latency_benchmark.cpp->Process:50]	1_493_201
+2026/02/03 13:18:54 241326	UPDATE [nlxreader.cpp->Process:170]	source. Received 13959168 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:19:02 311273	UPDATE [nlxreader.cpp->Process:170]	source. Received 13991936 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:19:07 455269	INFO [latency_benchmark.cpp->Process:50]	1_717_705
+2026/02/03 13:19:10 194673	UPDATE [nlxreader.cpp->Process:170]	source. Received 14024704 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:19:18 183908	UPDATE [nlxreader.cpp->Process:170]	source. Received 14057472 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:19:26 157875	UPDATE [nlxreader.cpp->Process:170]	source. Received 14090240 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:19:28 638436	INFO [latency_benchmark.cpp->Process:50]	9_786_499
+2026/02/03 13:19:34 057021	UPDATE [nlxreader.cpp->Process:170]	source. Received 14123008 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:19:42 132629	UPDATE [nlxreader.cpp->Process:170]	source. Received 14155776 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:19:49 876012	INFO [latency_benchmark.cpp->Process:50]	1_412_218
+2026/02/03 13:19:50 126257	UPDATE [nlxreader.cpp->Process:170]	source. Received 14188544 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:19:58 175845	UPDATE [nlxreader.cpp->Process:170]	source. Received 14221312 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:20:06 145847	UPDATE [nlxreader.cpp->Process:170]	source. Received 14254080 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:20:11 111557	INFO [latency_benchmark.cpp->Process:50]	1_986_254
+2026/02/03 13:20:14 056632	UPDATE [nlxreader.cpp->Process:170]	source. Received 14286848 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:20:22 070518	UPDATE [nlxreader.cpp->Process:170]	source. Received 14319616 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:20:30 114425	UPDATE [nlxreader.cpp->Process:170]	source. Received 14352384 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:20:32 359407	INFO [latency_benchmark.cpp->Process:50]	1_600_843
+2026/02/03 13:20:38 111955	UPDATE [nlxreader.cpp->Process:170]	source. Received 14385152 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:20:46 167865	UPDATE [nlxreader.cpp->Process:170]	source. Received 14417920 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:20:53 703388	INFO [latency_benchmark.cpp->Process:50]	2_177_983
+2026/02/03 13:20:54 175816	UPDATE [nlxreader.cpp->Process:170]	source. Received 14450688 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:21:02 235796	UPDATE [nlxreader.cpp->Process:170]	source. Received 14483456 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:21:10 229953	UPDATE [nlxreader.cpp->Process:170]	source. Received 14516224 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:21:14 834709	INFO [latency_benchmark.cpp->Process:50]	1_817_219
+2026/02/03 13:21:17 981150	UPDATE [nlxreader.cpp->Process:170]	source. Received 14548992 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:21:26 035349	UPDATE [nlxreader.cpp->Process:170]	source. Received 14581760 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:21:34 111897	UPDATE [nlxreader.cpp->Process:170]	source. Received 14614528 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:21:36 062995	INFO [latency_benchmark.cpp->Process:50]	1_924_356
+2026/02/03 13:21:42 141298	UPDATE [nlxreader.cpp->Process:170]	source. Received 14647296 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:21:50 158045	UPDATE [nlxreader.cpp->Process:170]	source. Received 14680064 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:21:57 357658	INFO [latency_benchmark.cpp->Process:50]	1_951_844
+2026/02/03 13:21:58 057705	UPDATE [nlxreader.cpp->Process:170]	source. Received 14712832 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:22:06 133820	UPDATE [nlxreader.cpp->Process:170]	source. Received 14745600 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:22:14 189881	UPDATE [nlxreader.cpp->Process:170]	source. Received 14778368 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:22:18 574271	INFO [latency_benchmark.cpp->Process:50]	1_990_049
+2026/02/03 13:22:21 967464	UPDATE [nlxreader.cpp->Process:170]	source. Received 14811136 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:22:29 960821	UPDATE [nlxreader.cpp->Process:170]	source. Received 14843904 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:22:37 964339	UPDATE [nlxreader.cpp->Process:170]	source. Received 14876672 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:22:39 687109	INFO [latency_benchmark.cpp->Process:50]	2_434_680
+2026/02/03 13:22:46 011657	UPDATE [nlxreader.cpp->Process:170]	source. Received 14909440 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:22:54 059589	UPDATE [nlxreader.cpp->Process:170]	source. Received 14942208 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:23:01 133666	INFO [latency_benchmark.cpp->Process:50]	1_475_566
+2026/02/03 13:23:02 101173	UPDATE [nlxreader.cpp->Process:170]	source. Received 14974976 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:23:10 202902	UPDATE [nlxreader.cpp->Process:170]	source. Received 15007744 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:23:18 246425	UPDATE [nlxreader.cpp->Process:170]	source. Received 15040512 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:23:22 400187	INFO [latency_benchmark.cpp->Process:50]	1_843_921
+2026/02/03 13:23:25 924881	UPDATE [nlxreader.cpp->Process:170]	source. Received 15073280 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:23:33 898778	UPDATE [nlxreader.cpp->Process:170]	source. Received 15106048 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:23:41 941203	UPDATE [nlxreader.cpp->Process:170]	source. Received 15138816 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:23:43 363196	INFO [latency_benchmark.cpp->Process:50]	1_564_058
+2026/02/03 13:23:49 946926	UPDATE [nlxreader.cpp->Process:170]	source. Received 15171584 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:23:57 987271	UPDATE [nlxreader.cpp->Process:170]	source. Received 15204352 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:24:04 660943	INFO [latency_benchmark.cpp->Process:50]	2_129_957
+2026/02/03 13:24:05 853031	UPDATE [nlxreader.cpp->Process:170]	source. Received 15237120 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:24:13 986052	UPDATE [nlxreader.cpp->Process:170]	source. Received 15269888 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:24:22 013291	UPDATE [nlxreader.cpp->Process:170]	source. Received 15302656 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:24:25 965743	INFO [latency_benchmark.cpp->Process:50]	1_639_049
+2026/02/03 13:24:29 860975	UPDATE [nlxreader.cpp->Process:170]	source. Received 15335424 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:24:37 861014	UPDATE [nlxreader.cpp->Process:170]	source. Received 15368192 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:24:45 895907	UPDATE [nlxreader.cpp->Process:170]	source. Received 15400960 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:24:47 097734	INFO [latency_benchmark.cpp->Process:50]	1_956_352
+2026/02/03 13:24:53 966748	UPDATE [nlxreader.cpp->Process:170]	source. Received 15433728 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:25:01 990606	UPDATE [nlxreader.cpp->Process:170]	source. Received 15466496 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:25:08 496726	INFO [latency_benchmark.cpp->Process:50]	1_792_500
+2026/02/03 13:25:09 943280	UPDATE [nlxreader.cpp->Process:170]	source. Received 15499264 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:25:18 034977	UPDATE [nlxreader.cpp->Process:170]	source. Received 15532032 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:25:26 032949	UPDATE [nlxreader.cpp->Process:170]	source. Received 15564800 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:25:29 689618	INFO [latency_benchmark.cpp->Process:50]	1_794_440
+2026/02/03 13:25:33 823057	UPDATE [nlxreader.cpp->Process:170]	source. Received 15597568 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:25:41 802651	UPDATE [nlxreader.cpp->Process:170]	source. Received 15630336 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:25:49 821949	UPDATE [nlxreader.cpp->Process:170]	source. Received 15663104 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:25:50 764651	INFO [latency_benchmark.cpp->Process:50]	1_905_040
+2026/02/03 13:25:57 864268	UPDATE [nlxreader.cpp->Process:170]	source. Received 15695872 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:26:05 892084	UPDATE [nlxreader.cpp->Process:170]	source. Received 15728640 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:26:12 179425	INFO [latency_benchmark.cpp->Process:50]	1_697_415
+2026/02/03 13:26:13 849059	UPDATE [nlxreader.cpp->Process:170]	source. Received 15761408 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:26:21 906135	UPDATE [nlxreader.cpp->Process:170]	source. Received 15794176 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:26:29 944101	UPDATE [nlxreader.cpp->Process:170]	source. Received 15826944 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:26:33 383853	INFO [latency_benchmark.cpp->Process:50]	1_905_271
+2026/02/03 13:26:37 778534	UPDATE [nlxreader.cpp->Process:170]	source. Received 15859712 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:26:45 824732	UPDATE [nlxreader.cpp->Process:170]	source. Received 15892480 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:26:53 887344	UPDATE [nlxreader.cpp->Process:170]	source. Received 15925248 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:26:54 565845	INFO [latency_benchmark.cpp->Process:50]	1_802_994
+2026/02/03 13:27:01 983676	UPDATE [nlxreader.cpp->Process:170]	source. Received 15958016 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:27:10 015348	UPDATE [nlxreader.cpp->Process:170]	source. Received 15990784 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:27:15 987952	INFO [latency_benchmark.cpp->Process:50]	1_926_437
+2026/02/03 13:27:17 943570	UPDATE [nlxreader.cpp->Process:170]	source. Received 16023552 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:27:26 075442	UPDATE [nlxreader.cpp->Process:170]	source. Received 16056320 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:27:34 127591	UPDATE [nlxreader.cpp->Process:170]	source. Received 16089088 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:27:37 288255	INFO [latency_benchmark.cpp->Process:50]	1_901_583
+2026/02/03 13:27:41 976127	UPDATE [nlxreader.cpp->Process:170]	source. Received 16121856 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:27:49 990005	UPDATE [nlxreader.cpp->Process:170]	source. Received 16154624 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:27:58 005123	UPDATE [nlxreader.cpp->Process:170]	source. Received 16187392 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:27:58 494927	INFO [latency_benchmark.cpp->Process:50]	2_957_645
+2026/02/03 13:28:06 012844	UPDATE [nlxreader.cpp->Process:170]	source. Received 16220160 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:28:14 004218	UPDATE [nlxreader.cpp->Process:170]	source. Received 16252928 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:28:19 720850	INFO [latency_benchmark.cpp->Process:50]	2_162_170
+2026/02/03 13:28:21 933379	UPDATE [nlxreader.cpp->Process:170]	source. Received 16285696 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:28:29 961665	UPDATE [nlxreader.cpp->Process:170]	source. Received 16318464 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:28:38 041018	UPDATE [nlxreader.cpp->Process:170]	source. Received 16351232 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:28:40 950500	INFO [latency_benchmark.cpp->Process:50]	1_674_358
+2026/02/03 13:28:45 904136	UPDATE [nlxreader.cpp->Process:170]	source. Received 16384000 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:28:53 908912	UPDATE [nlxreader.cpp->Process:170]	source. Received 16416768 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:29:01 977207	UPDATE [nlxreader.cpp->Process:170]	source. Received 16449536 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:29:02 218019	INFO [latency_benchmark.cpp->Process:50]	1_868_837
+2026/02/03 13:29:09 945553	UPDATE [nlxreader.cpp->Process:170]	source. Received 16482304 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:29:17 984868	UPDATE [nlxreader.cpp->Process:170]	source. Received 16515072 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:29:23 454704	INFO [latency_benchmark.cpp->Process:50]	1_811_916
+2026/02/03 13:29:25 894673	UPDATE [nlxreader.cpp->Process:170]	source. Received 16547840 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:29:33 945236	UPDATE [nlxreader.cpp->Process:170]	source. Received 16580608 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:29:42 013196	UPDATE [nlxreader.cpp->Process:170]	source. Received 16613376 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:29:44 664197	INFO [latency_benchmark.cpp->Process:50]	1_395_738
+2026/02/03 13:29:49 883470	UPDATE [nlxreader.cpp->Process:170]	source. Received 16646144 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:29:57 922239	UPDATE [nlxreader.cpp->Process:170]	source. Received 16678912 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:30:05 901539	UPDATE [nlxreader.cpp->Process:170]	source. Received 16711680 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:30:05 903083	INFO [latency_benchmark.cpp->Process:50]	1_509_807
+2026/02/03 13:30:13 955532	UPDATE [nlxreader.cpp->Process:170]	source. Received 16744448 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:30:21 995056	UPDATE [nlxreader.cpp->Process:170]	source. Received 16777216 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:30:27 167693	INFO [latency_benchmark.cpp->Process:50]	2_211_432
+2026/02/03 13:30:29 848955	UPDATE [nlxreader.cpp->Process:170]	source. Received 16809984 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:30:37 878846	UPDATE [nlxreader.cpp->Process:170]	source. Received 16842752 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:30:45 894069	UPDATE [nlxreader.cpp->Process:170]	source. Received 16875520 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:30:48 343841	INFO [latency_benchmark.cpp->Process:50]	1_985_632
+2026/02/03 13:30:53 784030	UPDATE [nlxreader.cpp->Process:170]	source. Received 16908288 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:31:01 769035	UPDATE [nlxreader.cpp->Process:170]	source. Received 16941056 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:31:09 518246	INFO [latency_benchmark.cpp->Process:50]	2_083_087
+2026/02/03 13:31:09 758428	UPDATE [nlxreader.cpp->Process:170]	source. Received 16973824 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:31:17 744550	UPDATE [nlxreader.cpp->Process:170]	source. Received 17006592 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:31:25 719703	UPDATE [nlxreader.cpp->Process:170]	source. Received 17039360 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:31:30 634155	INFO [latency_benchmark.cpp->Process:50]	2_291_572
+2026/02/03 13:31:33 525530	UPDATE [nlxreader.cpp->Process:170]	source. Received 17072128 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:31:41 616332	UPDATE [nlxreader.cpp->Process:170]	source. Received 17104896 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:31:49 703356	UPDATE [nlxreader.cpp->Process:170]	source. Received 17137664 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:31:51 939263	INFO [latency_benchmark.cpp->Process:50]	2_251_034
+2026/02/03 13:31:57 586633	UPDATE [nlxreader.cpp->Process:170]	source. Received 17170432 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:32:05 518291	UPDATE [nlxreader.cpp->Process:170]	source. Received 17203200 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:32:13 061512	INFO [latency_benchmark.cpp->Process:50]	2_200_994
+2026/02/03 13:32:13 543954	UPDATE [nlxreader.cpp->Process:170]	source. Received 17235968 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:32:21 594128	UPDATE [nlxreader.cpp->Process:170]	source. Received 17268736 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:32:29 633968	UPDATE [nlxreader.cpp->Process:170]	source. Received 17301504 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:32:34 276304	INFO [latency_benchmark.cpp->Process:50]	2_171_480
+2026/02/03 13:32:37 376906	UPDATE [nlxreader.cpp->Process:170]	source. Received 17334272 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:32:45 378430	UPDATE [nlxreader.cpp->Process:170]	source. Received 17367040 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:32:53 435008	UPDATE [nlxreader.cpp->Process:170]	source. Received 17399808 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:32:55 364402	INFO [latency_benchmark.cpp->Process:50]	1_725_303
+2026/02/03 13:33:01 483010	UPDATE [nlxreader.cpp->Process:170]	source. Received 17432576 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:33:09 568258	UPDATE [nlxreader.cpp->Process:170]	source. Received 17465344 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:33:16 860833	INFO [latency_benchmark.cpp->Process:50]	1_940_056
+2026/02/03 13:33:17 562061	UPDATE [nlxreader.cpp->Process:170]	source. Received 17498112 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:33:25 711141	UPDATE [nlxreader.cpp->Process:170]	source. Received 17530880 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:33:33 774614	UPDATE [nlxreader.cpp->Process:170]	source. Received 17563648 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:33:38 198036	INFO [latency_benchmark.cpp->Process:50]	2_166_075
+2026/02/03 13:33:41 560942	UPDATE [nlxreader.cpp->Process:170]	source. Received 17596416 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:33:49 681789	UPDATE [nlxreader.cpp->Process:170]	source. Received 17629184 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:33:57 673997	UPDATE [nlxreader.cpp->Process:170]	source. Received 17661952 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:33:59 353195	INFO [latency_benchmark.cpp->Process:50]	2_022_091
+2026/02/03 13:34:05 632362	UPDATE [nlxreader.cpp->Process:170]	source. Received 17694720 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:34:13 671537	UPDATE [nlxreader.cpp->Process:170]	source. Received 17727488 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:34:20 705317	INFO [latency_benchmark.cpp->Process:50]	1_912_909
+2026/02/03 13:34:21 633484	UPDATE [nlxreader.cpp->Process:170]	source. Received 17760256 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:34:29 804289	UPDATE [nlxreader.cpp->Process:170]	source. Received 17793024 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:34:37 846414	UPDATE [nlxreader.cpp->Process:170]	source. Received 17825792 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:34:42 017401	INFO [latency_benchmark.cpp->Process:50]	1_843_922
+2026/02/03 13:34:45 645145	UPDATE [nlxreader.cpp->Process:170]	source. Received 17858560 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:34:53 684854	UPDATE [nlxreader.cpp->Process:170]	source. Received 17891328 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:35:01 723782	UPDATE [nlxreader.cpp->Process:170]	source. Received 17924096 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:35:03 154537	INFO [latency_benchmark.cpp->Process:50]	2_272_401
+2026/02/03 13:35:09 759230	UPDATE [nlxreader.cpp->Process:170]	source. Received 17956864 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:35:17 731217	UPDATE [nlxreader.cpp->Process:170]	source. Received 17989632 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:35:24 427763	INFO [latency_benchmark.cpp->Process:50]	2_062_236
+2026/02/03 13:35:25 582397	UPDATE [nlxreader.cpp->Process:170]	source. Received 18022400 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:35:33 761139	UPDATE [nlxreader.cpp->Process:170]	source. Received 18055168 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:35:41 767580	UPDATE [nlxreader.cpp->Process:170]	source. Received 18087936 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:35:45 702317	INFO [latency_benchmark.cpp->Process:50]	2_222_948
+2026/02/03 13:35:49 623815	UPDATE [nlxreader.cpp->Process:170]	source. Received 18120704 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:35:57 583011	UPDATE [nlxreader.cpp->Process:170]	source. Received 18153472 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:36:05 480096	UPDATE [nlxreader.cpp->Process:170]	source. Received 18186240 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:36:06 673580	INFO [latency_benchmark.cpp->Process:50]	1_793_743
+2026/02/03 13:36:13 554614	UPDATE [nlxreader.cpp->Process:170]	source. Received 18219008 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:36:21 602375	UPDATE [nlxreader.cpp->Process:170]	source. Received 18251776 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:36:28 114719	INFO [latency_benchmark.cpp->Process:50]	1_835_002
+2026/02/03 13:36:29 546005	UPDATE [nlxreader.cpp->Process:170]	source. Received 18284544 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:36:37 696179	UPDATE [nlxreader.cpp->Process:170]	source. Received 18317312 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:36:45 797201	UPDATE [nlxreader.cpp->Process:170]	source. Received 18350080 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:36:49 444949	INFO [latency_benchmark.cpp->Process:50]	2_299_640
+2026/02/03 13:36:53 652191	UPDATE [nlxreader.cpp->Process:170]	source. Received 18382848 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:37:01 687477	UPDATE [nlxreader.cpp->Process:170]	source. Received 18415616 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:37:09 708396	UPDATE [nlxreader.cpp->Process:170]	source. Received 18448384 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:37:10 660172	INFO [latency_benchmark.cpp->Process:50]	1_797_417
+2026/02/03 13:37:17 715821	UPDATE [nlxreader.cpp->Process:170]	source. Received 18481152 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:37:25 759837	UPDATE [nlxreader.cpp->Process:170]	source. Received 18513920 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:37:31 988907	INFO [latency_benchmark.cpp->Process:50]	1_746_024
+2026/02/03 13:37:33 693784	UPDATE [nlxreader.cpp->Process:170]	source. Received 18546688 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:37:41 818006	UPDATE [nlxreader.cpp->Process:170]	source. Received 18579456 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:37:49 857723	UPDATE [nlxreader.cpp->Process:170]	source. Received 18612224 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:37:53 283336	INFO [latency_benchmark.cpp->Process:50]	1_552_943
+2026/02/03 13:37:57 703076	UPDATE [nlxreader.cpp->Process:170]	source. Received 18644992 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:38:05 771261	UPDATE [nlxreader.cpp->Process:170]	source. Received 18677760 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:38:13 873323	UPDATE [nlxreader.cpp->Process:170]	source. Received 18710528 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:38:14 581836	INFO [latency_benchmark.cpp->Process:50]	1_834_168
+2026/02/03 13:38:21 864740	UPDATE [nlxreader.cpp->Process:170]	source. Received 18743296 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:38:29 901547	UPDATE [nlxreader.cpp->Process:170]	source. Received 18776064 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:38:35 875055	INFO [latency_benchmark.cpp->Process:50]	1_958_998
+2026/02/03 13:38:37 843128	UPDATE [nlxreader.cpp->Process:170]	source. Received 18808832 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:38:45 964982	UPDATE [nlxreader.cpp->Process:170]	source. Received 18841600 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:38:53 994616	UPDATE [nlxreader.cpp->Process:170]	source. Received 18874368 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:38:57 134450	INFO [latency_benchmark.cpp->Process:50]	2_243_482
+2026/02/03 13:39:01 826870	UPDATE [nlxreader.cpp->Process:170]	source. Received 18907136 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:39:09 865490	UPDATE [nlxreader.cpp->Process:170]	source. Received 18939904 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:39:17 952075	UPDATE [nlxreader.cpp->Process:170]	source. Received 18972672 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:39:18 444744	INFO [latency_benchmark.cpp->Process:50]	1_549_928
+2026/02/03 13:39:25 952633	UPDATE [nlxreader.cpp->Process:170]	source. Received 19005440 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:39:33 997695	UPDATE [nlxreader.cpp->Process:170]	source. Received 19038208 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:39:39 682642	INFO [latency_benchmark.cpp->Process:50]	1_571_381
+2026/02/03 13:39:41 909639	UPDATE [nlxreader.cpp->Process:170]	source. Received 19070976 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:39:49 940549	UPDATE [nlxreader.cpp->Process:170]	source. Received 19103744 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:39:57 923605	UPDATE [nlxreader.cpp->Process:170]	source. Received 19136512 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:40:00 813986	INFO [latency_benchmark.cpp->Process:50]	1_961_431
+2026/02/03 13:40:05 679887	UPDATE [nlxreader.cpp->Process:170]	source. Received 19169280 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:40:13 760751	UPDATE [nlxreader.cpp->Process:170]	source. Received 19202048 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:40:21 745236	UPDATE [nlxreader.cpp->Process:170]	source. Received 19234816 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:40:21 972737	INFO [latency_benchmark.cpp->Process:50]	1_763_350
+2026/02/03 13:40:29 782348	UPDATE [nlxreader.cpp->Process:170]	source. Received 19267584 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:40:37 875454	UPDATE [nlxreader.cpp->Process:170]	source. Received 19300352 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:40:43 348625	INFO [latency_benchmark.cpp->Process:50]	1_725_350
+2026/02/03 13:40:45 791778	UPDATE [nlxreader.cpp->Process:170]	source. Received 19333120 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:40:53 798142	UPDATE [nlxreader.cpp->Process:170]	source. Received 19365888 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:41:01 859864	UPDATE [nlxreader.cpp->Process:170]	source. Received 19398656 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:41:04 512135	INFO [latency_benchmark.cpp->Process:50]	1_552_790
+2026/02/03 13:41:09 718755	UPDATE [nlxreader.cpp->Process:170]	source. Received 19431424 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:41:17 630316	UPDATE [nlxreader.cpp->Process:170]	source. Received 19464192 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:41:25 611645	UPDATE [nlxreader.cpp->Process:170]	source. Received 19496960 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:41:25 613466	INFO [latency_benchmark.cpp->Process:50]	1_786_205
+2026/02/03 13:41:33 659015	UPDATE [nlxreader.cpp->Process:170]	source. Received 19529728 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:41:41 760986	UPDATE [nlxreader.cpp->Process:170]	source. Received 19562496 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:41:46 924508	INFO [latency_benchmark.cpp->Process:50]	1_916_399
+2026/02/03 13:41:49 612497	UPDATE [nlxreader.cpp->Process:170]	source. Received 19595264 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:41:57 574214	UPDATE [nlxreader.cpp->Process:170]	source. Received 19628032 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:42:05 579420	UPDATE [nlxreader.cpp->Process:170]	source. Received 19660800 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:42:08 056048	INFO [latency_benchmark.cpp->Process:50]	1_716_989
+2026/02/03 13:42:13 502107	UPDATE [nlxreader.cpp->Process:170]	source. Received 19693568 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:42:21 569747	UPDATE [nlxreader.cpp->Process:170]	source. Received 19726336 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:42:29 346692	INFO [latency_benchmark.cpp->Process:50]	1_885_202
+2026/02/03 13:42:29 599236	UPDATE [nlxreader.cpp->Process:170]	source. Received 19759104 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:42:37 592807	UPDATE [nlxreader.cpp->Process:170]	source. Received 19791872 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:42:45 518284	UPDATE [nlxreader.cpp->Process:170]	source. Received 19824640 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:42:50 485431	INFO [latency_benchmark.cpp->Process:50]	1_669_921
+2026/02/03 13:42:53 380473	UPDATE [nlxreader.cpp->Process:170]	source. Received 19857408 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:43:01 434175	UPDATE [nlxreader.cpp->Process:170]	source. Received 19890176 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:43:09 464430	UPDATE [nlxreader.cpp->Process:170]	source. Received 19922944 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:43:11 698577	INFO [latency_benchmark.cpp->Process:50]	1_579_855
+2026/02/03 13:43:17 370790	UPDATE [nlxreader.cpp->Process:170]	source. Received 19955712 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:43:25 402247	UPDATE [nlxreader.cpp->Process:170]	source. Received 19988480 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:43:32 981265	INFO [latency_benchmark.cpp->Process:50]	1_973_075
+2026/02/03 13:43:33 460412	UPDATE [nlxreader.cpp->Process:170]	source. Received 20021248 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:43:41 560312	UPDATE [nlxreader.cpp->Process:170]	source. Received 20054016 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:43:49 584239	UPDATE [nlxreader.cpp->Process:170]	source. Received 20086784 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:43:54 266039	INFO [latency_benchmark.cpp->Process:50]	10_095_741
+2026/02/03 13:43:57 412279	UPDATE [nlxreader.cpp->Process:170]	source. Received 20119552 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:44:05 428793	UPDATE [nlxreader.cpp->Process:170]	source. Received 20152320 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:44:13 539619	UPDATE [nlxreader.cpp->Process:170]	source. Received 20185088 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:44:15 531449	INFO [latency_benchmark.cpp->Process:50]	1_585_115
+2026/02/03 13:44:21 684648	UPDATE [nlxreader.cpp->Process:170]	source. Received 20217856 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:44:29 751906	UPDATE [nlxreader.cpp->Process:170]	source. Received 20250624 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:44:37 013631	INFO [latency_benchmark.cpp->Process:50]	2_234_189
+2026/02/03 13:44:37 721430	UPDATE [nlxreader.cpp->Process:170]	source. Received 20283392 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:44:45 792362	UPDATE [nlxreader.cpp->Process:170]	source. Received 20316160 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:44:53 863009	UPDATE [nlxreader.cpp->Process:170]	source. Received 20348928 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:44:58 280905	INFO [latency_benchmark.cpp->Process:50]	2_033_748
+2026/02/03 13:45:01 711495	UPDATE [nlxreader.cpp->Process:170]	source. Received 20381696 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:45:09 790057	UPDATE [nlxreader.cpp->Process:170]	source. Received 20414464 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:45:17 780721	UPDATE [nlxreader.cpp->Process:170]	source. Received 20447232 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:45:19 497044	INFO [latency_benchmark.cpp->Process:50]	1_887_754
+2026/02/03 13:45:25 834925	UPDATE [nlxreader.cpp->Process:170]	source. Received 20480000 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:45:33 905762	UPDATE [nlxreader.cpp->Process:170]	source. Received 20512768 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:45:40 930640	INFO [latency_benchmark.cpp->Process:50]	1_506_329
+2026/02/03 13:45:41 864966	UPDATE [nlxreader.cpp->Process:170]	source. Received 20545536 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:45:50 046413	UPDATE [nlxreader.cpp->Process:170]	source. Received 20578304 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:45:58 034009	UPDATE [nlxreader.cpp->Process:170]	source. Received 20611072 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:46:02 207988	INFO [latency_benchmark.cpp->Process:50]	2_214_629
+2026/02/03 13:46:05 817811	UPDATE [nlxreader.cpp->Process:170]	source. Received 20643840 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:46:13 871165	UPDATE [nlxreader.cpp->Process:170]	source. Received 20676608 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:46:21 881642	UPDATE [nlxreader.cpp->Process:170]	source. Received 20709376 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:46:23 307538	INFO [latency_benchmark.cpp->Process:50]	1_726_659
+2026/02/03 13:46:29 911155	UPDATE [nlxreader.cpp->Process:170]	source. Received 20742144 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:46:37 954018	UPDATE [nlxreader.cpp->Process:170]	source. Received 20774912 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:46:44 666647	INFO [latency_benchmark.cpp->Process:50]	2_302_719
+2026/02/03 13:46:45 849291	UPDATE [nlxreader.cpp->Process:170]	source. Received 20807680 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:46:54 006141	UPDATE [nlxreader.cpp->Process:170]	source. Received 20840448 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:47:02 027345	UPDATE [nlxreader.cpp->Process:170]	source. Received 20873216 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:47:05 934499	INFO [latency_benchmark.cpp->Process:50]	1_921_785
+2026/02/03 13:47:09 866940	UPDATE [nlxreader.cpp->Process:170]	source. Received 20905984 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:47:17 880399	UPDATE [nlxreader.cpp->Process:170]	source. Received 20938752 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:47:25 882658	UPDATE [nlxreader.cpp->Process:170]	source. Received 20971520 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:47:27 076215	INFO [latency_benchmark.cpp->Process:50]	1_866_661
+2026/02/03 13:47:33 892620	UPDATE [nlxreader.cpp->Process:170]	source. Received 21004288 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:47:41 943687	UPDATE [nlxreader.cpp->Process:170]	source. Received 21037056 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:47:48 430503	INFO [latency_benchmark.cpp->Process:50]	2_308_406
+2026/02/03 13:47:49 845420	UPDATE [nlxreader.cpp->Process:170]	source. Received 21069824 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:47:58 010065	UPDATE [nlxreader.cpp->Process:170]	source. Received 21102592 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:48:05 994072	UPDATE [nlxreader.cpp->Process:170]	source. Received 21135360 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:48:09 670285	INFO [latency_benchmark.cpp->Process:50]	1_653_682
+2026/02/03 13:48:13 877635	UPDATE [nlxreader.cpp->Process:170]	source. Received 21168128 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:48:21 893453	UPDATE [nlxreader.cpp->Process:170]	source. Received 21200896 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:48:29 937896	UPDATE [nlxreader.cpp->Process:170]	source. Received 21233664 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:48:30 869988	INFO [latency_benchmark.cpp->Process:50]	1_589_560
+2026/02/03 13:48:37 932560	UPDATE [nlxreader.cpp->Process:170]	source. Received 21266432 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:48:45 996272	UPDATE [nlxreader.cpp->Process:170]	source. Received 21299200 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:48:52 259046	INFO [latency_benchmark.cpp->Process:50]	1_905_570
+2026/02/03 13:48:53 932104	UPDATE [nlxreader.cpp->Process:170]	source. Received 21331968 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:49:02 040989	UPDATE [nlxreader.cpp->Process:170]	source. Received 21364736 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:49:10 081526	UPDATE [nlxreader.cpp->Process:170]	source. Received 21397504 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:49:13 419276	INFO [latency_benchmark.cpp->Process:50]	1_782_888
+2026/02/03 13:49:17 832625	UPDATE [nlxreader.cpp->Process:170]	source. Received 21430272 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:49:25 800417	UPDATE [nlxreader.cpp->Process:170]	source. Received 21463040 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:49:33 843700	UPDATE [nlxreader.cpp->Process:170]	source. Received 21495808 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:49:34 549738	INFO [latency_benchmark.cpp->Process:50]	2_208_803
+2026/02/03 13:49:41 848008	UPDATE [nlxreader.cpp->Process:170]	source. Received 21528576 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:49:49 926555	UPDATE [nlxreader.cpp->Process:170]	source. Received 21561344 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:49:55 873089	INFO [latency_benchmark.cpp->Process:50]	1_325_790
+2026/02/03 13:49:57 823998	UPDATE [nlxreader.cpp->Process:170]	source. Received 21594112 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:50:05 905882	UPDATE [nlxreader.cpp->Process:170]	source. Received 21626880 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:50:13 915241	UPDATE [nlxreader.cpp->Process:170]	source. Received 21659648 valid packets. Stats: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:50:16 834961	STATE [processorgraph.hpp->set_state:157]	STOPPING
+2026/02/03 13:50:16 835015	INFO [eventsync.cpp->log_and_reset_counters:92]	sync. 'events' counters.
+				1019840 events received.
+				1019840 target events received.
+				0 non-target events received. Counters are consistent.
+2026/02/03 13:50:16 835015	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross17. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 835022	INFO [eventsync.cpp->Postprocess:73]	sync. 127531915158622 events synced.
+2026/02/03 13:50:16 835116	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross18. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 835275	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross19. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 835464	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross2. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 835592	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross20. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 835694	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross21. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 835816	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross22. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 835864	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross23. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 835923	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross24. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 835964	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross25. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 835991	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross26. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 836069	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross27. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 836115	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross28. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 836150	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross29. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 836189	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross3. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 836326	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross1. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 836355	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross10. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 836585	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross11. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 836673	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross12. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 836848	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross13. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 836952	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross14. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837041	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross15. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837191	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross16. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837304	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross30. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837317	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross31. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837333	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross32. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837345	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross4. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837357	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross5. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837368	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross6. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837379	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross7. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837391	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross8. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 837402	INFO [levelcrossingdetector.cpp->Postprocess:228]	levelcross9. 31870 detections of event rising_edge occurred.
+2026/02/03 13:50:16 838308	INFO [nlxreader.cpp->Process:231]	source. Port tt1. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838326	INFO [nlxreader.cpp->Process:231]	source. Port tt10. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838334	INFO [nlxreader.cpp->Process:231]	source. Port tt11. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838341	INFO [nlxreader.cpp->Process:231]	source. Port tt12. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838347	INFO [nlxreader.cpp->Process:231]	source. Port tt13. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838353	INFO [nlxreader.cpp->Process:231]	source. Port tt14. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838358	INFO [nlxreader.cpp->Process:231]	source. Port tt15. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838364	INFO [nlxreader.cpp->Process:231]	source. Port tt16. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838368	INFO [nlxreader.cpp->Process:231]	source. Port tt17. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838379	INFO [nlxreader.cpp->Process:231]	source. Port tt18. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838383	INFO [nlxreader.cpp->Process:231]	source. Port tt19. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838388	INFO [nlxreader.cpp->Process:231]	source. Port tt2. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838392	INFO [nlxreader.cpp->Process:231]	source. Port tt20. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838396	INFO [nlxreader.cpp->Process:231]	source. Port tt21. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838401	INFO [nlxreader.cpp->Process:231]	source. Port tt22. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838405	INFO [nlxreader.cpp->Process:231]	source. Port tt23. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838410	INFO [nlxreader.cpp->Process:231]	source. Port tt24. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838414	INFO [nlxreader.cpp->Process:231]	source. Port tt25. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838419	INFO [nlxreader.cpp->Process:231]	source. Port tt26. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838427	INFO [nlxreader.cpp->Process:231]	source. Port tt27. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838431	INFO [nlxreader.cpp->Process:231]	source. Port tt28. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838438	INFO [nlxreader.cpp->Process:231]	source. Port tt29. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838442	INFO [nlxreader.cpp->Process:231]	source. Port tt3. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838446	INFO [nlxreader.cpp->Process:231]	source. Port tt30. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838451	INFO [nlxreader.cpp->Process:231]	source. Port tt31. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838455	INFO [nlxreader.cpp->Process:231]	source. Port tt32. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838460	INFO [nlxreader.cpp->Process:231]	source. Port tt4. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838467	INFO [nlxreader.cpp->Process:231]	source. Port tt5. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838472	INFO [nlxreader.cpp->Process:231]	source. Port tt6. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838476	INFO [nlxreader.cpp->Process:231]	source. Port tt7. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838481	INFO [nlxreader.cpp->Process:231]	source. Port tt8. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838485	INFO [nlxreader.cpp->Process:231]	source. Port tt9. Slot 0. Streamed 21672014 data packets. 
+2026/02/03 13:50:16 838499	UPDATE [nlxreader.cpp->Postprocess:244]	source. Finished reading : 21672014 packets received over 5226.96 seconds at a rate of 4146.2 packets/second.
+2026/02/03 13:50:16 838505	UPDATE [nlxreader.cpp->print_stats:259]	source: 0 invalid, 0 duplicated, 0 out of order, 0 missed, 0 gaps.
+2026/02/03 13:50:17 360102	INFO [processorgraph.cpp->StopProcessing:682]	Stopped all processors.
+2026/02/03 13:50:17 360232	INFO [processorgraph.cpp->StopProcessing:683]	Graph was processing for 5229 seconds
+2026/02/03 13:50:17 360300	STATE [processorgraph.hpp->set_state:157]	READY
+2026/02/03 13:50:17 389892	INFO [processorgraph.cpp->Destroy:602]	Graph has been destroyed.
+2026/02/03 13:50:17 389909	STATE [processorgraph.hpp->set_state:157]	NOGRAPH
+2026/02/03 13:50:17 389983	INFO [main.cpp->main:225]	Falcon shutting down normally.
+g3log g3FileSink shutdown at: 13:50:17 395614

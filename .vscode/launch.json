@@ -10,9 +10,9 @@
                 // Replace with your graph.
                 // While debugging, graphs are located under build/resources/
                 // In the case below, falcon will try to load build/resources/my_graph.yaml
-                "neuralynx/ripple_detection.yaml"
+                "./bench.yaml"
             ],
-            "cwd": "${workspaceFolder}/build/debug",
+            "cwd": "${workspaceFolder}/build/debug/",
             "MIMode": "gdb",
             "miDebuggerPath": "/usr/bin/gdb",
             "preLaunchTask": "make",

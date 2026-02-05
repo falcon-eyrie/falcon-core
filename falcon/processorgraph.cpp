@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "buildconstant.hpp"
+#include "dummy_type.cpp"
 #include "processorgraph.hpp"
 #include "sharedstate.hpp"
 
@@ -133,65 +134,190 @@ std::vector<std::string> expandProcessorName(const std::string& s) {
     }
     return result;
 }
+constexpr size_t n_rows = 14;
+
+constexpr std::string_view nlxreader_options_ = R"(
+advanced:
+    thread_core_range: [0, 0]
+options:
+    address: 0.0.0.0
+    port: 5000
+    batch_size: 1
+    update_interval: 1
+    channelmap:
+        tt1: [0, 1, 2, 3]
+        tt2: [4, 5, 6, 7]
+        tt3: [8, 9, 10, 11]
+        tt4: [12, 13, 14, 15]
+        tt5: [16, 17, 18, 19]
+        tt6: [20, 21, 22, 23]
+        tt7: [24, 25, 26, 27]
+        tt8: [28, 29, 30, 31]
+        tt9: [32, 33, 34, 35]
+        tt10: [36, 37, 38, 39]
+        tt11: [40, 41, 42, 43]
+        tt12: [44, 45, 46, 47]
+        tt13: [48, 49, 50, 51]
+        tt14: [52, 53, 54, 55]
+        tt15: [56, 57, 58, 59]
+        tt16: [60, 61, 62, 63]
+        tt17: [64, 65, 66, 67]
+        tt18: [68, 69, 70, 71]
+        tt19: [72, 73, 74, 75]
+        tt20: [76, 77, 78, 79]
+        tt21: [80, 81, 82, 83]
+        tt22: [84, 85, 86, 87]
+        tt23: [88, 89, 90, 91]
+        tt24: [92, 93, 94, 95]
+        tt25: [96, 97, 98, 99]
+        tt26: [100, 101, 102, 103]
+        tt27: [104, 105, 106, 107]
+        tt28: [108, 109, 110, 111]
+        tt29: [112, 113, 114, 115]
+        tt30: [116, 117, 118, 119]
+        tt31: [120, 121, 122, 123]
+        tt32: [124, 125, 126, 127]
+)";
+
+void ProcessorGraph::ConstructProcessorEnginesBench() {
+    // 1st layer: NlxReader
+    auto nlx_reader = ProcessorFactory::instance().create("NlxReader");
+    nlx_reader->set_name_and_type("nlx_reader", "NlxReader");
+    nlx_reader->internal_Configure(YAML::Load(std::string(nlxreader_options_)), global_context_);
+
+    // 2nd layer : ChainProcessors with 7 MultiChannelFilter each
+    auto chains = std::vector<std::unique_ptr<IProcessor>>();
+
+    auto chain_cores = std::vector<int>{2, 4, 6, 8, 10, 12};
+
+    for (int col = 1; col <= n_rows; ++col) {
+        auto chain_processor = ProcessorFactory::instance().create("ChainProcessor");
+        chain_processor->set_name_and_type("chain" + std::to_string(col), "ChainProcessor");
+
+        auto thread_core_id = chain_cores[(col - 1) % chain_cores.size()];
+
+        auto chain_options = std::string(
+                                 "advanced:\n"
+                                 "    thread_core_range: [") +
+                             std::to_string(thread_core_id) + ", " + std::to_string(15) + "]\n";
+
+        chain_processor->internal_Configure(YAML::Load(chain_options), global_context_);
+
+        auto roman_numerals = std::vector<std::string>{"I", "II", "III", "IV", "V", "VI", "VII"};
+
+        for (int pass = 1; pass <= 7; ++pass) {
+            auto filter = ProcessorFactory::instance().create("MultiChannelFilter");
+            filter->set_name_and_type("pass" + roman_numerals[pass - 1] + std::to_string(col),
+                                      "MultiChannelFilter");
+            filter->internal_Configure(YAML::Load("options:\n"
+                                                  "    filter:\n"
+                                                  "        type: fir\n"
+                                                  "        description: all pass filter\n"
+                                                  "        coefficients: [1]\n"),
+                                       global_context_);
+            filter->ExecutePrepare();
+            chain_processor->insertChainProcessor(std::unique_ptr<IProcessor>(filter));
+        }
+
+        auto levelcross = ProcessorFactory::instance().create("LevelCrossingDetector");
+        levelcross->set_name_and_type("levelcross" + std::to_string(col), "LevelCrossingDetector");
+        levelcross->internal_Configure(YAML::Load("options:\n"
+                                                  "    event: rising_edge\n"
+                                                  "    threshold: 0.0\n"
+                                                  "    upslope: true\n"
+                                                  "    post_detect_block: 15\n"),
+                                       global_context_);
+        levelcross->ExecutePrepare();
+        chain_processor->insertChainProcessor(std::unique_ptr<IProcessor>(levelcross));
+
+        chains.push_back(std::unique_ptr<IProcessor>(chain_processor));
+    }
+
+    // 3th layer: EventSync
+    auto event_sync = ProcessorFactory::instance().create("EventSync");
+    event_sync->set_name_and_type("sync", "EventSync");
+    event_sync->internal_Configure(YAML::Load("advanced:\n"
+                                              "    thread_core_range: [14, 14]\n"
+                                              "options:\n"
+                                              "    target_event: rising_edge\n"),
+                                   global_context_);
+
+    // 4th layer: LatencyBenchmark
+    auto latency_benchmark = ProcessorFactory::instance().create("LatencyBenchmark");
+    latency_benchmark->set_name_and_type("bench", "LatencyBenchmark");
+    latency_benchmark->internal_Configure(YAML::Load("advanced:\n"
+                                                     "    thread_core_range: [15, 15]\n"),
+                                          global_context_);
+
+    processors_.try_emplace("nlx_reader", "NlxReader", std::unique_ptr<IProcessor>(nlx_reader));
+
+    for (int i = 0; i < n_rows; ++i) {
+        processors_.try_emplace("chain" + std::to_string(i + 1), "ChainProcessor",
+                                std::move(chains[i]));
+    }
+
+    processors_.try_emplace("sync", "EventSync", std::unique_ptr<IProcessor>(event_sync));
+    processors_.try_emplace("bench", "LatencyBenchmark",
+                            std::unique_ptr<IProcessor>(latency_benchmark));
+}
+
+void ProcessorGraph::ParseConnectionRulesBench() {
+    // connect nlx out to chain in
+    for (int i = 1; i <= n_rows; ++i) {
+        connections_.push_back(
+            std::make_pair(SlotAddress("nlx_reader", "tt" + std::to_string(i), 0),
+
+                           SlotAddress("chain" + std::to_string(i), "input", 0)));
+    }
+
+    // connect chain out to eventsync in
+    for (int i = 1; i <= n_rows; ++i) {
+        connections_.push_back(std::make_pair(SlotAddress("chain" + std::to_string(i), "output", 0),
+                                              SlotAddress("sync", "events", i - 1)));
+    }
+
+    // connect sync out to benchmark in
+    connections_.push_back(
+        std::make_pair(SlotAddress("sync", "events", 0), SlotAddress("bench", "data", 0)));
+}
 
 void ProcessorGraph::ConstructProcessorEngines(const YAML::Node& node) {
-    std::vector<std::string> processor_name_list;
-    std::string processor_name;
-    std::string processor_class;
-    std::unique_ptr<IProcessor> processor;
+    for (const auto& entry : node) {
+        const auto raw_key = entry.first.as<std::string>();
+        const auto& processor_node = entry.second;
 
-    // loop through all processors defined in YAML document
-    for (YAML::const_iterator it = node.begin(); it != node.end(); ++it) {
-        // expand processor name
-        // e.g. name -> name, name1 -> name1, name(1-2, 4) -> name1, name2,
-        // name4
-        processor_name_list = expandProcessorName(it->first.as<std::string>());
+        const auto names = expandProcessorName(raw_key);
 
-        // get processor definition
-        YAML::Node processor_node = it->second;
+        if (!processor_node["class"]) [[unlikely]] {
+            throw InvalidProcessorError(
+                std::format("No class specified for processor {}", raw_key));
+        }
 
-        if (processor_node["class"]) {
-            processor_class = processor_node["class"].as<std::string>();
+        const auto proc_class = processor_node["class"].as<std::string>();
 
-            // loop through expanded name list
-            for (auto& name_it : processor_name_list) {
-                processor_name = name_it;
+        for (const auto& name : names) {
+            auto [it, inserted] = processors_.try_emplace(name, proc_class, nullptr);
+            auto& [existing_class, existing_ptr] = it->second;
 
-                // does processor already exist?
-                auto it2 = processors_.find(processor_name);
-
-                if (it2 == processors_.end()) {  // no processor with this name known
-                    try {
-                        processor.reset(ProcessorFactory::instance().create(processor_class));
-                    } catch (factory::UnknownClass& e) {
-                        std::ostringstream oss;
-                        oss << "Cannot create processor " << processor_name << " of unknown class "
-                            << processor_class << '.';
-                        throw InvalidProcessorError(oss.str());
-                    }
-                    processor->set_name_and_type(processor_name, processor_class);
-                    processor->internal_Configure(processor_node, global_context_);
-                    processors_[processor_name] =
-                        std::make_pair(processor_class, std::move(processor));
-
-                    LOG(DEBUG) << "Constructed and configured " << processor_name << " ("
-                               << processor_class << ").";
-
-                } else if (it2->second.first == processor_class) {
-                    // processor with this name and class found
-                    it2->second.second->internal_Configure(processor_node, global_context_);
-
-                    LOG(DEBUG) << "Configured processor " << processor_name << " ("
-                               << processor_class << ")";
-
-                } else {  // processor with this name, but different class found
-                    throw InvalidProcessorError("Processor " + processor_name +
-                                                " of different class (" + it2->second.first +
-                                                ") already exists.");
+            if (inserted) {
+                try {
+                    existing_ptr.reset(ProcessorFactory::instance().create(proc_class));
+                } catch (const factory::UnknownClass&) {
+                    throw InvalidProcessorError(std::format(
+                        "Cannot create processor {} of unknown class {}.", name, proc_class));
                 }
+
+                existing_ptr->set_name_and_type(name, proc_class);
+                existing_ptr->internal_Configure(processor_node, global_context_);
+                LOG(DEBUG) << std::format("Constructed {}({}).", name, proc_class);
+
+            } else {
+                if (existing_class != proc_class) [[unlikely]] {
+                    throw InvalidProcessorError(std::format("Class mismatch for {}: {} vs {}.",
+                                                            name, existing_class, proc_class));
+                }
+                existing_ptr->internal_Configure(processor_node, global_context_);
             }
-        } else {
-            throw InvalidProcessorError("No class specified for processor " + processor_name + ".");
         }
     }
 }
@@ -369,6 +495,8 @@ void ProcessorGraph::Build(const YAML::Node& node) {
     try {
         ConstructProcessorEngines(node["processors"]);
         LOG(INFO) << "Constructed and configured all processors";
+        // ConstructProcessorEnginesBench();
+        // LOG(INFO) << "Constructed and configured static benchmark processors";
 
         for (auto& it : this->processors_) {
             it.second.second->internal_CreatePorts();
@@ -379,6 +507,8 @@ void ProcessorGraph::Build(const YAML::Node& node) {
         if (node["connections"] && node["connections"].IsSequence()) {
             ParseConnectionRules(node["connections"], connections_);
             LOG(INFO) << "Parsed all connection rules.";
+            // ParseConnectionRulesBench();
+            // LOG(INFO) << "Constructed static benchmark connections.";
 
             for (auto& it : connections_) {
                 CreateConnection(it.first, it.second);
