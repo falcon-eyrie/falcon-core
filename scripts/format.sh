@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+which clang-format
+clang-format --version
+
 # This script gathers all relevant C and C++ files tracked by git
 # (respecting .gitignore), excludes specific directories, and
 # formats them using clang-format.
