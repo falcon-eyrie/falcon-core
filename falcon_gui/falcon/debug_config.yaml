@@ -3,18 +3,11 @@ graph:
   autostart: false
 debug:
   enabled: false
-testing:
-  enabled: false
 network:
   port: 5555
 logging:
-  path: ./build/falcon/logs
-  screen:
-    enabled: true
-  cloud:
-    enabled: true
-    port: 5556
-server_side_storage:
-  environment: ./build/falcon
-  resources: /home/device/falcon/resources
-  custom: {}
+  path: "./build/falcon/logs"
+ui:
+  theme_mode: "system"
+  last_opened_graph: "/home/device/falcon/resources/graphs/current.yaml"
+

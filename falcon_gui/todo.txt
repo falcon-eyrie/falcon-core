@@ -5,8 +5,6 @@ Missing:
 - Use absolute paths for config files
 - Replace temporary absolute paths with correct paths
 - Change falcon's config.yaml from GUI settings
-- Use config.yaml for everything, remove shared_preferences
-- Find out what happens if processing data from 256 channels. Do we need 256 processor instances?
 - When exiting, ask user if they wanna let falcon run in background or kill it
 
 Nice to have:

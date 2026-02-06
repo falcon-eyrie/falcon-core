@@ -10,6 +10,7 @@ import 'package:falcon_gui/state/falcon_zmq.dart';
 import 'package:falcon_gui/utils/debounce.dart';
 import 'package:falcon_gui/utils/file_picker.dart';
 import 'package:falcon_gui/utils/killing_falcon_banner.dart';
+import 'package:falcon_gui/utils/local_config.dart';
 import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';
 import 'package:falcon_gui/utils/paths.dart';
@@ -17,7 +18,7 @@ import 'package:falcon_gui/utils/status_dialog.dart';
 import 'package:flutter/foundation.dart';
 
 final FalconManager falconManager = FalconManager.instance;
-const bool _debugUseExistingFalconInstance = false;
+const bool _debugUseExistingFalconInstance = true;
 
 class FalconManager extends ChangeNotifier {
   FalconManager._internal() {
@@ -83,6 +84,16 @@ class FalconManager extends ChangeNotifier {
     }
   }
 
+  Future<void> saveGraphAs() async {
+    if (_currentGraphFile == null) {
+      return;
+    }
+    final createdFile = await FalconFilePicker.saveGraphAs(_currentGraphFile!);
+    if (createdFile != null) {
+      await loadFile(file: createdFile);
+    }
+  }
+
   Future<void> loadFile({required File file}) async {
     try {
       final yamlAsString = await file.readAsString();
@@ -95,6 +106,10 @@ class FalconManager extends ChangeNotifier {
         _currentGraphFile = file;
         notifyListeners();
 
+        unawaited(
+          LocalConfigManager.setLastOpenedGraphFilePath(file.absolute.path),
+        );
+        
         graphLoadedNotifier.value = graph;
       } catch (e, s) {
         logError('Error parsing graph YAML from file ${file.path}: $e', s);

@@ -11,63 +11,61 @@ class ProcessorOptionsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ...processor.options.entries.map(
-          (entry) {
-            final option = entry.value;
+        ...processor.options.entries.map((entry) {
+          final option = entry.value;
 
-            void onChanged(OptionValue<dynamic> newValue) {
-              graphManager.updateOptionValue(
-                processorId: processor.id,
-                optionName: entry.key,
-                newValue: newValue,
-              );
-            }
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 4,
-              ),
-              child: Row(
-                children: [
-                  Text(option.displayName),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: switch (option) {
-                        final IntOption o => IntOptionField(
-                          option: o,
-                          onChanged: onChanged,
-                        ),
-                        final DoubleOption o => DoubleOptionField(
-                          option: o,
-                          onChanged: onChanged,
-                        ),
-                        final StringOption o => StringOptionField(
-                          option: o,
-                          onChanged: onChanged,
-                        ),
-                        final BoolOption o => BoolOptionField(
-                          option: o,
-                          onChanged: onChanged,
-                        ),
-                        final OneOfOption o => OneOfOptionField(
-                          option: o,
-                          onChanged: onChanged,
-                        ),
-                        // TODO(ben): implement a better YAML editor
-                        final YamlNodeOption o => Text(
-                          o.value.toString(),
-                        ),
-                      },
-                    ),
-                  ),
-                ],
-              ),
+          void onChanged(OptionValue<dynamic> newValue) {
+            graphManager.updateOptionValue(
+              processorId: processor.id,
+              optionName: entry.key,
+              newValue: newValue,
             );
-          },
-        ),
+          }
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              children: [
+                Text(option.displayName),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: switch (option) {
+                      final IntOption o => IntOptionField(
+                        option: o,
+                        onChanged: onChanged,
+                      ),
+                      final DoubleOption o => DoubleOptionField(
+                        option: o,
+                        onChanged: onChanged,
+                      ),
+                      final StringOption o => StringOptionField(
+                        option: o,
+                        onChanged: onChanged,
+                      ),
+                      final BoolOption o => BoolOptionField(
+                        option: o,
+                        onChanged: onChanged,
+                      ),
+                      final OneOfOption o => OneOfOptionField(
+                        option: o,
+                        onChanged: onChanged,
+                      ),
+                      // TODO(ben): implement a better YAML editor
+                      final YamlNodeOption o => Tooltip(
+                        message:
+                            'Editing this option from UI is not supported yet, '
+                            'please use YAML editor for now',
+                        child: Text(o.value.toString()),
+                      ),
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
       ],
     );
   }
@@ -118,10 +116,7 @@ class _OptionFieldBaseState<T extends OptionValue<dynamic>>
       final newOption = widget.parseValue(value);
       widget.onChanged(newOption);
     } catch (e, s) {
-      logError(
-        'Error parsing option value for ${widget.option}: $e',
-        s,
-      );
+      logError('Error parsing option value for ${widget.option}: $e', s);
     }
   }
 
@@ -268,18 +263,16 @@ class OneOfOptionField extends StatelessWidget {
   }
 }
 
-final _intFormatter = TextInputFormatter.withFunction(
-  (oldValue, newValue) {
-    var text = newValue.text;
+final _intFormatter = TextInputFormatter.withFunction((oldValue, newValue) {
+  var text = newValue.text;
 
-    if (!RegExp(r'^-?\d*-?$').hasMatch(text)) return oldValue;
-    if (text.endsWith('-') && text.length > 1) {
-      text = text.substring(0, text.length - 1);
-    }
+  if (!RegExp(r'^-?\d*-?$').hasMatch(text)) return oldValue;
+  if (text.endsWith('-') && text.length > 1) {
+    text = text.substring(0, text.length - 1);
+  }
 
-    return TextEditingValue(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
-    );
-  },
-);
+  return TextEditingValue(
+    text: text,
+    selection: TextSelection.collapsed(offset: text.length),
+  );
+});

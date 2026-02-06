@@ -54,10 +54,7 @@ final _processorTemplatesUnsorted = {
     className: 'FileSerializer',
     isTemplate: true,
     options: {
-      'path': const StringOption(
-        value: 'run://',
-        displayName: 'Path',
-      ),
+      'path': const StringOption(value: 'run://', displayName: 'Path'),
       'encoding': _createEncodingOption(),
       'format': _createFormatOption(),
       'overwrite': const BoolOption(value: false, displayName: 'Overwrite'),
@@ -75,57 +72,32 @@ final _processorTemplatesUnsorted = {
       ),
       'preamble': const BoolOption(value: true, displayName: 'Preamble'),
     },
-    ports: const [
-      Port(name: 'data', type: 'AnyType', isIn: true),
-    ],
+    ports: const [Port(name: 'data', type: 'AnyType', isIn: true)],
   ),
   'nlx_pure_reader': Processor(
     id: 'nlx_pure_reader',
     className: 'NlxPureReader',
     isTemplate: true,
     options: const {
-      'address': StringOption(
-        value: '127.0.0.1',
-        displayName: 'Address',
-      ),
-      'port': IntOption(
-        value: 5000,
-        displayName: 'Port',
-      ),
-      'npackets': IntOption(
-        value: 0,
-        displayName: 'Number of Packets',
-      ),
-      'nchannels': IntOption(
-        value: 32,
-        displayName: 'Number of Channels',
-      ),
+      'address': StringOption(value: '127.0.0.1', displayName: 'Address'),
+      'port': IntOption(value: 5000, displayName: 'Port'),
+      'npackets': IntOption(value: 0, displayName: 'Number of Packets'),
+      'nchannels': IntOption(value: 32, displayName: 'Number of Channels'),
     },
-    ports: const [
-      Port(name: 'udp', type: 'VectorType<uint32_t>', isIn: false),
-    ],
+    ports: const [Port(name: 'udp', type: 'VectorType<uint32_t>', isIn: false)],
   ),
   'burst_detector': Processor(
     id: 'burst_detector',
     className: 'BurstDetector',
     isTemplate: true,
     options: const {
-      'threshold_dev': DoubleOption(
-        value: 3,
-        displayName: 'Threshold Dev',
-      ),
-      'smooth_time': DoubleOption(
-        value: 1,
-        displayName: 'Smooth Time',
-      ),
+      'threshold_dev': DoubleOption(value: 3, displayName: 'Threshold Dev'),
+      'smooth_time': DoubleOption(value: 1, displayName: 'Smooth Time'),
       'detection_lockout_time': DoubleOption(
         value: 1,
         displayName: 'Detection Lockout Time',
       ),
-      'stream_events': BoolOption(
-        value: true,
-        displayName: 'Stream Events',
-      ),
+      'stream_events': BoolOption(value: true, displayName: 'Stream Events'),
       'stream_statistics': BoolOption(
         value: false,
         displayName: 'Stream Statistics',
@@ -136,21 +108,9 @@ final _processorTemplatesUnsorted = {
       ),
     },
     ports: const [
-      Port(
-        name: 'mua',
-        type: 'MUAType',
-        isIn: true,
-      ),
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: false,
-      ),
-      Port(
-        name: 'statistics',
-        type: 'TimeSeriesType<double>',
-        isIn: false,
-      ),
+      Port(name: 'mua', type: 'MUAType', isIn: true),
+      Port(name: 'events', type: 'EventType', isIn: false),
+      Port(name: 'statistics', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
   'digital_output': Processor(
@@ -158,10 +118,7 @@ final _processorTemplatesUnsorted = {
     className: 'DigitalOutput',
     isTemplate: true,
     options: {
-      'pulse_width': const IntOption(
-        value: 400,
-        displayName: 'Pulse Width',
-      ),
+      'pulse_width': const IntOption(value: 400, displayName: 'Pulse Width'),
       'device_type': const StringOption(
         value: 'dummy',
         displayName: 'Device Type',
@@ -183,13 +140,7 @@ final _processorTemplatesUnsorted = {
         displayName: 'Event Logging',
       ),
     },
-    ports: const [
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: true,
-      ),
-    ],
+    ports: const [Port(name: 'events', type: 'EventType', isIn: true)],
   ),
   'event2state': Processor(
     id: 'event2state',
@@ -202,16 +153,8 @@ final _processorTemplatesUnsorted = {
       ),
     },
     ports: const [
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: true,
-      ),
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: false,
-      ),
+      Port(name: 'events', type: 'EventType', isIn: true),
+      Port(name: 'events', type: 'EventType', isIn: false),
     ],
   ),
   'event_converter': Processor(
@@ -223,22 +166,11 @@ final _processorTemplatesUnsorted = {
         value: 'DEFAULT_EVENT',
         displayName: 'Event Name',
       ),
-      'replace': BoolOption(
-        value: true,
-        displayName: 'Replace',
-      ),
+      'replace': BoolOption(value: true, displayName: 'Replace'),
     },
     ports: const [
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: true,
-      ),
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: false,
-      ),
+      Port(name: 'events', type: 'EventType', isIn: true),
+      Port(name: 'events', type: 'EventType', isIn: false),
     ],
   ),
   'event_delayed': Processor(
@@ -306,16 +238,8 @@ final _processorTemplatesUnsorted = {
       ),
     },
     ports: const [
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: true,
-      ),
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: false,
-      ),
+      Port(name: 'events', type: 'EventType', isIn: true),
+      Port(name: 'events', type: 'EventType', isIn: false),
     ],
   ),
   'ripple_detector': Processor(
@@ -323,22 +247,13 @@ final _processorTemplatesUnsorted = {
     className: 'RippleDetector',
     isTemplate: true,
     options: const {
-      'threshold_dev': DoubleOption(
-        value: 6,
-        displayName: 'Threshold Dev',
-      ),
-      'smooth_time': DoubleOption(
-        value: 10,
-        displayName: 'Smooth Time (s)',
-      ),
+      'threshold_dev': DoubleOption(value: 6, displayName: 'Threshold Dev'),
+      'smooth_time': DoubleOption(value: 10, displayName: 'Smooth Time (s)'),
       'analysis_lockout_time': DoubleOption(
         value: 30,
         displayName: 'Detection Lockout Time (ms)',
       ),
-      'stream_events': BoolOption(
-        value: true,
-        displayName: 'Stream Events',
-      ),
+      'stream_events': BoolOption(value: true, displayName: 'Stream Events'),
       'stream_statistics': BoolOption(
         value: true,
         displayName: 'Stream Statistics',
@@ -351,27 +266,12 @@ final _processorTemplatesUnsorted = {
         value: 1,
         displayName: 'Statistics Downsample Factor',
       ),
-      'use_power': BoolOption(
-        value: true,
-        displayName: 'Use Power',
-      ),
+      'use_power': BoolOption(value: true, displayName: 'Use Power'),
     },
     ports: const [
-      Port(
-        name: 'data',
-        type: 'TimeSeriesType<double>',
-        isIn: true,
-      ),
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: false,
-      ),
-      Port(
-        name: 'statistics',
-        type: 'TimeSeriesType<double>',
-        isIn: false,
-      ),
+      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'events', type: 'EventType', isIn: false),
+      Port(name: 'statistics', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
   'event_filter': Processor(
@@ -387,10 +287,7 @@ final _processorTemplatesUnsorted = {
         value: 1.5,
         displayName: 'Block Wait Time (ms)',
       ),
-      'sync_time': DoubleOption(
-        value: 3.5,
-        displayName: 'Sync Time (ms)',
-      ),
+      'sync_time': DoubleOption(value: 3.5, displayName: 'Sync Time (ms)'),
       'discard_warnings': BoolOption(
         value: false,
         displayName: 'Discard Warnings',
@@ -401,21 +298,9 @@ final _processorTemplatesUnsorted = {
       ),
     },
     ports: const [
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: true,
-      ),
-      Port(
-        name: 'blocking_events',
-        type: 'EventType',
-        isIn: true,
-      ),
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: false,
-      ),
+      Port(name: 'events', type: 'EventType', isIn: true),
+      Port(name: 'blocking_events', type: 'EventType', isIn: true),
+      Port(name: 'events', type: 'EventType', isIn: false),
     ],
   ),
   'event_logger': Processor(
@@ -428,13 +313,7 @@ final _processorTemplatesUnsorted = {
         displayName: 'Target Event',
       ),
     },
-    ports: const [
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: true,
-      ),
-    ],
+    ports: const [Port(name: 'events', type: 'EventType', isIn: true)],
   ),
 
   'event_source': Processor(
@@ -446,18 +325,9 @@ final _processorTemplatesUnsorted = {
         value: YamlList.wrap(['DEFAULT_EVENT']),
         displayName: 'Events',
       ),
-      'rate': const DoubleOption(
-        value: 1,
-        displayName: 'Event Rate (Hz)',
-      ),
+      'rate': const DoubleOption(value: 1, displayName: 'Event Rate (Hz)'),
     },
-    ports: const [
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: false,
-      ),
-    ],
+    ports: const [Port(name: 'events', type: 'EventType', isIn: false)],
   ),
   'event_sync': Processor(
     id: 'event_sync',
@@ -470,16 +340,8 @@ final _processorTemplatesUnsorted = {
       ),
     },
     ports: const [
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: true,
-      ),
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: false,
-      ),
+      Port(name: 'events', type: 'EventType', isIn: true),
+      Port(name: 'events', type: 'EventType', isIn: false),
     ],
   ),
   'level_crossing_detector': Processor(
@@ -487,14 +349,8 @@ final _processorTemplatesUnsorted = {
     className: 'LevelCrossingDetector',
     isTemplate: true,
     options: const {
-      'threshold': DoubleOption(
-        value: 100,
-        displayName: 'Threshold',
-      ),
-      'upslope': BoolOption(
-        value: true,
-        displayName: 'Upslope',
-      ),
+      'threshold': DoubleOption(value: 100, displayName: 'Threshold'),
+      'upslope': BoolOption(value: true, displayName: 'Upslope'),
       'post_detect_block': IntOption(
         value: 2,
         displayName: 'Post Detect Block (samples)',
@@ -505,16 +361,8 @@ final _processorTemplatesUnsorted = {
       ),
     },
     ports: const [
-      Port(
-        name: 'data',
-        type: 'TimeSeriesType<double>',
-        isIn: true,
-      ),
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: false,
-      ),
+      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'events', type: 'EventType', isIn: false),
     ],
   ),
   'mua_estimator': Processor(
@@ -522,22 +370,11 @@ final _processorTemplatesUnsorted = {
     className: 'MUAEstimator',
     isTemplate: true,
     options: const {
-      'bin_size': DoubleOption(
-        value: 10,
-        displayName: 'Bin Size (ms)',
-      ),
+      'bin_size': DoubleOption(value: 10, displayName: 'Bin Size (ms)'),
     },
     ports: const [
-      Port(
-        name: 'spikes',
-        type: 'SpikeType',
-        isIn: true,
-      ),
-      Port(
-        name: 'mua',
-        type: 'MUAType',
-        isIn: false,
-      ),
+      Port(name: 'spikes', type: 'SpikeType', isIn: true),
+      Port(name: 'mua', type: 'MUAType', isIn: false),
     ],
   ),
   'nlx_parser': Processor(
@@ -545,10 +382,7 @@ final _processorTemplatesUnsorted = {
     className: 'NlxParser',
     isTemplate: true,
     options: const {
-      'batch_size': IntOption(
-        value: 1,
-        displayName: 'Batch Size',
-      ),
+      'batch_size': IntOption(value: 1, displayName: 'Batch Size'),
       'update_interval': DoubleOption(
         value: 0,
         displayName: 'Update Interval (s)',
@@ -557,31 +391,13 @@ final _processorTemplatesUnsorted = {
         value: false,
         displayName: 'Trigger Enabled',
       ),
-      'trigger_channel': IntOption(
-        value: 0,
-        displayName: 'Trigger Channel',
-      ),
-      'gap_fill': StringOption(
-        value: 'none',
-        displayName: 'Gap Fill',
-      ),
+      'trigger_channel': IntOption(value: 0, displayName: 'Trigger Channel'),
+      'gap_fill': StringOption(value: 'none', displayName: 'Gap Fill'),
     },
     ports: const [
-      Port(
-        name: 'udp',
-        type: 'VectorType<uint32_t>',
-        isIn: true,
-      ),
-      Port(
-        name: 'data',
-        type: 'TimeSeriesType<double>',
-        isIn: false,
-      ),
-      Port(
-        name: 'ttl',
-        type: 'TimeSeriesType<uint32_t>',
-        isIn: false,
-      ),
+      Port(name: 'udp', type: 'VectorType<uint32_t>', isIn: true),
+      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: false),
+      Port(name: 'ttl', type: 'TimeSeriesType<uint32_t>', isIn: false),
     ],
   ),
   'zmq_serializer': Processor(
@@ -589,42 +405,21 @@ final _processorTemplatesUnsorted = {
     className: 'ZMQSerializer',
     isTemplate: true,
     options: {
-      'port': const IntOption(
-        value: 5555,
-        displayName: 'Port',
-      ),
+      'port': const IntOption(value: 5555, displayName: 'Port'),
       'encoding': _createEncodingOption(),
       'format': _createFormatOption(),
-      'interleave': const BoolOption(
-        value: false,
-        displayName: 'Interleave',
-      ),
+      'interleave': const BoolOption(value: false, displayName: 'Interleave'),
     },
-    ports: const [
-      Port(
-        name: 'data',
-        type: 'AnyType',
-        isIn: true,
-      ),
-    ],
+    ports: const [Port(name: 'data', type: 'AnyType', isIn: true)],
   ),
   'spike_detector': Processor(
     id: 'spike_detector',
     className: 'SpikeDetector',
     isTemplate: true,
     options: const {
-      'threshold': DoubleOption(
-        value: 0,
-        displayName: 'Threshold',
-      ),
-      'invert_signal': BoolOption(
-        value: false,
-        displayName: 'Invert Signal',
-      ),
-      'buffer_size': DoubleOption(
-        value: 1,
-        displayName: 'Buffer Size (s)',
-      ),
+      'threshold': DoubleOption(value: 0, displayName: 'Threshold'),
+      'invert_signal': BoolOption(value: false, displayName: 'Invert Signal'),
+      'buffer_size': DoubleOption(value: 1, displayName: 'Buffer Size (s)'),
       'strict_time_bin_check': BoolOption(
         value: true,
         displayName: 'Strict Time Bin Check',
@@ -635,21 +430,9 @@ final _processorTemplatesUnsorted = {
       ),
     },
     ports: const [
-      Port(
-        name: 'data',
-        type: 'TimeSeriesType<double>',
-        isIn: true,
-      ),
-      Port(
-        name: 'spikes',
-        type: 'SpikeType',
-        isIn: false,
-      ),
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: false,
-      ),
+      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'spikes', type: 'SpikeType', isIn: false),
+      Port(name: 'events', type: 'EventType', isIn: false),
     ],
   ),
   'serial_output': Processor(
@@ -661,22 +444,10 @@ final _processorTemplatesUnsorted = {
         value: '/dev/ttyACM0',
         displayName: 'Port Address',
       ),
-      'baud_rate': IntOption(
-        value: 9600,
-        displayName: 'Baudrate',
-      ),
-      'event_logging': BoolOption(
-        value: true,
-        displayName: 'Event Logging',
-      ),
+      'baud_rate': IntOption(value: 9600, displayName: 'Baudrate'),
+      'event_logging': BoolOption(value: true, displayName: 'Event Logging'),
     },
-    ports: const [
-      Port(
-        name: 'events',
-        type: 'EventType',
-        isIn: true,
-      ),
-    ],
+    ports: const [Port(name: 'events', type: 'EventType', isIn: true)],
   ),
   'running_stats': Processor(
     id: 'running_stats',
@@ -691,26 +462,15 @@ final _processorTemplatesUnsorted = {
         value: false,
         displayName: 'Outlier Protection',
       ),
-      'outlier_zscore': DoubleOption(
-        value: 6,
-        displayName: 'Outlier Z-Score',
-      ),
+      'outlier_zscore': DoubleOption(value: 6, displayName: 'Outlier Z-Score'),
       'outlier_half_life': DoubleOption(
         value: 2,
         displayName: 'Outlier Half-Life',
       ),
     },
     ports: const [
-      Port(
-        name: 'data',
-        type: 'TimeSeriesType<double>',
-        isIn: true,
-      ),
-      Port(
-        name: 'data',
-        type: 'TimeSeriesType<double>',
-        isIn: false,
-      ),
+      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
   'rebuffer': Processor(
@@ -722,22 +482,11 @@ final _processorTemplatesUnsorted = {
         value: 1,
         displayName: 'Downsample Factor',
       ),
-      'buffer_size': DoubleOption(
-        value: 10,
-        displayName: 'Buffer Size (s)',
-      ),
+      'buffer_size': DoubleOption(value: 10, displayName: 'Buffer Size (s)'),
     },
     ports: const [
-      Port(
-        name: 'data',
-        type: 'TimeSeriesType<double>',
-        isIn: true,
-      ),
-      Port(
-        name: 'data',
-        type: 'TimeSeriesType<double>',
-        isIn: false,
-      ),
+      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
 };

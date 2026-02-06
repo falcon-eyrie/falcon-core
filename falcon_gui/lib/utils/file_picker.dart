@@ -51,4 +51,30 @@ class FalconFilePicker {
 
     return null;
   }
+
+  static Future<File?> saveGraphAs(File currentFile) async {
+    try {
+      final result = await FilePicker.platform.saveFile(
+        allowedExtensions: [graphFileExtension],
+        initialDirectory: defaultGraphsDirectory.path,
+        dialogTitle: 'Save Falcon Graph File As',
+        type: FileType.custom,
+        lockParentWindow: true,
+        fileName: currentFile.path.split(Platform.pathSeparator).last,
+      );
+
+      if (result != null) {
+        final newFile = File(result);
+        if (newFile.absolute.path != currentFile.absolute.path) {
+          await currentFile.copy(newFile.path);
+        }
+
+        return newFile;
+      }
+    } catch (e, s) {
+      logError('Error saving graph file: $e', s);
+    }
+
+    return null;
+  }
 }

@@ -39,6 +39,14 @@ class ControlsBar extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               IconButton(
+                icon: const Icon(RemixIcons.export_line),
+                tooltip: 'Save Graph File As',
+                onPressed: falconManager.currentGraphFile != null
+                    ? falconManager.saveGraphAs
+                    : null,
+              ),
+              const SizedBox(width: 8),
+              IconButton(
                 icon: const Icon(RemixIcons.settings_3_line),
                 tooltip: 'Settings',
                 onPressed: () async {

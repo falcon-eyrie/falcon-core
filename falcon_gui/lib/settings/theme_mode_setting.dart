@@ -1,24 +1,36 @@
 import 'dart:async';
 
+import 'package:falcon_gui/utils/local_config.dart';
 import 'package:falcon_gui/utils/logger.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
 
-Future<void> loadThemeModeFromSharedPreferences() async {
+Future<void> setThemeModeFromConfig() async {
   try {
-    final prefs = await SharedPreferences.getInstance();
-    final themeIndex = prefs.getInt('theme_mode') ?? 0;
-    themeNotifier.value = ThemeMode.values[themeIndex];
+    if (localConfig.themeMode == null) {
+      await _saveThemeModeToLocalConfig(ThemeMode.system);
+    }
+
+    final themeModeName = localConfig.themeMode ?? 'system';
+    final themeMode = themeModeName == 'light'
+        ? ThemeMode.light
+        : themeModeName == 'dark'
+        ? ThemeMode.dark
+        : ThemeMode.system;
+    themeNotifier.value = themeMode;
   } catch (e, s) {
     logError('Error loading theme mode from shared preferences: $e', s);
   }
 }
 
-Future<void> saveThemeModeToSharedPreferences(ThemeMode mode) async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setInt('theme_mode', mode.index);
+Future<void> _saveThemeModeToLocalConfig(ThemeMode mode) async {
+  final modeName = switch (mode) {
+    ThemeMode.light => 'light',
+    ThemeMode.dark => 'dark',
+    ThemeMode.system => 'system',
+  };
+  await LocalConfigManager.setThemeMode(modeName);
 }
 
 class ThemeModeSetting extends StatelessWidget {
@@ -59,7 +71,7 @@ class ThemeModeSetting extends StatelessWidget {
                 onSelectionChanged: (newSelection) {
                   final newMode = newSelection.first;
                   themeNotifier.value = newMode;
-                  unawaited(saveThemeModeToSharedPreferences(newMode));
+                  unawaited(_saveThemeModeToLocalConfig(newMode));
                 },
               ),
             ],

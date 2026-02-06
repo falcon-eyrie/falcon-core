@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:falcon_gui/graph_editor/graph_editor.dart';
 import 'package:falcon_gui/settings/theme_mode_setting.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
+import 'package:falcon_gui/utils/local_config.dart';
 import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/priority_dialog.dart';
@@ -29,7 +31,7 @@ Future<void> _entrypoint() async {
     size: Size(1280, 720),
     center: true,
     skipTaskbar: false,
-    title: 'Falcon GUI',
+    title: 'Falcon',
     windowButtonVisibility: true,
   );
   await windowManager.setPreventClose(true);
@@ -40,11 +42,24 @@ Future<void> _entrypoint() async {
     // await windowManager.focus();
   });
 
-  await loadThemeModeFromSharedPreferences();
+  await LocalConfigManager.loadConfig();
+
+  await setThemeModeFromConfig();
   _listenForLoadedGraphFile();
+  _maybeLoadLastGraph();
   Future.delayed(const Duration(milliseconds: 1000), maybeShowPriorityDialog);
 
   runApp(const DesktopApp());
+}
+
+void _maybeLoadLastGraph() {
+  final lastGraphPath = localConfig.lastOpenedGraph;
+  if (lastGraphPath != null) {
+    final file = File(lastGraphPath);
+    if (file.existsSync()) {
+      unawaited(falconManager.loadFile(file: file));
+    }
+  }
 }
 
 void _listenForLoadedGraphFile() {
@@ -52,6 +67,16 @@ void _listenForLoadedGraphFile() {
     final graph = falconManager.graphLoadedNotifier.value;
     if (graph != null) {
       graphManager.loadGraph(graph);
+    }
+
+    if (falconManager.currentGraphFileName != null) {
+      unawaited(
+        windowManager.setTitle(
+          'Falcon - ${falconManager.currentGraphFileName}',
+        ),
+      );
+    } else {
+      unawaited(windowManager.setTitle('Falcon'));
     }
   });
 }

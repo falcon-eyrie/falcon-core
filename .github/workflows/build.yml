@@ -53,9 +53,7 @@ jobs:
 
       - name: Build project
         run: |
-          ls -al
           cd build
-          ls -al
           make -j$(nproc)
 
       - name: Run clang-tidy (only for clang)
