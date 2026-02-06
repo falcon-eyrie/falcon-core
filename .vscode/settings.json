@@ -23,5 +23,7 @@
     "C_Cpp.codeAnalysis.exclude": {
         "build/": true,
         "extensions/": true,
+        "**/.fvm/": true,
+        "**/.venv/": true,
     },
 }

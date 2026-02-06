@@ -66,7 +66,7 @@ class IProcessor {
         add_option("test", new_test_flag_);
 
         // add advanced options
-        add_advanced_option("thread_core_range", thread_core_range_);
+        add_advanced_option("thread_core", thread_core_);
         add_advanced_option("threadpriority", thread_priority_ = priority);
         add_advanced_option("buffer_sizes", requested_buffer_sizes_);
     }
@@ -170,8 +170,7 @@ class IProcessor {
     virtual bool isautonomous() const { return (issource() && issink()); }
 
     ThreadPriority thread_priority() const { return thread_priority_(); }
-    std::pair<ThreadCore, ThreadCore> thread_core_range() const { return thread_core_range_(); }
-
+    ThreadCore thread_core() const { return thread_core_(); }
     bool running() const { return running_.load(); }
 
     YAML::Node ExportYAML();
@@ -671,7 +670,9 @@ class IProcessor {
     options::Value<ThreadPriority, false> thread_priority_{
         PRIORITY_NONE, options::inrange<ThreadPriority>(PRIORITY_NONE, PRIORITY_HIGH)};
 
-    options::Value<std::pair<ThreadCore, ThreadCore>, false> thread_core_range_{{-1, -1}};
+    options::Value<ThreadCore, false> thread_core_{
+        CORE_NOT_PINNED, options::inrange<ThreadCore>(
+                             CORE_NOT_PINNED, (ThreadCore) sysconf(_SC_NPROCESSORS_ONLN) - 1)};
 
     options::NullableBool new_test_flag_;
     options::Value<std::map<std::string, int>> requested_buffer_sizes_{};

@@ -144,7 +144,7 @@ class _YamlEditorState extends State<_YamlEditor> {
             maxLines: null,
             expands: true,
             decoration: InputDecoration(
-              labelText: falconManager.curentGraphFileName,
+              labelText: falconManager.currentGraphFileName,
               border: const OutlineInputBorder(),
               errorMaxLines: 10,
             ),

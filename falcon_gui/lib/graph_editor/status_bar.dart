@@ -42,7 +42,7 @@ class StatusBar extends StatelessWidget {
               ),
               _StatusBarButton(
                 icon: RemixIcons.code_block,
-                label: falconManager.curentGraphFileName ?? 'No Graph File',
+                label: falconManager.currentGraphFileName ?? 'No Graph File',
                 tooltip: isYamlEditorCollapsed
                     ? 'Show YAML Editor'
                     : 'Hide YAML Editor',

@@ -27,10 +27,10 @@ class FalconManager extends ChangeNotifier {
 
   static final FalconManager instance = FalconManager._internal();
 
-  File? _curentGraphFile;
-  File? get curentGraphFile => _curentGraphFile;
-  String? get curentGraphFileName =>
-      _curentGraphFile?.path.split(Platform.pathSeparator).last;
+  File? _currentGraphFile;
+  File? get currentGraphFile => _currentGraphFile;
+  String? get currentGraphFileName =>
+      _currentGraphFile?.path.split(Platform.pathSeparator).last;
 
   final graphLoadedNotifier = ValueNotifier<FalconGraph?>(null);
 
@@ -92,7 +92,7 @@ class FalconManager extends ChangeNotifier {
           yamlAsString,
         );
 
-        _curentGraphFile = file;
+        _currentGraphFile = file;
         notifyListeners();
 
         graphLoadedNotifier.value = graph;
@@ -322,7 +322,7 @@ class FalconManager extends ChangeNotifier {
   }
 
   Future<void> onGraphChanged(FalconGraph graph) async {
-    if (_curentGraphFile == null) {
+    if (_currentGraphFile == null) {
       logError(
         'onGraphChanged called but no current '
         'graph file is set ${StackTrace.current}',
@@ -349,14 +349,14 @@ class FalconManager extends ChangeNotifier {
       return;
     }
 
-    await _curentGraphFile!.writeAsString(graphAsYaml);
+    await _currentGraphFile!.writeAsString(graphAsYaml);
     await _falconZMQ!.sendCommandParts(
-      FalconZmqCommand.graphBuild(_curentGraphFile!.absolute.path),
+      FalconZmqCommand.graphBuild(_currentGraphFile!.absolute.path),
     );
   }
 
   Future<void> onUIMetadataChanged(FalconGraph graph) async {
-    if (_curentGraphFile == null) {
+    if (_currentGraphFile == null) {
       logError(
         'onUIMetadataChanged called but no current '
         'graph file is set ${StackTrace.current}',
@@ -364,7 +364,7 @@ class FalconManager extends ChangeNotifier {
       return;
     }
     _fileWriteDebounce(() async {
-      await _curentGraphFile!.writeAsString(graph.toYaml());
+      await _currentGraphFile!.writeAsString(graph.toYaml());
     });
   }
 
