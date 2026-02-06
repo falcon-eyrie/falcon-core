@@ -53,6 +53,7 @@ jobs:
 
       - name: Build project
         run: |
+          ls -al
           cd build
           ls -al
           make -j$(nproc)
