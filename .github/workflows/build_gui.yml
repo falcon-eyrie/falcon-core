@@ -1,0 +1,31 @@
+name: Build GUI
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - "falcon_gui/**"
+      - ".github/workflows/build_gui.yml"
+
+jobs:
+  build-linux:
+    name: Build GUI
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install flutter
+        run: |
+          curl -fsSL https://fvm.app/install.sh | bash -s -- 3.38.5
+
+      - name: Lint and format
+        run: |
+          flutter pub get
+          flutter format --set-exit-if-changed .
+          flutter analyze --fatal-infos --fatal-warnings
+
+      - name: Build project
+        run: |
+          flutter build linux --release
