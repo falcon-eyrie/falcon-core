@@ -30,7 +30,7 @@ class FalconManager extends ChangeNotifier {
   final graphLoadedNotifier = ValueNotifier<FalconGraph?>(null);
 
   File get _defaultGraphFile =>
-      File('$ubuntuHomePath/falcon/resources/graphs/my_graph.yaml')
+      File('$ubuntuHomePath/falcon/resources/graphs/new_graph.yaml')
         ..createSync(recursive: true);
 
   String get _falconPath {
@@ -305,13 +305,6 @@ class FalconManager extends ChangeNotifier {
         }
       }
 
-      await _falconZMQ?.disconnect();
-      await _falconZMQ?.dispose();
-      _falconZMQ = null;
-
-      _localFalconBackendPid = null;
-      _localBackendExitCompleter = null;
-
       notifyListeners();
     } catch (e, s) {
       logError('Error killing falcon instance: $e', s);
@@ -400,7 +393,6 @@ class FalconManager extends ChangeNotifier {
   @override
   Future<void> dispose() async {
     await _falconZMQ?.dispose();
-    _falconZMQ = null;
     _processExitWatchdogTimer?.cancel();
     super.dispose();
   }

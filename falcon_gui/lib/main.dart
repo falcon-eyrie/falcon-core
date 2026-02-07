@@ -113,9 +113,16 @@ class _RootPageState extends State<RootPage> with WindowListener {
     super.dispose();
   }
 
+  bool _isDialogAlreadyShowing = false;
+
   @override
   Future<void> onWindowClose() async {
     logInfo('Window close requested, calling on close dialog...');
+    if (_isDialogAlreadyShowing) {
+      logInfo('On close dialog is already showing, ignoring...');
+      return;
+    }
+    _isDialogAlreadyShowing = true;
     await showOnCloseGUIDialog();
     logInfo('On close dialog completed, destroying window...');
     unawaited(windowManager.destroy());

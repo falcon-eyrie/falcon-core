@@ -275,10 +275,19 @@ final class OneOfOption extends OptionValue<String> {
 }
 
 class Port extends Equatable {
-  const Port({required this.isIn, required this.name, required this.type});
+  const Port({
+    required this.isIn,
+    required this.name,
+    required this.type,
+    this.isState = false,
+  });
   final String name;
-  final String type; // e.g. "AnyType", "TimeSeriesType<double>", "int"
+  // e.g. "AnyType", "TimeSeriesType<double>", "int"
+  final String type;
   final bool isIn;
+  // State ports are special ports. They are used to
+  // share slow changing state between processors.
+  final bool isState;
   bool get isOut => !isIn;
 
   String get directionalName => isIn ? 'in:$name' : 'out:$name';

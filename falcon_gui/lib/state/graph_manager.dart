@@ -691,7 +691,7 @@ class GraphManager extends ChangeNotifier {
     super.dispose();
   }
 
-  // Hook called when the editor view has been rendered.
+  // This hook is called when the editor view has been rendered.
   void onEditorViewRendered() {
     // If there are port positions and we were waiting for them,
     // we can now stop waiting and render connections using these port
