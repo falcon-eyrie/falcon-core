@@ -1,6 +1,5 @@
-import 'package:falcon_gui/settings/falcon_priority_status.dart';
+import 'package:falcon_gui/dialogs/dialog_view.dart';
 import 'package:falcon_gui/settings/theme_mode_setting.dart';
-import 'package:falcon_gui/utils/dialog_view.dart';
 import 'package:flutter/material.dart';
 
 class SettingsView extends StatelessWidget {
@@ -13,8 +12,8 @@ class SettingsView extends StatelessWidget {
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FalconProcessPriorityStatus(),
-          SizedBox(height: 12),
+          // FalconProcessPriorityStatus(),
+          // SizedBox(height: 12),
           ThemeModeSetting(),
           SizedBox(height: 12),
         ],

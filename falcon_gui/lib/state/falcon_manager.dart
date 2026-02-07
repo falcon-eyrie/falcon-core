@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:falcon_gui/dialogs/status_dialog.dart';
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/falcon_log.dart';
 import 'package:falcon_gui/model/falcon_state.dart';
@@ -9,22 +10,15 @@ import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/falcon_zmq.dart';
 import 'package:falcon_gui/utils/debounce.dart';
 import 'package:falcon_gui/utils/file_picker.dart';
-import 'package:falcon_gui/utils/killing_falcon_banner.dart';
 import 'package:falcon_gui/utils/local_config.dart';
 import 'package:falcon_gui/utils/logger.dart';
-import 'package:falcon_gui/utils/other_falcon_instances_banner.dart';
-import 'package:falcon_gui/utils/paths.dart';
-import 'package:falcon_gui/utils/status_dialog.dart';
+import 'package:falcon_gui/utils/misc.dart';
 import 'package:flutter/foundation.dart';
 
 final FalconManager falconManager = FalconManager.instance;
-const bool _debugUseExistingFalconInstance = true;
 
 class FalconManager extends ChangeNotifier {
-  FalconManager._internal() {
-    // TODO(ben): load last opened graph from the last session
-    unawaited(loadFile(file: _defaultGraphFile));
-  }
+  FalconManager._internal();
 
   static final FalconManager instance = FalconManager._internal();
 
@@ -45,13 +39,16 @@ class FalconManager extends ChangeNotifier {
 
   final _fileWriteDebounce = Debounce(delay: const Duration(milliseconds: 500));
 
-  Process? _falconProcess;
   FalconZMQ? _falconZMQ;
-  Completer<void>? _processExitCompleter;
 
-  PriorityStatus _priorityStatus = PriorityStatus.unknown;
+  int? _localFalconBackendPid;
+  int? get localFalconBackendPid => _localFalconBackendPid;
+  Timer? _processExitWatchdogTimer;
+  Completer<void>? _localBackendExitCompleter;
 
-  PriorityStatus get processPriority => _priorityStatus;
+  // PriorityStatus _priorityStatus = PriorityStatus.unknown;
+
+  // PriorityStatus get processPriority => _priorityStatus;
 
   String get processPriorityCommand =>
       'sudo setcap cap_sys_nice=eip $_falconPath';
@@ -68,6 +65,24 @@ class FalconManager extends ChangeNotifier {
     return state != FalconState.processing &&
         state != FalconState.starting &&
         state != FalconState.stopping;
+  }
+
+  Future<void> initialize() async {
+    await _initializeZMQ();
+
+    // Don't default to local,
+    // let user choose remote vs local on startup
+    await initLocalBackend();
+
+    final lastGraphPath = localConfig.lastOpenedGraph;
+    if (lastGraphPath != null) {
+      final file = File(lastGraphPath);
+      if (file.existsSync()) {
+        unawaited(falconManager.loadFile(file: file));
+      }
+    } else {
+      unawaited(loadFile(file: _defaultGraphFile));
+    }
   }
 
   Future<void> openFile() async {
@@ -133,124 +148,113 @@ class FalconManager extends ChangeNotifier {
     }
   }
 
-  Future<PriorityStatus> checkProcessPriority() async {
+  // Future<PriorityStatus> checkProcessPriority() async {
+  //   try {
+  //     final result = await Process.run('getcap', [_falconPath]);
+  //     final newStatus = result.stdout.toString().contains('cap_sys_nice')
+  //         ? PriorityStatus.prioritized
+  //         : PriorityStatus.notPrioritized;
+  //     if (_priorityStatus != PriorityStatus.prioritized &&
+  //         newStatus == PriorityStatus.prioritized) {
+  //       logInfo('Falcon process has been prioritized.');
+
+  //       if (_falconProcess != null) {
+  //         logInfo('Restarting falcon to apply new priority settings.');
+  //         unawaited(killFalcon().then((_) => createFalconInstance()));
+  //       } else {
+  //         logInfo('Spawning falcon with prioritized settings.');
+  //         unawaited(createFalconInstance());
+  //       }
+  //     }
+
+  //     _priorityStatus = newStatus;
+  //   } catch (e, s) {
+  //     logError('Error checking priority: $e', s);
+  //     _priorityStatus = PriorityStatus.unknown;
+  //   }
+  //   notifyListeners();
+  //   return _priorityStatus;
+  // }
+
+  Future<void> initLocalBackend() async {
+    if (_localFalconBackendPid != null) return;
+
     try {
-      final result = await Process.run('getcap', [_falconPath]);
-      final newStatus = result.stdout.toString().contains('cap_sys_nice')
-          ? PriorityStatus.prioritized
-          : PriorityStatus.notPrioritized;
-      if (_priorityStatus != PriorityStatus.prioritized &&
-          newStatus == PriorityStatus.prioritized) {
-        logInfo('Falcon process has been prioritized.');
+      final existingPid = await _getExistingFalconPID();
 
-        if (_falconProcess != null) {
-          logInfo('Restarting falcon to apply new priority settings.');
-          unawaited(killFalcon().then((_) => createFalconInstance()));
-        } else {
-          logInfo('Spawning falcon with prioritized settings.');
-          unawaited(createFalconInstance());
-        }
-      }
+      if (existingPid != null) {
+        logInfo(
+          'Found existing local backend process with PID '
+          '$existingPid, taking ownership.',
+        );
 
-      _priorityStatus = newStatus;
-    } catch (e, s) {
-      logError('Error checking priority: $e', s);
-      _priorityStatus = PriorityStatus.unknown;
-    }
-    notifyListeners();
-    return _priorityStatus;
-  }
-
-  Future<void> createFalconInstance() async {
-    final pids = await _getExistingFalconPIDs();
-
-    if (pids.isNotEmpty) {
-      logInfo('Existing Falcon instances detected: $pids');
-      if (kDebugMode) {
-        unawaited(killOthersAndSpawnNew());
+        _localFalconBackendPid = existingPid;
       } else {
-        showOtherFalconInstancesBanner(pids: pids);
-      }
-      return;
-    }
-
-    if (_falconProcess != null) return;
-
-    await _initializeZMQ();
-
-    if (kDebugMode && _debugUseExistingFalconInstance) {
-      notifyListeners();
-      return;
-    }
-
-    try {
-      // tmp solution, will fix on CPP side later
-      if (kDebugMode) {
-        final logDir = Directory('./build/falcon/logs');
-        // ignore: avoid_slow_async_io
-        if (!await logDir.exists()) {
-          await logDir.create(recursive: true);
-        }
-      }
-
-      _falconProcess = await Process.start(
-        _falconPath,
-        [
-          '-c',
-          if (kDebugMode) ...[
-            'falcon/debug_config.yaml',
-          ] else ...[
-            '$ubuntuHomePath/.local/share/org.falcon-eyrie.falcon_gui/config.yaml',
+        final localBackendProcess = await Process.start(
+          _falconPath,
+          [
+            '-c',
+            if (kDebugMode) ...[
+              'falcon/debug_config.yaml',
+            ] else ...[
+              '$ubuntuHomePath/.local/share/org.falcon-eyrie.falcon_gui/config.yaml',
+            ],
           ],
-        ],
-      );
-      _processExitCompleter = Completer<void>();
-      _listenForExitCode();
+        );
+        _localFalconBackendPid = localBackendProcess.pid;
+        logInfo('Started new Falcon process with PID $_localFalconBackendPid');
+      }
+
+      _localBackendExitCompleter = Completer<void>();
+      _startExitMonitoring();
       notifyListeners();
     } catch (e, s) {
       logError('Error creating falcon instance: $e', s);
     }
   }
 
-  void _listenForExitCode() {
-    unawaited(
-      _falconProcess!.exitCode.then((_) {
-        logInfo('Falcon process exitCode received');
-        if (_processExitCompleter != null &&
-            !_processExitCompleter!.isCompleted) {
-          _processExitCompleter!.complete();
+  bool _isLocalBackendStillAlive() {
+    return Directory('/proc/$_localFalconBackendPid').existsSync();
+  }
+
+  void _startExitMonitoring() {
+    _processExitWatchdogTimer?.cancel();
+    _processExitWatchdogTimer = Timer.periodic(
+      const Duration(milliseconds: 500),
+      (timer) {
+        if (_localFalconBackendPid == null || !_isLocalBackendStillAlive()) {
+          logInfo(
+            'Falcon process (PID $_localFalconBackendPid) exit '
+            'detected via polling',
+          );
+
+          timer.cancel();
+          _localFalconBackendPid = null;
+
+          if (_localBackendExitCompleter != null &&
+              !_localBackendExitCompleter!.isCompleted) {
+            _localBackendExitCompleter!.complete();
+          }
+
+          notifyListeners();
         }
-      }),
+      },
     );
   }
 
-  Future<List<int>> _getExistingFalconPIDs() async {
+  /// Get existing Falcon PID on this machine using pgrep.
+  /// If there are multiple instances (there shouldn't),
+  /// first match is returned.
+  Future<int?> _getExistingFalconPID() async {
     final pgrepResult = await Process.run('pgrep', ['-f', _falconPath]);
-    final pids = pgrepResult.stdout
+    final existingPids = pgrepResult.stdout
         .toString()
         .trim()
         .split('\n')
         .where((line) => line.isNotEmpty)
         .map(int.parse)
         .toList();
-    return pids;
-  }
-
-  Future<void> killOthersAndSpawnNew() async {
-    final pids = await _getExistingFalconPIDs();
-    for (final pid in pids) {
-      try {
-        final result = Process.killPid(pid, ProcessSignal.sigkill);
-        logInfo(
-          'Killed existing Falcon process with PID: $pid '
-          'Result: $result',
-        );
-      } catch (e, s) {
-        logError('Error killing existing process $pid: $e', s);
-      }
-    }
-
-    await createFalconInstance();
+    return existingPids.isNotEmpty ? existingPids.first : null;
   }
 
   Future<void> _initializeZMQ() async {
@@ -274,26 +278,27 @@ class FalconManager extends ChangeNotifier {
   Future<void> killFalcon() async {
     logInfo('killFalcon called');
     try {
-      showKillingFalconBanner();
-
       // Wait for process to terminate
-      if (_falconProcess != null && _processExitCompleter != null) {
+      if (_localFalconBackendPid != null &&
+          _localBackendExitCompleter != null) {
         try {
           await Future<void>.delayed(const Duration(milliseconds: 100));
-          await sendCommand(FalconZmqCommand.kill);
-          // Wait for process to exit with 5 second timeout
+          unawaited(sendCommand(FalconZmqCommand.kill));
+          // Wait for process to exit with 2 second timeout
           await Future.any([
-            _processExitCompleter!.future,
-            Future<void>.delayed(const Duration(seconds: 15)),
+            _localBackendExitCompleter!.future,
+            Future<void>.delayed(const Duration(seconds: 2)),
           ]);
 
-          if (!_processExitCompleter!.isCompleted) {
+          if (!_localBackendExitCompleter!.isCompleted) {
             logInfo(
-              'Process did not exit gracefully after 15 seconds, force killing',
+              'Falcon backend did not exit gracefully with zmq command '
+              'after 2 seconds, sending SIGKILL',
             );
-            _falconProcess!.kill(ProcessSignal.sigkill);
+
+            Process.killPid(_localFalconBackendPid!, ProcessSignal.sigkill);
           } else {
-            logInfo('Process exited successfully');
+            logInfo('Falcon backend exited successfully');
           }
         } catch (e, s) {
           logError('Error waiting for process to exit: $e', s);
@@ -304,8 +309,8 @@ class FalconManager extends ChangeNotifier {
       await _falconZMQ?.dispose();
       _falconZMQ = null;
 
-      _falconProcess = null;
-      _processExitCompleter = null;
+      _localFalconBackendPid = null;
+      _localBackendExitCompleter = null;
 
       notifyListeners();
     } catch (e, s) {
@@ -390,6 +395,14 @@ class FalconManager extends ChangeNotifier {
     } else {
       await sendCommand(FalconZmqCommand.graphStart);
     }
+  }
+
+  @override
+  Future<void> dispose() async {
+    await _falconZMQ?.dispose();
+    _falconZMQ = null;
+    _processExitWatchdogTimer?.cancel();
+    super.dispose();
   }
 }
 

@@ -8,7 +8,6 @@ import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/utils/debounce.dart';
 import 'package:falcon_gui/utils/geometry_algorithms.dart';
 import 'package:falcon_gui/utils/misc.dart';
-import 'package:falcon_gui/utils/regex.dart';
 import 'package:flutter/material.dart';
 
 final GraphManager graphManager = GraphManager.instance;

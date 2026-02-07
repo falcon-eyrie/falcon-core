@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
-import 'package:falcon_gui/utils/regex.dart';
+import 'package:falcon_gui/utils/misc.dart';
 import 'package:yaml/yaml.dart' as yaml;
 
 class FalconGraph extends Equatable {

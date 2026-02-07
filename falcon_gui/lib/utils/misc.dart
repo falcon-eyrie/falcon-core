@@ -1,8 +1,23 @@
+import 'dart:io';
+
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:flutter/material.dart';
 
 final globalNavigatorKey = GlobalKey<NavigatorState>();
+
+String get ubuntuHomePath {
+  return Platform.environment['HOME'] ?? '';
+}
+
+Directory get defaultGraphsDirectory =>
+    Directory('$ubuntuHomePath/falcon/resources/graphs')
+      ..createSync(recursive: true);
+
+// TODO(ben): this regex is not matching the falcon backend one, fix it
+final processorIdRegex = RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*$');
+
+final processorIdSuffixRegex = RegExp(r'(\d+)$');
 
 final topLeftMatrix = Matrix4.identity()
   ..translateByDouble(

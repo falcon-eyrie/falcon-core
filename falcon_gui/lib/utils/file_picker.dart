@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:falcon_gui/utils/logger.dart';
-import 'package:falcon_gui/utils/paths.dart';
+import 'package:falcon_gui/utils/misc.dart';
 import 'package:file_picker/file_picker.dart';
 
 class FalconFilePicker {

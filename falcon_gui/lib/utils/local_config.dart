@@ -16,13 +16,17 @@ abstract class LocalConfigManager {
       : File('config.yaml');
 
   static Future<void> setThemeMode(String modeName) async {
-    _config = _config.copyWith(themeMode: modeName);
-    await _saveConfig();
+    if (localConfig.themeMode != modeName) {
+      _config = _config.copyWith(themeMode: modeName);
+      await _saveConfig();
+    }
   }
 
   static Future<void> setLastOpenedGraphFilePath(String path) async {
+    // if (localConfig.lastOpenedGraph != path) {
     _config = _config.copyWith(lastOpenedGraph: path);
     await _saveConfig();
+    // }
   }
 
   static Future<void> loadConfig() async {
@@ -74,12 +78,15 @@ class LocalConfig {
     this.debugEnabled,
     this.networkPort,
     this.loggingPath,
+    this.serverSideStorageEnvironment,
+    this.serverSideStorageResources,
   });
   factory LocalConfig.fromMap(Map<String, dynamic> map) {
     final graph = map['graph'] as Map?;
     final debug = map['debug'] as Map?;
     final network = map['network'] as Map?;
     final logging = map['logging'] as Map?;
+    final serverSideStorage = map['server_side_storage'] as Map?;
     final ui = map['ui'] as Map?;
 
     return LocalConfig(
@@ -88,6 +95,9 @@ class LocalConfig {
       debugEnabled: debug?['enabled'] as bool?,
       networkPort: network?['port'] as int?,
       loggingPath: logging?['path'] as String?,
+      serverSideStorageEnvironment:
+          serverSideStorage?['environment'] as String?,
+      serverSideStorageResources: serverSideStorage?['resources'] as String?,
       themeMode: ui?['theme_mode'] as String?,
       lastOpenedGraph: ui?['last_opened_graph'] as String?,
     );
@@ -106,6 +116,10 @@ class LocalConfig {
   final int? networkPort;
   @Deprecated("Do not use this field. It's for falcon backend.")
   final String? loggingPath;
+  @Deprecated("Do not use this field. It's for falcon backend.")
+  final String? serverSideStorageEnvironment;
+  @Deprecated("Do not use this field. It's for falcon backend.")
+  final String? serverSideStorageResources;
 
   Map<String, dynamic> toMap() {
     return {
@@ -116,6 +130,10 @@ class LocalConfig {
       'debug': {'enabled': debugEnabled},
       'network': {'port': networkPort},
       'logging': {'path': loggingPath},
+      'server_side_storage': {
+        'environment': serverSideStorageEnvironment,
+        'resources': serverSideStorageResources,
+      },
       'ui': {
         'theme_mode': themeMode,
         'last_opened_graph': lastOpenedGraph,
@@ -131,6 +149,8 @@ class LocalConfig {
     bool? debugEnabled,
     int? networkPort,
     String? loggingPath,
+    String? serverSideStorageEnvironment,
+    String? serverSideStorageResources,
   }) {
     return LocalConfig(
       themeMode: themeMode ?? this.themeMode,
@@ -140,6 +160,10 @@ class LocalConfig {
       debugEnabled: debugEnabled ?? this.debugEnabled,
       networkPort: networkPort ?? this.networkPort,
       loggingPath: loggingPath ?? this.loggingPath,
+      serverSideStorageEnvironment:
+          serverSideStorageEnvironment ?? this.serverSideStorageEnvironment,
+      serverSideStorageResources:
+          serverSideStorageResources ?? this.serverSideStorageResources,
     );
   }
 }

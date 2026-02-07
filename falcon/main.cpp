@@ -24,7 +24,6 @@
 #include <regex>
 #include <string>
 
-#include <sys/prctl.h>
 #include "buildconstant.hpp"
 #include "cmdline/cmdline.h"
 #include "commandhandler.hpp"
@@ -40,9 +39,6 @@
 using namespace std;
 
 int main(int argc, char** argv) {
-    // When parent dies, this process gets SIGTERM
-    prctl(PR_SET_PDEATHSIG, SIGTERM);
-
     // create a parser
     cmdline::parser parser;
 

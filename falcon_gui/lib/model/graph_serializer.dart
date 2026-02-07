@@ -2,7 +2,7 @@ import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/processor_templates.dart';
 import 'package:falcon_gui/utils/geometry_algorithms.dart';
 import 'package:falcon_gui/utils/logger.dart';
-import 'package:falcon_gui/utils/regex.dart';
+import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/yaml_scalar.dart';
 import 'package:flutter/material.dart';
 import 'package:yaml/yaml.dart';

@@ -1,12 +1,16 @@
-name: Format and Compile
+name: Build backend
 
 on:
   pull_request:
     branches: [develop]
-
+    paths:
+      # Skip CPP pipeline if the changes are only GUI
+      - "**"
+      - "!falcon_gui/**"
+      - "!.github/workflows/build_gui.yml"
 jobs:
   build-linux:
-    name: Format and Compile
+    name: Build backend
     runs-on: ubuntu-24.04
 
     strategy:

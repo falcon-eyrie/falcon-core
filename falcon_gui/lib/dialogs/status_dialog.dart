@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:falcon_gui/utils/dialog_view.dart';
+import 'package:falcon_gui/dialogs/dialog_view.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';

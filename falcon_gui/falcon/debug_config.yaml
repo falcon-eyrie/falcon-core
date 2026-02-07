@@ -6,8 +6,10 @@ debug:
 network:
   port: 5555
 logging:
-  path: "./build/falcon/logs"
+  path: "./build/falcon/logs/"
+server_side_storage:
+  environment: "./build/falcon/output/"
+  resources: "./build/falcon/resources/"
 ui:
   theme_mode: "system"
   last_opened_graph: "/home/device/falcon/resources/graphs/current.yaml"
-

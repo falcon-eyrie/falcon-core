@@ -10,7 +10,8 @@
                 // Replace with your graph.
                 // While debugging, graphs are located under build/resources/
                 // In the case below, falcon will try to load build/resources/my_graph.yaml
-                "my_graph.yaml"
+                "-c",
+                "/home/device/dev/falcon-core/falcon_gui/falcon/debug_config.yaml"
             ],
             "cwd": "${workspaceFolder}/build/debug",
             "MIMode": "gdb",

@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
+import 'package:falcon_gui/dialogs/on_close_gui_dialog.dart';
 import 'package:falcon_gui/graph_editor/graph_editor.dart';
 import 'package:falcon_gui/settings/theme_mode_setting.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
@@ -8,7 +8,6 @@ import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/local_config.dart';
 import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/misc.dart';
-import 'package:falcon_gui/utils/priority_dialog.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
@@ -46,20 +45,12 @@ Future<void> _entrypoint() async {
 
   await setThemeModeFromConfig();
   _listenForLoadedGraphFile();
-  _maybeLoadLastGraph();
-  Future.delayed(const Duration(milliseconds: 1000), maybeShowPriorityDialog);
+
+  unawaited(falconManager.initialize());
+  // Future.delayed(const Duration(milliseconds: 1000),
+  // maybeShowPriorityDialog);
 
   runApp(const DesktopApp());
-}
-
-void _maybeLoadLastGraph() {
-  final lastGraphPath = localConfig.lastOpenedGraph;
-  if (lastGraphPath != null) {
-    final file = File(lastGraphPath);
-    if (file.existsSync()) {
-      unawaited(falconManager.loadFile(file: file));
-    }
-  }
 }
 
 void _listenForLoadedGraphFile() {
@@ -124,9 +115,9 @@ class _RootPageState extends State<RootPage> with WindowListener {
 
   @override
   Future<void> onWindowClose() async {
-    logInfo('Window close requested, calling killFalcon()...');
-    await falconManager.killFalcon();
-    logInfo('killFalcon() completed, destroying window...');
+    logInfo('Window close requested, calling on close dialog...');
+    await showOnCloseGUIDialog();
+    logInfo('On close dialog completed, destroying window...');
     unawaited(windowManager.destroy());
   }
 
