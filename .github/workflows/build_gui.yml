@@ -18,7 +18,9 @@ jobs:
 
       - name: Install flutter
         run: |
-          curl -fsSL https://fvm.app/install.sh | bash -s -- 3.38.5
+          curl -fsSL https://fvm.app/install.sh
+          fvm install 3.38.5
+          fvm global 3.38.5
 
       - name: Lint and format
         run: |
