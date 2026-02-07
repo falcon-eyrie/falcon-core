@@ -18,7 +18,7 @@ jobs:
 
       - name: Install flutter
         run: |
-          curl -fsSL https://fvm.app/install.sh
+          curl -fsSL https://fvm.app/install.sh | bash
           export PATH="$PATH:$HOME/.pub-cache/bin"
           fvm install 3.38.5
           fvm global 3.38.5
