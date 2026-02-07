@@ -109,7 +109,7 @@ class FalconManager extends ChangeNotifier {
         unawaited(
           LocalConfigManager.setLastOpenedGraphFilePath(file.absolute.path),
         );
-        
+
         graphLoadedNotifier.value = graph;
       } catch (e, s) {
         logError('Error parsing graph YAML from file ${file.path}: $e', s);
