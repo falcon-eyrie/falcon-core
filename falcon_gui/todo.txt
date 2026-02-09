@@ -1,7 +1,5 @@
 Missing:
 - Add processor states
-- Address processor option renaming such as "message/detection" to "message_detection" in Falcon Core.
-- Document readme.md for how to compile and run Falcon GUI
 - Use absolute paths for config files
 - Replace temporary absolute paths with correct paths
 - Change falcon's config.yaml from GUI settings
