@@ -1,96 +1,87 @@
-import 'package:falcon_gui/graph_editor/processor_item.dart';
-import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/processor_templates.dart';
+import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
 
-class ProcessorsPanel extends StatelessWidget {
-  const ProcessorsPanel({super.key});
+enum ActiveProcessorCategory {
+  sources,
+  intermediates,
+  sinks,
+}
 
-  bool isFirstIntermediateProcessor(int index, Processor processor) {
-    return processor.isIntermediate &&
-        processorTemplates.values.where((p) => p.isSource).length == index;
-  }
+class ProcessorsPanel extends StatefulWidget {
+  const ProcessorsPanel({required this.activeCategory, super.key});
 
-  bool isFirstSinkProcessor(int index, Processor processor) {
-    return processor.isSink &&
-        processorTemplates.values
-                .where((p) => p.isSource || p.isIntermediate)
-                .length ==
-            index;
-  }
+  final ActiveProcessorCategory activeCategory;
+
+  @override
+  State<ProcessorsPanel> createState() => _ProcessorsPanelState();
+}
+
+class _ProcessorsPanelState extends State<ProcessorsPanel> {
+  String _hoveredProcessorId = '';
 
   @override
   Widget build(BuildContext context) {
+    final processors = switch (widget.activeCategory) {
+      ActiveProcessorCategory.sources => sourceTemplates.values.toList(),
+      ActiveProcessorCategory.intermediates =>
+        intermediateTemplates.values.toList(),
+      ActiveProcessorCategory.sinks => sinkTemplates.values.toList(),
+    };
+
     return Container(
-      width: 400,
+      padding: const EdgeInsets.all(16),
       color: context.c.surfaceContainer,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(8),
-            child: Text(
-              'Available Processors',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                final processor = processorTemplates.values.elementAtOrNull(
-                  index,
-                );
-
-                if (processor == null) {
-                  return null;
-                }
-
-                String? processorCategoryText;
-
-                if (index == 0) {
-                  processorCategoryText = 'Sources';
-                } else if (isFirstIntermediateProcessor(index, processor)) {
-                  processorCategoryText = 'Intermediates';
-                } else if (isFirstSinkProcessor(index, processor)) {
-                  processorCategoryText = 'Sinks';
-                }
-
-                if (processorCategoryText != null) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Divider(),
-
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
-                        child: Text(
-                          processorCategoryText,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: processors.map(
+          (processor) {
+            final isHovered = _hoveredProcessorId == processor.className;
+            return MouseRegion(
+              cursor: SystemMouseCursors.click,
+              onEnter: (event) =>
+                  setState(() => _hoveredProcessorId = processor.className),
+              onExit: (event) => setState(() => _hoveredProcessorId = ''),
+              child: GestureDetector(
+                onTap: () =>
+                    graphManager.duplicateProcessor(processor: processor),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isHovered
+                        ? context.c.secondary
+                        : DefaultProcessorColor.byClassName(
+                            className: processor.className,
                           ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        processor.className,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: isHovered ? context.c.onSecondary : null,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: ProcessorItem(processor: processor),
+                      const SizedBox(width: 4),
+                      Icon(
+                        RemixIcons.function_add_line,
+                        size: 16,
+                        color: isHovered ? context.c.onSecondary : null,
                       ),
                     ],
-                  );
-                }
-
-                return Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: ProcessorItem(processor: processor),
-                );
-              },
-            ),
-          ),
-        ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ).toList(),
       ),
     );
   }

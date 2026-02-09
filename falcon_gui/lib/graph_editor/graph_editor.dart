@@ -18,19 +18,23 @@ class GraphEditor extends StatefulWidget {
 }
 
 class _GraphEditorState extends State<GraphEditor> {
-  bool _isProcessorsCollapsed = true;
+  ActiveProcessorCategory? _activeCategory;
   bool _isYamlCollapsed = true;
   bool _isLogsCollapsed = false;
+
+  void _toggleProcessorPanel(ActiveProcessorCategory category) {
+    setState(() {
+      if (_activeCategory == category) {
+        _activeCategory = null;
+      } else {
+        _activeCategory = category;
+      }
+    });
+  }
 
   void _onYamlCollapseToggled() {
     setState(() {
       _isYamlCollapsed = !_isYamlCollapsed;
-    });
-  }
-
-  void _onProcessorPanelCollapseToggled() {
-    setState(() {
-      _isProcessorsCollapsed = !_isProcessorsCollapsed;
     });
   }
 
@@ -45,8 +49,8 @@ class _GraphEditorState extends State<GraphEditor> {
     return Column(
       children: [
         ControlsBar(
-          isProcessorsCollapsed: _isProcessorsCollapsed,
-          onProcessorPanelClicked: _onProcessorPanelCollapseToggled,
+          activeCategory: _activeCategory,
+          onToggleProcessorPanel: _toggleProcessorPanel,
         ),
         Expanded(
           child: Column(
@@ -54,13 +58,23 @@ class _GraphEditorState extends State<GraphEditor> {
               Expanded(
                 child: Row(
                   children: [
-                    // Processors Panel (left)
-                    if (!_isProcessorsCollapsed) ...[
-                      const ProcessorsPanel(),
-                    ],
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          const EditorView(),
+                          if (_activeCategory != null) ...[
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
 
-                    const Expanded(
-                      child: EditorView(),
+                              child: ProcessorsPanel(
+                                activeCategory: _activeCategory!,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
 
                     // YAML Editor (right)

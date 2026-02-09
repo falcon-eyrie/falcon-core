@@ -30,11 +30,11 @@ class FalconManager extends ChangeNotifier {
   final graphLoadedNotifier = ValueNotifier<FalconGraph?>(null);
 
   File get _defaultGraphFile =>
-      File('$ubuntuHomePath/falcon/resources/graphs/new_graph.yaml')
+      File('${ubuntuHomePath.path}/falcon/resources/graphs/new_graph.yaml')
         ..createSync(recursive: true);
 
-  String get _falconPath {
-    return '$ubuntuHomePath/.local/share/org.falcon-eyrie.falcon_gui/bin/falcon';
+  String get _falconBackendBinPath {
+    return '${falconInstallationPath.path}/bin/falcon';
   }
 
   final _fileWriteDebounce = Debounce(delay: const Duration(milliseconds: 500));
@@ -51,7 +51,7 @@ class FalconManager extends ChangeNotifier {
   // PriorityStatus get processPriority => _priorityStatus;
 
   String get processPriorityCommand =>
-      'sudo setcap cap_sys_nice=eip $_falconPath';
+      'sudo setcap cap_sys_nice=eip $_falconBackendBinPath';
 
   List<FalconLog> get logs => _falconZMQ?.logs ?? [];
 
@@ -191,13 +191,13 @@ class FalconManager extends ChangeNotifier {
         _localFalconBackendPid = existingPid;
       } else {
         final localBackendProcess = await Process.start(
-          _falconPath,
+          _falconBackendBinPath,
           [
             '-c',
             if (kDebugMode) ...[
               'falcon/debug_config.yaml',
             ] else ...[
-              '$ubuntuHomePath/.local/share/org.falcon-eyrie.falcon_gui/config.yaml',
+              '${falconInstallationPath.path}/config.yaml',
             ],
           ],
         );
@@ -246,7 +246,10 @@ class FalconManager extends ChangeNotifier {
   /// If there are multiple instances (there shouldn't),
   /// first match is returned.
   Future<int?> _getExistingFalconPID() async {
-    final pgrepResult = await Process.run('pgrep', ['-f', _falconPath]);
+    final pgrepResult = await Process.run('pgrep', [
+      '-f',
+      _falconBackendBinPath,
+    ]);
     final existingPids = pgrepResult.stdout
         .toString()
         .trim()

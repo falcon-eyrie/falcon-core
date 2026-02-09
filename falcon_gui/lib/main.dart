@@ -28,6 +28,7 @@ Future<void> _entrypoint() async {
   const windowOptions = WindowOptions(
     titleBarStyle: TitleBarStyle.normal,
     size: Size(1280, 720),
+    minimumSize: Size(800, 600),
     center: true,
     skipTaskbar: false,
     title: 'Falcon',
@@ -117,15 +118,43 @@ class _RootPageState extends State<RootPage> with WindowListener {
 
   @override
   Future<void> onWindowClose() async {
-    logInfo('Window close requested, calling on close dialog...');
+    logInfo('Window close requested');
+
+    if (falconManager.localFalconBackendPid == null) {
+      logInfo(
+        'No local falcon backend instance detected, '
+        'closing without showing dialog...',
+      );
+      await windowManager.destroy();
+      return;
+    }
+
     if (_isDialogAlreadyShowing) {
       logInfo('On close dialog is already showing, ignoring...');
       return;
     }
+
     _isDialogAlreadyShowing = true;
-    await showOnCloseGUIDialog();
-    logInfo('On close dialog completed, destroying window...');
-    unawaited(windowManager.destroy());
+    final result = await showOnCloseGUIDialog();
+    _isDialogAlreadyShowing = false;
+    if (result != null) {
+      if (result) {
+        logInfo(
+          'User choosed to kill local falcon backend instance, killing...',
+        );
+        await falconManager.killFalcon();
+      } else {
+        logInfo(
+          'User choosed to keep local falcon backend instance running, '
+          'keeping...',
+        );
+      }
+
+      logInfo('Destroying window...');
+      await windowManager.destroy();
+    } else {
+      logInfo('User canceled window close, ignoring...');
+    }
   }
 
   @override

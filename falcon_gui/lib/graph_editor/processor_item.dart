@@ -49,13 +49,15 @@ class _ProcessorItemState extends State<ProcessorItem> {
       ? _isTemplateExpanded
       : widget.processor.uiMetadata.isExpanded;
 
+  bool get _canExpand => widget.processor.options.isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (_) => widget.onTapDown?.call(),
       child: Container(
         key: ValueKey(widget.processor.id),
-        width: 400,
+        width: 150,
         decoration: BoxDecoration(
           border: Border.all(color: context.c.surfaceContainerHighest),
           borderRadius: BorderRadius.circular(8),
@@ -79,7 +81,7 @@ class _ProcessorItemState extends State<ProcessorItem> {
               child: ProcessorPortsView(
                 processor: widget.processor,
                 isExpanded: _isExpanded,
-                onExpandToggle: _toggleExpanded,
+                onExpandToggle: _canExpand ? _toggleExpanded : null,
               ),
             ),
             if (_isExpanded) ...[
@@ -185,75 +187,77 @@ class _HeaderState extends State<_Header> {
             setState(() => _isGrabbing = false);
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             decoration: BoxDecoration(
               color: headerColor,
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(8),
               ),
             ),
-            child: Row(
+            child: Column(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                SizedBox(
+                  height: 18,
+                  child: Center(
+                    child: _isEditing
+                        ? _ProcessorNameEditor(
+                            processor: widget.processor,
+                            onNameChanged: _onNameChanged,
+                            onFocused: widget.onFocused,
+                          )
+                        : _ProcessorName(
+                            processorName: widget.processor.id,
+                            onClicked: _startEditing,
+                            readonly: widget.readonly,
+                          ),
+                  ),
+                ),
+
+                Text(
+                  widget.processor.className,
+                  style: const TextStyle(
+                    color: Color(0xffffffff),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4, left: 4, right: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      if (_isEditing) ...[
-                        _ProcessorNameEditor(
-                          processor: widget.processor,
-                          onNameChanged: _onNameChanged,
-                          onFocused: widget.onFocused,
+                      if (!widget.processor.isTemplate) ...[
+                        _PreventEdit(
+                          isPreventing: widget.readonly,
+                          child: ClickableIcon(
+                            icon: const Icon(
+                              RemixIcons.delete_bin_2_line,
+                              size: 14,
+                              color: Color(0xffffffff),
+                            ),
+                            onPressed: () => graphManager.removeProcessor(
+                              id: widget.processor.id,
+                            ),
+                          ),
                         ),
-                      ] else if (!widget.processor.isTemplate) ...[
-                        _ProcessorName(
-                          processorName: widget.processor.id,
-                          onClicked: _startEditing,
-                          readonly: widget.readonly,
-                        ),
+                        const SizedBox(width: 4),
                       ],
-                      Text(
-                        widget.processor.className,
-                        style: const TextStyle(
-                          color: Color(0xffffffff),
-                          fontSize: 16,
-                          fontWeight: FontWeight.w300,
+
+                      _PreventEdit(
+                        isPreventing: widget.readonly,
+                        child: ClickableIcon(
+                          icon: Icon(
+                            widget.processor.isTemplate
+                                ? RemixIcons.add_line
+                                : RemixIcons.file_copy_line,
+                            size: 14,
+                            color: const Color(0xffffffff),
+                          ),
+                          onPressed: () => graphManager.duplicateProcessor(
+                            processor: widget.processor,
+                          ),
                         ),
                       ),
                     ],
-                  ),
-                ),
-                if (!widget.processor.isTemplate) ...[
-                  _PreventEdit(
-                    isPreventing: widget.readonly,
-                    child: IconButton(
-                      icon: const Icon(
-                        RemixIcons.delete_bin_2_line,
-                        size: 16,
-                        color: Color(0xffffffff),
-                      ),
-                      color: context.c.onPrimary,
-                      onPressed: () =>
-                          graphManager.removeProcessor(id: widget.processor.id),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                ],
-
-                _PreventEdit(
-                  isPreventing: widget.readonly,
-                  child: IconButton(
-                    icon: Icon(
-                      widget.processor.isTemplate
-                          ? RemixIcons.add_line
-                          : RemixIcons.file_copy_line,
-                      size: 20,
-                      color: const Color(0xffffffff),
-                    ),
-                    color: context.c.onPrimary,
-                    onPressed: () => graphManager.duplicateProcessor(
-                      processor: widget.processor,
-                    ),
                   ),
                 ),
               ],
@@ -292,26 +296,40 @@ class _ProcessorNameState extends State<_ProcessorName> {
         onExit: (event) => setState(() => _isHovering = false),
         child: GestureDetector(
           onTap: widget.onClicked,
-          child: Row(
-            children: [
-              Text(
-                widget.processorName,
-                style: const TextStyle(
-                  color: Color(0xffffffff),
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-
-              if (_isHovering) ...[
-                const SizedBox(width: 4),
-                Icon(
-                  RemixIcons.edit_line,
-                  size: 16,
-                  color: context.c.onPrimary,
+          child: Tooltip(
+            message: 'Click to rename',
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: widget.processorName,
+                      children: [
+                        if (_isHovering) ...[
+                          const WidgetSpan(
+                            child: SizedBox(width: 4),
+                          ),
+                          WidgetSpan(
+                            child: Icon(
+                              RemixIcons.edit_line,
+                              size: 14,
+                              color: context.c.onPrimary,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 3,
+                    style: const TextStyle(
+                      color: Color(0xffffffff),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -371,12 +389,15 @@ class _ProcessorNameEditorState extends State<_ProcessorNameEditor> {
       focusNode: _focusNode,
       controller: _nameController,
       autofocus: true,
+      textAlign: TextAlign.center,
+
       style: const TextStyle(
         color: Color(0xffffffff),
-        fontSize: 20,
-        fontWeight: FontWeight.w900,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
       ),
       decoration: const InputDecoration(
+        contentPadding: EdgeInsets.zero,
         isDense: true,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,

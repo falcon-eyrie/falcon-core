@@ -455,6 +455,7 @@ class GraphManager extends ChangeNotifier {
             inPort: outPortName,
             outProcessor: inProcessorId,
             outPort: inPortName,
+            isState: port.isState,
           ),
         );
       } else {
@@ -464,6 +465,7 @@ class GraphManager extends ChangeNotifier {
             inPort: inPortName,
             outProcessor: outProcessorId,
             outPort: outPortName,
+            isState: port.isState,
           ),
         );
       }

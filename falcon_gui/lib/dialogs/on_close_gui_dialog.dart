@@ -1,17 +1,12 @@
 import 'dart:async';
 
 import 'package:falcon_gui/dialogs/dialog_view.dart';
-import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:flutter/material.dart';
 import 'package:remixicon/remixicon.dart';
 
-Future<void> showOnCloseGUIDialog() async {
-  if (falconManager.localFalconBackendPid == null) {
-    return;
-  }
-
-  await showDialog<void>(
+Future<bool?> showOnCloseGUIDialog() async {
+  return showDialog<bool>(
     context: globalNavigatorKey.currentContext!,
     barrierDismissible: false,
     builder: (context) {
@@ -33,7 +28,10 @@ Future<void> showOnCloseGUIDialog() async {
                 const Text(
                   'A Falcon backend instance is currently running '
                   'on this machine.',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -48,18 +46,22 @@ Future<void> showOnCloseGUIDialog() async {
                   runSpacing: 8,
                   children: [
                     ElevatedButton(
-                      onPressed: () async {
-                        await falconManager.killFalcon();
-                        // ignore: use_build_context_synchronously
-                        Navigator.of(context).pop();
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
                       },
                       child: const Text('Kill Backend and Exit'),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(false);
                       },
                       child: const Text('Leave It Running and Exit'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel'),
                     ),
                   ],
                 ),

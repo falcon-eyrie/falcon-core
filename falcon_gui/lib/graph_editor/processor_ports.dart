@@ -14,70 +14,90 @@ class ProcessorPortsView extends StatelessWidget {
 
   final Processor processor;
   final bool isExpanded;
-  final VoidCallback onExpandToggle;
+  final VoidCallback? onExpandToggle;
   @override
   Widget build(BuildContext context) {
-    final inPorts = processor.ports.where((port) => port.isIn);
-    final outPorts = processor.ports.where((port) => port.isOut);
+    final inPorts = processor.ports.where((port) => port.isIn && !port.isState);
+    final outPorts = processor.ports.where(
+      (port) => port.isOut && !port.isState,
+    );
+
+    final states = processor.ports.where((port) => port.isState);
+
     return Stack(
       children: [
         IgnorePointer(
           ignoring: processor.isTemplate,
-          child: Row(
+          child: Column(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (final port in inPorts)
-                    _PortRow(
-                      processor: processor,
-                      port: port,
-                    ),
+              if (states.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text('States', style: context.t.textTheme.labelMedium),
+                for (final port in states)
+                  _PortRow(
+                    processor: processor,
+                    port: port,
+                  ),
+              ],
+
+              if (states.isNotEmpty &&
+                  (inPorts.isNotEmpty || outPorts.isNotEmpty)) ...[
+                const Divider(),
+                Text('Ports', style: context.t.textTheme.labelMedium),
+              ],
+
+              if (inPorts.isNotEmpty) ...[
+                for (final port in inPorts) ...[
+                  _PortRow(
+                    processor: processor,
+                    port: port,
+                  ),
                 ],
-              ),
-              const Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  for (final port in outPorts)
-                    _PortRow(
-                      processor: processor,
-                      port: port,
-                    ),
+              ],
+
+              if (outPorts.isNotEmpty) ...[
+                for (final port in outPorts) ...[
+                  _PortRow(
+                    processor: processor,
+                    port: port,
+                  ),
                 ],
-              ),
+              ],
+              const SizedBox(height: 8),
             ],
           ),
         ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          left: 0,
-          child: Center(
-            child: GestureDetector(
-              onTap: onExpandToggle,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: Tooltip(
-                  message: isExpanded ? 'Collapse Options' : 'Expand Options',
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 8,
-                      right: 8,
-                      left: 8,
-                    ),
-                    child: Icon(
-                      isExpanded
-                          ? RemixIcons.arrow_up_wide_line
-                          : RemixIcons.arrow_down_wide_line,
-                      size: 16,
+        if (onExpandToggle != null) ...[
+          Positioned(
+            bottom: 0,
+            right: 0,
+            left: 0,
+            child: Center(
+              child: GestureDetector(
+                onTap: onExpandToggle,
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: Tooltip(
+                    message: isExpanded ? 'Collapse Options' : 'Expand Options',
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8,
+                        right: 8,
+                        left: 8,
+                      ),
+                      child: Icon(
+                        isExpanded
+                            ? RemixIcons.arrow_up_wide_line
+                            : RemixIcons.arrow_down_wide_line,
+                        size: 16,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ],
     );
   }
@@ -126,30 +146,23 @@ class _PortRowState extends State<_PortRow> {
       null => null,
     };
 
-    final text = Column(
-      crossAxisAlignment: widget.port.isIn
-          ? CrossAxisAlignment.start
-          : CrossAxisAlignment.end,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
+    final portName = Align(
+      alignment: widget.port.isIn
+          ? Alignment.centerLeft
+          : Alignment.centerRight,
+      child: Tooltip(
+        message: widget.port.type,
+        child: Text(
           widget.port.name,
+
           style: TextStyle(
             color: isEnabled ? context.c.onSurface : Colors.grey,
             fontWeight: FontWeight.w500,
-            fontSize: 16,
-          ),
-        ),
-        Text(
-          widget.port.type,
-          style: TextStyle(
-            color: isEnabled ? context.c.onSurface.withAlpha(200) : Colors.grey,
             fontSize: 14,
-            fontStyle: FontStyle.italic,
-            fontWeight: FontWeight.w400,
           ),
+          maxLines: 2,
         ),
-      ],
+      ),
     );
 
     final dot = _PortHalfDot(
@@ -203,13 +216,22 @@ class _PortRowState extends State<_PortRow> {
               : SystemMouseCursors.forbidden,
           message: widget.processor.isTemplate ? '' : tooltipMessage,
           verticalOffset: 20,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: widget.port.isIn
-                  ? [dot, const SizedBox(width: 4), text]
-                  : [text, const SizedBox(width: 4), dot],
+          child: Align(
+            alignment: widget.port.isIn
+                ? Alignment.centerLeft
+                : Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: widget.port.isIn
+                    ? [dot, const SizedBox(width: 4), Expanded(child: portName)]
+                    : [
+                        Expanded(child: portName),
+                        const SizedBox(width: 4),
+                        dot,
+                      ],
+              ),
             ),
           ),
         ),

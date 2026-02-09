@@ -14,39 +14,37 @@ OneOfOption _createFormatOption() => OneOfOption(
   displayName: 'Format',
 );
 
-final Map<String, Processor> processorTemplates = () {
+final Map<String, Processor> allProcessorTemplates = () {
   // Register default colors
   for (final processor in _processorTemplatesUnsorted.values) {
     DefaultProcessorColor.register(processor.className);
   }
 
-  // Sort processors: sources first, then intermediates,
-  // then sinks; each group alphabetically
+  // Sort processors: alphabetically
   final sortedKeys = _processorTemplatesUnsorted.keys.toList()
     ..sort((a, b) {
-      final procA = _processorTemplatesUnsorted[a]!;
-      final procB = _processorTemplatesUnsorted[b]!;
-
-      int rank(Processor p) {
-        if (p.isSource) return 0;
-        if (p.isSink) return 2;
-        return 1;
-      }
-
-      final rankA = rank(procA);
-      final rankB = rank(procB);
-
-      if (rankA != rankB) {
-        return rankA.compareTo(rankB);
-      } else {
-        return procA.className.compareTo(procB.className);
-      }
+      return a.toLowerCase().compareTo(b.toLowerCase());
     });
 
   return <String, Processor>{
     for (final key in sortedKeys) key: _processorTemplatesUnsorted[key]!,
   };
 }();
+
+final Map<String, Processor> sinkTemplates = {
+  for (final entry in allProcessorTemplates.entries)
+    if (entry.value.isSink) entry.key: entry.value,
+};
+
+final Map<String, Processor> sourceTemplates = {
+  for (final entry in allProcessorTemplates.entries)
+    if (entry.value.isSource) entry.key: entry.value,
+};
+
+final Map<String, Processor> intermediateTemplates = {
+  for (final entry in allProcessorTemplates.entries)
+    if (entry.value.isIntermediate) entry.key: entry.value,
+};
 
 final _processorTemplatesUnsorted = {
   'file_serializer': Processor(
@@ -127,7 +125,7 @@ final _processorTemplatesUnsorted = {
         value: 16,
         displayName: 'Device Channels',
       ),
-      'protocols': YamlNodeOption(
+      'protocols': YamlMapOption(
         value: YamlMap.wrap({
           'event_a': {
             'high': [0, 1],
@@ -155,6 +153,7 @@ final _processorTemplatesUnsorted = {
     ports: const [
       Port(name: 'events', type: 'EventType', isIn: true),
       Port(name: 'events', type: 'EventType', isIn: false),
+      Port(name: 'enabled', type: 'bool', isIn: false, isState: true),
     ],
   ),
   'event_converter': Processor(
@@ -186,7 +185,7 @@ final _processorTemplatesUnsorted = {
         value: false,
         displayName: 'Delayed Mode',
       ),
-      'delayed_range': YamlNodeOption(
+      'delayed_range': YamlListOption(
         // TODO(ben): change to vector option for
         // options::Value<std::vector<long int>, true>
         //      initial_delayed_range_{{150, 200}};
@@ -205,7 +204,7 @@ final _processorTemplatesUnsorted = {
         value: 'o',
         displayName: 'On-time Message',
       ),
-      'analysis_lockout_time_starting_time': YamlNodeOption(
+      'analysis_lockout_time_starting_time': YamlListOption(
         // TODO(ben): change to vector option for
         // options::Value<std::vector<int>, true>
         //      when_stop_analysis_period_{{0, 0}};
@@ -321,7 +320,7 @@ final _processorTemplatesUnsorted = {
     className: 'EventSource',
     isTemplate: true,
     options: {
-      'events': YamlNodeOption(
+      'events': YamlListOption(
         value: YamlList.wrap(['DEFAULT_EVENT']),
         displayName: 'Events',
       ),
@@ -487,6 +486,16 @@ final _processorTemplatesUnsorted = {
     ports: const [
       Port(name: 'data', type: 'TimeSeriesType<double>', isIn: true),
       Port(name: 'data', type: 'TimeSeriesType<double>', isIn: false),
+    ],
+  ),
+  'dummysink': Processor(
+    id: 'dummysink',
+    className: 'DummySink',
+    isTemplate: true,
+    options: const {},
+    ports: const [
+      Port(name: 'data', type: 'AnyType', isIn: true),
+      Port(name: 'tickle', type: 'bool', isIn: true, isState: true),
     ],
   ),
 };

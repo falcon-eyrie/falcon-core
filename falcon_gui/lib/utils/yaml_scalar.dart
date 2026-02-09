@@ -14,7 +14,7 @@ OptionValue<dynamic> optionFromScalar(
   }
   if (templateOption is DoubleOption) {
     return DoubleOption(
-      value: value as double,
+      value: (value as num).toDouble(),
       displayName: templateOption.displayName,
     );
   }
@@ -30,9 +30,15 @@ OptionValue<dynamic> optionFromScalar(
       displayName: templateOption.displayName,
     );
   }
-  if (templateOption is YamlNodeOption) {
-    return YamlNodeOption(
-      value: value as YamlNode,
+  if (templateOption is YamlListOption) {
+    return YamlListOption(
+      value: value as YamlList,
+      displayName: templateOption.displayName,
+    );
+  }
+  if (templateOption is YamlMapOption) {
+    return YamlMapOption(
+      value: value as YamlMap,
       displayName: templateOption.displayName,
     );
   }

@@ -81,11 +81,9 @@ class FalconGraph extends Equatable {
     // Step 2: Update connections to use newId
     for (var i = 0; i < _connections.length; i++) {
       final c = _connections[i];
-      _connections[i] = Connection(
+      _connections[i] = c.copyWith(
         inProcessor: c.inProcessor == oldId ? newId : c.inProcessor,
-        inPort: c.inPort,
         outProcessor: c.outProcessor == oldId ? newId : c.outProcessor,
-        outPort: c.outPort,
       );
     }
 
@@ -244,11 +242,19 @@ final class BoolOption extends OptionValue<bool> {
   }
 }
 
-final class YamlNodeOption extends OptionValue<yaml.YamlNode> {
-  const YamlNodeOption({required super.value, required super.displayName});
+final class YamlListOption extends OptionValue<yaml.YamlList> {
+  const YamlListOption({required super.value, required super.displayName});
 
-  YamlNodeOption copyWith({required yaml.YamlNode newValue}) {
-    return YamlNodeOption(value: newValue, displayName: displayName);
+  YamlListOption copyWith({required yaml.YamlList newValue}) {
+    return YamlListOption(value: newValue, displayName: displayName);
+  }
+}
+
+final class YamlMapOption extends OptionValue<yaml.YamlMap> {
+  const YamlMapOption({required super.value, required super.displayName});
+
+  YamlMapOption copyWith({required yaml.YamlMap newValue}) {
+    return YamlMapOption(value: newValue, displayName: displayName);
   }
 }
 
@@ -354,12 +360,14 @@ class Connection extends Equatable {
     required this.inPort,
     required this.outProcessor,
     required this.outPort,
+    this.isState = false,
   });
 
   final String inProcessor;
   final String inPort;
   final String outProcessor;
   final String outPort;
+  final bool isState;
 
   @override
   String toString() =>
@@ -371,5 +379,22 @@ class Connection extends Equatable {
     inPort,
     outProcessor,
     outPort,
+    isState,
   ];
+
+  Connection copyWith({
+    String? inProcessor,
+    String? inPort,
+    String? outProcessor,
+    String? outPort,
+    bool? isState,
+  }) {
+    return Connection(
+      inProcessor: inProcessor ?? this.inProcessor,
+      inPort: inPort ?? this.inPort,
+      outProcessor: outProcessor ?? this.outProcessor,
+      outPort: outPort ?? this.outPort,
+      isState: isState ?? this.isState,
+    );
+  }
 }

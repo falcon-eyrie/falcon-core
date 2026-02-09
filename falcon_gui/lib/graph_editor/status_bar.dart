@@ -26,7 +26,7 @@ class StatusBar extends StatelessWidget {
       builder: (context) {
         return Container(
           height: 24,
-          color: context.c.surfaceContainer,
+          color: _stateColor(falconManager.falconState),
           child: Row(
             children: [
               const Spacer(),
@@ -98,10 +98,16 @@ class _StatusBarButton extends StatelessWidget {
                       Icon(
                         icon,
                         size: 18,
+                        color: isActive ? context.c.primary : Colors.white,
                       ),
                       if (label != null) ...[
                         const SizedBox(width: 4),
-                        Text(label!),
+                        Text(
+                          label!,
+                          style: TextStyle(
+                            color: isActive ? context.c.primary : Colors.white,
+                          ),
+                        ),
                       ],
                       const SizedBox(width: 8),
                     ],
@@ -169,21 +175,20 @@ class _FalconStateIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = _stateColor(falconState);
     return Tooltip(
       message: _stateExplanation(falconState),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             RemixIcons.circle_fill,
-            color: color,
+            color: Colors.white,
             size: 14,
           ),
           const SizedBox(width: 4),
           Text(
             falconState.toString(),
-            style: TextStyle(
-              color: color,
+            style: const TextStyle(
+              color: Colors.white,
             ),
           ),
         ],

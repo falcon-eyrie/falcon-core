@@ -1,3 +1,4 @@
+import 'package:falcon_gui/graph_editor/processors_panel.dart';
 import 'package:falcon_gui/model/falcon_state.dart';
 import 'package:falcon_gui/settings/settings_view.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
@@ -9,13 +10,12 @@ import 'package:remixicon/remixicon.dart';
 
 class ControlsBar extends StatelessWidget {
   const ControlsBar({
-    required this.onProcessorPanelClicked,
-    required this.isProcessorsCollapsed,
+    required this.activeCategory,
+    required this.onToggleProcessorPanel,
     super.key,
   });
-  final bool isProcessorsCollapsed;
-  final VoidCallback onProcessorPanelClicked;
-
+  final ActiveProcessorCategory? activeCategory;
+  final ValueChanged<ActiveProcessorCategory> onToggleProcessorPanel;
   @override
   Widget build(BuildContext context) {
     return MultiListener(
@@ -57,23 +57,33 @@ class ControlsBar extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(RemixIcons.flow_chart),
-                style: IconButton.styleFrom(
-                  backgroundColor: isProcessorsCollapsed
-                      ? null
-                      : context.c.primary,
-                  foregroundColor: isProcessorsCollapsed
-                      ? null
-                      : context.c.onPrimary,
-                ),
-                tooltip: isProcessorsCollapsed
-                    ? 'Show Processors Panel'
-                    : 'Hide Processors Panel',
-                onPressed: onProcessorPanelClicked,
-              ),
+              const Spacer(),
 
+              _ProcessorPanelButton(
+                isActive: activeCategory == ActiveProcessorCategory.sources,
+                onPressed: () =>
+                    onToggleProcessorPanel(ActiveProcessorCategory.sources),
+                icon: RemixIcons.guide_line,
+                label: 'Sources',
+              ),
+              const SizedBox(width: 8),
+              _ProcessorPanelButton(
+                isActive:
+                    activeCategory == ActiveProcessorCategory.intermediates,
+                onPressed: () => onToggleProcessorPanel(
+                  ActiveProcessorCategory.intermediates,
+                ),
+                icon: RemixIcons.exchange_2_line,
+                label: 'Intermediates',
+              ),
+              const SizedBox(width: 8),
+              _ProcessorPanelButton(
+                isActive: activeCategory == ActiveProcessorCategory.sinks,
+                onPressed: () =>
+                    onToggleProcessorPanel(ActiveProcessorCategory.sinks),
+                icon: RemixIcons.record_circle_line,
+                label: 'Sinks',
+              ),
               const Spacer(),
               const IconButton(
                 icon: Icon(RemixIcons.arrow_go_back_line),
@@ -146,6 +156,51 @@ class ControlsBar extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _ProcessorPanelButton extends StatelessWidget {
+  const _ProcessorPanelButton({
+    required this.isActive,
+    required this.onPressed,
+    required this.icon,
+    required this.label,
+  });
+  final bool isActive;
+  final VoidCallback onPressed;
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Container(
+          decoration: BoxDecoration(
+            color: isActive ? context.c.primary : null,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: isActive ? context.c.onPrimary : null,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isActive ? context.c.onPrimary : null,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

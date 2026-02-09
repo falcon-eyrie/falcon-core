@@ -39,10 +39,27 @@ extension FalconGraphSerializerX on FalconGraph {
       }
     }
 
-    if (connections.isNotEmpty) {
+    final nonStateConnections = connections
+        .where((connection) => !connection.isState)
+        .toList();
+    final stateConnections = connections.where(
+      (connection) => connection.isState,
+    );
+
+    if (nonStateConnections.isNotEmpty) {
       graph['connections'] = [
-        for (final conn in connections)
+        for (final conn in nonStateConnections)
           '''${conn.outProcessor}.${conn.outPort} = ${conn.inProcessor}.${conn.inPort}''',
+      ];
+    }
+
+    if (stateConnections.isNotEmpty) {
+      graph['states'] = [
+        for (final conn in stateConnections)
+          [
+            '${conn.outProcessor}.${conn.outPort}',
+            '${conn.inProcessor}.${conn.inPort}',
+          ],
       ];
     }
 
@@ -108,7 +125,7 @@ extension FalconGraphSerializerX on FalconGraph {
       final map = entry.value as YamlMap;
       final className = map['class'] as String;
 
-      final templateProcessor = processorTemplates.values.firstWhere(
+      final templateProcessor = allProcessorTemplates.values.firstWhere(
         (t) => t.className == className,
         orElse: () => throw FalconGraphYamlParserException(
           'Invalid processor class: $className. '
@@ -154,35 +171,49 @@ extension FalconGraphSerializerX on FalconGraph {
     }
 
     // Second pass: parse and validate connections
-    final connectionsEntry = doc['connections'];
+    final connectionsEntry = doc['connections'] as YamlList?;
 
     if (connectionsEntry != null) {
-      if (connectionsEntry is YamlList) {
-        // Handle list format: connections: [line1, line2, ...]
-        for (final line in connectionsEntry) {
-          _parseAndValidateConnection(line as String, processors, connections);
-        }
-      } else if (connectionsEntry is YamlMap) {
-        // Handle map format where keys and values form the connection
-        for (final connEntry in connectionsEntry.entries) {
-          final inPart = (connEntry.key ?? '').toString().trim();
-          final outPart = (connEntry.value ?? '').toString().trim();
+      for (final line in connectionsEntry) {
+        _parseAndValidateConnection(line as String, processors, connections);
+      }
+    }
 
-          if (inPart.isNotEmpty && outPart.isNotEmpty) {
-            final line = '$inPart = $outPart';
-            _parseAndValidateConnection(line, processors, connections);
-          }
-        }
-      } else if (connectionsEntry is String) {
-        // Handle string that may contain multiple connections
-        final lines = connectionsEntry
-            .split(RegExp(r'(?<!=)\s+(?=\w+\.\w+\s*=)'))
-            .where((line) => line.trim().isNotEmpty)
-            .toList();
+    final statesEntry = doc['states'] as YamlList?;
 
-        for (final line in lines) {
-          _parseAndValidateConnection(line, processors, connections);
+    if (statesEntry != null) {
+      for (final line in statesEntry) {
+        // TODO(ben): validate state connections
+        final connList = line as YamlList;
+        if (connList.length != 2) {
+          throw FalconGraphYamlParserException(
+            'Invalid state connection format: "$line". Expected format: '
+            '["processorId.portName", "processorId.portName"]',
+          );
         }
+        final outSide = connList[0] as String;
+        final inSide = connList[1] as String;
+        final outParts = outSide.split('.');
+        final inParts = inSide.split('.');
+        if (outParts.length < 2 || inParts.length < 2) {
+          throw FalconGraphYamlParserException(
+            'Invalid state connection format: "$line". Expected format: '
+            '["processorId.portName", "processorId.portName"]',
+          );
+        }
+        final outProcessorId = outParts[0].trim();
+        final outPortName = outParts[1].trim();
+        final inProcessorId = inParts[0].trim();
+        final inPortName = inParts[1].trim();
+        connections.add(
+          Connection(
+            inProcessor: inProcessorId,
+            inPort: inPortName,
+            outProcessor: outProcessorId,
+            outPort: outPortName,
+            isState: true,
+          ),
+        );
       }
     }
 

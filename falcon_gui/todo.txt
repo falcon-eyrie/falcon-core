@@ -1,5 +1,6 @@
 Missing:
-- Add processor states
+- Add all processor states and validation rules
+- Implement falcon backend manager (create & kill backend instances, connect remote backend)
 - Use absolute paths for config files
 - Replace temporary absolute paths with correct paths
 - Change falcon's config.yaml from GUI settings

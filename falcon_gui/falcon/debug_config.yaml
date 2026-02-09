@@ -11,5 +11,5 @@ server_side_storage:
   environment: "./build/falcon/output/"
   resources: "./build/falcon/resources/"
 ui:
-  theme_mode: "system"
+  theme_mode: "light"
   last_opened_graph: "/home/device/falcon/resources/graphs/current.yaml"

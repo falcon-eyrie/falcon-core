@@ -6,12 +6,18 @@ import 'package:flutter/material.dart';
 
 final globalNavigatorKey = GlobalKey<NavigatorState>();
 
-String get ubuntuHomePath {
-  return Platform.environment['HOME'] ?? '';
+Directory get ubuntuHomePath {
+  return Directory(Platform.environment['HOME'] ?? '').absolute;
+}
+
+Directory get falconInstallationPath {
+  return Directory(
+    '${ubuntuHomePath.path}/.local/share/org.falcon-eyrie.falcon_gui/',
+  )..createSync(recursive: true);
 }
 
 Directory get defaultGraphsDirectory =>
-    Directory('$ubuntuHomePath/falcon/resources/graphs')
+    Directory('${ubuntuHomePath.path}/falcon/resources/graphs')
       ..createSync(recursive: true);
 
 // TODO(ben): this regex is not matching the falcon backend one, fix it
@@ -74,5 +80,32 @@ extension CapitalizeX on String {
   String get capitalized {
     if (isEmpty) return this;
     return this[0].toUpperCase() + substring(1).toLowerCase();
+  }
+}
+
+class ClickableIcon extends StatelessWidget {
+  const ClickableIcon({
+    required this.icon,
+    required this.onPressed,
+    this.tooltip,
+    super.key,
+  });
+  final Icon icon;
+  final VoidCallback onPressed;
+  final String? tooltip;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onPressed,
+        child: tooltip == null
+            ? icon
+            : Tooltip(
+                message: tooltip,
+                child: icon,
+              ),
+      ),
+    );
   }
 }
