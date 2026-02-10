@@ -3,11 +3,20 @@ cmake_minimum_required(VERSION 3.16)
 
 # Export compile commands for VS Code IntelliSense
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wextra -Wunused -std=c++17 -pthread")
+	message(STATUS "Debug build")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wextra -Wunused -pthread")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Profile")
+	message(STATUS "Profile build")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -g -fno-omit-frame-pointer -fno-inline-functions -Wall -Wextra -Wunused -pthread")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Wunused -std=c++17 -pthread")
+	message(STATUS "Release build")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Wunused -pthread")
 endif()
 
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
@@ -114,8 +123,6 @@ FetchContent_GetProperties(units)
 if(NOT units_POPULATED)
 	message(STATUS "Populating LLNL units...")
 	FetchContent_MakeAvailable(units)
-	# Add here options for units building
-	set(CMAKE_CXX_STANDARD 17)
 	set(USE_LIBCXX OFF CACHE INTERNAL "")
 	set(UNITS_HEADER_ONLY OFF CACHE INTERNAL "")
 	set(UNITS_ENABLE_TESTS OFF CACHE BOOL "Whether or not to build the tests")

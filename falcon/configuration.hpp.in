@@ -26,24 +26,24 @@
 #include "utilities/configuration.hpp"
 
 class FalconConfiguration : public Configuration {
-public:
-  FalconConfiguration();
+   public:
+    FalconConfiguration();
 
-  // CONFIG OPTIONS
-public:
-  options::String graph_file{""};
-  options::Bool debug_enabled{false};
-  options::Bool testing_enabled{false};
-  options::Bool graph_autostart{false};
-  options::Int network_port{5555};
-  options::String logging_path{"./", options::isdir()};
-  options::Bool logging_screen_enabled{true};
-  options::Bool logging_cloud_enabled{true};
-  options::Int logging_cloud_port{5556};
-  options::String server_side_storage_environment{"./", options::isdir()};
-  options::String server_side_storage_resources{"@RESOURCES_PATH@/resources",
-                                                options::isdir(true, true)};
-  options::ValueMap<options::String> server_side_storage_custom;
+    // CONFIG OPTIONS
+   public:
+    options::String graph_file{""};
+    options::Bool debug_enabled{false};
+    options::Bool testing_enabled{false};
+    options::Bool graph_autostart{false};
+    options::Int network_port{5555};
+    options::String logging_path{"./", options::isdir(true, true)};
+    options::Bool logging_screen_enabled{true};
+    options::Bool logging_cloud_enabled{true};
+    options::Int logging_cloud_port{5556};
+    options::String server_side_storage_environment{"./", options::isdir(true, true)};
+    options::String server_side_storage_resources{"@RESOURCES_PATH@/resources",
+                                                  options::isdir(true, true)};
+    options::ValueMap<options::String> server_side_storage_custom;
 };
 
 #endif

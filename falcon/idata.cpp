@@ -28,6 +28,20 @@ uint64_t Data::serial_number() const {
     return serial_number_;
 }
 
+int64_t Data::ingestion_ns() const {
+    return ingestion_ns_;
+}
+
+void Data::set_ingestion_ns() {
+    ingestion_ns_ = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                        std::chrono::steady_clock::now().time_since_epoch())
+                        .count();
+}
+
+void Data::forward_ingestion_ns(const Data& data) {
+    ingestion_ns_ = data.ingestion_ns_;
+}
+
 void Data::set_source_timestamp() {
     source_timestamp_ = Clock::now();
 }

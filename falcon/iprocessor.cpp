@@ -363,11 +363,15 @@ void IProcessor::internal_Start(RunContext& runcontext) {
             LOG(INFO) << "Successfully set thread priority for " << name_ << " to "
                       << thread_priority() << "%.";
         }
+    }
+    bool is_core_set = thread_core() >= 0;
+    if (is_core_set) {
+        auto set_core = set_thread_core(thread_.native_handle(), thread_core());
 
-        if (!set_thread_core(thread_.native_handle(), thread_core())) {
+        if (set_core < 0) {
             LOG(WARNING) << "Unable to pin thread for " << name_ << " to core " << thread_core();
-        } else if (thread_core() >= 0) {
-            LOG(INFO) << "Successfully pinned thread for " << name_ << " to core " << thread_core()
+        } else {
+            LOG(INFO) << "Successfully pinned thread for " << name_ << " to core " << set_core
                       << ".";
         }
     }

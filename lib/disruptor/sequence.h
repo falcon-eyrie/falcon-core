@@ -53,21 +53,19 @@ class Sequence {
     // Get the current value of the {@link Sequence}.
     //
     // @return the current value.
-    int64_t sequence() const { return value_.load(std::memory_order::memory_order_acquire); }
+    int64_t sequence() const { return value_.load(std::memory_order_acquire); }
 
     // Set the current value of the {@link Sequence}.
     //
     // @param the value to which the {@link Sequence} will be set.
-    void set_sequence(int64_t value) {
-        value_.store(value, std::memory_order::memory_order_release);
-    }
+    void set_sequence(int64_t value) { value_.store(value, std::memory_order_release); }
 
     // Increment and return the value of the {@link Sequence}.
     //
     // @param increment the {@link Sequence}.
     // @return the new value incremented.
     int64_t IncrementAndGet(const int64_t& increment) {
-        return value_.fetch_add(increment, std::memory_order::memory_order_release) + increment;
+        return value_.fetch_add(increment, std::memory_order_release) + increment;
     }
 
    private:

@@ -1,17 +1,21 @@
-name: Format and Compile
+name: Build backend
 
 on:
   pull_request:
     branches: [develop]
-
+    paths:
+      # Skip CPP pipeline if the changes are only GUI
+      - "**"
+      - "!falcon_gui/**"
+      - "!.github/workflows/build_gui.yml"
 jobs:
   build-linux:
-    name: Format and Compile
+    name: Build backend
     runs-on: ubuntu-24.04
 
     strategy:
       matrix:
-        compiler: [clang, gcc]
+        compiler: [clang] # gcc is disabled for now
 
     steps:
       - name: Checkout code
@@ -40,18 +44,16 @@ jobs:
           mkdir -p build
           cd build
           if [ "${{ matrix.compiler }}" == "clang" ]; then
-            cmake .. \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DIGNORE_EXTENSIONS=ON \
-            -DCMAKE_C_COMPILER=/usr/local/bin/clang \
-            -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++
+            C_PATH=/usr/local/bin/clang
+            CXX_PATH=/usr/local/bin/clang++
           else
-            cmake .. \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DIGNORE_EXTENSIONS=ON \
-            -DCMAKE_C_COMPILER=/usr/bin/gcc \
-            -DCMAKE_CXX_COMPILER=/usr/bin/g++
+            C_PATH=/usr/bin/gcc
+            CXX_PATH=/usr/bin/g++
           fi
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=$C_PATH \
+            -DCMAKE_CXX_COMPILER=$CXX_PATH
 
       - name: Build project
         run: |

@@ -1,0 +1,311 @@
+import 'package:falcon_gui/model/falcon_log.dart';
+import 'package:falcon_gui/state/falcon_manager.dart';
+import 'package:falcon_gui/utils/theme.dart';
+import 'package:flutter/material.dart';
+import 'package:remixicon/remixicon.dart';
+
+class LogsPanel extends StatefulWidget {
+  const LogsPanel({required this.onHidden, super.key});
+  final VoidCallback onHidden;
+  @override
+  State<LogsPanel> createState() => _LogsPanelState();
+}
+
+class _LogsPanelState extends State<LogsPanel> {
+  final ScrollController _scrollController = ScrollController();
+
+  double _panelHeight = 200;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (mounted && MediaQuery.of(context).size.height < 260) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onHidden();
+      });
+      return const SizedBox.shrink();
+    }
+
+    final panelHeight = _panelHeight.clamp(
+      100.0,
+      MediaQuery.of(context).size.height * 0.7,
+    );
+
+    return AnimatedBuilder(
+      animation: falconManager,
+      builder: (context, _) {
+        final logs = falconManager.logs.reversed;
+
+        return SizedBox(
+          height: panelHeight,
+          child: Stack(
+            children: [
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  height: panelHeight,
+                  color: context.c.surface,
+                  child: Column(
+                    children: [
+                      _LogPanelHeader(onHidden: widget.onHidden),
+                      Expanded(
+                        child: Scrollbar(
+                          controller: _scrollController,
+                          thumbVisibility: true,
+                          child: ListView.builder(
+                            reverse: true,
+                            controller: _scrollController,
+                            itemCount: logs.length,
+                            itemBuilder: (context, index) {
+                              final log = logs.elementAt(index);
+
+                              return _LogRow(
+                                log: log,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // This is an overengineered way to make the resizable handle
+              // height 8 instead of 1 for easier mouse interaction
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: _panelHeight - 8,
+                child: MouseRegion(
+                  cursor: SystemMouseCursors.resizeUpDown,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onVerticalDragUpdate: (details) {
+                      setState(() {
+                        _panelHeight -= details.delta.dy;
+                        if (_panelHeight < 100) {
+                          _panelHeight = 100;
+                        } else if (_panelHeight >
+                            MediaQuery.of(context).size.height * 0.8) {
+                          _panelHeight =
+                              MediaQuery.of(context).size.height * 0.8;
+                        }
+                      });
+                    },
+                    child: Container(
+                      height: 8,
+                      color: Colors.transparent,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _LogPanelHeader extends StatelessWidget {
+  const _LogPanelHeader({required this.onHidden});
+
+  final VoidCallback onHidden;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 24,
+      decoration: BoxDecoration(
+        color: context.c.surfaceContainer,
+        border: Border.symmetric(
+          horizontal: BorderSide(color: context.c.outlineVariant),
+        ),
+      ),
+      child: Row(
+        children: [
+          const SizedBox(width: 8),
+          Text(
+            'Falcon Logs',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+              color: context.c.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Tooltip(
+            message: _logsDescription,
+            child: Icon(
+              RemixIcons.information_line,
+              size: 16,
+              color: context.c.onSurfaceVariant,
+            ),
+          ),
+          const Spacer(),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onHidden,
+              child: Tooltip(
+                message: 'Hide Logs Panel',
+                child: SizedBox(
+                  height: 24,
+                  width: 32,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Icon(
+                      RemixIcons.subtract_line,
+                      size: 16,
+                      color: context.c.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+const _logsDescription =
+    'These logs are generated by the Falcon\n'
+    'and current processors in the pipeline.';
+
+class _LogRow extends StatelessWidget {
+  const _LogRow({
+    required this.log,
+  });
+
+  final FalconLog log;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _logColor(context, log.type);
+
+    final timeText =
+        '${log.timestamp.hour.toString().padLeft(2, '0')}:'
+        '${log.timestamp.minute.toString().padLeft(2, '0')}:'
+        '${log.timestamp.second.toString().padLeft(2, '0')}.'
+        '${log.timestamp.microsecond.toString().padLeft(6, '0')}';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Tooltip(
+            message: log.type.toString(),
+            child: Container(
+              margin: const EdgeInsets.only(top: 2),
+              width: 16,
+              height: 16,
+              child: Icon(
+                _logIcon(log.type),
+                size: 16,
+                color: color,
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 2),
+          Expanded(
+            child: SelectableText.rich(
+              TextSpan(
+                text: timeText,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w900,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                  color: _logColor(context, log.type),
+                ),
+                children: [
+                  const TextSpan(
+                    text: ' ',
+                  ),
+                  TextSpan(
+                    text: log.message,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+IconData _logIcon(FalconLogType type) {
+  switch (type) {
+    case FalconLogType.fatal:
+    case FalconLogType.error:
+      return RemixIcons.error_warning_line;
+    case FalconLogType.warning:
+      return RemixIcons.alert_line;
+    case FalconLogType.info:
+      return RemixIcons.information_line;
+    case FalconLogType.update:
+      return RemixIcons.exchange_2_line;
+    case FalconLogType.state:
+      return RemixIcons.settings_3_line;
+    case FalconLogType.unknown:
+      return RemixIcons.question_line;
+  }
+}
+
+Color _logColor(BuildContext context, FalconLogType type) {
+  switch (Theme.of(context).brightness) {
+    case Brightness.dark:
+      switch (type) {
+        case FalconLogType.fatal:
+          return const Color(0xFFFF4D4D);
+        case FalconLogType.error:
+          return const Color(0xFFFF7A7A);
+        case FalconLogType.warning:
+          return const Color(0xFFFFD166);
+        case FalconLogType.info:
+          return const Color(0xFF7DD3FC);
+        case FalconLogType.update:
+          return const Color(0xFF4ADE80);
+        case FalconLogType.state:
+          return const Color(0xFFC084FC);
+        case FalconLogType.unknown:
+          return const Color(0xFFD1D5DB);
+      }
+
+    case Brightness.light:
+      switch (type) {
+        case FalconLogType.fatal:
+          return const Color(0xFF8B0000);
+        case FalconLogType.error:
+          return const Color(0xFFB3261E);
+        case FalconLogType.warning:
+          return const Color(0xFF8A5A00);
+        case FalconLogType.info:
+          return const Color.fromARGB(255, 18, 75, 119);
+        case FalconLogType.update:
+          return const Color(0xFF0F5D2F);
+        case FalconLogType.state:
+          return const Color.fromARGB(255, 129, 62, 211);
+        case FalconLogType.unknown:
+          return const Color(0xFF1F2933);
+      }
+  }
+}

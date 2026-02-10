@@ -18,7 +18,9 @@
 // ---------------------------------------------------------------------
 
 #include <unistd.h>
+#include <vector>
 
+#include <g3log/loglevels.hpp>
 #include "threadutilities.hpp"
 
 bool set_realtime_priority(pthread_t thread, ThreadPriority priority) {
@@ -58,24 +60,22 @@ bool set_realtime_priority(pthread_t thread, ThreadPriority priority) {
     return true;
 }
 
-bool set_thread_core(pthread_t thread, ThreadCore core) {
-    int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
+ThreadCore set_thread_core(pthread_t thread, ThreadCore core) {
+    int num_cores = (int) sysconf(_SC_NPROCESSORS_ONLN);
 
-    if (core < 0) {
-        return true;
-    }
-
-    if (core >= num_cores) {
-        return false;
+    if (core < 0 || core >= num_cores) {
+        return -1;
     }
 
     cpu_set_t cpuset;
-
     CPU_ZERO(&cpuset);
-
     CPU_SET(core, &cpuset);
 
-    pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+    int result = pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
 
-    return true;
+    if (result != 0) {
+        return -1;
+    }
+
+    return core;
 }
