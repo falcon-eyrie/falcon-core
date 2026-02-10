@@ -63,8 +63,9 @@ jobs:
               run: |
                   BUNDLE_DIR="falcon_gui/build/linux/x64/release/bundle"
 
+                  mkdir -p $BUNDLE_DIR/bin
                   cp build/falcon/falcon $BUNDLE_DIR/bin/
-                  cp assets/icon.png $BUNDLE_DIR/
+                  cp falcon_gui/assets/icon.png $BUNDLE_DIR/
 
                   tar -czf falcon_linux_v${{ github.event.inputs.version }}.tar.gz -C $BUNDLE_DIR .
 
