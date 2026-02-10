@@ -1,9 +1,23 @@
-![Falcon version](https://img.shields.io/badge/Falcon-v2.0.0-green) ![License](https://img.shields.io/badge/License-GPLv3-blue)
+![Falcon version](https://img.shields.io/badge/Falcon-v2.0.0-rc1-green) ![License](https://img.shields.io/badge/License-GPLv3-blue)
 # Falcon core
 
 Falcon is a software for real-time processing of neural signals to enable short-latency closed-loop feedback in 
 experiments that try to causally link neural activity to behavior. 
- 
+
+# Easy Ubuntu installation
+
+To install Falcon on Ubuntu, simply run the following command in your terminal:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/falcon-eyrie/falcon-core/refs/heads/develop/install.sh | bash
+```
+
+# Advanced development and debugging
+
+Falcon backend is developed in C++. New processors and data types can be developed in C++ and added as extensions. In order to compile the codebase, you can follow exact steps that the automated CI pipeline uses. Please refer to the `.github/workflows/build_backend.yml` file for more details. As can be seen in the workflow, the build process is based on CMake and uses clang and gcc compilers. In order to have linting and formatting, llvm tools are required.
+
+# More about Falcon
+
 Example use cases are the detection of hippocampal ripple oscillations or online decoding and detection of hippocampal replay patterns.
 The full documentation can be found [here!](https://falcon-core.readthedocs.io)
 
