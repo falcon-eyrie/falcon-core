@@ -39,6 +39,10 @@ jobs:
 
             - name: Configure CMake
               run: |
+                  mkdir -p extensions
+                  cd extensions
+                  git clone https://github.com/falcon-eyrie/falcon-fklab-extensions.git --branch develop --depth 1
+                  cd ..
                   mkdir -p build
                   cd build
                   C_PATH=/usr/local/bin/clang

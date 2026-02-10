@@ -41,8 +41,7 @@ class FalconConfiguration : public Configuration {
     options::Bool logging_cloud_enabled{true};
     options::Int logging_cloud_port{5556};
     options::String server_side_storage_environment{"./", options::isdir(true, true)};
-    options::String server_side_storage_resources{"@RESOURCES_PATH@/resources",
-                                                  options::isdir(true, true)};
+    options::String server_side_storage_resources{"~/falcon/resources", options::isdir(true, true)};
     options::ValueMap<options::String> server_side_storage_custom;
 };
 
