@@ -8,7 +8,7 @@ LATEST_VERSION="2.0.0"
 RELEASE_BUNDLE_URL="https://github.com/falcon-eyrie/falcon-core/releases/download/v$LATEST_VERSION/falcon_linux_v$LATEST_VERSION.tar.gz"
 DESKTOP_ENTRY="$HOME/.local/share/applications/$NAMESPACE.desktop"
 
-DEPS=("curl" "libgtk-3-0" "libsecret-`1-0" "liblzma5" "libzmq5")
+DEPS=("curl" "libgtk-3-0" "libzmq5")
 
 echo "Installing Falcon, please wait..."
 
