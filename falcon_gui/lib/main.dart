@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:falcon_gui/dialogs/on_close_gui_dialog.dart';
 import 'package:falcon_gui/graph_editor/graph_editor.dart';
@@ -125,8 +126,7 @@ class _RootPageState extends State<RootPage> with WindowListener {
         'No local falcon backend instance detected, '
         'closing without showing dialog...',
       );
-      await windowManager.destroy();
-      return;
+      exit(0);
     }
 
     if (_isDialogAlreadyShowing) {
@@ -151,7 +151,7 @@ class _RootPageState extends State<RootPage> with WindowListener {
       }
 
       logInfo('Destroying window...');
-      await windowManager.destroy();
+      exit(0);
     } else {
       logInfo('User canceled window close, ignoring...');
     }
