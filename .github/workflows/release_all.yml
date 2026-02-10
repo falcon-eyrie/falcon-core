@@ -1,12 +1,16 @@
 name: Release backend and GUI
 
 on:
+    pull_request:
+        branches: [develop]
     workflow_dispatch:
         inputs:
             version:
                 description: "Version name for this release"
                 required: true
                 default: "1.0.0"
+
+    
 
 jobs:
     build-linux:
