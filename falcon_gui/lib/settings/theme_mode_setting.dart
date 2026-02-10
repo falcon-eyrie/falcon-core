@@ -8,11 +8,7 @@ final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
 
 Future<void> setThemeModeFromConfig() async {
   try {
-    if (localConfig.themeMode == null) {
-      await _saveThemeModeToLocalConfig(ThemeMode.system);
-    }
-
-    final themeModeName = localConfig.themeMode ?? 'system';
+    final themeModeName = localConfig.themeMode;
     final themeMode = themeModeName == 'light'
         ? ThemeMode.light
         : themeModeName == 'dark'

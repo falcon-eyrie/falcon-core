@@ -1,15 +1,15 @@
 graph:
-  file: ""
-  autostart: false
+  file: null
+  autostart: null
 debug:
-  enabled: false
+  enabled: null
 network:
   port: 5555
 logging:
-  path: "./build/falcon/logs/"
+  path: "~/falcon/output/logs/"
 server_side_storage:
-  environment: "./build/falcon/output/"
-  resources: "./build/falcon/resources/"
+  environment: "~/falcon/output/"
+  resources: "~/falcon/resources/"
 ui:
-  theme_mode: "light"
-  last_opened_graph: "/home/device/falcon/resources/graphs/current.yaml"
+  theme_mode: "system"
+  last_opened_graph: "/home/device/falcon/resources/graphs/my_graph.yaml"

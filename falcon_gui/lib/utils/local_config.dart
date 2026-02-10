@@ -23,10 +23,10 @@ abstract class LocalConfigManager {
   }
 
   static Future<void> setLastOpenedGraphFilePath(String path) async {
-    // if (localConfig.lastOpenedGraph != path) {
-    _config = _config.copyWith(lastOpenedGraph: path);
-    await _saveConfig();
-    // }
+    if (localConfig.lastOpenedGraph != path) {
+      _config = _config.copyWith(lastOpenedGraph: path);
+      await _saveConfig();
+    }
   }
 
   static Future<void> loadConfig() async {
@@ -40,6 +40,7 @@ abstract class LocalConfigManager {
         );
       } else {
         _config = LocalConfig();
+        await _saveConfig();
       }
     } catch (e, s) {
       logError('Error loading local config: $e', s);
@@ -71,16 +72,17 @@ abstract class LocalConfigManager {
 
 class LocalConfig {
   LocalConfig({
-    this.themeMode,
+    this.themeMode = 'system',
+    this.networkPort = 5555,
+    this.loggingPath = '~/falcon/output/logs/',
+    this.serverSideStorageEnvironment = '~/falcon/output/',
+    this.serverSideStorageResources = '~/falcon/resources/',
     this.lastOpenedGraph,
     this.graphFile,
     this.graphAutostart,
     this.debugEnabled,
-    this.networkPort,
-    this.loggingPath,
-    this.serverSideStorageEnvironment,
-    this.serverSideStorageResources,
   });
+
   factory LocalConfig.fromMap(Map<String, dynamic> map) {
     final graph = map['graph'] as Map?;
     final debug = map['debug'] as Map?;
@@ -90,20 +92,21 @@ class LocalConfig {
     final ui = map['ui'] as Map?;
 
     return LocalConfig(
+      networkPort: network?['port'] as int? ?? 5555,
+      loggingPath: logging?['path'] as String? ?? '~/falcon/output/logs/',
+      serverSideStorageEnvironment:
+          serverSideStorage?['environment'] as String? ?? '~/falcon/output/',
+      serverSideStorageResources:
+          serverSideStorage?['resources'] as String? ?? '~/falcon/resources/',
+      themeMode: ui?['theme_mode'] as String? ?? 'system',
       graphFile: graph?['file'] as String?,
       graphAutostart: graph?['autostart'] as bool?,
       debugEnabled: debug?['enabled'] as bool?,
-      networkPort: network?['port'] as int?,
-      loggingPath: logging?['path'] as String?,
-      serverSideStorageEnvironment:
-          serverSideStorage?['environment'] as String?,
-      serverSideStorageResources: serverSideStorage?['resources'] as String?,
-      themeMode: ui?['theme_mode'] as String?,
       lastOpenedGraph: ui?['last_opened_graph'] as String?,
     );
   }
 
-  final String? themeMode;
+  final String themeMode;
   final String? lastOpenedGraph;
 
   @Deprecated("Do not use this field. It's for falcon backend.")
@@ -113,13 +116,13 @@ class LocalConfig {
   @Deprecated("Do not use this field. It's for falcon backend.")
   final bool? debugEnabled;
   @Deprecated("Do not use this field. It's for falcon backend.")
-  final int? networkPort;
+  final int networkPort;
   @Deprecated("Do not use this field. It's for falcon backend.")
-  final String? loggingPath;
+  final String loggingPath;
   @Deprecated("Do not use this field. It's for falcon backend.")
-  final String? serverSideStorageEnvironment;
+  final String serverSideStorageEnvironment;
   @Deprecated("Do not use this field. It's for falcon backend.")
-  final String? serverSideStorageResources;
+  final String serverSideStorageResources;
 
   Map<String, dynamic> toMap() {
     return {
