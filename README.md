@@ -1,10 +1,9 @@
 ![Falcon version](https://img.shields.io/badge/Falcon-v2.0.0--rc1-green) ![License](https://img.shields.io/badge/License-GPLv3-blue)
-# Falcon core
+# Falcon
 
-Falcon is a software for real-time processing of neural signals to enable short-latency closed-loop feedback in 
-experiments that try to causally link neural activity to behavior. 
+Falcon is a modular and extensible software framework for soft real-time signal processing, originally designed for short-latency closed-loop neural applications.
 
-# Easy Ubuntu installation
+# ⚡ Quick installation (Ubuntu)
 
 To install Falcon on Ubuntu, simply run the following command in your terminal:
 
@@ -14,26 +13,33 @@ wget -qO- https://raw.githubusercontent.com/falcon-eyrie/falcon-core/refs/heads/
 
 # Advanced development and debugging
 
-Falcon backend is developed in C++. New processors and data types can be developed in C++ and added as extensions. In order to compile the codebase, you can follow exact steps that the automated CI pipeline uses. Please refer to the `.github/workflows/build_backend.yml` file for more details. As can be seen in the workflow, the build process is based on CMake and uses clang and gcc compilers. In order to have linting and formatting, llvm tools are required.
+The Falcon backend is developed in C++. New processors and data types can be added as modular extensions. To compile the codebase locally, follow the build steps defined in the automated CI pipeline located at `.github/workflows/build_backend.yml`.
+The build process is based on CMake and supports both Clang and GCC compilers. For development environments, LLVM tools are required to support linting and formatting. By default, project contains settings and launch configurations for VSCode, but you can easily adapt it to other IDEs.
 
-# More about Falcon
+# Core architecture and extensions
 
-Example use cases are the detection of hippocampal ripple oscillations or online decoding and detection of hippocampal replay patterns.
-The full documentation can be found [here!](https://falcon-core.readthedocs.io)
+Falcon operates on a graph-based architecture where users compose processors into a directed graph to accomplish specific signal processing tasks.
+While the core framework manages execution, the processors themselves are maintained in separate repositories as extensions. By default, the build process includes the `falcon-fklab-extensions`, as specified in the extensions.txt configuration. You can customize Falcon by integrating your own specialized extensions to suit your specific research or engineering needs.
 
-It is based on a graph definition composed with processors chose to accomplish a specific task and connections between them. 
-However, processors are managed separate repositories as extensions.
+# Use cases
 
-When building the falcon project with the default extension setting (see extensions.txt), it will add by default the falcon-fklab-extension.
-See extensions documentation [here!](https://falcon-fklab-extensions.readthedocs.io)
+Falcon is engineered for high-performance neural data processing where timing is critical. Current applications include:
 
-Don't hesitate to personalize Falcon with your own set of extensions.
+*   **Ripple Detection:** Real-time identification of hippocampal ripple oscillations.
+*   **Neural Decoding:** Online detection and decoding of hippocampal replay patterns.
+*   **Closed-Loop Experiments:** Low-latency feedback loops for electrophysiology.
 
-## Contribution 
+For comprehensive guides and API references, please visit the [Official Documentation](https://falcon-core.readthedocs.io). 
 
-If your issue concerned the installation or falcon during running time, don't hesitate to add an issue 
-describing the problem / or the feature to develop. Add the graph (+ eventually the config file) used to run Falcon
-is highly recommended. 
- 
-To develop a new extension, an issue can be open here for guidance but most probably the maintainer will advise you to 
-create your own repository and then open an PR in Falcon to link your extension doc in the Falcon doc. 
+> We are currently working on expanding the documentation to include more detailed examples and tutorials.
+
+
+# Contributing
+
+If you encounter installation issues or runtime bugs, please open an issue in the repository. When reporting a bug, it is highly recommended to include:
+A clear description of the problem or requested feature.
+The specific graph definition used.
+Relevant configuration files.
+
+# Developing new extensions
+To develop a new extension, you may open an issue here for architectural guidance. Generally, maintainers recommend hosting your extension in a standalone repository and then submitting a Pull Request to Falcon to include your documentation link in the main project registry.
