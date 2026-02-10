@@ -10,8 +10,6 @@ on:
                 required: true
                 default: "1.0.0"
 
-    
-
 jobs:
     build-linux:
         name: Release backend and GUI
@@ -63,11 +61,11 @@ jobs:
 
             - name: Prepare release
               run: |
-                  BUNDLE_DIR="build/linux/x64/release/bundle"
-                  
+                  BUNDLE_DIR="falcon_gui/build/linux/x64/release/bundle"
+
                   cp build/falcon/falcon $BUNDLE_DIR/bin/
                   cp assets/icon.png $BUNDLE_DIR/
-                  
+
                   tar -czf falcon_linux_v${{ github.event.inputs.version }}.tar.gz -C $BUNDLE_DIR .
 
             - name: Publish artifact

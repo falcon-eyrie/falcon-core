@@ -1,5 +1,4 @@
-![Falcon version](https://img.shields.io/badge/Falcon-v1.3.0-blue)
-
+![Falcon version](https://img.shields.io/badge/Falcon-v2.0.0-green) ![License](https://img.shields.io/badge/License-GPLv3-blue)
 # Falcon core
 
 Falcon is a software for real-time processing of neural signals to enable short-latency closed-loop feedback in 
