@@ -195,7 +195,7 @@ class FalconManager extends ChangeNotifier {
           [
             '-c',
             if (kDebugMode) ...[
-              'falcon/debug_config.yaml',
+              'build/falcon/config.yaml',
             ] else ...[
               '${falconInstallationPath.path}/config.yaml',
             ],

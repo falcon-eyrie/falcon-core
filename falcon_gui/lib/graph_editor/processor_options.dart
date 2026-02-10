@@ -381,7 +381,7 @@ class _YamlOptionChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: context.c.primaryContainer,
+        color: context.c.surfaceContainer,
         borderRadius: BorderRadius.circular(16),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

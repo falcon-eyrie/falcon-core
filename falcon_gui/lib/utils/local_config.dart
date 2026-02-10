@@ -12,7 +12,7 @@ LocalConfig get localConfig => _config;
 
 abstract class LocalConfigManager {
   static final File _configFile = kDebugMode
-      ? File('falcon/debug_config.yaml')
+      ? File('build/falcon/config.yaml')
       : File('config.yaml');
 
   static Future<void> setThemeMode(String modeName) async {
