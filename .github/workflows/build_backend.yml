@@ -8,6 +8,7 @@ on:
       - "**"
       - "!falcon_gui/**"
       - "!.github/workflows/build_gui.yml"
+      - "!.github/workflows/release_all.yml"
 jobs:
   build-linux:
     name: Build backend
