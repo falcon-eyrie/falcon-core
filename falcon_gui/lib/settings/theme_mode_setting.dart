@@ -1,24 +1,8 @@
 import 'dart:async';
 
 import 'package:falcon_gui/utils/local_config.dart';
-import 'package:falcon_gui/utils/logger.dart';
+import 'package:falcon_gui/utils/misc.dart';
 import 'package:flutter/material.dart';
-
-final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.system);
-
-Future<void> setThemeModeFromConfig() async {
-  try {
-    final themeModeName = localConfig.themeMode;
-    final themeMode = themeModeName == 'light'
-        ? ThemeMode.light
-        : themeModeName == 'dark'
-        ? ThemeMode.dark
-        : ThemeMode.system;
-    themeNotifier.value = themeMode;
-  } catch (e, s) {
-    logError('Error loading theme mode from shared preferences: $e', s);
-  }
-}
 
 Future<void> _saveThemeModeToLocalConfig(ThemeMode mode) async {
   final modeName = switch (mode) {
@@ -35,9 +19,9 @@ class ThemeModeSetting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // use CupertinoSegmentedControl to show 3 options: light, dark, system
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (context, mode, _) {
+    return ValueListenableBuilder<LocalConfig>(
+      valueListenable: localConfigNotifier,
+      builder: (context, localConfig, _) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Column(
@@ -63,10 +47,11 @@ class ThemeModeSetting extends StatelessWidget {
                     label: Text('System'),
                   ),
                 ],
-                selected: <ThemeMode>{mode},
+                selected: <ThemeMode>{
+                  themeModeFromString(localConfig.themeMode),
+                },
                 onSelectionChanged: (newSelection) {
                   final newMode = newSelection.first;
-                  themeNotifier.value = newMode;
                   unawaited(_saveThemeModeToLocalConfig(newMode));
                 },
               ),

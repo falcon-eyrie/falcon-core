@@ -109,3 +109,25 @@ class ClickableIcon extends StatelessWidget {
     );
   }
 }
+
+String getAbsolutePathForUbuntu(String input) {
+  var path = input.replaceAll(r'$HOME', ubuntuHomePath.path);
+
+  if (path.startsWith('~')) {
+    path = path.replaceFirst('~', ubuntuHomePath.path);
+  }
+
+  return Directory(path).absolute.path;
+}
+
+ThemeMode themeModeFromString(String mode) {
+  switch (mode) {
+    case 'light':
+      return ThemeMode.light;
+    case 'dark':
+      return ThemeMode.dark;
+    case 'system':
+    default:
+      return ThemeMode.system;
+  }
+}
