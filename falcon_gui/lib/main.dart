@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:falcon_gui/dialogs/on_close_gui_dialog.dart';
 import 'package:falcon_gui/graph_editor/graph_editor.dart';
-import 'package:falcon_gui/settings/theme_mode_setting.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/local_config.dart';
@@ -45,7 +44,6 @@ Future<void> _entrypoint() async {
 
   await LocalConfigManager.loadConfig();
 
-  await setThemeModeFromConfig();
   _listenForLoadedGraphFile();
 
   unawaited(falconManager.initialize());
@@ -80,13 +78,13 @@ class DesktopApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: themeNotifier,
+      animation: localConfigNotifier,
       builder: (context, _) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           home: const RootPage(),
           navigatorKey: globalNavigatorKey,
-          themeMode: themeNotifier.value,
+          themeMode: themeModeFromString(localConfigNotifier.value.themeMode),
           theme: FalconTheme(Theme.of(context).textTheme).light(),
           darkTheme: FalconTheme(Theme.of(context).textTheme).dark(),
         );

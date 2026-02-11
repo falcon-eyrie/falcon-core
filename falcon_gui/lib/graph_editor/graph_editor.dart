@@ -61,7 +61,11 @@ class _GraphEditorState extends State<GraphEditor> {
                     Expanded(
                       child: Stack(
                         children: [
-                          const EditorView(),
+                          Listener(
+                            onPointerDown: (_) =>
+                                setState(() => _activeCategory = null),
+                            child: const EditorView(),
+                          ),
                           if (_activeCategory != null) ...[
                             Positioned(
                               top: 0,

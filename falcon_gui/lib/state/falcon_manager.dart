@@ -74,15 +74,17 @@ class FalconManager extends ChangeNotifier {
     // let user choose remote vs local on startup
     await initLocalBackend();
 
-    final lastGraphPath = localConfig.lastOpenedGraph;
+    var initialFile = _defaultGraphFile;
+
+    final lastGraphPath = localConfigNotifier.value.lastOpenedGraph;
+
     if (lastGraphPath != null) {
       final file = File(lastGraphPath);
       if (file.existsSync()) {
-        unawaited(falconManager.loadFile(file: file));
+        initialFile = file;
       }
-    } else {
-      unawaited(loadFile(file: _defaultGraphFile));
     }
+    unawaited(loadFile(file: initialFile));
   }
 
   Future<void> openFile() async {
@@ -190,6 +192,8 @@ class FalconManager extends ChangeNotifier {
 
         _localFalconBackendPid = existingPid;
       } else {
+        // TODO(ben): start process using linux command and pipe the
+        // output to a file in logs directory
         final localBackendProcess = await Process.start(
           _falconBackendBinPath,
           [
@@ -346,12 +350,18 @@ class FalconManager extends ChangeNotifier {
       return;
     }
 
+    final graphAsYaml = graph.toYaml();
+    await _currentGraphFile!.writeAsString(graphAsYaml);
+    unawaited(_sendGraphToBackend(graphAsYaml));
+  }
+
+  Future<void> _sendGraphToBackend(String graphAsYaml) async {
     if (falconState == FalconState.unknown) {
       // TODO(ben): dont create infinite Futures, instead, overwrite
       // the previous one, perhaps just use the debouncer
       Future.delayed(
         const Duration(milliseconds: 100),
-        () => onGraphChanged(graph),
+        () => _sendGraphToBackend(graphAsYaml),
       );
       return;
     }
@@ -359,13 +369,11 @@ class FalconManager extends ChangeNotifier {
     if (falconState != FalconState.noGraph) {
       await sendCommand(FalconZmqCommand.graphDestroy);
     }
-    final graphAsYaml = graph.toYaml();
 
     if (graphAsYaml.trim().isEmpty) {
       return;
     }
 
-    await _currentGraphFile!.writeAsString(graphAsYaml);
     await _falconZMQ!.sendCommandParts(
       FalconZmqCommand.graphBuild(_currentGraphFile!.absolute.path),
     );

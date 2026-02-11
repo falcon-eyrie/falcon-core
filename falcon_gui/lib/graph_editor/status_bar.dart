@@ -24,7 +24,9 @@ class StatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiListener(
       builder: (context) {
-        return Container(
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
+
           height: 24,
           color: _stateColor(falconManager.falconState),
           child: Row(
@@ -204,7 +206,7 @@ Color _stateColor(FalconState falconState) => switch (falconState) {
   FalconState.noGraph => Colors.orange,
   FalconState.constructing => Colors.purple,
   FalconState.preparing => Colors.indigo,
-  FalconState.stopping => Colors.red,
+  FalconState.stopping => Colors.orangeAccent,
   FalconState.error => Colors.redAccent,
   FalconState.starting => Colors.blueAccent,
 };

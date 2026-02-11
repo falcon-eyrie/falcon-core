@@ -77,4 +77,25 @@ class FalconFilePicker {
 
     return null;
   }
+
+  static Future<Directory?> pickDirectory({
+    required String initialDirectory,
+    required String dialogTitle,
+  }) async {
+    try {
+      final result = await FilePicker.platform.getDirectoryPath(
+        initialDirectory: Directory(initialDirectory).absolute.path,
+        dialogTitle: dialogTitle,
+        lockParentWindow: true,
+      );
+
+      if (result != null) {
+        return Directory(result);
+      }
+    } catch (e, s) {
+      logError('Error picking directory: $e', s);
+    }
+
+    return null;
+  }
 }

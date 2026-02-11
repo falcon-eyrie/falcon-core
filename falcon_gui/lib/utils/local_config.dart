@@ -3,12 +3,12 @@
 
 import 'dart:io';
 import 'package:falcon_gui/utils/logger.dart';
+import 'package:falcon_gui/utils/misc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_writer/yaml_writer.dart';
 
-late LocalConfig _config;
-LocalConfig get localConfig => _config;
+ValueNotifier<LocalConfig> localConfigNotifier = ValueNotifier(LocalConfig());
 
 abstract class LocalConfigManager {
   static final File _configFile = kDebugMode
@@ -16,15 +16,46 @@ abstract class LocalConfigManager {
       : File('config.yaml');
 
   static Future<void> setThemeMode(String modeName) async {
-    if (localConfig.themeMode != modeName) {
-      _config = _config.copyWith(themeMode: modeName);
+    if (localConfigNotifier.value.themeMode != modeName) {
+      localConfigNotifier.value = localConfigNotifier.value.copyWith(
+        themeMode: modeName,
+      );
       await _saveConfig();
     }
   }
 
   static Future<void> setLastOpenedGraphFilePath(String path) async {
-    if (localConfig.lastOpenedGraph != path) {
-      _config = _config.copyWith(lastOpenedGraph: path);
+    if (localConfigNotifier.value.lastOpenedGraph != path) {
+      localConfigNotifier.value = localConfigNotifier.value.copyWith(
+        lastOpenedGraph: path,
+      );
+      await _saveConfig();
+    }
+  }
+
+  static Future<void> setServerSideStorageResources(String path) async {
+    if (localConfigNotifier.value.serverSideStorageResources != path) {
+      localConfigNotifier.value = localConfigNotifier.value.copyWith(
+        serverSideStorageResources: path,
+      );
+      await _saveConfig();
+    }
+  }
+
+  static Future<void> setServerSideStorageEnvironment(String path) async {
+    if (localConfigNotifier.value.serverSideStorageEnvironment != path) {
+      localConfigNotifier.value = localConfigNotifier.value.copyWith(
+        serverSideStorageEnvironment: path,
+      );
+      await _saveConfig();
+    }
+  }
+
+  static Future<void> setLoggingPath(String path) async {
+    if (localConfigNotifier.value.loggingPath != path) {
+      localConfigNotifier.value = localConfigNotifier.value.copyWith(
+        loggingPath: path,
+      );
       await _saveConfig();
     }
   }
@@ -35,23 +66,23 @@ abstract class LocalConfigManager {
       if (await _configFile.exists()) {
         final content = await _configFile.readAsString();
         final yamlMap = loadYaml(content) as YamlMap;
-        _config = LocalConfig.fromMap(
+        localConfigNotifier.value = LocalConfig.fromMap(
           _yamlMapToMap(yamlMap) as Map<String, dynamic>,
         );
       } else {
-        _config = LocalConfig();
+        localConfigNotifier.value = LocalConfig();
         await _saveConfig();
       }
     } catch (e, s) {
       logError('Error loading local config: $e', s);
-      _config = LocalConfig();
+      localConfigNotifier.value = LocalConfig();
     }
   }
 
   static Future<void> _saveConfig() async {
     try {
       final yamlWriter = YamlWriter();
-      final yamlString = yamlWriter.write(_config.toMap());
+      final yamlString = yamlWriter.write(localConfigNotifier.value.toMap());
       await _configFile.writeAsString(yamlString);
     } catch (e, s) {
       logError('Error saving local config: $e', s);
@@ -74,9 +105,9 @@ class LocalConfig {
   LocalConfig({
     this.themeMode = 'system',
     this.networkPort = 5555,
-    this.loggingPath = '~/falcon/output/logs/',
-    this.serverSideStorageEnvironment = '~/falcon/output/',
-    this.serverSideStorageResources = '~/falcon/resources/',
+    this.loggingPath = r'$HOME/falcon/output/logs/',
+    this.serverSideStorageEnvironment = r'$HOME/falcon/output/',
+    this.serverSideStorageResources = r'$HOME/falcon/resources/',
     this.lastOpenedGraph,
     this.graphFile,
     this.graphAutostart,
@@ -93,11 +124,13 @@ class LocalConfig {
 
     return LocalConfig(
       networkPort: network?['port'] as int? ?? 5555,
-      loggingPath: logging?['path'] as String? ?? '~/falcon/output/logs/',
+      loggingPath: logging?['path'] as String? ?? r'$HOME/falcon/output/logs/',
       serverSideStorageEnvironment:
-          serverSideStorage?['environment'] as String? ?? '~/falcon/output/',
+          serverSideStorage?['environment'] as String? ??
+          r'$HOME/falcon/output/',
       serverSideStorageResources:
-          serverSideStorage?['resources'] as String? ?? '~/falcon/resources/',
+          serverSideStorage?['resources'] as String? ??
+          r'$HOME/falcon/resources/',
       themeMode: ui?['theme_mode'] as String? ?? 'system',
       graphFile: graph?['file'] as String?,
       graphAutostart: graph?['autostart'] as bool?,
@@ -115,31 +148,27 @@ class LocalConfig {
   final bool? graphAutostart;
   @Deprecated("Do not use this field. It's for falcon backend.")
   final bool? debugEnabled;
-  @Deprecated("Do not use this field. It's for falcon backend.")
   final int networkPort;
-  @Deprecated("Do not use this field. It's for falcon backend.")
   final String loggingPath;
-  @Deprecated("Do not use this field. It's for falcon backend.")
   final String serverSideStorageEnvironment;
-  @Deprecated("Do not use this field. It's for falcon backend.")
   final String serverSideStorageResources;
 
   Map<String, dynamic> toMap() {
     return {
       'graph': {
-        'file': graphFile,
-        'autostart': graphAutostart,
+        if (graphFile != null) 'file': graphFile!.absolutePath,
+        if (graphAutostart != null) 'autostart': graphAutostart,
       },
-      'debug': {'enabled': debugEnabled},
+      if (debugEnabled != null) 'debug': {'enabled': debugEnabled},
       'network': {'port': networkPort},
-      'logging': {'path': loggingPath},
+      'logging': {'path': loggingPath.absolutePath},
       'server_side_storage': {
-        'environment': serverSideStorageEnvironment,
-        'resources': serverSideStorageResources,
+        'environment': serverSideStorageEnvironment.absolutePath,
+        'resources': serverSideStorageResources.absolutePath,
       },
       'ui': {
         'theme_mode': themeMode,
-        'last_opened_graph': lastOpenedGraph,
+        'last_opened_graph': lastOpenedGraph?.absolutePath,
       },
     };
   }
@@ -169,4 +198,8 @@ class LocalConfig {
           serverSideStorageResources ?? this.serverSideStorageResources,
     );
   }
+}
+
+extension _AbsolutePath on String {
+  String get absolutePath => getAbsolutePathForUbuntu(this);
 }
