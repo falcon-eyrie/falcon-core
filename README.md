@@ -3,9 +3,9 @@
 
 Falcon is a modular and extensible software framework for soft real-time signal processing, originally designed for short-latency closed-loop neural applications.
 
-# ⚡ Quick installation (Ubuntu)
+# ⚡ Quick installation
 
-To install Falcon on Ubuntu, simply run the following command in your terminal:
+To install Falcon on Linux, simply run the following command in your terminal:
 
 ```bash
 wget -qO- https://raw.githubusercontent.com/falcon-eyrie/falcon-core/refs/heads/develop/install.sh | bash
