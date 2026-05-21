@@ -3,9 +3,9 @@
 
 Falcon is a modular and extensible software framework for soft real-time signal processing, originally designed for short-latency closed-loop neural applications.
 
-# ⚡ Quick installation
+# ⚡ Quick installation (Debian)
 
-To install Falcon on Linux, simply run the following command in your terminal:
+To install Falcon on Debian Linux, simply run the following command in your terminal:
 
 ```bash
 wget -qO- https://raw.githubusercontent.com/falcon-eyrie/falcon-core/refs/heads/develop/install.sh | bash
@@ -29,7 +29,7 @@ Falcon is engineered for high-performance neural data processing where timing is
 *   **Neural Decoding:** Online detection and decoding of hippocampal replay patterns.
 *   **Closed-Loop Experiments:** Low-latency feedback loops for electrophysiology.
 
-For comprehensive guides and API references, please visit the [Official Documentation](https://falcon-core.readthedocs.io). 
+For comprehensive guides and API references, please visit the [Official Documentation](https://falcon-core.readthedocs.io).
 
 > We are currently working on expanding the documentation to include more detailed examples and tutorials.
 

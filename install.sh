@@ -6,7 +6,15 @@ BASE_DIR="$HOME/.local/share/$NAMESPACE"
 REPO="falcon-eyrie/falcon-core"
 
 echo "Fetching latest version information..."
-LATEST_VERSION=$(wget -qO- "https://api.github.com/repos/$REPO/releases/latest" | grep -Po '"tag_name": "\K[^"]*')
+
+if command -v wget >/dev/null 2>&1; then
+    LATEST_VERSION=$(wget -qO- "https://api.github.com/repos/$REPO/releases/latest" | grep -Po '"tag_name": "\K[^"]*')
+elif command -v curl >/dev/null 2>&1; then
+    LATEST_VERSION=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | grep -Po '"tag_name": "\K[^"]*')
+else
+    echo "Error: Installation script requires curl or wget to function."
+    exit 1
+fi
 
 if [ -z "$LATEST_VERSION" ]; then
     echo "Error: Could not fetch latest version. Check your internet connection or repository name."
@@ -41,13 +49,17 @@ chmod +x "$DESKTOP_ENTRY"
 
 echo "Falcon needs following dependencies: ${DEPS[*]}"
 echo "Checking and installing dependencies..."
+echo "This might require administrative priviledges."
+
 sudo apt-get update -qq >/dev/null 2>&1
+
 for dep in "${DEPS[@]}"; do
-    if ! dpkg -s "$dep" >/dev/null 2>&1; then
+    if ! dpkg -l "*${dep}*" >/dev/null 2>&1; then
         echo "✓  Installing: $dep"
         sudo apt-get install -y -qq "$dep" >/dev/null 2>&1
     else
         echo "✓  Skipping $dep, already installed."
+        dpkg-query -W -f='   ${Package}: ${Version}\n' "*${dep}*" 2>/dev/null | grep -v ':$'
     fi
 done
 
