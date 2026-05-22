@@ -680,7 +680,7 @@ class IProcessor {
     options::Value<std::map<std::string, int>> requested_buffer_sizes_{};
 
     /// @brief Count of non-voluntary context switches measured last time.
-    /// It's used to calculate the increase in non-nvoluntary context
+    /// It's used to calculate the increase in non-voluntary context
     /// switches to log an alert message.
     uint64_t lastNonvoluntaryContextSwitches = 0;
 

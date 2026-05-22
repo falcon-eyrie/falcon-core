@@ -20,6 +20,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Run CSpell spell checker
+        uses: streetsidesoftware/cspell-action@v8
+        with:
+          # TODO(ben): enable strict checking once the codebase is cleaned
+          strict: false
+          
       - name: Install FVM and Flutter
         working-directory: . # To install FVM globally for the entire workflow
         run: |

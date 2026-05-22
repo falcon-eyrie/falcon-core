@@ -156,11 +156,11 @@ void IProcessor::internal_CreatePorts() {
 
     for (auto& it : requested_buffer_sizes_()) {
         if (!has_output_port(it.first) || it.second < 2) {
-            LOG(WARNING) << "Could not set ringbuffer size to " << it.second << " for port "
+            LOG(WARNING) << "Could not set ring buffer size to " << it.second << " for port "
                          << name() << "." << it.first;
         } else {
             output_port(it.first)->set_buffer_size(it.second);
-            LOG(INFO) << "Set ringbuffer size to " << it.second << " for port " << name() << "."
+            LOG(INFO) << "Set ring buffer size to " << it.second << " for port " << name() << "."
                       << it.first;
         }
     }

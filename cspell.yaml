@@ -1,0 +1,30 @@
+$schema: https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json
+version: "0.2"
+language: en
+ignorePaths:
+  - build/**
+dictionaries:
+  - cpp
+words:
+  - backend
+  - cppzmq
+  - DCMAKE
+  - Digilynx
+  - FLATBUFFERS
+  - flatc
+  - frontend
+  - GRAPHERROR
+  - isautonomous
+  - keypair
+  - Neuro
+  - nlxrecord
+  - nlxtestbench
+  - nsamples
+  - outoforder
+  - recvlen
+  - REGISTERPROCESSOR
+  - rootproject
+  - stdev
+  - unoptimized
+  - Wextra
+  - Wunused
