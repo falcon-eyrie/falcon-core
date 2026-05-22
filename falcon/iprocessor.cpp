@@ -21,6 +21,10 @@
 #include <regex>
 #include <utility>
 
+#include <stdio.h>
+#include <sys/resource.h>
+#include <sys/time.h>
+
 #include "iprocessor.hpp"
 #include "logging/log.hpp"
 #include "utilities/general.hpp"
@@ -351,11 +355,32 @@ void IProcessor::internal_ThreadEntry(RunContext& runcontext) {
     LOG(DEBUG) << "Exiting thread for processor " << name_;
 }
 
+void IProcessor::checkNonvoluntaryContextSwitches() {
+    struct rusage usage;
+    if (getrusage(RUSAGE_THREAD, &usage) == 0) {
+        auto delta = usage.ru_nivcsw - lastNonvoluntaryContextSwitches;
+        if (delta > 1) {
+            LOG(ERROR) << name_ << " had " << delta
+                       << " non-voluntary context switches since last measurement. "
+                       << "Please ensure that you have isolated OS resources properly for falcon.\n"
+                       << "Total non-voluntary switches: " << usage.ru_nivcsw;
+        }
+        lastNonvoluntaryContextSwitches = usage.ru_nivcsw;
+    }
+}
+
 void IProcessor::internal_Start(RunContext& runcontext) {
     if (!running_) {
         internal_Stop();
 
         thread_ = std::thread(&IProcessor::internal_ThreadEntry, this, std::ref(runcontext));
+        pthread_t handle = thread_.native_handle();
+        std::string target_name = name_;
+        if (target_name.length() > 15) {
+            target_name = target_name.substr(0, 15);
+        }
+        const char* raw_name_ptr = target_name.c_str();
+        pthread_setname_np(handle, raw_name_ptr);
 
         if (!set_realtime_priority(thread_.native_handle(), thread_priority())) {
             LOG(WARNING) << "Unable to set thread priority for " << name_;
