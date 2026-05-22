@@ -62,9 +62,7 @@ class ZMQSink {
 
 class ScreenSink {
    public:
-    ScreenSink() {
-        pthread_setname_np(pthread_self(), "G3LogScreenSink");
-    };
+    ScreenSink() { pthread_setname_np(pthread_self(), "G3LogScreenSink"); };
 
     virtual ~ScreenSink() {};
 
