@@ -175,6 +175,8 @@ class IProcessor {
 
     YAML::Node ExportYAML();
 
+    void checkNonvoluntaryContextSwitches();
+
    protected:
     std::map<std::string, std::shared_ptr<std::ostream>> streams_;
     std::vector<TimePoint> test_source_timestamps_;
@@ -676,6 +678,11 @@ class IProcessor {
 
     options::NullableBool new_test_flag_;
     options::Value<std::map<std::string, int>> requested_buffer_sizes_{};
+
+    /// @brief Count of non-voluntary context switches measured last time.
+    /// It's used to calculate the increase in non-voluntary context
+    /// switches to log an alert message.
+    uint64_t lastNonvoluntaryContextSwitches = 0;
 
    protected:
     options::OptionList options_;

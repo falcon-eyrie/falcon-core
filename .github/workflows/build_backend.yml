@@ -22,6 +22,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Run CSpell spell checker
+        uses: streetsidesoftware/cspell-action@v8
+        with:
+          # TODO(ben): enable strict checking once the codebase is cleaned
+          strict: false
+
       - name: Install dependencies
         run: |
           sh scripts/setup/install_deps.sh

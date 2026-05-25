@@ -41,6 +41,8 @@ class GraphManager {
     void start() {
         terminate_ = false;
         thread_ = std::thread(&GraphManager::Run, this);
+        pthread_t handle = thread_.native_handle();
+        pthread_setname_np(handle, "GraphManager");
     }
     bool terminated() const { return terminate_; }
 
