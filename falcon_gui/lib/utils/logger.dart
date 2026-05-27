@@ -126,8 +126,7 @@ class _LogMessage {
 enum _LogType {
   info,
   warning,
-  error
-  ;
+  error;
 
   @override
   String toString() {

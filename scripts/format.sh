@@ -9,18 +9,15 @@ clang-format --version
 # formats them using clang-format.
 
 # Extensions of files to format
-FILE_EXTS="*.[ch] *.cpp *.hpp *.cc *.cxx *.hh *.hxx"
-
+FILE_EXTS="*.c *.h *.cc *.cpp *.cxx *.c++ *.hh *.hpp *.hxx *.h++"
 
 # Get files from git (respects .gitignore)
 FILES=$(git ls-files --cached --others --exclude-standard $FILE_EXTS)
-
 
 # Directories to ignore even if they are tracked by git
 MANUAL_EXCLUDE="
 falcon_gui
 "
-
 
 # Filter out manual excludes
 for dir in $MANUAL_EXCLUDE; do
@@ -33,4 +30,3 @@ if [ -z "$FILES" ]; then
 fi
 
 echo "$FILES" | xargs clang-format -i
-   
