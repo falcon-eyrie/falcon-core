@@ -131,6 +131,7 @@ class ZMQIsolateWorker {
             zmq ??= ZMQFFi();
             context ??= zmq!.ctxNew();
 
+            logInfo('libzmq version: ${zmq!.version()}');
             final socket = zmq!.socket(context!, message['socketType'] as int);
 
             if (message['receiveTimeout'] != null) {

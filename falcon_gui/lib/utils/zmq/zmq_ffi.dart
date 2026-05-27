@@ -41,6 +41,19 @@ class ZMQFFi {
     }
   }
 
+  /// Returns the linked ZeroMQ library version as a formatted String.
+  String version() {
+    return using((arena) {
+      final major = arena<Int32>();
+      final minor = arena<Int32>();
+      final patch = arena<Int32>();
+
+      _fns.zmq_version(major, minor, patch);
+
+      return '${major.value}.${minor.value}.${patch.value}';
+    });
+  }
+
   /// Creates a new ZeroMQ context.
   ZMQContext ctxNew() => _fns.zmq_ctx_new();
 
@@ -260,7 +273,6 @@ class ZMQFFi {
       if (_fns.zmq_msg_init(msg) != 0) {
         throw Exception('zmq_msg_init failed');
       }
-
       try {
         while (true) {
           final n = _fns.zmq_msg_recv(msg, sock, flags);

@@ -170,6 +170,11 @@ class ZMQFunctionTable {
     zmq_strerror = lib.lookupFunction<ZmqStrerrorNative, ZmqStrerrorDart>(
       'zmq_strerror',
     );
+
+    // Misc
+    zmq_version = lib.lookupFunction<ZmqVersionNative, ZmqVersionDart>(
+      'zmq_version',
+    );
   }
 
   // Context functions
@@ -197,4 +202,20 @@ class ZMQFunctionTable {
   // Error handling
   late final ZmqErrnoDart zmq_errno;
   late final ZmqStrerrorDart zmq_strerror;
+
+  // Misc
+  late final ZmqVersionDart zmq_version;
 }
+
+typedef ZmqVersionNative =
+    Void Function(
+      Pointer<Int32> major,
+      Pointer<Int32> minor,
+      Pointer<Int32> patch,
+    );
+typedef ZmqVersionDart =
+    void Function(
+      Pointer<Int32> major,
+      Pointer<Int32> minor,
+      Pointer<Int32> patch,
+    );

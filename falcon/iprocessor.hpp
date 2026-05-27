@@ -61,7 +61,7 @@ class IProcessor {
     friend class graph::ProcessorGraph;
 
    public:  // called by anyone
-    IProcessor(ThreadPriority priority = PRIORITY_NONE) : running_(false), thread_() {
+    IProcessor(ThreadPriority priority = PRIORITY_HIGH) : running_(false), thread_() {
         // add test option
         add_option("test", new_test_flag_);
 
@@ -670,7 +670,7 @@ class IProcessor {
     std::thread thread_;
 
     options::Value<ThreadPriority, false> thread_priority_{
-        PRIORITY_NONE, options::inrange<ThreadPriority>(PRIORITY_NONE, PRIORITY_HIGH)};
+        PRIORITY_HIGH, options::inrange<ThreadPriority>(PRIORITY_NONE, PRIORITY_HIGH)};
 
     options::Value<ThreadCore, false> thread_core_{
         CORE_NOT_PINNED, options::inrange<ThreadCore>(

@@ -10,21 +10,35 @@ words:
   - cppzmq
   - DCMAKE
   - Digilynx
+  - ETERM
+  - FETCHCONTENT
   - FLATBUFFERS
   - flatc
   - frontend
   - GRAPHERROR
   - isautonomous
   - keypair
+  - libzmq
+  - nchannels
+  - neuralynx
   - Neuro
   - nlxrecord
   - nlxtestbench
   - nsamples
+  - optvallen
   - outoforder
+  - RCVTIMEO
+  - rdtsc
   - recvlen
   - REGISTERPROCESSOR
+  - remixicon
   - rootproject
+  - Selectability
+  - SNDMORE
   - stdev
+  - taskset
   - unoptimized
+  - upslope
   - Wextra
   - Wunused
+  - ZMQF
