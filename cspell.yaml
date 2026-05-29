@@ -8,6 +8,7 @@ dictionaries:
 words:
   - backend
   - bugprone
+  - cppdbg
   - cppzmq
   - DCMAKE
   - Digilynx
@@ -21,6 +22,7 @@ words:
   - keypair
   - libzmq
   - nchannels
+  - ncipollo
   - neuralynx
   - Neuro
   - nlxrecord
@@ -42,4 +44,5 @@ words:
   - upslope
   - Wextra
   - Wunused
+  - xipplib
   - ZMQF

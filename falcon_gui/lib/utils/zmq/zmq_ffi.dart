@@ -265,48 +265,38 @@ class ZMQFFi {
   /// The receive timeout should be configured via `setSocketOption` with
   /// `ZMQ_RCVTIMEO` before calling this method.
   List<int>? recvSync(ZMQSocket sock, {int flags = 0}) {
-    return using((arena) {
-      // zmq_msg_t is opaque and size varies by platform, but 64 bytes is
-      // generally sufficient for the structure.
-      final msg = arena.allocate<Uint8>(64).cast<Void>();
+    final msgRaw = calloc<Uint8>(64);
+    final msg = msgRaw.cast<Void>();
+    if (_fns.zmq_msg_init(msg) != 0) {
+      calloc.free(msgRaw);
+      throw Exception('zmq_msg_init failed');
+    }
 
-      if (_fns.zmq_msg_init(msg) != 0) {
-        throw Exception('zmq_msg_init failed');
-      }
-      try {
-        while (true) {
-          final n = _fns.zmq_msg_recv(msg, sock, flags);
-          if (n >= 0) {
-            final dataPtr = _fns.zmq_msg_data(msg);
-            final size = _fns.zmq_msg_size(msg);
-            if (size == 0) {
-              // Return empty list for empty messages (not null)
-              return <int>[];
-            }
-            return dataPtr.cast<Uint8>().asTypedList(size).toList();
+    try {
+      while (true) {
+        final n = _fns.zmq_msg_recv(msg, sock, flags);
+        if (n >= 0) {
+          final dataPtr = _fns.zmq_msg_data(msg);
+          final size = _fns.zmq_msg_size(msg);
+          if (size == 0) {
+            return <int>[];
           }
-
-          final err = _fns.zmq_errno();
-          if (err == EINTR) {
-            // Interrupted system call, retry
-            continue;
-          }
-          if (err == EAGAIN) {
-            // Timeout or non-blocking mode with no message available
-            return null;
-          }
-          if (err == ETERM) {
-            // Context was terminated
-            throw Exception('zmq_msg_recv failed: context terminated');
-          }
-
-          final errStr = _fns.zmq_strerror(err).toDartString();
-          throw Exception('zmq_msg_recv failed: $errStr (errno=$err)');
+          return dataPtr.cast<Uint8>().asTypedList(size).toList();
         }
-      } finally {
-        _fns.zmq_msg_close(msg);
+
+        final err = _fns.zmq_errno();
+        if (err == EINTR) continue;
+        if (err == EAGAIN) return null;
+        if (err == ETERM) throw Exception('Context terminated');
+
+        final errStr = _fns.zmq_strerror(err).toDartString();
+        throw Exception('zmq_msg_recv failed: $errStr (errno=$err)');
       }
-    });
+    } catch (e) {
+      _fns.zmq_msg_close(msg);
+      calloc.free(msgRaw);
+      return null;
+    }
   }
 
   /// Closes the socket.

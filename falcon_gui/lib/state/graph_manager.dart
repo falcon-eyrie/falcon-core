@@ -101,7 +101,7 @@ class GraphManager extends ChangeNotifier {
         processors: _graph.processors.values.toList(),
       );
     } else {
-      newPosition = processor.uiMetadata.position + const Offset(20, 20);
+      newPosition = processor.uiMetadata.position + const Offset(200, 0);
     }
 
     _graph.setProcessor(

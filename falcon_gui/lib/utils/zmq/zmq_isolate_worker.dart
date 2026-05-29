@@ -219,7 +219,6 @@ class ZMQIsolateWorker {
     while (true) {
       try {
         final result = zmq.recvMultipartStringsSync(socket);
-
         data.sendPort.send({
           'id': data.id,
           'stream': true,

@@ -6,7 +6,7 @@ import 'package:ffi/ffi.dart';
 
 typedef ZMQContext = Pointer<Void>;
 typedef ZMQSocket = Pointer<Void>;
-typedef ZMQMessage = Pointer<Void>; // Opaque pointer for zmq_msg_t
+typedef ZMQMessage = Pointer<Void>;
 
 // Function signatures
 typedef ZmqCtxNewNative = ZMQContext Function();

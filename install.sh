@@ -49,7 +49,7 @@ chmod +x "$DESKTOP_ENTRY"
 
 echo "Falcon needs following dependencies: ${DEPS[*]}"
 echo "Checking and installing dependencies..."
-echo "This might require administrative priviledges."
+echo "This might require administrative privileges."
 
 sudo apt-get update -qq >/dev/null 2>&1
 
