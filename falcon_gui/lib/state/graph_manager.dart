@@ -149,9 +149,6 @@ class GraphManager extends ChangeNotifier {
     ).animate(focusAnimationController);
     focusAnimation!.addListener(_onFocusAnimationTick);
     unawaited(focusAnimationController.forward());
-
-    // TODO remove
-    notifyListeners();
   }
 
   void _onFocusAnimationTick() {
