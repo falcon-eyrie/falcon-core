@@ -4,14 +4,16 @@ set -e
 # libpython3.11 needed by lldb-dap
 # Check if libpython3.11 is missing from current repos
 if ! apt-cache show libpython3.11 >/dev/null 2>&1; then
-    echo "libpython3.11 missing. Adding deadsnakes PPA..."
-    sudo apt-get update
-    sudo apt-get install -y software-properties-common
-    sudo add-apt-repository -y ppa:deadsnakes/ppa
+    echo "Adding deadsnakes PPA..."
+    sudo apt-get update -qq
+    sudo apt-get install -y -qq software-properties-common > /dev/null
+    sudo add-apt-repository -y ppa:deadsnakes/ppa > /dev/null
 else
-    echo "libpython3.11 is found in the current repos."
+    echo "libpython3.11 found."
 fi
-sudo apt update && sudo apt install -y libpython3.11
+sudo apt-get update -qq
+sudo apt-get install -y -qq libpython3.11 > /dev/null
+
 
 VERSION=22.1.7
 
