@@ -8,6 +8,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 
+# Prevents re-downloading dependencies every time the build folder is deleted
+set(FETCHCONTENT_BASE_DIR "${CMAKE_HOME_DIRECTORY}/cmake_cache" CACHE PATH "")
+
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	message(STATUS "Debug build")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -Wall -Wextra -Wunused -pthread")

@@ -18,7 +18,7 @@ class EditorView extends StatefulWidget {
   State<EditorView> createState() => _EditorViewState();
 }
 
-class _EditorViewState extends State<EditorView> {
+class _EditorViewState extends State<EditorView> with TickerProviderStateMixin {
   bool _isPanning = false;
 
   /// Converts global screen position to world coordinates
@@ -28,9 +28,18 @@ class _EditorViewState extends State<EditorView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    graphManager.focusAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     graphManager.viewportSize = MediaQuery.of(context).size;
-
     return AnimatedBuilder(
       animation: graphManager,
       builder: (context, _) {

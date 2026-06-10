@@ -138,12 +138,12 @@ class _RootPageState extends State<RootPage> with WindowListener {
     if (result != null) {
       if (result) {
         logInfo(
-          'User choosed to kill local falcon backend instance, killing...',
+          'User chosen to kill local falcon backend instance, killing...',
         );
         await falconManager.killFalcon();
       } else {
         logInfo(
-          'User choosed to keep local falcon backend instance running, '
+          'User chosen to keep local falcon backend instance running, '
           'keeping...',
         );
       }

@@ -38,6 +38,7 @@ words:
   - latencybenchmark
   - levelcrossingdetector
   - LIBCXX
+  - libpython
   - libzmq
   - LLNL
   - multichannelfilter
@@ -53,15 +54,22 @@ words:
   - ontime
   - optvallen
   - outoforder
+  - pixz
+  - RCVTIMEO
+  - rdtsc
   - recvlen
   - REGISTERPROCESSOR
+  - remixicon
   - rootproject
+  - Selectability
+  - SNDMORE
   - stdev
   - stim
   - streamheader
   - SUBDIRLIST
   - taskset
   - unoptimized
+  - upslope
   - Wextra
   - WHOLELIBS
   - Wunused

@@ -1,7 +1,7 @@
 Checks: >
   -*,
   performance-*,
-  # TODO(ben): Uncomment and fix the remanining lints
+  # TODO(ben): Uncomment and fix the remaining lints
   #bugprone-*,
   #modernize-*,
   #readability-*,

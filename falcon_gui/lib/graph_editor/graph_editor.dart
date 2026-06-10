@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:falcon_gui/graph_editor/controls_bar.dart';
 import 'package:falcon_gui/graph_editor/editor_view.dart';
 import 'package:falcon_gui/graph_editor/logs_panel.dart';
@@ -22,14 +24,16 @@ class _GraphEditorState extends State<GraphEditor> {
   bool _isYamlCollapsed = true;
   bool _isLogsCollapsed = false;
 
-  void _toggleProcessorPanel(ActiveProcessorCategory category) {
-    setState(() {
-      if (_activeCategory == category) {
-        _activeCategory = null;
-      } else {
-        _activeCategory = category;
-      }
-    });
+  Timer? _hideProcessorPanelTimer;
+
+  void _setActiveProcessorPanelCategory(ActiveProcessorCategory? category) {
+    if (category == null) {
+      _hideProcessorPanelTimer = Timer(Duration.zero, () {
+        setState(() => _activeCategory = null);
+      });
+    } else {
+      setState(() => _activeCategory = category);
+    }
   }
 
   void _onYamlCollapseToggled() {
@@ -48,9 +52,15 @@ class _GraphEditorState extends State<GraphEditor> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ControlsBar(
-          activeCategory: _activeCategory,
-          onToggleProcessorPanel: _toggleProcessorPanel,
+        MouseRegion(
+          onExit: (_) => _setActiveProcessorPanelCategory(
+            null,
+          ),
+          onHover: (_) => _hideProcessorPanelTimer?.cancel(),
+          child: ControlsBar(
+            activeCategory: _activeCategory,
+            onProcessorCategoryHovered: _setActiveProcessorPanelCategory,
+          ),
         ),
         Expanded(
           child: Column(
@@ -61,19 +71,23 @@ class _GraphEditorState extends State<GraphEditor> {
                     Expanded(
                       child: Stack(
                         children: [
-                          Listener(
-                            onPointerDown: (_) =>
-                                setState(() => _activeCategory = null),
-                            child: const EditorView(),
-                          ),
+                          const EditorView(),
                           if (_activeCategory != null) ...[
                             Positioned(
                               top: 0,
                               left: 0,
                               right: 0,
 
-                              child: ProcessorsPanel(
-                                activeCategory: _activeCategory!,
+                              child: Center(
+                                child: MouseRegion(
+                                  onHover: (_) =>
+                                      _hideProcessorPanelTimer?.cancel(),
+                                  onExit: (_) =>
+                                      _setActiveProcessorPanelCategory(null),
+                                  child: ProcessorsPanel(
+                                    activeCategory: _activeCategory!,
+                                  ),
+                                ),
                               ),
                             ),
                           ],

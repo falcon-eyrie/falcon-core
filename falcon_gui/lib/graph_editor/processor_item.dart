@@ -32,22 +32,11 @@ class ProcessorItem extends StatefulWidget {
 
 class _ProcessorItemState extends State<ProcessorItem> {
   // Template processors neither store any state nor they are modifiable
-  bool _isTemplateExpanded = false;
   void _toggleExpanded() {
-    if (widget.processor.isTemplate) {
-      setState(() {
-        _isTemplateExpanded = !_isTemplateExpanded;
-      });
-    } else {
-      graphManager.toggleProcessorExpanded(id: widget.processor.id);
-    }
+    graphManager.toggleProcessorExpanded(id: widget.processor.id);
   }
 
-  bool get showPorts => !widget.processor.isTemplate || _isTemplateExpanded;
-
-  bool get _isExpanded => widget.processor.isTemplate
-      ? _isTemplateExpanded
-      : widget.processor.uiMetadata.isExpanded;
+  bool get showPorts => !widget.processor.isTemplate;
 
   bool get _canExpand => widget.processor.options.isNotEmpty;
 
@@ -80,11 +69,10 @@ class _ProcessorItemState extends State<ProcessorItem> {
               isPreventing: widget.readonly,
               child: ProcessorPortsView(
                 processor: widget.processor,
-                isExpanded: _isExpanded,
                 onExpandToggle: _canExpand ? _toggleExpanded : null,
               ),
             ),
-            if (_isExpanded) ...[
+            if (widget.processor.uiMetadata.isExpanded) ...[
               const Divider(),
               _PreventEdit(
                 isPreventing: widget.readonly || widget.processor.isTemplate,

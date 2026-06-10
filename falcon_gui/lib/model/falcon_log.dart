@@ -54,8 +54,7 @@ enum FalconLogType {
   warning,
   info,
   fatal,
-  unknown
-  ;
+  unknown;
 
   factory FalconLogType.fromString(String typeStr) {
     switch (typeStr.toUpperCase()) {

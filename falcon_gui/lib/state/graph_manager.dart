@@ -36,6 +36,12 @@ class GraphManager extends ChangeNotifier {
   final TransformationController transformationController =
       TransformationController(topLeftMatrix);
 
+  /// Animation to focus on a processor.
+  Animation<Matrix4>? focusAnimation;
+
+  /// AnimationController for focusing on a processor.
+  late final AnimationController focusAnimationController;
+
   final _hoverDebounce = Debounce(
     delay: const Duration(milliseconds: 1),
   );
@@ -101,7 +107,7 @@ class GraphManager extends ChangeNotifier {
         processors: _graph.processors.values.toList(),
       );
     } else {
-      newPosition = processor.uiMetadata.position + const Offset(20, 20);
+      newPosition = processor.uiMetadata.position + const Offset(200, 0);
     }
 
     _graph.setProcessor(
@@ -112,35 +118,63 @@ class GraphManager extends ChangeNotifier {
         uiMetadata: processor.uiMetadata.copyWith(
           position: newPosition,
           lastModified: DateTime.now(),
-          isExpanded: true,
         ),
       ),
     );
 
-    focusOnProcessor(id: newId);
+    _focusOnProcessor(id: newId);
 
     notifyListeners();
     return newId;
   }
 
-  void focusOnProcessor({required String id}) {
+  void _focusOnProcessor({required String id}) {
     final processor = _graph.processors[id];
     if (processor == null) return;
 
     final processorPos = processor.uiMetadata.position;
 
     // Calculate the target transformation to center it on the screen
-    final targetX = -(processorPos.dx - _viewportSize.width / 2) - 600;
-    final targetY = -(processorPos.dy - _viewportSize.height / 2) - 300;
+    final targetX = -(processorPos.dx - _viewportSize.width / 2) - 10;
+    final targetY = -(processorPos.dy - _viewportSize.height / 2) - 400;
 
     // Create new transformation matrix with translation to center the processor
     final targetMatrix = Matrix4.identity()
       ..translateByDouble(targetX, targetY, 0, 1);
 
-    transformationController.value = targetMatrix;
-
-    notifyListeners();
+    focusAnimationController.reset();
+    focusAnimation = Matrix4Tween(
+      begin: transformationController.value,
+      end: targetMatrix,
+    ).animate(focusAnimationController);
+    focusAnimation!.addListener(_onFocusAnimationTick);
+    unawaited(focusAnimationController.forward());
   }
+
+  void _onFocusAnimationTick() {
+    transformationController.value = focusAnimation!.value;
+    if (!focusAnimationController.isAnimating) {
+      focusAnimation!.removeListener(_onFocusAnimationTick);
+      focusAnimation = null;
+      focusAnimationController.reset();
+    }
+  }
+
+  // Stop a running reset to home transform animation.
+  // void _stopFocusAnimation() {
+  //   focusAnimationController.stop();
+  //   focusAnimation?.removeListener(_onFocusAnimationTick);
+  //   focusAnimation = null;
+  //   focusAnimationController.reset();
+  // }
+
+  // void _onInteractionStart(ScaleStartDetails details) {
+  //   // If the user tries to cause a transformation while the reset animation is
+  //   // running, cancel the reset animation.
+  //   if (_controllerReset.status == AnimationStatus.forward) {
+  //     _animateResetStop();
+  //   }
+  // }
 
   void onProcessorDragStart({
     required String id,
@@ -689,6 +723,8 @@ class GraphManager extends ChangeNotifier {
 
   @override
   void dispose() {
+    focusAnimationController.dispose();
+    transformationController.dispose();
     _hoverDebounce.dispose();
     super.dispose();
   }

@@ -32,7 +32,7 @@ IndentCaseLabels: true
 IndentGotoLabels: true
 
 # Extra modern preferences
-BreakBeforeBraces: Attach        # matches Java/Rust/JS
+BreakBeforeBraces: Attach
 SpacesInParentheses: false
 SpacesInAngles: false
 SpaceBeforeRangeBasedForLoopColon: true

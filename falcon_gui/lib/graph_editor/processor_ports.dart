@@ -7,13 +7,11 @@ import 'package:remixicon/remixicon.dart';
 class ProcessorPortsView extends StatelessWidget {
   const ProcessorPortsView({
     required this.processor,
-    required this.isExpanded,
     required this.onExpandToggle,
     super.key,
   });
 
   final Processor processor;
-  final bool isExpanded;
   final VoidCallback? onExpandToggle;
   @override
   Widget build(BuildContext context) {
@@ -78,7 +76,9 @@ class ProcessorPortsView extends StatelessWidget {
                 child: MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: Tooltip(
-                    message: isExpanded ? 'Collapse Options' : 'Expand Options',
+                    message: processor.uiMetadata.isExpanded
+                        ? 'Collapse Options'
+                        : 'Expand Options',
                     child: Padding(
                       padding: const EdgeInsets.only(
                         top: 8,
@@ -86,7 +86,7 @@ class ProcessorPortsView extends StatelessWidget {
                         left: 8,
                       ),
                       child: Icon(
-                        isExpanded
+                        processor.uiMetadata.isExpanded
                             ? RemixIcons.arrow_up_wide_line
                             : RemixIcons.arrow_down_wide_line,
                         size: 16,

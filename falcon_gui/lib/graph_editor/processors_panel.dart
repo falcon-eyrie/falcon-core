@@ -33,7 +33,14 @@ class _ProcessorsPanelState extends State<ProcessorsPanel> {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      color: context.c.surfaceContainer,
+      decoration: BoxDecoration(
+        color: context.c.surfaceContainer,
+        borderRadius: const BorderRadius.only(
+          bottomRight: Radius.circular(16),
+          bottomLeft: Radius.circular(16),
+        ),
+      ),
+      width: 800,
       child: Wrap(
         spacing: 8,
         runSpacing: 8,

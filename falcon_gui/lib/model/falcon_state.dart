@@ -7,8 +7,7 @@ enum FalconState {
   processing,
   stopping,
   error,
-  unknown
-  ;
+  unknown;
 
   factory FalconState.fromString(String stateStr) {
     switch (stateStr) {

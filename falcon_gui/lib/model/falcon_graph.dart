@@ -160,6 +160,7 @@ class Processor extends Equatable {
   Map<String, OptionValue<dynamic>> get options => Map.unmodifiable(_options);
 
   Port? getPort(String name) => ports.firstWhereOrNull((p) => p.name == name);
+  void addPort(Port port) => _ports.add(port);
 
   bool get isSource => _ports.every((port) => port.isOut);
 
@@ -304,14 +305,11 @@ class Port extends Equatable {
 
 class UIMetadata {
   UIMetadata({
-    Offset position = Offset.zero,
+    this._position = Offset.zero,
     DateTime? lastModified,
-    Color? color,
-    bool isExpanded = false,
-  }) : _position = position,
-       _lastModified = lastModified ?? DateTime(1970),
-       _color = color,
-       _isExpanded = isExpanded;
+    this._color,
+    this._isExpanded = false,
+  }) : _lastModified = lastModified ?? DateTime(1970);
 
   Offset _position;
   DateTime _lastModified;

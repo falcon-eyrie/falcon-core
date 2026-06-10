@@ -13,8 +13,7 @@ enum FalconZmqCommand {
   testOn,
   testOff,
   testToggle,
-  resourcesList
-  ;
+  resourcesList;
 
   /// Convert command to list of string parts for ZMQ multipart message
   List<String> serialize() {

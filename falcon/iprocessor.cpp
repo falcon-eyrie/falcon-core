@@ -383,7 +383,8 @@ void IProcessor::internal_Start(RunContext& runcontext) {
         pthread_setname_np(handle, raw_name_ptr);
 
         if (!set_realtime_priority(thread_.native_handle(), thread_priority())) {
-            LOG(WARNING) << "Unable to set thread priority for " << name_;
+            LOG(ERROR) << "Unable to set thread priority for " << name_
+                       << ". Please ensure that the falcon is runing with admin privileges.";
         } else if (thread_priority() >= PRIORITY_LOW) {
             LOG(INFO) << "Successfully set thread priority for " << name_ << " to "
                       << thread_priority() << "%.";
