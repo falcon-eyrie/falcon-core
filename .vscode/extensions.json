@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "llvm-vs-code-extensions.vscode-clangd",
+        "llvm-vs-code-extensions.lldb-dap",
+        "ms-vscode.hexeditor",
+        "streetsidesoftware.code-spell-checker",
+    ]
+}

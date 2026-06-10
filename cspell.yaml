@@ -21,8 +21,6 @@ words:
   - datatypebuffer
   - DCMAKE
   - Digilynx
-  - ETERM
-  - FETCHCONTENT
   - dummysink
   - endmacro
   - ETERM
@@ -37,10 +35,10 @@ words:
   - isautonomous
   - kbhit
   - keypair
-  - libzmq
   - latencybenchmark
   - levelcrossingdetector
   - LIBCXX
+  - libpython
   - libzmq
   - LLNL
   - multichannelfilter
@@ -56,6 +54,7 @@ words:
   - ontime
   - optvallen
   - outoforder
+  - pixz
   - RCVTIMEO
   - rdtsc
   - recvlen
@@ -75,7 +74,6 @@ words:
   - WHOLELIBS
   - Wunused
   - xipplib
-  - ZMQF
   - YAMLCPP
   - ZMQF
   - zscore

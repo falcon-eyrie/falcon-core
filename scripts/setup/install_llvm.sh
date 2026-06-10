@@ -1,7 +1,9 @@
 #!/bin/sh
 set -e
+# libpython3.11 needed by lldb-dap
+sudo apt update && sudo apt install -y libpython3.11
 
-VERSION=21.1.7
+VERSION=22.1.7
 
 cd /usr/local
 
@@ -30,4 +32,4 @@ echo "Cleaning up $ARCHIVE..."
 sudo rm -f "$ARCHIVE"
 
 echo "LLVM-${VERSION} installed successfully."
-clang --version
+lldb-dap --version

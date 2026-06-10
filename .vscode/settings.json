@@ -8,22 +8,9 @@
     "search.useIgnoreFiles": false,
     "cmake.configureOnOpen": false,
     "[cpp]": {
-        "editor.defaultFormatter": "xaver.clang-format",
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
         "editor.formatOnSave": true
     },
-    "C_Cpp.autoAddFileAssociations": false,
-    "C_Cpp.default.compileCommands": "build/compile_commands.json",
-    "C_Cpp.clang_format_path": "/usr/local/bin/clang-format",
-    "C_Cpp.clang_format_sortIncludes": true,
-    "C_Cpp.codeAnalysis.clangTidy.path": "/usr/local/bin/clang-tidy",
-    "C_Cpp.codeAnalysis.clangTidy.enabled": true,
-    "C_Cpp.codeAnalysis.runAutomatically": true,
-    "C_Cpp.codeAnalysis.clangTidy.codeAction.formatFixes": true,
-    "C_Cpp.codeAnalysis.clangTidy.useBuildPath": true,
-    "C_Cpp.codeAnalysis.exclude": {
-        "build/": true,
-        "extensions/": true,
-        "**/.fvm/": true,
-        "**/.venv/": true,
-    },
+    "clangd.path": "/usr/local/bin/clangd",
+    "clangd.checkUpdates": false,
 }
