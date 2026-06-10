@@ -160,6 +160,7 @@ class Processor extends Equatable {
   Map<String, OptionValue<dynamic>> get options => Map.unmodifiable(_options);
 
   Port? getPort(String name) => ports.firstWhereOrNull((p) => p.name == name);
+  void addPort(Port port) => _ports.add(port);
 
   bool get isSource => _ports.every((port) => port.isOut);
 

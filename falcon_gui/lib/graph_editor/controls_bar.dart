@@ -11,11 +11,11 @@ import 'package:remixicon/remixicon.dart';
 class ControlsBar extends StatelessWidget {
   const ControlsBar({
     required this.activeCategory,
-    required this.onToggleProcessorPanel,
+    required this.onProcessorCategoryHovered,
     super.key,
   });
   final ActiveProcessorCategory? activeCategory;
-  final ValueChanged<ActiveProcessorCategory> onToggleProcessorPanel;
+  final ValueChanged<ActiveProcessorCategory?> onProcessorCategoryHovered;
   @override
   Widget build(BuildContext context) {
     return MultiListener(
@@ -59,31 +59,38 @@ class ControlsBar extends StatelessWidget {
               ),
               const Spacer(),
 
-              _ProcessorPanelButton(
-                isActive: activeCategory == ActiveProcessorCategory.sources,
-                onPressed: () =>
-                    onToggleProcessorPanel(ActiveProcessorCategory.sources),
-                icon: RemixIcons.guide_line,
-                label: 'Sources',
+              Row(
+                children: [
+                  _ProcessorPanelButton(
+                    isActive: activeCategory == ActiveProcessorCategory.sources,
+                    onMouseEnter: () => onProcessorCategoryHovered(
+                      ActiveProcessorCategory.sources,
+                    ),
+                    icon: RemixIcons.guide_line,
+                    label: 'Sources',
+                  ),
+                  const SizedBox(width: 8),
+                  _ProcessorPanelButton(
+                    isActive:
+                        activeCategory == ActiveProcessorCategory.intermediates,
+                    onMouseEnter: () => onProcessorCategoryHovered(
+                      ActiveProcessorCategory.intermediates,
+                    ),
+                    icon: RemixIcons.exchange_2_line,
+                    label: 'Intermediates',
+                  ),
+                  const SizedBox(width: 8),
+                  _ProcessorPanelButton(
+                    isActive: activeCategory == ActiveProcessorCategory.sinks,
+                    onMouseEnter: () => onProcessorCategoryHovered(
+                      ActiveProcessorCategory.sinks,
+                    ),
+                    icon: RemixIcons.record_circle_line,
+                    label: 'Sinks',
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              _ProcessorPanelButton(
-                isActive:
-                    activeCategory == ActiveProcessorCategory.intermediates,
-                onPressed: () => onToggleProcessorPanel(
-                  ActiveProcessorCategory.intermediates,
-                ),
-                icon: RemixIcons.exchange_2_line,
-                label: 'Intermediates',
-              ),
-              const SizedBox(width: 8),
-              _ProcessorPanelButton(
-                isActive: activeCategory == ActiveProcessorCategory.sinks,
-                onPressed: () =>
-                    onToggleProcessorPanel(ActiveProcessorCategory.sinks),
-                icon: RemixIcons.record_circle_line,
-                label: 'Sinks',
-              ),
+
               const Spacer(),
               const IconButton(
                 icon: Icon(RemixIcons.arrow_go_back_line),
@@ -163,12 +170,12 @@ class ControlsBar extends StatelessWidget {
 class _ProcessorPanelButton extends StatelessWidget {
   const _ProcessorPanelButton({
     required this.isActive,
-    required this.onPressed,
+    required this.onMouseEnter,
     required this.icon,
     required this.label,
   });
   final bool isActive;
-  final VoidCallback onPressed;
+  final VoidCallback onMouseEnter;
   final IconData icon;
   final String label;
 
@@ -176,29 +183,27 @@ class _ProcessorPanelButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onPressed,
-        child: Container(
-          decoration: BoxDecoration(
-            color: isActive ? context.c.primary : null,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Row(
-            children: [
-              Icon(
-                icon,
+      onEnter: (_) => onMouseEnter(),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isActive ? context.c.primary : null,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isActive ? context.c.onPrimary : null,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
                 color: isActive ? context.c.onPrimary : null,
               ),
-              const SizedBox(width: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isActive ? context.c.onPrimary : null,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

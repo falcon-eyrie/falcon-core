@@ -170,6 +170,31 @@ extension FalconGraphSerializerX on FalconGraph {
       );
     }
 
+    // Populate dynamic ports based on settings
+    final nlxReaderProcessors = processors.values.where(
+      (processor) => processor.className == 'NlxReader',
+    );
+    for (final nlxReader in nlxReaderProcessors) {
+      try {
+        final channelMapOption =
+            (nlxReader.options['channelmap']! as YamlMapOption).value;
+        final channelNames = channelMapOption.keys.cast<String>();
+        for (final channelName in channelNames) {
+          nlxReader.addPort(
+            Port(
+              isIn: false,
+              name: channelName,
+              type: 'TimeSeriesType<double>',
+            ),
+          );
+        }
+      } catch (e) {
+        throw FalconGraphYamlParserException(
+          "Couldn't populate ports for NlxReader ${nlxReader.className}: $e",
+        );
+      }
+    }
+
     // Second pass: parse and validate connections
     final connectionsEntry = doc['connections'] as YamlList?;
 

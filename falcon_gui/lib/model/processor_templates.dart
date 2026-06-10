@@ -488,6 +488,83 @@ final _processorTemplatesUnsorted = {
       Port(name: 'data', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
+  'nlxreader': Processor(
+    id: 'nlxreader',
+    className: 'NlxReader',
+    isTemplate: true,
+    options: {
+      'address': const StringOption(
+        value: '127.0.0.1',
+        displayName: 'IP Address',
+      ),
+      'port': const IntOption(
+        value: 5555,
+        displayName: 'Port Number',
+      ),
+      'npackets': const IntOption(
+        value: 0,
+        displayName: 'Total Data Packets',
+      ),
+      'batch_size': const IntOption(
+        value: 1,
+        displayName: 'Batch Size',
+      ),
+      'nchannels': const IntOption(
+        value: 1,
+        displayName: 'Number of Channels',
+      ),
+      'update_interval': const DoubleOption(
+        value: 1,
+        displayName: 'Update Interval (s)',
+      ),
+      'trigger_enable': const BoolOption(
+        value: false,
+        displayName: 'Enable Hardware Trigger',
+      ),
+      'trigger_channel': const IntOption(
+        value: 0,
+        displayName: 'Hardware Trigger Channel',
+      ),
+      'channelmap': YamlMapOption(
+        value: YamlMap.wrap({
+          'tetrode1': [0, 1, 2, 3],
+        }),
+        displayName: 'Channel Map',
+      ),
+    },
+    ports: const [
+      Port(name: 'tetrode1', type: 'TimeSeriesType<double>', isIn: false),
+    ],
+  ),
+  'multichannelfilter': Processor(
+    id: 'multichannelfilter',
+    className: 'MultiChannelFilter',
+    isTemplate: true,
+    options: {
+      'filter': YamlMapOption(
+        value: YamlMap.wrap(const {
+          'event_a': {
+            'high': [0, 1],
+          },
+        }),
+        displayName: 'Protocols',
+      ),
+    },
+    ports: const [
+      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'data', type: 'TimeSeriesType<double>', isIn: false),
+    ],
+  ),
+  'latencybenchmark': Processor(
+    id: 'latencybenchmark',
+    className: 'LatencyBenchmark',
+    isTemplate: true,
+    options: const {},
+    ports: const [
+      Port(name: 'data', type: 'AnyType', isIn: true),
+    ],
+  ),
+
   'dummysink': Processor(
     id: 'dummysink',
     className: 'DummySink',
@@ -496,6 +573,24 @@ final _processorTemplatesUnsorted = {
     ports: const [
       Port(name: 'data', type: 'AnyType', isIn: true),
       Port(name: 'tickle', type: 'bool', isIn: true, isState: true),
+    ],
+  ),
+  'testing1': Processor(
+    id: 'testing1',
+    className: 'testing1',
+    isTemplate: true,
+    options: const {},
+    ports: const [
+      Port(name: 'todo', type: 'AnyType', isIn: false),
+    ],
+  ),
+  'testing2': Processor(
+    id: 'testing2',
+    className: 'testing2',
+    isTemplate: true,
+    options: const {},
+    ports: const [
+      Port(name: 'todo', type: 'AnyType', isIn: false),
     ],
   ),
 };

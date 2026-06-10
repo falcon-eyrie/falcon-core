@@ -182,8 +182,10 @@ class ZMQFFi {
   /// Returns the number of bytes sent.
   int send(ZMQSocket sock, List<int> data, {int flags = 0}) {
     if (data.isEmpty) return 0;
-    return using((arena) {
-      final ptr = arena.allocate<Uint8>(data.length);
+
+    final ptr = calloc<Uint8>(data.length);
+
+    try {
       ptr.asTypedList(data.length).setAll(0, data);
       final result = _fns.zmq_send(sock, ptr.cast<Void>(), data.length, flags);
       if (result < 0) {
@@ -191,7 +193,9 @@ class ZMQFFi {
         throw Exception('zmq_send failed: errno=$errno');
       }
       return result;
-    });
+    } finally {
+      calloc.free(ptr);
+    }
   }
 
   /// Sends a multipart message where each part is a separate frame.

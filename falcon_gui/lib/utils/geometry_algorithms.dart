@@ -195,7 +195,7 @@ Offset findNonOverlappingPosition({required List<Processor> processors}) {
   while (overlaps(position)) {
     position += Offset(biggestNodeSize.width + padding, 0);
     // move to next row if exceeding some arbitrary canvas width
-    if (position.dx > 2000) {
+    if (position.dx > 13500) {
       position = Offset(0, position.dy + biggestNodeSize.height + padding);
     }
   }
