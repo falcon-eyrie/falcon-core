@@ -3,18 +3,22 @@ version: "0.2"
 language: en
 ignorePaths:
   - build/**
+  - cmake_cache/**
+  - extensions/**
 dictionaries:
   - cpp
 words:
   - AABB
+  - ALSA
   - backend
-  - cppzmq
-  - DCMAKE
-  - Digilynx
   - bugprone
+  - buildconstant
   - channelmap
+  - COPYONLY
   - cppdbg
   - cppzmq
+  - curdir
+  - datatypebuffer
   - DCMAKE
   - Digilynx
   - dummysink
@@ -24,13 +28,18 @@ words:
   - flatbuffer
   - FLATBUFFERS
   - flatc
+  - flathash
   - frontend
   - GRAPHERROR
   - headeronly
   - isautonomous
+  - kbhit
   - keypair
   - latencybenchmark
+  - levelcrossingdetector
+  - LIBCXX
   - libzmq
+  - LLNL
   - multichannelfilter
   - nchannels
   - ncipollo
@@ -50,10 +59,13 @@ words:
   - stdev
   - stim
   - streamheader
+  - SUBDIRLIST
   - taskset
   - unoptimized
   - Wextra
+  - WHOLELIBS
   - Wunused
   - xipplib
+  - YAMLCPP
   - ZMQF
   - zscore

@@ -42,7 +42,7 @@ class RingBuffer : public disruptor::Sequencer {
     /**
      * Construct a RingBuffer with the full option set.
      *
-     * @param prototype of data object to store in ringbuffer
+     * @param prototype of data object to store in ring buffer
      * @param buffer_size of the RingBuffer, must be a power of 2.
      * @param claim_strategy_option threading strategy for publishers claiming
      * entries in the ring.

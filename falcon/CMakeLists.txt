@@ -174,7 +174,7 @@ if (COMPILE_EXTENSIONS)
             endforeach ()
 
         elseif (EXISTS "${FALCON_PATH}/src")
-            message("Adding new layout processor natively: ${EXT_NAME}")
+            message("Adding processor: ${EXT_NAME}")
             add_subdirectory("${FALCON_PATH}" "${CMAKE_CURRENT_BINARY_DIR}/extensions/${EXT_NAME}")
 
             if (TARGET ${EXT_NAME})
