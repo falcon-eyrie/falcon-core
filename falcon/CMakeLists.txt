@@ -87,6 +87,10 @@ if (COMPILE_EXTENSIONS)
             include_directories(${FALCON_PATH}/processors)
         endif ()
 
+        if (EXISTS ${FALCON_PATH}/src)
+            include_directories(${FALCON_PATH})
+        endif ()
+
     endforeach ()
 
     # next, let's add all libs in extensions
@@ -142,7 +146,6 @@ if (COMPILE_EXTENSIONS)
         get_filename_component(EXT_NAME "${FALCON_PATH}" NAME)
 
         if (EXISTS ${FALCON_PATH}/processors)
-
             message("Adding processors for extension: ${FALCON_PATH}")
 
             SUBDIRLIST(PROCESSORS "${FALCON_PATH}/processors")
@@ -175,11 +178,13 @@ if (COMPILE_EXTENSIONS)
 
         elseif (EXISTS "${FALCON_PATH}/src")
             message("Adding processor: ${EXT_NAME}")
-            add_subdirectory("${FALCON_PATH}" "${CMAKE_CURRENT_BINARY_DIR}/extensions/${EXT_NAME}")
+            add_subdirectory("${FALCON_PATH}" "${CMAKE_CURRENT_BINARY_DIR}/processors/${EXT_NAME}")
 
-            if (TARGET ${EXT_NAME})
-                add_dependencies(${EXT_NAME} datatypebuffer)
-                list(APPEND PROCESSOR_LIBS ${EXT_NAME})
+            string(REPLACE "-" "_" TARGET_NAME_CLEAN "${EXT_NAME}")
+
+            if (TARGET ${TARGET_NAME_CLEAN})
+                add_dependencies(${TARGET_NAME_CLEAN} datatypebuffer)
+                list(APPEND PROCESSOR_LIBS ${TARGET_NAME_CLEAN})
             endif ()
 
         endif ()
