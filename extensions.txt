@@ -1,2 +1,0 @@
-enable, extension name, extension path, extension version (optional)
-dev, core, extensions/falcon-fklab-extensions

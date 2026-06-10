@@ -6,25 +6,54 @@ ignorePaths:
 dictionaries:
   - cpp
 words:
+  - AABB
   - backend
   - cppzmq
   - DCMAKE
   - Digilynx
+  - bugprone
+  - channelmap
+  - cppdbg
+  - cppzmq
+  - DCMAKE
+  - Digilynx
+  - dummysink
+  - endmacro
+  - ETERM
+  - FETCHCONTENT
+  - flatbuffer
   - FLATBUFFERS
   - flatc
   - frontend
   - GRAPHERROR
+  - headeronly
   - isautonomous
   - keypair
+  - latencybenchmark
+  - libzmq
+  - multichannelfilter
+  - nchannels
+  - ncipollo
+  - neuralynx
   - Neuro
+  - nlxreader
   - nlxrecord
   - nlxtestbench
+  - npackets
   - nsamples
+  - ontime
+  - optvallen
   - outoforder
   - recvlen
   - REGISTERPROCESSOR
   - rootproject
   - stdev
+  - stim
+  - streamheader
+  - taskset
   - unoptimized
   - Wextra
   - Wunused
+  - xipplib
+  - ZMQF
+  - zscore
