@@ -18,7 +18,6 @@
 // ---------------------------------------------------------------------
 
 #include <unistd.h>
-#include <vector>
 
 #include <g3log/loglevels.hpp>
 #include "threadutilities.hpp"

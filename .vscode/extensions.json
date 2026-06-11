@@ -2,7 +2,8 @@
     "recommendations": [
         "llvm-vs-code-extensions.vscode-clangd",
         "llvm-vs-code-extensions.lldb-dap",
-        "ms-vscode.hexeditor",
+        "ms-vscode.cmake-tools",
         "streetsidesoftware.code-spell-checker",
+        "ms-vscode.hexeditor",
     ]
 }
