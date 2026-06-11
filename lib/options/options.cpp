@@ -62,7 +62,7 @@ OptionBase::OptionBase(const std::string& name, ValueBase& value, const std::str
     if (name.size() == 0) {
         throw std::runtime_error("Option name cannot be empty.");
     }
-    path_ = split(name, '/');
+    path_ = str_split(name, '/');
 }
 
 std::string OptionBase::name() const {

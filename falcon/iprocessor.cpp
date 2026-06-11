@@ -350,6 +350,8 @@ void IProcessor::internal_ThreadEntry(RunContext& runcontext) {
         context.TerminateWithError("TestFinalize", e.what());
     }
 
+    lastNonvoluntaryContextSwitches = 0;
+
     running_.store(false);
 
     LOG(DEBUG) << "Exiting thread for processor " << name_;

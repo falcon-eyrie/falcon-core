@@ -33,9 +33,9 @@
 
 bool path_exists(const std::string& name);
 
-std::vector<std::string>& split(const std::string& s, char delim, std::vector<std::string>& elems);
+std::vector<std::string>& str_split(const std::string& s, char delim, std::vector<std::string>& elems);
 
-std::vector<std::string> split(const std::string& s, char delim);
+std::vector<std::string> str_split(const std::string& s, char delim);
 
 template <typename T>
 std::string join(const std::vector<T>& s, std::string delim = ",");

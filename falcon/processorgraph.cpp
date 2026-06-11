@@ -99,7 +99,7 @@ std::vector<std::string> expandProcessorName(const std::string& s) {
                 range.end());
 
             // split on comma
-            auto id_range = split(range, ',');
+            auto id_range = str_split(range, ',');
 
             std::regex re_range("(\\d+)(?:\\-(\\d+))?");
             std::smatch match_range;
@@ -254,7 +254,7 @@ std::vector<std::pair<std::string, std::shared_ptr<IState>>> ProcessorGraph::Loo
 
     for (auto& state_address : state_addresses) {
         // parse processor.state name
-        std::vector<std::string> address = split(state_address, '.');
+        std::vector<std::string> address = str_split(state_address, '.');
 
         if (address.size() != 2) {
             throw InvalidGraphError("Error parsing state address \"" + state_address + "\"");

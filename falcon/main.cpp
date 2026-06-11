@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
         std::cout << "Configuration: " << BUILD_TYPE << '\n';
         std::cout << "Extensions: " << '\n';
 
-        std::vector<std::string> extensions = split(EXTENSIONS_BUILD, ';');
+        std::vector<std::string> extensions = str_split(EXTENSIONS_BUILD, ';');
         for (const auto& it : extensions) {
             std::cout << it << '\n';
         }

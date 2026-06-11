@@ -54,7 +54,7 @@ ConnectionRule parseConnectionRule(const std::string& rulestring) {
     int current_connection_part;
 
     // split on "="
-    auto rule_parts = split(rulestring, '=');
+    auto rule_parts = str_split(rulestring, '=');
 
     if (rule_parts.size() != 2 || rule_parts[0].length() == 0 || rule_parts[1].length() == 0) {
         throw std::runtime_error(
@@ -65,7 +65,7 @@ ConnectionRule parseConnectionRule(const std::string& rulestring) {
     for (auto& rule_part : rule_parts) {
         rule_part = std::regex_replace(rule_part, std::regex("^ +| +$"), std::string(""));
         // split on "."
-        auto connection_parts = split(rule_part, '.');
+        auto connection_parts = str_split(rule_part, '.');
 
         if (connection_parts.size() > 3) {
             throw std::runtime_error(
@@ -152,7 +152,7 @@ ConnectionRule parseConnectionRule(const std::string& rulestring) {
                                 range.end());
 
                     // split on comma
-                    auto id_range = split(range, ',');
+                    auto id_range = str_split(range, ',');
 
                     std::regex re_range("(\\d+)(?:\\-(\\d+))?");
                     std::smatch match_range;
