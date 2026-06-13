@@ -35,10 +35,13 @@
 #include "logging/log.hpp"
 #include "options/units.hpp"
 #include "utilities/time.hpp"
+#include "utilities/tsc_duration_clock.cpp"
 
 using namespace std;
 
 int main(int argc, char** argv) {
+    TscDurationClock::init();
+
     // create a parser
     cmdline::parser parser;
 

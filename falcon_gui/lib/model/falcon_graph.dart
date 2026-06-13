@@ -243,19 +243,11 @@ final class BoolOption extends OptionValue<bool> {
   }
 }
 
-final class YamlListOption extends OptionValue<yaml.YamlList> {
-  const YamlListOption({required super.value, required super.displayName});
+final class FileOption extends OptionValue<String> {
+  const FileOption({required super.value, required super.displayName});
 
-  YamlListOption copyWith({required yaml.YamlList newValue}) {
-    return YamlListOption(value: newValue, displayName: displayName);
-  }
-}
-
-final class YamlMapOption extends OptionValue<yaml.YamlMap> {
-  const YamlMapOption({required super.value, required super.displayName});
-
-  YamlMapOption copyWith({required yaml.YamlMap newValue}) {
-    return YamlMapOption(value: newValue, displayName: displayName);
+  FileOption copyWith({required String newValue}) {
+    return FileOption(value: newValue, displayName: displayName);
   }
 }
 
@@ -281,6 +273,24 @@ final class OneOfOption extends OptionValue<String> {
   }
 }
 
+// TO BE DEPRECATED SOON
+final class YamlListOption extends OptionValue<yaml.YamlList> {
+  const YamlListOption({required super.value, required super.displayName});
+
+  YamlListOption copyWith({required yaml.YamlList newValue}) {
+    return YamlListOption(value: newValue, displayName: displayName);
+  }
+}
+
+final class YamlMapOption extends OptionValue<yaml.YamlMap> {
+  const YamlMapOption({required super.value, required super.displayName});
+
+  YamlMapOption copyWith({required yaml.YamlMap newValue}) {
+    return YamlMapOption(value: newValue, displayName: displayName);
+  }
+}
+
+// TO BE DEPRECATED SOON
 class Port extends Equatable {
   const Port({
     required this.isIn,

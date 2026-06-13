@@ -541,13 +541,9 @@ final _processorTemplatesUnsorted = {
     className: 'MultiChannelFilter',
     isTemplate: true,
     options: {
-      'filter': YamlMapOption(
-        value: YamlMap.wrap(const {
-          'event_a': {
-            'high': [0, 1],
-          },
-        }),
-        displayName: 'Protocols',
+      'filter_file': FileOption(
+        value: 'Pick a file',
+        displayName: 'Filter File',
       ),
     },
     ports: const [
@@ -562,6 +558,20 @@ final _processorTemplatesUnsorted = {
     options: const {},
     ports: const [
       Port(name: 'data', type: 'AnyType', isIn: true),
+    ],
+  ),
+  'ripple_neuromed_reader': Processor(
+    id: 'ripple_neuromed_reader',
+    className: 'RippleNeuromedReader',
+    isTemplate: true,
+    options: const {
+      'n_electrodes': const IntOption(
+        value: 32,
+        displayName: 'Number of electrodes',
+      ),
+    },
+    ports: const [
+      Port(name: 'signal', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
 

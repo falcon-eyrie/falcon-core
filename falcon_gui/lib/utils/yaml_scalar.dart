@@ -42,6 +42,12 @@ OptionValue<dynamic> optionFromScalar(
       displayName: templateOption.displayName,
     );
   }
+  if (templateOption is FileOption) {
+    return FileOption(
+      value: value as String,
+      displayName: templateOption.displayName,
+    );
+  }
   if (templateOption is OneOfOption) {
     final v = value as String;
     if (!templateOption.allowed

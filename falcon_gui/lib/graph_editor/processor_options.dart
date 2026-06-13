@@ -3,6 +3,7 @@ import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/logger.dart';
 import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/theme.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:remixicon/remixicon.dart';
@@ -49,6 +50,11 @@ class ProcessorOptionsView extends StatelessWidget {
                 option: o,
                 onChanged: onChanged,
               ),
+              final FileOption o => FileOptionField(
+                option: o,
+                onChanged: onChanged,
+              ),
+              // TO BE DEPRECATED SOON - start
               final YamlListOption o => YamlListOptionField(
                 option: o,
                 onChanged: onChanged,
@@ -57,6 +63,7 @@ class ProcessorOptionsView extends StatelessWidget {
                 option: o,
                 onChanged: onChanged,
               ),
+              // TO BE DEPRECATED SOON - end
             },
           );
         }),
@@ -271,6 +278,96 @@ class OneOfOptionField extends StatelessWidget {
   }
 }
 
+class FileOptionField extends StatelessWidget {
+  const FileOptionField({
+    required this.option,
+    required this.onChanged,
+    super.key,
+  });
+
+  final FileOption option;
+  final ValueChanged<FileOption> onChanged;
+
+  Future<void> _pickFile() async {
+    final result = await FilePicker.platform.pickFiles(
+      // May or may not introduce type constraint in the future
+      // ignore: avoid_redundant_argument_values
+      type: FileType.any,
+    );
+
+    if (result != null && result.files.single.path != null) {
+      final selectedPath = result.files.single.path!;
+      onChanged(option.copyWith(newValue: selectedPath));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hasFile = option.value.isNotEmpty;
+
+    // Extracts the filename after the last slash, or falls back to the full text
+    final fileName = hasFile
+        ? option.value.split('/').last
+        : 'No file selected';
+
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            option.displayName,
+            style: const TextStyle(fontSize: 12),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Expanded(
+                child: Tooltip(
+                  message: option.value,
+                  waitDuration: const Duration(milliseconds: 500),
+                  child: Text(
+                    fileName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: hasFile ? null : Colors.grey,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Remix.folder_5_fill),
+                visualDensity: VisualDensity.compact,
+                onPressed: _pickFile,
+                tooltip: 'Select File',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+final _intFormatter = TextInputFormatter.withFunction((oldValue, newValue) {
+  var text = newValue.text;
+
+  if (!RegExp(r'^-?\d*-?$').hasMatch(text)) return oldValue;
+  if (text.endsWith('-') && text.length > 1) {
+    text = text.substring(0, text.length - 1);
+  }
+
+  return TextEditingValue(
+    text: text,
+    selection: TextSelection.collapsed(offset: text.length),
+  );
+});
+
+// Below will be deprecated, because YAML is not user friendly,
+// checkboxes and chips are.
 class YamlListOptionField extends StatefulWidget {
   const YamlListOptionField({
     required this.option,
@@ -409,32 +506,25 @@ class _YamlOptionChip extends StatelessWidget {
   }
 }
 
-class YamlMapOptionField extends StatelessWidget {
+class YamlMapOptionField extends _OptionTextFieldBase<YamlMapOption> {
   const YamlMapOptionField({
-    required this.option,
-    required this.onChanged,
+    required super.option,
+    required super.onChanged,
     super.key,
   });
 
-  final YamlMapOption option;
-  final ValueChanged<YamlMapOption> onChanged;
+  @override
+  TextInputType get keyboardType => TextInputType.multiline;
 
   @override
-  Widget build(BuildContext context) {
-    return const Text('YAML Map Editor is not implemented yet');
+  List<TextInputFormatter> get inputFormatters => [];
+
+  @override
+  YamlMapOption parseValue(String value) {
+    try {
+      return option.copyWith(newValue: loadYaml(value) as YamlMap);
+    } catch (e) {
+      return option;
+    }
   }
 }
-
-final _intFormatter = TextInputFormatter.withFunction((oldValue, newValue) {
-  var text = newValue.text;
-
-  if (!RegExp(r'^-?\d*-?$').hasMatch(text)) return oldValue;
-  if (text.endsWith('-') && text.length > 1) {
-    text = text.substring(0, text.length - 1);
-  }
-
-  return TextEditingValue(
-    text: text,
-    selection: TextSelection.collapsed(offset: text.length),
-  );
-});

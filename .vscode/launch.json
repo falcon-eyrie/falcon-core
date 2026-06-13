@@ -7,7 +7,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/debug/falcon",
             "args": [
-                "my_graph.yaml"
+                "my_graph.yaml",
+                "-a"
             ],
             "cwd": "${workspaceFolder}/build/debug",
             "preLaunchTask": "make",

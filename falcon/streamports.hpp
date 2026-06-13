@@ -112,7 +112,7 @@ class PortOut : public IPortOut {
         return slots_[index]->prototype();
     }
 
-    virtual SlotOut<DATATYPE>* slot(std::size_t index) { return slots_[index].get(); }
+    virtual SlotOut<DATATYPE>* slot(std::size_t index) override { return slots_[index].get(); }
 
     SlotOut<DATATYPE>* dataslot(std::size_t index) { return slots_[index].get(); }
 
@@ -126,7 +126,7 @@ class PortOut : public IPortOut {
     void UnlockSlots() override;
 
     // called by PortOut<DATATYPE>::Connect
-    virtual void NewSlot(int n = 1);
+    virtual void NewSlot(int n = 1) override;
 
     void PrepareProcessing() override {
         for (auto& it : slots_) {
@@ -263,7 +263,7 @@ class PortIn : public IPortIn {
 
     SlotType number_of_slots() const override { return slots_.size(); }
 
-    virtual SlotIn<DATATYPE>* slot(std::size_t index) { return slots_[index].get(); }
+    virtual SlotIn<DATATYPE>* slot(std::size_t index) override { return slots_[index].get(); }
     SlotIn<DATATYPE>* dataslot(std::size_t index) { return slots_[index].get(); }
 
     std::string datatype() const override { return DATATYPE::datatype(); }
@@ -282,8 +282,8 @@ class PortIn : public IPortIn {
 
    protected:
     // called by StreamInConnector
-    virtual void Connect(int slot, ISlotOut* upstream);
-    virtual int ReserveSlot(int slot);
+    virtual void Connect(int slot, ISlotOut* upstream) override;
+    virtual int ReserveSlot(int slot) override;
 
     void UnlockSlots() override;
     void NewSlot(int n = 1);
