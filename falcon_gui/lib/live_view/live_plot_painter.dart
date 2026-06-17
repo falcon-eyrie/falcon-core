@@ -1,10 +1,12 @@
 import 'package:falcon_gui/live_view/live_view_controller.dart';
 import 'package:flutter/material.dart';
 
+/// CustomPainter for real-time multi-channel data with high sampling rates (e.g., 30kHz).
+/// Uses an absolute screen-index layout paired with a moving circular wipe effect.
 class LivePlotPainter extends CustomPainter {
   LivePlotPainter({
     required this.signalBuffer,
-    required this.visibleSamples,
+    required this.visibleSamples, // Set dynamically to (15 * sfreq) for 15s history
     required this.yScaleMultiplier,
   });
 
@@ -17,11 +19,13 @@ class LivePlotPainter extends CustomPainter {
     final channels = signalBuffer.nchannels;
     final maxSamples = signalBuffer.bufferSize;
 
+    // EDGE CASE: Prevent division by zero or invalid layout updates on empty buffers
     if (channels == 0 || visibleSamples < 2) return;
 
     final latestWrite = signalBuffer.latestWriteIndex;
     if (latestWrite < 0) return;
 
+    // Map the hardware write head into the 0 to (visibleSamples - 1) screen coordinate space
     final currentHeadIndex = latestWrite % visibleSamples;
 
     // 1. Render data lines
@@ -57,10 +61,8 @@ class LivePlotPainter extends CustomPainter {
     final cursorX = currentHeadIndex * stepX;
 
     final cursorPaint = Paint()
-      ..color = Colors.white
-          .withAlpha(200) // White line with opacity
-      ..strokeWidth =
-          2.0 // Slightly thicker than data line
+      ..color = Colors.white.withAlpha(200)
+      ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
 
     canvas.drawLine(
@@ -80,6 +82,7 @@ class LivePlotPainter extends CustomPainter {
     final rowHeight = size.height / channels;
     final stepX = size.width / (visibleSamples - 1);
 
+    // Creates the blank visual buffer gap directly ahead of the sweeping write cursor
     final wipeGapSamples = (visibleSamples * 0.03).ceil().clamp(5, 50);
 
     const maxVal = 10.0;
@@ -97,30 +100,35 @@ class LivePlotPainter extends CustomPainter {
     );
 
     final data = signalBuffer.dataView;
+
+    // EDGE CASE: Handle unallocated/unfilled circular buffer state on application boot
     final totalSamplesAvailable = signalBuffer.isBufferFull
         ? maxSamples
         : signalBuffer.latestWriteIndex;
 
-    final int stride = (visibleSamples / (size.width * 2)).floor().clamp(
-      1,
-      1000,
-    );
+    // PERFORMANCE: Stride downsamples high-frequency inputs (e.g. 30kHz) to ~2 points per pixel maximum.
+    // Keeps Flutter UI thread fluid by stopping path sub-pixel rendering congestion.
+    final int stride = (visibleSamples / (size.width * 2)).floor().clamp(1, 1000);
 
     for (var screenIdx = 0; screenIdx < visibleSamples; screenIdx += stride) {
+      // Calculate how far back in absolute sample history this x-coordinate sits
       final distanceBehindHead =
           (currentHeadIndex - screenIdx + visibleSamples) % visibleSamples;
       final targetDataIndex =
           signalBuffer.latestWriteIndex - distanceBehindHead;
 
+      // EDGE CASE: Skip rendering historical points if the rolling buffer hasn't reached them yet
       if (targetDataIndex < 0 || targetDataIndex >= totalSamplesAvailable) {
         continue;
       }
 
+      // WIPE EFFECT: Skip drawing anything located inside the blank zone right ahead of the head
       if (screenIdx > currentHeadIndex &&
           screenIdx < (currentHeadIndex + wipeGapSamples)) {
         continue;
       }
 
+      // Map chronological index back into physical interleaved circular array structure
       final ringBufferIdx = targetDataIndex % maxSamples;
       final x = screenIdx * stepX;
 
@@ -133,6 +141,8 @@ class LivePlotPainter extends CustomPainter {
         final normalizedValue = (value - minVal) / range;
         final y = midY - ((normalizedValue - 0.5) * 2 * scaleY);
 
+        // EDGE CASE / PATH ARTIFACT FIX: Call moveTo instead of lineTo when restarting a line path
+        // across the stride steps, wrap-around index loop bounds, or directly after the wipe gap boundary.
         if (screenIdx == 0 ||
             (screenIdx >= currentHeadIndex + wipeGapSamples &&
                 screenIdx < currentHeadIndex + wipeGapSamples + stride) ||
@@ -145,6 +155,7 @@ class LivePlotPainter extends CustomPainter {
       }
     }
 
+    // CLIPPING BOUNDS: Encapsulate trace lines to their own channel rows to avoid signal overflow bleeding
     for (var ch = 0; ch < channels; ch++) {
       canvas
         ..save()
@@ -173,6 +184,7 @@ class LivePlotPainter extends CustomPainter {
     final oldestSampleIndex =
         (latestWrite - samplesToRender + maxSamples) % maxSamples;
 
+    // Use raw hardware timestamps to locate exact timing windows across dynamic sampling frequencies
     final physicalStartTime = signalBuffer.timestampView[oldestSampleIndex];
     final physicalEndTime = signalBuffer.timestampView[newestSampleIndex];
     final microsecondWindowSize = physicalEndTime - physicalStartTime;
@@ -188,13 +200,16 @@ class LivePlotPainter extends CustomPainter {
     for (final event in signalBuffer.events) {
       final eventTime = event.closestSampleTimestamp;
 
+      // FILTER: Only plot events that physically match within the current rolling window's timestamp duration
       if (eventTime >= physicalStartTime && eventTime <= physicalEndTime) {
         final timeBehindHead = physicalEndTime - eventTime;
         final totalDuration = physicalEndTime - physicalStartTime;
 
+        // Convert the time delta relative to the hardware head back into screen samples
         final samplesBehindHead =
             (timeBehindHead / totalDuration * samplesToRender).round();
 
+        // Translate the sample offset to the exact absolute circular screen x-coordinate slot
         final screenIdx =
             (currentHeadIndex - samplesBehindHead + visibleSamples) %
             visibleSamples;
