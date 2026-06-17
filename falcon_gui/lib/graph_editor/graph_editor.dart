@@ -5,6 +5,7 @@ import 'package:falcon_gui/graph_editor/editor_view.dart';
 import 'package:falcon_gui/graph_editor/logs_panel.dart';
 import 'package:falcon_gui/graph_editor/processors_panel.dart';
 import 'package:falcon_gui/graph_editor/status_bar.dart';
+import 'package:falcon_gui/live_view/live_view.dart';
 import 'package:falcon_gui/model/graph_serializer.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
@@ -23,10 +24,14 @@ class _GraphEditorState extends State<GraphEditor> {
   ActiveProcessorCategory? _activeCategory;
   bool _isYamlCollapsed = true;
   bool _isLogsCollapsed = false;
+  bool _showLiveView = false;
 
   Timer? _hideProcessorPanelTimer;
 
   void _setActiveProcessorPanelCategory(ActiveProcessorCategory? category) {
+    if (_showLiveView) {
+      return;
+    }
     if (category == null) {
       _hideProcessorPanelTimer = Timer(Duration.zero, () {
         setState(() => _activeCategory = null);
@@ -48,6 +53,14 @@ class _GraphEditorState extends State<GraphEditor> {
     });
   }
 
+  void _onLiveViewToggled() {
+    setState(() {
+      _showLiveView = !_showLiveView;
+      _isYamlCollapsed = true;
+      _isLogsCollapsed = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -60,8 +73,10 @@ class _GraphEditorState extends State<GraphEditor> {
           child: ControlsBar(
             activeCategory: _activeCategory,
             onProcessorCategoryHovered: _setActiveProcessorPanelCategory,
+            onLiveViewToggled: _onLiveViewToggled,
           ),
         ),
+
         Expanded(
           child: Column(
             children: [
@@ -71,7 +86,10 @@ class _GraphEditorState extends State<GraphEditor> {
                     Expanded(
                       child: Stack(
                         children: [
-                          const EditorView(),
+                          IndexedStack(
+                            index: _showLiveView ? 1 : 0,
+                            children: const [EditorView(), LiveView()],
+                          ),
                           if (_activeCategory != null) ...[
                             Positioned(
                               top: 0,
@@ -108,6 +126,7 @@ class _GraphEditorState extends State<GraphEditor> {
             ],
           ),
         ),
+
         StatusBar(
           isLogsCollapsed: _isLogsCollapsed,
           onLogsPanelClicked: _onLogsCollapseToggled,

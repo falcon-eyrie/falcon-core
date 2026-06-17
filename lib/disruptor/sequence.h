@@ -85,7 +85,7 @@ class PaddedSequence : public Sequence {
 
    private:
     // padding
-    int64_t padding_[ATOMIC_SEQUENCE_PADDING_LENGTH];
+    // int64_t padding_[ATOMIC_SEQUENCE_PADDING_LENGTH];
 
     DISALLOW_COPY_AND_ASSIGN(PaddedSequence);
 };
@@ -117,8 +117,8 @@ class PaddedLong : public MutableLong {
    public:
     PaddedLong(int64_t initial_value = kInitialCursorValue) : MutableLong(initial_value) {}
 
-   private:
-    int64_t padding_[SEQUENCE_PADDING_LENGTH];
+//    private:
+    // int64_t padding_[SEQUENCE_PADDING_LENGTH];
 };
 
 int64_t GetMinimumSequence(const std::vector<Sequence*>& sequences);

@@ -305,7 +305,8 @@ class FileOptionField extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasFile = option.value.isNotEmpty;
 
-    // Extracts the filename after the last slash, or falls back to the full text
+    // Extracts the filename after the last slash,
+    // or falls back to the full text
     final fileName = hasFile
         ? option.value.split('/').last
         : 'No file selected';

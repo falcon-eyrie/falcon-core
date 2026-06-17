@@ -63,13 +63,13 @@ Permissions::Permissions(Permission self, Permission others, Permission external
     : self_(self), others_(others), external_(external) {
 }
 
-const Permission Permissions::self() const {
+Permission Permissions::self() const {
     return self_;
 }
-const Permission Permissions::others() const {
+Permission Permissions::others() const {
     return others_;
 }
-const Permission Permissions::external() const {
+Permission Permissions::external() const {
     return external_;
 }
 

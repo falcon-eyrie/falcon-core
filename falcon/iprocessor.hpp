@@ -155,14 +155,14 @@ class IProcessor {
      *
      * @param port The name of the port.
      */
-    bool has_input_port(std::string port) { return input_ports_.count(port) == 1; }
+    bool has_input_port(const std::string& port) { return input_ports_.count(port) == 1; }
 
     /**
      * Check if output port with given name exists.
      *
      * @param port The name of the port.
      */
-    bool has_output_port(std::string port) { return output_ports_.count(port) == 1; }
+    bool has_output_port(const std::string& port) { return output_ports_.count(port) == 1; }
 
     virtual bool issource() const { return n_input_ports() == 0; }
     virtual bool issink() const { return n_output_ports() == 0; }
@@ -214,7 +214,7 @@ class IProcessor {
     template <typename TValue>
     void add_option(std::string name, TValue& value, std::string description = "",
                     bool required = false) {
-        options_.add(name, value, description, required);
+        options_.add(std::move(name), value, std::move(description), required);
     }
 
     /**
@@ -248,8 +248,8 @@ class IProcessor {
                                      "\" is invalid or already exists.");
         }
 
-        output_ports_[name] = std::move(std::unique_ptr<IPortOut>((IPortOut*) new PortOut<DATATYPE>(
-            this, PortAddress(this->name(), name), parameters, policy)));
+        output_ports_[name] = std::unique_ptr<IPortOut>((IPortOut*) new PortOut<DATATYPE>(
+            this, PortAddress(this->name(), name), parameters, policy));
 
         return ((PortOut<DATATYPE>*) output_ports_[name].get());
     }
@@ -291,8 +291,8 @@ class IProcessor {
                                      "\" is invalid or already exists.");
         }
 
-        input_ports_[name] = std::move(std::unique_ptr<IPortIn>((IPortIn*) new PortIn<DATATYPE>(
-            this, PortAddress(this->name(), name), capabilities, policy)));
+        input_ports_[name] = std::unique_ptr<IPortIn>((IPortIn*) new PortIn<DATATYPE>(
+            this, PortAddress(this->name(), name), capabilities, policy));
 
         return ((PortIn<DATATYPE>*) input_ports_[name].get());
     }
@@ -315,14 +315,14 @@ class IProcessor {
      *
      * @param port The name of the input port.
      */
-    IPortIn* input_port(std::string port) { return input_ports_.at(port).get(); }
+    IPortIn* input_port(const std::string& port) { return input_ports_.at(port).get(); }
 
     /**
      * Retrieve observing pointer to output port.
      *
      * @param port The name of the output port.
      */
-    IPortOut* output_port(std::string port) { return output_ports_.at(port).get(); }
+    IPortOut* output_port(const std::string& port) { return output_ports_.at(port).get(); }
 
     /**
      * Retrieve observing pointer to input port.
@@ -522,7 +522,7 @@ class IProcessor {
      *
      */
     template <typename T>
-    ReadableState<T>* create_readable_shared_state(std::string state, T default_value,
+    ReadableState<T>* create_readable_shared_state(const std::string& state, T default_value,
                                                    Permission peers = Permission::WRITE,
                                                    Permission external = Permission::NONE,
                                                    std::string description = "") {
@@ -531,8 +531,8 @@ class IProcessor {
                 "Shared state \"" + state + "\" is invalid or already exists.", name());
         }
 
-        shared_states_[state] = std::move(std::unique_ptr<IState>(
-            (IState*) new ReadableState<T>(default_value, description, peers, external)));
+        shared_states_[state] = std::unique_ptr<IState>(
+            (IState*) new ReadableState<T>(default_value, description, peers, external));
 
         return ((ReadableState<T>*) shared_states_[state].get());
     }
@@ -556,7 +556,7 @@ class IProcessor {
      *
      */
     template <typename T>
-    WritableState<T>* create_writable_shared_state(std::string state, T default_value,
+    WritableState<T>* create_writable_shared_state(const std::string& state, T default_value,
                                                    Permission peers = Permission::READ,
                                                    Permission external = Permission::NONE,
                                                    std::string description = "") {
@@ -565,8 +565,8 @@ class IProcessor {
                 "Shared state \"" + state + "\" is invalid or already exists.", name());
         }
 
-        shared_states_[state] = std::move(std::unique_ptr<IState>(
-            (IState*) new WritableState<T>(default_value, description, peers, external)));
+        shared_states_[state] = std::unique_ptr<IState>(
+            (IState*) new WritableState<T>(default_value, description, peers, external));
         return ((WritableState<T>*) shared_states_[state].get());
     }
 
@@ -575,7 +575,7 @@ class IProcessor {
      *
      * @param state The name of the state.
      */
-    std::shared_ptr<IState> shared_state(std::string state) {
+    std::shared_ptr<IState> shared_state(const std::string& state) {
         if (this->shared_states_.count(state) == 0) {
             throw ProcessorInternalError("Shared state \"" + state + "\" does not exist.", name());
         }
@@ -583,7 +583,7 @@ class IProcessor {
     }
 
     template <class T>
-    void expose_method(std::string methodname, YAML::Node (T::*method)(const YAML::Node&)) {
+    void expose_method(const std::string& methodname, YAML::Node (T::*method)(const YAML::Node&)) {
         if (exposed_methods_.count(methodname) == 1) {
             throw ProcessorInternalError(
                 "Exposed method \"" + methodname + "\" is invalid or already exists.", name());
@@ -592,7 +592,7 @@ class IProcessor {
             std::bind(method, static_cast<T*>(this), std::placeholders::_1);
     }
 
-    std::function<YAML::Node(const YAML::Node&)>& exposed_method(std::string method) {
+    std::function<YAML::Node(const YAML::Node&)>& exposed_method(const std::string& method) {
         if (this->exposed_methods_.count(method) == 0) {
             throw ProcessorInternalError("Exposed method \"" + method + "\" does not exist.",
                                          name());
@@ -605,16 +605,16 @@ class IProcessor {
     virtual std::string default_output_port() const;
 
    private:  // to be overridden by derived processors, callable internally
-    virtual void Configure(const GlobalContext& context) {}
+    virtual void Configure(const GlobalContext& _) {}
     virtual void CreatePorts() = 0;
-    virtual void Preprocess(ProcessingContext& context) {}
+    virtual void Preprocess(ProcessingContext& _) {}
     virtual void Process(ProcessingContext& context) = 0;
-    virtual void Postprocess(ProcessingContext& context) {}
+    virtual void Postprocess(ProcessingContext& _) {}
     virtual void CompleteStreamInfo();
-    virtual void Prepare(GlobalContext& context) {}
-    virtual void Unprepare(GlobalContext& context) {}
-    virtual void TestPrepare(ProcessingContext& context) {}
-    virtual void TestFinalize(ProcessingContext& context) {}
+    virtual void Prepare(GlobalContext& _) {}
+    virtual void Unprepare(GlobalContext& _) {}
+    virtual void TestPrepare(ProcessingContext& _) {}
+    virtual void TestFinalize(ProcessingContext& _) {}
 
    private:  // callable internally only
     void internal_Configure(const YAML::Node& node,
@@ -642,14 +642,14 @@ class IProcessor {
     YAML::Node internal_ApplyMethod(const std::string& name, const YAML::Node& node);
 
     void set_name_and_type(std::string name, std::string type) {
-        name_ = name;
-        type_ = type;
+        name_ = std::move(name);
+        type_ = std::move(type);
     }
 
     template <typename TValue>
     void add_advanced_option(std::string name, TValue& value, std::string description = "",
                              bool required = false) {
-        advanced_options_.add(name, value, description, required);
+        advanced_options_.add(std::move(name), value, std::move(description), required);
     }
 
    private:

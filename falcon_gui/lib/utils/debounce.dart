@@ -3,14 +3,14 @@ import 'dart:async';
 class Debounce {
   Debounce({required this.delay});
   final Duration delay;
-  Timer? _timer;
+  Timer? timer;
 
   void call(void Function() action) {
-    _timer?.cancel();
-    _timer = Timer(delay, action);
+    timer?.cancel();
+    timer = Timer(delay, action);
   }
 
   void dispose() {
-    _timer?.cancel();
+    timer?.cancel();
   }
 }

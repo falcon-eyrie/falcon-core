@@ -3,7 +3,6 @@ import 'package:falcon_gui/model/falcon_state.dart';
 import 'package:falcon_gui/settings/settings_view.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
 import 'package:falcon_gui/state/graph_manager.dart';
-import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:remixicon/remixicon.dart';
@@ -12,14 +11,17 @@ class ControlsBar extends StatelessWidget {
   const ControlsBar({
     required this.activeCategory,
     required this.onProcessorCategoryHovered,
+    required this.onLiveViewToggled,
     super.key,
   });
   final ActiveProcessorCategory? activeCategory;
   final ValueChanged<ActiveProcessorCategory?> onProcessorCategoryHovered;
+  final VoidCallback onLiveViewToggled;
   @override
   Widget build(BuildContext context) {
-    return MultiListener(
-      builder: (context) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([falconManager, graphManager]),
+      builder: (context, _) {
         return Container(
           color: context.c.surfaceContainer,
           height: 48,
@@ -92,6 +94,12 @@ class ControlsBar extends StatelessWidget {
               ),
 
               const Spacer(),
+              IconButton(
+                icon: const Icon(RemixIcons.pulse_fill),
+                tooltip: 'Live View',
+                onPressed: onLiveViewToggled,
+              ),
+              const SizedBox(width: 8),
               const IconButton(
                 icon: Icon(RemixIcons.arrow_go_back_line),
                 tooltip: 'Undo',

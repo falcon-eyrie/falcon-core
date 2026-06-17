@@ -53,7 +53,11 @@
 //   global-state: value
 //   processor: {state: value}
 
-enum class Permission { NONE = 0, READ, WRITE };  // in order of least permissive to most permissive
+enum class Permission : std::uint8_t {
+    NONE = 0,
+    READ,
+    WRITE
+};  // in order of least permissive to most permissive
 
 Permission permission_from_string(std::string s);
 std::string permission_to_string(Permission p, bool shorthand = false);
@@ -109,9 +113,9 @@ class Permissions {
     Permissions(Permission self = Permission::WRITE, Permission others = Permission::READ,
                 Permission external = Permission::NONE);
 
-    const Permission self() const;
-    const Permission others() const;
-    const Permission external() const;
+    Permission self() const;
+    Permission others() const;
+    Permission external() const;
 
     void set_self(const Permission p);
     void set_others(const Permission p);

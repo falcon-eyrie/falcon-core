@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:falcon_gui/dialogs/status_dialog.dart';
+import 'package:falcon_gui/live_view/falcon_websocket_controller.dart';
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:falcon_gui/model/falcon_log.dart';
 import 'package:falcon_gui/model/falcon_state.dart';
@@ -395,6 +396,7 @@ class FalconManager extends ChangeNotifier {
   Future<void> toggleProcessingState() async {
     logInfo('toggleProcessingState called');
     if (falconState == FalconState.processing) {
+      await falconWSController.disconnect();
       await sendCommand(FalconZmqCommand.graphStop);
     } else {
       await sendCommand(FalconZmqCommand.graphStart);

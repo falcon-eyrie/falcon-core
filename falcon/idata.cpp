@@ -77,6 +77,14 @@ void Data::SerializeBinary(std::ostream& stream, Serialization::Format format) c
                      sizeof(hardware_timestamp_));
         stream.write(reinterpret_cast<const char*>(&serial_number_), sizeof(serial_number_));
     }
+
+    if (format == Serialization::Format::COMPACT) {
+        std::string_view type_name = serialized_type_name();
+        uint8_t type_len = static_cast<uint8_t>(std::min<size_t>(type_name.size(), 255));
+
+        stream.write(reinterpret_cast<const char*>(&type_len), sizeof(uint8_t));
+        stream.write(type_name.data(), type_len);
+    }
 }
 
 void Data::SerializeYAML(YAML::Node& node, Serialization::Format format) const {

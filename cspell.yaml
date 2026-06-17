@@ -20,6 +20,7 @@ words:
   - curdir
   - datatypebuffer
   - DCMAKE
+  - Debouncer
   - Digilynx
   - dummysink
   - endmacro
@@ -41,9 +42,11 @@ words:
   - libpython
   - libzmq
   - LLNL
+  - LTWH
   - multichannelfilter
   - nchannels
   - ncipollo
+  - ncolumns
   - neuralynx
   - Neuro
   - nlxreader

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:falcon_gui/model/falcon_state.dart';
 import 'package:falcon_gui/state/falcon_manager.dart';
-import 'package:falcon_gui/utils/misc.dart';
+import 'package:falcon_gui/state/graph_manager.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:remixicon/remixicon.dart';
@@ -22,8 +22,9 @@ class StatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiListener(
-      builder: (context) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([falconManager, graphManager]),
+      builder: (context, _) {
         return AnimatedContainer(
           duration: const Duration(milliseconds: 500),
 

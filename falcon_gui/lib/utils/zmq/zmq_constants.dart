@@ -112,6 +112,10 @@ const int ZMQ_SNDMORE = 2;
 const int ZMQ_RCVMORE = 13;
 const int ZMQ_SUBSCRIBE = 6;
 const int ZMQ_RCVTIMEO = 27;
+const int ZMQ_TCP_KEEPALIVE = 42;
+const int ZMQ_TCP_KEEPALIVE_CNT = 43;
+const int ZMQ_TCP_KEEPALIVE_IDLE = 44;
+const int ZMQ_TCP_KEEPALIVE_INTVL = 45;
 
 // Error constants
 const int EINTR = 4;

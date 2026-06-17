@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 # Prevents re-downloading dependencies every time the build folder is deleted
-set(FETCHCONTENT_BASE_DIR "${CMAKE_HOME_DIRECTORY}/cmake_cache" CACHE PATH "")
+set(FETCHCONTENT_BASE_DIR "${CMAKE_HOME_DIRECTORY}/.cache" CACHE PATH "")
 
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

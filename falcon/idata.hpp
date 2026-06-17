@@ -25,6 +25,7 @@
 #include <limits>
 #include <memory>
 #include <string>
+#include <string_view>
 
 #include "ringbuffer.hpp"
 
@@ -236,6 +237,12 @@ class Data : public IData<Data, BaseType> {
      * @param format Compact or Full
      */
     virtual void SerializeBinary(std::ostream& stream, Serialization::Format format) const;
+
+    /**
+     * @brief Identifies the underlying dynamic type for binary serialization.
+     * @return String view of the class or payload type name.
+     */
+    virtual std::string_view serialized_type_name() const { return "Unknown"; }
 
     /**
      * @brief SerializeYAML - Serialize data specific for the data type in yaml

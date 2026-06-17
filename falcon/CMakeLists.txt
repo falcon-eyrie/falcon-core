@@ -217,6 +217,8 @@ add_dependencies(falcon datatypebuffer)
 target_link_libraries(falcon yaml-cpp zmq flatbuffers ${PLATFORM_LINK_LIBRARIES})
 
 
+
+
 # here we have to use --whole-archive linker option, otherwise the data type and processor libs are not
 # linked at all because none of their exported symbols are explicitly used in falcon. Same is true for (part of)
 # the disruptor and utilities libraries
