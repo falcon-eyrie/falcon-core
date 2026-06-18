@@ -102,6 +102,9 @@ void liveViewIsolate(
     }
   };
 
+  final localMins = Float64List(64);
+  final localMaxs = Float64List(64);
+
   commandPort.listen((message) {
     if (message is! ProcessFrameCommand) return;
 
@@ -131,7 +134,6 @@ void liveViewIsolate(
       const minVal = -10.0;
       const range = 20.0;
 
-      // Cache reference to flat buffer to bypass method lookup overhead
       final dataView = buffer.dataView;
 
       for (var col = 0; col < totalPixelCols; col++) {
@@ -142,9 +144,13 @@ void liveViewIsolate(
         );
         final x = col.toDouble();
 
-        // Check wipe gap ONCE per column, instead of duplicating inside the channel loop
+        // 1. Check wipe gap once per pixel column
         var inWipeGap = false;
-        for (var screenIdx = startScreenIdx; screenIdx < endScreenIdx; screenIdx++) {
+        for (
+          var screenIdx = startScreenIdx;
+          screenIdx < endScreenIdx;
+          screenIdx++
+        ) {
           if (screenIdx > currentHeadIndex &&
               screenIdx < (currentHeadIndex + wipeGapSamples)) {
             inWipeGap = true;
@@ -152,52 +158,55 @@ void liveViewIsolate(
           }
         }
 
-        for (var ch = 0; ch < channels; ch++) {
-          final baseOffset = (ch * floatsPerChannel) + (col * 4);
-
-          if (inWipeGap) {
+        if (inWipeGap) {
+          for (var ch = 0; ch < channels; ch++) {
+            final baseOffset = (ch * floatsPerChannel) + (col * 4);
             vertexBuffer[baseOffset] = -1.0;
             vertexBuffer[baseOffset + 1] = -1.0;
             vertexBuffer[baseOffset + 2] = -1.0;
             vertexBuffer[baseOffset + 3] = -1.0;
+          }
+          continue;
+        }
+
+        localMins.fillRange(0, channels, double.infinity);
+        localMaxs.fillRange(0, channels, double.negativeInfinity);
+        var hasValidSamples = false;
+
+        for (
+          var screenIdx = startScreenIdx;
+          screenIdx < endScreenIdx;
+          screenIdx++
+        ) {
+          var distanceBehindHead = currentHeadIndex - screenIdx;
+          if (distanceBehindHead < 0) {
+            distanceBehindHead += message.visibleSamples;
+          }
+
+          final targetDataIndex = buffer.latestWriteIndex - distanceBehindHead;
+
+          if (targetDataIndex < 0 || targetDataIndex >= totalSamplesAvailable) {
             continue;
           }
 
-          var minValInPixel = double.infinity;
-          var maxValInPixel = double.negativeInfinity;
-          var hasValidSamples = false;
-
-          for (
-            var screenIdx = startScreenIdx;
-            screenIdx < endScreenIdx;
-            screenIdx++
-          ) {
-            // Optimized Index Math: Replace slow modulo (%) with addition fallback
-            var distanceBehindHead = currentHeadIndex - screenIdx;
-            if (distanceBehindHead < 0) {
-              distanceBehindHead += message.visibleSamples;
-            }
-
-            final targetDataIndex = buffer.latestWriteIndex - distanceBehindHead;
-
-            if (targetDataIndex < 0 ||
-                targetDataIndex >= totalSamplesAvailable) {
-              continue;
-            }
-
-            // Optimized Ring Buffer Lookup: Fast math instead of modulo % maxSamples
-            var ringBufferIdx = targetDataIndex;
-            while (ringBufferIdx >= maxSamples) {
-              ringBufferIdx -= maxSamples;
-            }
-
-            final flatIndex = (ringBufferIdx * channels) + ch;
-            final value = dataView[flatIndex];
-
-            if (value < minValInPixel) minValInPixel = value;
-            if (value > maxValInPixel) maxValInPixel = value;
-            hasValidSamples = true;
+          var ringBufferIdx = targetDataIndex;
+          while (ringBufferIdx >= maxSamples) {
+            ringBufferIdx -= maxSamples;
           }
+
+          final baseFlatIndex = ringBufferIdx * channels;
+          hasValidSamples = true;
+
+          for (var ch = 0; ch < channels; ch++) {
+            final value = dataView[baseFlatIndex + ch];
+
+            if (value < localMins[ch]) localMins[ch] = value;
+            if (value > localMaxs[ch]) localMaxs[ch] = value;
+          }
+        }
+
+        for (var ch = 0; ch < channels; ch++) {
+          final baseOffset = (ch * floatsPerChannel) + (col * 4);
 
           if (!hasValidSamples) {
             vertexBuffer[baseOffset] = -1.0;
@@ -208,9 +217,9 @@ void liveViewIsolate(
           }
 
           vertexBuffer[baseOffset] = x;
-          vertexBuffer[baseOffset + 1] = (minValInPixel - minVal) / range;
+          vertexBuffer[baseOffset + 1] = (localMins[ch] - minVal) / range;
           vertexBuffer[baseOffset + 2] = x;
-          vertexBuffer[baseOffset + 3] = (maxValInPixel - minVal) / range;
+          vertexBuffer[baseOffset + 3] = (localMaxs[ch] - minVal) / range;
         }
       }
 
