@@ -57,6 +57,7 @@ words:
   - ontime
   - optvallen
   - outoforder
+  - pgrep
   - pixz
   - RCVTIMEO
   - rdtsc
@@ -65,6 +66,7 @@ words:
   - remixicon
   - rootproject
   - Selectability
+  - setcap
   - SNDMORE
   - stdev
   - stim

@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:falcon_gui/live_view/falcon_ws_message.dart';
 
-const int kAllocatedSampleBufferSize = 16 * 1024 * 1024;
+const int kAllocatedSampleBufferSize = 1024 * 1024;
 
 class SignalBuffer {
   SignalBuffer({
@@ -24,7 +24,7 @@ class SignalBuffer {
   bool isBufferFull = false;
 
   Float64List get dataView => _flatBuffer;
-  Uint64List get timestampView => _timestampBuffer; // Public accessor
+  Uint64List get timestampView => _timestampBuffer;
   int get latestWriteIndex => _writeSampleIndex;
 
   void appendSignalBuffer(MultiChannelSignalPayload payload) {
@@ -32,8 +32,7 @@ class SignalBuffer {
 
     final incomingSamples = payload.bufferSize;
     final incomingByteView = payload.multichannelBuffers;
-    final incomingTimestamps =
-        payload.timestamps; // Get the synchronized timestamps
+    final incomingTimestamps = payload.timestamps;
 
     var incomingSampleRow = 0;
     var samplesLeftToCopy = incomingSamples;
@@ -51,12 +50,15 @@ class SignalBuffer {
         _timestampBuffer[currentDestRow] =
             incomingTimestamps[currentIncomingRow];
 
-        for (var ch = 0; ch < nchannels; ++ch) {
-          final srcByteOffset = ((currentIncomingRow * nchannels) + ch) * 8;
-          final destElementIndex = (currentDestRow * nchannels) + ch;
+        // Cache the base offsets outside the inner channel loop
+        // This saves millions of multiplication operations per second
+        final srcRowByteOffset = currentIncomingRow * nchannels * 8;
+        final destRowElementIndex = currentDestRow * nchannels;
 
-          _flatBuffer[destElementIndex] = incomingByteView.getFloat64(
-            srcByteOffset,
+        for (var ch = 0; ch < nchannels; ++ch) {
+          // Direct, safe little-endian extraction with zero indexing math overhead
+          _flatBuffer[destRowElementIndex + ch] = incomingByteView.getFloat64(
+            srcRowByteOffset + (ch * 8),
             Endian.little,
           );
         }

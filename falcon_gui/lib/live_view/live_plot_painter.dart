@@ -32,52 +32,50 @@ class LivePlotPainter extends CustomPainter {
     final rowHeight = size.height / channels;
     final totalPixelCols = size.width.floor();
     final floatsPerChannel = totalPixelCols * 4;
+    final totalBytesPerChannel = floatsPerChannel * 4;
 
     final paint = Paint()
       ..strokeWidth = 1.2
       ..style = PaintingStyle.stroke;
 
-    final totalBytes = floatsPerChannel * 4;
+    final midY = rowHeight / 2;
+    final scaleY = rowHeight * 0.4 * yScaleMultiplier;
 
     for (var ch = 0; ch < channels; ch++) {
       paint.color = Colors.accents[ch % Colors.accents.length];
 
+      final topY = ch * rowHeight;
+
       canvas
         ..save()
-        ..clipRect(Rect.fromLTWH(0, ch * rowHeight, size.width, rowHeight));
+        ..clipRect(Rect.fromLTWH(0, topY, size.width, rowHeight))
+        // Push the canvas to the row track position
+        ..translate(0, topY + midY);
 
-      final byteOffset = ch * totalBytes;
+      final byteOffset = ch * totalBytesPerChannel;
+
+      // Zero-Copy: Create a direct window into your transferred isolate data
       final channelView = Float32List.view(
         optimizedVertexBuffer!.buffer,
-        byteOffset,
+        optimizedVertexBuffer!.offsetInBytes + byteOffset,
         floatsPerChannel,
       );
 
-      // Temporary local draw buffer to avoid modifying the cached
-      // isolate buffer
-      final drawBuffer = Float32List(floatsPerChannel);
-      final midY = (ch * rowHeight) + (rowHeight / 2);
-      final scaleY = (rowHeight / 2) * 0.8 * yScaleMultiplier;
-
+      // Zero-Allocation Mutation: Modify the data in place.
+      // Since this data was received from TransferableTypedData,
+      // the UI thread owns it uniquely. Modifying it is safe and free.
       for (var i = 0; i < floatsPerChannel; i += 4) {
-        if (channelView[i] < 0) {
-          // Maintain line gaps (e.g., inside the wipe gap)
-          drawBuffer[i] = -1.0;
-          drawBuffer[i + 1] = -1.0;
-          drawBuffer[i + 2] = -1.0;
-          drawBuffer[i + 3] = -1.0;
-          continue;
-        }
+        if (channelView[i] < 0) continue; // Skip wipe gaps
 
-        drawBuffer[i] = channelView[i];
-        drawBuffer[i + 1] = midY - ((channelView[i + 1] - 0.5) * 2 * scaleY);
-        drawBuffer[i + 2] = channelView[i + 2];
-        drawBuffer[i + 3] = midY - ((channelView[i + 3] - 0.5) * 2 * scaleY);
+        // Map the isolate's normalized (0.0 to 1.0) value directly to rendering space
+        // This math is done in place without duplicating arrays
+        channelView[i + 1] = -((channelView[i + 1] - 0.5) * 2 * scaleY);
+        channelView[i + 3] = -((channelView[i + 3] - 0.5) * 2 * scaleY);
       }
 
-      // Hardware-accelerated drawing
+      // Direct GPU hardware-accelerated drawing
       canvas
-        ..drawRawPoints(PointMode.lines, drawBuffer, paint)
+        ..drawRawPoints(PointMode.lines, channelView, paint)
         ..restore();
     }
   }

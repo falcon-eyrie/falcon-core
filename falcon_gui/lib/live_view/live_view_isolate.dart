@@ -131,6 +131,9 @@ void liveViewIsolate(
       const minVal = -10.0;
       const range = 20.0;
 
+      // Cache reference to flat buffer to bypass method lookup overhead
+      final dataView = buffer.dataView;
+
       for (var col = 0; col < totalPixelCols; col++) {
         final startScreenIdx = (col * samplesPerPixel).floor();
         final endScreenIdx = ((col + 1) * samplesPerPixel).floor().clamp(
@@ -139,46 +142,64 @@ void liveViewIsolate(
         );
         final x = col.toDouble();
 
+        // Check wipe gap ONCE per column, instead of duplicating inside the channel loop
+        var inWipeGap = false;
+        for (var screenIdx = startScreenIdx; screenIdx < endScreenIdx; screenIdx++) {
+          if (screenIdx > currentHeadIndex &&
+              screenIdx < (currentHeadIndex + wipeGapSamples)) {
+            inWipeGap = true;
+            break;
+          }
+        }
+
         for (var ch = 0; ch < channels; ch++) {
+          final baseOffset = (ch * floatsPerChannel) + (col * 4);
+
+          if (inWipeGap) {
+            vertexBuffer[baseOffset] = -1.0;
+            vertexBuffer[baseOffset + 1] = -1.0;
+            vertexBuffer[baseOffset + 2] = -1.0;
+            vertexBuffer[baseOffset + 3] = -1.0;
+            continue;
+          }
+
           var minValInPixel = double.infinity;
           var maxValInPixel = double.negativeInfinity;
           var hasValidSamples = false;
-          var inWipeGap = false;
 
           for (
             var screenIdx = startScreenIdx;
             screenIdx < endScreenIdx;
             screenIdx++
           ) {
-            if (screenIdx > currentHeadIndex &&
-                screenIdx < (currentHeadIndex + wipeGapSamples)) {
-              inWipeGap = true;
-              break;
+            // Optimized Index Math: Replace slow modulo (%) with addition fallback
+            var distanceBehindHead = currentHeadIndex - screenIdx;
+            if (distanceBehindHead < 0) {
+              distanceBehindHead += message.visibleSamples;
             }
 
-            final distanceBehindHead =
-                (currentHeadIndex - screenIdx + message.visibleSamples) %
-                message.visibleSamples;
-            final targetDataIndex =
-                buffer.latestWriteIndex - distanceBehindHead;
+            final targetDataIndex = buffer.latestWriteIndex - distanceBehindHead;
 
             if (targetDataIndex < 0 ||
                 targetDataIndex >= totalSamplesAvailable) {
               continue;
             }
 
-            final ringBufferIdx = targetDataIndex % maxSamples;
+            // Optimized Ring Buffer Lookup: Fast math instead of modulo % maxSamples
+            var ringBufferIdx = targetDataIndex;
+            while (ringBufferIdx >= maxSamples) {
+              ringBufferIdx -= maxSamples;
+            }
+
             final flatIndex = (ringBufferIdx * channels) + ch;
-            final value = buffer.dataView[flatIndex];
+            final value = dataView[flatIndex];
 
             if (value < minValInPixel) minValInPixel = value;
             if (value > maxValInPixel) maxValInPixel = value;
             hasValidSamples = true;
           }
 
-          final baseOffset = (ch * floatsPerChannel) + (col * 4);
-
-          if (inWipeGap || !hasValidSamples) {
+          if (!hasValidSamples) {
             vertexBuffer[baseOffset] = -1.0;
             vertexBuffer[baseOffset + 1] = -1.0;
             vertexBuffer[baseOffset + 2] = -1.0;
