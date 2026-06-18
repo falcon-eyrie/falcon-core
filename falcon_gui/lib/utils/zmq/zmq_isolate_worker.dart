@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:falcon_gui/utils/logger.dart';
@@ -132,7 +133,8 @@ class ZMQIsolateWorker {
             context ??= zmq!.ctxNew();
 
             logInfo('libzmq version: ${zmq!.version()}');
-            final socket = zmq!.socket(context!, message['socketType'] as int);
+            final zmqSocketType = message['socketType'] as int;
+            final socket = zmq!.socket(context!, zmqSocketType);
 
             if (message['receiveTimeout'] != null) {
               zmq!.setSocketOption(
@@ -140,6 +142,12 @@ class ZMQIsolateWorker {
                 ZMQ_RCVTIMEO,
                 message['receiveTimeout'] as int,
               );
+            }
+
+            final socketType = message['socketType'] as int;
+            if (socketType == ZMQ_REQ) {
+              zmq!.setSocketOption(socket, ZMQ_REQ_RELAXED, 1);
+              zmq!.setSocketOption(socket, ZMQ_REQ_CORRELATE, 1);
             }
 
             zmq!.connect(socket, message['endpoint'] as String);
@@ -217,6 +225,8 @@ class ZMQIsolateWorker {
     }
 
     while (true) {
+      sleep(const Duration(milliseconds: 100));
+
       try {
         final result = zmq.recvMultipartStringsSync(socket);
         data.sendPort.send({
@@ -232,12 +242,9 @@ class ZMQIsolateWorker {
             'stream': true,
             'error': e.toString(),
           });
-          break;
         }
       }
     }
-
-    data.sendPort.send({'id': data.id, 'stream': true, 'done': true});
   }
 }
 

@@ -1,4 +1,3 @@
-/// Falcon commands matching Python FalconCommand enum
 enum FalconZmqCommand {
   graphStart,
   graphStop,

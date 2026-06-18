@@ -113,7 +113,8 @@ class MultiChannelSignalPayload extends FalconWSPayloadData {
   /// Values are packed sequentially in memory by sample rows.
   final ByteData multichannelBuffers;
 
-  /// High-resolution 64-bit timestamps synchronized with each sample collection interval.
+  /// High-resolution 64-bit timestamps synchronized with
+  /// each sample collection interval.
   final Uint64List timestamps;
 }
 

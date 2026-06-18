@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:falcon_gui/live_view/falcon_websocket_controller.dart';
 import 'package:falcon_gui/live_view/live_view_controller.dart';
+import 'package:falcon_gui/live_view/signal_buffer.dart';
 import 'package:falcon_gui/utils/debounce.dart';
 import 'package:flutter/gestures.dart'; // Required for PointerScrollEvent tracking
 import 'package:flutter/material.dart';
@@ -37,7 +37,7 @@ class _ValueSlidersState extends State<ValueSliders> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: Listenable.merge([falconWSController, liveViewController]),
+      listenable: liveViewController,
       builder: (context, _) {
         final actualLogScale =
             math.log(liveViewController.yScaleMultiplier) / math.ln10;
@@ -66,15 +66,17 @@ class _ValueSlidersState extends State<ValueSliders> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // ignore: lines_longer_than_80_chars
                 // Wrap track with a Listener block to intercept desktop mouse wheels
                 Listener(
                   onPointerSignal: (pointerSignal) {
                     if (pointerSignal is PointerScrollEvent) {
+                      // ignore: lines_longer_than_80_chars
                       // Positive scroll delta means rolling downwards (reduce scale)
-                      final double step = pointerSignal.scrollDelta.dy > 0
+                      final step = pointerSignal.scrollDelta.dy > 0
                           ? -0.05
                           : 0.05;
-                      final double nextValue = (_localLogScale + step).clamp(
+                      final nextValue = (_localLogScale + step).clamp(
                         -6.0,
                         6.0,
                       );
@@ -111,11 +113,12 @@ class _ValueSlidersState extends State<ValueSliders> {
                 Listener(
                   onPointerSignal: (pointerSignal) {
                     if (pointerSignal is PointerScrollEvent) {
+                      // ignore: lines_longer_than_80_chars
                       // Scrolling down increases view bounds, scrolling up zooms in
-                      final int step = pointerSignal.scrollDelta.dy > 0
+                      final step = pointerSignal.scrollDelta.dy > 0
                           ? -500
                           : 500;
-                      final int nextValue = (_localVisibleSamples + step).clamp(
+                      final nextValue = (_localVisibleSamples + step).clamp(
                         100,
                         kAllocatedSampleBufferSize,
                       );

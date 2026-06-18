@@ -105,6 +105,8 @@ typedef ZmqTSize = IntPtr;
 const int ZMQ_SUB = 2;
 const int ZMQ_REQ = 3;
 const int ZMQ_REP = 4;
+const int ZMQ_DEALER = 5;
+const int ZMQ_ROUTER = 6;
 
 // ZMQ flags
 const int ZMQ_DONTWAIT = 1;
@@ -116,6 +118,8 @@ const int ZMQ_TCP_KEEPALIVE = 42;
 const int ZMQ_TCP_KEEPALIVE_CNT = 43;
 const int ZMQ_TCP_KEEPALIVE_IDLE = 44;
 const int ZMQ_TCP_KEEPALIVE_INTVL = 45;
+const int ZMQ_REQ_RELAXED = 53;
+const int ZMQ_REQ_CORRELATE = 54;
 
 // Error constants
 const int EINTR = 4;

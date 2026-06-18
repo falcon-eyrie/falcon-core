@@ -101,20 +101,6 @@ class ZMQFFi {
         throw Exception('zmq_setsockopt failed: $errStr');
       }
 
-      final readPtr = arena<Int32>();
-      final sizePtr = arena<Size>()..value = sizeOf<Int32>();
-
-      final readResult = _fns.zmq_getsockopt(
-        sock,
-        option,
-        readPtr.cast<Void>(),
-        sizePtr,
-      );
-      if (readResult != 0) {
-        final err = _fns.zmq_errno();
-        final errStr = _fns.zmq_strerror(err).toDartString();
-        throw Exception('zmq_getsockopt failed: $errStr');
-      }
       return result;
     });
   }
