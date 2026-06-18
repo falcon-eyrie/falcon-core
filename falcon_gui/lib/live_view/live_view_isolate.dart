@@ -27,8 +27,8 @@ class LiveViewInitConfig {
   final String wsAddress;
 }
 
-class DecimationJobResult {
-  DecimationJobResult({
+class LiveViewIsolateResponse {
+  LiveViewIsolateResponse({
     required this.upstreamAddress,
     required this.latestWriteIndex,
     required this.transferableBuffer,
@@ -74,11 +74,9 @@ void liveViewIsolate(
       config.controllerSendPort.send('CONNECTED');
 
       ws.listen(
-        (raw) {
+        (dynamic raw) {
           try {
-            final bytes = raw is Uint8List
-                ? raw
-                : Uint8List.fromList(raw as List<int>);
+            final bytes = raw as Uint8List;
             final wsMessage = FalconWSMessage.fromBytes(bytes);
 
             if (wsMessage.payload is MultiChannelSignalPayload) {
@@ -196,7 +194,7 @@ void liveViewIsolate(
       }
 
       config.controllerSendPort.send(
-        DecimationJobResult(
+        LiveViewIsolateResponse(
           upstreamAddress: address,
           latestWriteIndex: buffer.latestWriteIndex,
           transferableBuffer: TransferableTypedData.fromList([vertexBuffer]),

@@ -26,18 +26,18 @@ class LiveViewController extends ChangeNotifier {
   bool _isIsolateReady = false;
 
   double lastKnownScreenWidth = 1000;
-  int visibleSamples = 500;
-  double yScaleMultiplier = 1;
+  int visibleSamples = 90000;
+  double yScaleMultiplier = 15000;
 
   void _initEngineTicker() {
     _ticker = Ticker(
-      (_) => _tickDecimationJob(),
-      debugLabel: 'SignalDecimatorTicker',
+      (_) => _tickLiveViewIsolate(),
+      debugLabel: 'LiveViewIsolateTicker',
     );
     unawaited(_ticker?.start());
   }
 
-  void _tickDecimationJob() {
+  void _tickLiveViewIsolate() {
     if (!_isIsolateReady || _isolateSendPort == null) return;
 
     _isolateSendPort!.send(
@@ -64,7 +64,7 @@ class LiveViewController extends ChangeNotifier {
       if (message is SendPort) {
         _isolateSendPort = message;
         _isIsolateReady = true;
-      } else if (message is DecimationJobResult) {
+      } else if (message is LiveViewIsolateResponse) {
         final rawBytes = message.transferableBuffer.materialize();
         optimizedRenderBuffers[message.upstreamAddress] = rawBytes
             .asFloat32List();
