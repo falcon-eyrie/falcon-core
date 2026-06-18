@@ -65,11 +65,20 @@ class LiveViewController extends ChangeNotifier {
         _isolateSendPort = message;
         _isIsolateReady = true;
       } else if (message is LiveViewIsolateResponse) {
-        final rawBytes = message.transferableBuffer.materialize();
-        optimizedRenderBuffers[message.upstreamAddress] = rawBytes
-            .asFloat32List();
-        renderBufferHeadIndices[message.upstreamAddress] =
-            message.latestWriteIndex;
+        final address = message.upstreamAddress;
+
+        final transferableDataView = message.transferableBuffer.materialize();
+
+        final uint8List = transferableDataView.asUint8List();
+
+        final optimizedData = Float32List.view(
+          uint8List.buffer,
+          uint8List.offsetInBytes,
+          uint8List.length ~/ 4, // 4 bytes per Float32
+        );
+
+        optimizedRenderBuffers[address] = optimizedData;
+        renderBufferHeadIndices[address] = message.latestWriteIndex;
         notifyListeners();
       } else if (message == 'CONNECTED') {
         isConnected = true;

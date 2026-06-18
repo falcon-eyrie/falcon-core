@@ -34,25 +34,21 @@ class _LiveViewState extends State<LiveView> {
           );
         }
 
-        return Scaffold(
-          body: Stack(
-            children: [
-              Positioned.fill(
-                child: ListView.builder(
-                  itemCount: renderBuffers.length,
-                  itemBuilder: (context, index) {
-                    final address = renderBuffers.keys.elementAt(index);
-                    return _SignalCard(address: address);
-                  },
-                ),
-              ),
-              const Positioned(
-                left: 16,
-                bottom: 16,
-                child: ValueSliders(),
-              ),
-            ],
-          ),
+        return Stack(
+          children: [
+            Column(
+              children: renderBuffers.keys.map((address) {
+                return Expanded(
+                  child: _SignalCard(address: address),
+                );
+              }).toList(),
+            ),
+            const Positioned(
+              left: 16,
+              bottom: 16,
+              child: ValueSliders(),
+            ),
+          ],
         );
       },
     );
