@@ -206,16 +206,19 @@ void ParseConnectionRules(const YAML::Node& node, StreamConnections& connections
 ProcessorGraph::ProcessorGraph(GlobalContext& context)
     : global_context_(context), terminate_signal_(false) {
     LOG(STATE) << state_string();
-    // log list of registered processors
     std::vector<std::string> processors = ProcessorFactory::instance().listEntries();
+    std::string registered_list = "";
+
     for (const auto& item : processors) {
         documentation_[item] = LoadProcessorDoc(item);
-        if (documentation_[item].IsMap() && documentation_[item]["Description"]) {
-            LOG(INFO) << "Registered processor " << item << " - "
-                      << documentation_[item]["Description"];
-        } else {
-            LOG(INFO) << "Registered processor " << item;
+        if (!registered_list.empty()) {
+            registered_list += ", ";
         }
+        registered_list += item;
+    }
+
+    if (!registered_list.empty()) {
+        LOG(INFO) << "Registered processors: " << registered_list;
     }
 }
 

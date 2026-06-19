@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:isolate';
 
 import 'package:falcon_gui/utils/logger.dart';
@@ -223,12 +222,10 @@ class ZMQIsolateWorker {
         logInfo('Subscribed to all topics on ${data.config.endpoint}');
       }
     }
-
     while (true) {
-      sleep(const Duration(milliseconds: 100));
-
       try {
         final result = zmq.recvMultipartStringsSync(socket);
+
         data.sendPort.send({
           'id': data.id,
           'stream': true,

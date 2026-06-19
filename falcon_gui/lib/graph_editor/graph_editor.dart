@@ -56,6 +56,7 @@ class _GraphEditorState extends State<GraphEditor> {
   void _onLiveViewToggled() {
     setState(() {
       _showLiveView = !_showLiveView;
+      _activeCategory = null;
       _isYamlCollapsed = true;
       _isLogsCollapsed = true;
     });

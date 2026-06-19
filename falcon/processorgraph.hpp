@@ -147,7 +147,7 @@ class ProcessorGraph {
 
     std::string ExportYAML();
 
-    const GraphState state() const { return state_; }
+    GraphState state() const { return state_; }
     std::string state_string() const;
     void set_state(GraphState state) {
         state_ = state;

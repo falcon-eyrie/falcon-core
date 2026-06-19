@@ -493,6 +493,25 @@ final _processorTemplatesUnsorted = {
       Port(name: 'data', type: 'TimeSeriesType<double>', isIn: false),
     ],
   ),
+  'decimator': Processor(
+    id: 'decimator',
+    className: 'Decimator',
+    isTemplate: true,
+    options: const {
+      'downsample_factor': IntOption(
+        value: 1,
+        displayName: 'Downsample Factor',
+      ),
+      'buffer_size': IntOption(
+        value: 10,
+        displayName: 'Buffer size in samples',
+      ),
+    },
+    ports: const [
+      Port(name: 'input', type: 'TimeSeriesType<double>', isIn: true),
+      Port(name: 'output', type: 'TimeSeriesType<double>', isIn: false),
+    ],
+  ),
   'nlxreader': Processor(
     id: 'nlxreader',
     className: 'NlxReader',
@@ -502,22 +521,10 @@ final _processorTemplatesUnsorted = {
         value: '127.0.0.1',
         displayName: 'IP Address',
       ),
-      'port': const IntOption(
-        value: 5555,
-        displayName: 'Port Number',
-      ),
-      'npackets': const IntOption(
-        value: 0,
-        displayName: 'Total Data Packets',
-      ),
-      'batch_size': const IntOption(
-        value: 1,
-        displayName: 'Batch Size',
-      ),
-      'nchannels': const IntOption(
-        value: 1,
-        displayName: 'Number of Channels',
-      ),
+      'port': const IntOption(value: 5555, displayName: 'Port Number'),
+      'npackets': const IntOption(value: 0, displayName: 'Total Data Packets'),
+      'batch_size': const IntOption(value: 1, displayName: 'Batch Size'),
+      'nchannels': const IntOption(value: 1, displayName: 'Number of Channels'),
       'update_interval': const DoubleOption(
         value: 1,
         displayName: 'Update Interval (s)',
@@ -561,23 +568,15 @@ final _processorTemplatesUnsorted = {
     className: 'LatencyBenchmark',
     isTemplate: true,
     options: const {},
-    ports: const [
-      Port(name: 'data', type: 'AnyType', isIn: true),
-    ],
+    ports: const [Port(name: 'data', type: 'AnyType', isIn: true)],
   ),
   'ripple_neuromed_reader': Processor(
     id: 'ripple_neuromed_reader',
     className: 'RippleNeuromedReader',
     isTemplate: true,
     options: const {
-      'elec_start': IntOption(
-        value: 0,
-        displayName: 'Start electrode',
-      ),
-      'elec_end': IntOption(
-        value: 32,
-        displayName: 'End electrode',
-      ),
+      'elec_start': IntOption(value: 0, displayName: 'Start electrode'),
+      'elec_end': IntOption(value: 32, displayName: 'End electrode'),
     },
     ports: const [
       Port(name: 'signal', type: 'TimeSeriesType<double>', isIn: false),
@@ -607,15 +606,9 @@ final _processorTemplatesUnsorted = {
         value: 1000,
         displayName: 'Sample Frequency',
       ),
-      'buffer_size': const IntOption(
-        value: 1,
-        displayName: 'Buffer Size',
-      ),
+      'buffer_size': const IntOption(value: 1, displayName: 'Buffer Size'),
       'signal_type': _createSignalTypeOption(),
-      'file_path': const FileOption(
-        value: '',
-        displayName: 'File Path',
-      ),
+      'file_path': const FileOption(value: '', displayName: 'File Path'),
     },
     ports: const [
       Port(name: 'signal', type: 'TimeSeriesType<double>', isIn: false),
@@ -627,10 +620,7 @@ final _processorTemplatesUnsorted = {
     className: 'SignalPlotter',
     isTemplate: true,
     options: const {
-      'history_size': IntOption(
-        value: 1000,
-        displayName: 'Points on screen.',
-      ),
+      'history_size': IntOption(value: 1000, displayName: 'Points on screen.'),
     },
     ports: const [
       Port(name: 'signal', type: 'TimeSeriesType<double>', isIn: true),
@@ -640,14 +630,7 @@ final _processorTemplatesUnsorted = {
     id: 'websocket_sink',
     className: 'WebsocketSink',
     isTemplate: true,
-    options: const {
-      'port': IntOption(
-        value: 5550,
-        displayName: 'Port',
-      ),
-    },
-    ports: const [
-      Port(name: 'input', type: 'AnyType', isIn: true),
-    ],
+    options: const {'port': IntOption(value: 5550, displayName: 'Port')},
+    ports: const [Port(name: 'input', type: 'AnyType', isIn: true)],
   ),
 };
