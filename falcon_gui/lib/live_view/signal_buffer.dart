@@ -56,7 +56,8 @@ class SignalBuffer {
         final destRowElementIndex = currentDestRow * nchannels;
 
         for (var ch = 0; ch < nchannels; ++ch) {
-          // Direct, safe little-endian extraction with zero indexing math overhead
+          // Direct, safe little-endian extraction with
+          // zero indexing math overhead
           _flatBuffer[destRowElementIndex + ch] = incomingByteView.getFloat64(
             srcRowByteOffset + (ch * 8),
             Endian.little,
@@ -72,22 +73,5 @@ class SignalBuffer {
         isBufferFull = true;
       }
     }
-  }
-
-  void appendEvent(EventPayload payload) {
-    final availableSamples = isBufferFull ? bufferSize : _writeSampleIndex;
-    if (availableSamples != 0) {
-      // Find the index of the most recently written data row
-      final lastWrittenIndex =
-          (_writeSampleIndex - 1 + bufferSize) % bufferSize;
-
-      // Assign the exact hardware timestamp to the event
-      payload.closestSampleTimestamp = _timestampBuffer[lastWrittenIndex];
-    }
-
-    events.add(payload);
-    // if (events.length > 5000) {
-    //   events.removeRange(0, 1000);
-    // }
   }
 }

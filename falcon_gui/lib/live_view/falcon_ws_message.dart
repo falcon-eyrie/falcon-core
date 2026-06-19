@@ -29,6 +29,7 @@ class FalconWSMessage {
         offset,
       ),
       'EventType' => EventPayload.fromBytes(
+        byteData,
         rawBytes,
         offset,
       ),
@@ -119,18 +120,38 @@ class MultiChannelSignalPayload extends FalconWSPayloadData {
 }
 
 class EventPayload extends FalconWSPayloadData {
-  EventPayload({required this.eventName});
+  EventPayload({required this.eventName, required this.hardwareTs});
 
-  factory EventPayload.fromBytes(Uint8List rawBytes, int initialOffset) {
+  factory EventPayload.fromBytes(
+    ByteData byteData,
+    Uint8List rawBytes,
+    int initialOffset,
+  ) {
+    var offset = initialOffset;
+    final hardwareTsLen = byteData.getUint8(offset++);
+
+    final hardwareTs = byteData.getUint64(offset, Endian.little);
+    offset += hardwareTsLen;
+
+    final eventNameLen = byteData.getUint16(offset, Endian.little);
+    offset += 2;
+
+    final eventName = String.fromCharCodes(
+      rawBytes.sublist(offset, offset + eventNameLen),
+    );
+    offset += eventNameLen;
+
     return EventPayload(
-      eventName: String.fromCharCodes(rawBytes.sublist(initialOffset + 2)),
+      hardwareTs: hardwareTs,
+      eventName: eventName,
     );
   }
-
+  final int hardwareTs;
   final String eventName;
 
-  // Add this mutable field to lock it to the data stream timeline
-  int closestSampleTimestamp = 0;
+  @override
+  String toString() =>
+      'EventPayload(eventName: $eventName, hardwareTs: $hardwareTs)';
 }
 
 class UnknownPayload extends FalconWSPayloadData {

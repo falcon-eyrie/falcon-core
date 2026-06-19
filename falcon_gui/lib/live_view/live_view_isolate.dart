@@ -79,18 +79,23 @@ void liveViewIsolate(
             final bytes = raw as Uint8List;
             final wsMessage = FalconWSMessage.fromBytes(bytes);
 
-            if (wsMessage.payload is MultiChannelSignalPayload) {
-              final payload = wsMessage.payload as MultiChannelSignalPayload;
-              realtimeSignalBuffers
-                  .putIfAbsent(
-                    wsMessage.upstreamAddress,
-                    () => SignalBuffer(nchannels: payload.nchannels),
-                  )
-                  .appendSignalBuffer(payload);
-            } else if (wsMessage.payload is EventPayload) {
-              for (final buffer in realtimeSignalBuffers.values) {
-                buffer.appendEvent(wsMessage.payload as EventPayload);
-              }
+            final payload = wsMessage.payload;
+
+            switch (payload) {
+              case MultiChannelSignalPayload():
+                realtimeSignalBuffers
+                    .putIfAbsent(
+                      wsMessage.upstreamAddress,
+                      () => SignalBuffer(nchannels: payload.nchannels),
+                    )
+                    .appendSignalBuffer(payload);
+
+              case EventPayload():
+                for (final buffer in realtimeSignalBuffers.values) {
+                  buffer.events.add(payload);
+                }
+              case UnknownPayload():
+                throw UnimplementedError();
             }
           } catch (_) {}
         },

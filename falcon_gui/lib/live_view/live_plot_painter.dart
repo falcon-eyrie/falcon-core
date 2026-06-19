@@ -54,7 +54,7 @@ class LivePlotPainter extends CustomPainter {
 
       final byteOffset = ch * totalBytesPerChannel;
 
-      // Zero-Copy: Create a direct window into your transferred isolate data
+      // Zero-Copy: Create a direct window into transferred isolate data
       final channelView = Float32List.view(
         optimizedVertexBuffer!.buffer,
         optimizedVertexBuffer!.offsetInBytes + byteOffset,
@@ -67,8 +67,9 @@ class LivePlotPainter extends CustomPainter {
       for (var i = 0; i < floatsPerChannel; i += 4) {
         if (channelView[i] < 0) continue; // Skip wipe gaps
 
-        // Map the isolate's normalized (0.0 to 1.0) value directly to rendering space
-        // This math is done in place without duplicating arrays
+        // Map the isolate's normalized (0.0 to 1.0) value directly to
+        // rendering space. This math is done in place without
+        // duplicating arrays
         channelView[i + 1] = -((channelView[i + 1] - 0.5) * 2 * scaleY);
         channelView[i + 3] = -((channelView[i + 3] - 0.5) * 2 * scaleY);
       }
