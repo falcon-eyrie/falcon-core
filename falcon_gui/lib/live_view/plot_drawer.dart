@@ -13,33 +13,66 @@ class PlotDrawer {
     final accumulatedBuffers = <String, List<TransferableTypedData>>{};
 
     var maxValGlobal = 0.0001;
-    var oldestTimeGlobal = 0.0;
-    var latestTimeGlobal = 0.0;
-    var computedGlobalBounds = false;
+    var oldestTimeGlobal = double.infinity;
+    var latestTimeGlobal = -double.infinity;
+    var streamsFound = false;
 
     for (final streamKey in SignalParser.historyBuffers.keys) {
-      final bounds = _generateSharedCanvasRenderBuffers(
-        streamKey,
-        renderParams,
-        visibleSamples,
-        accumulatedBuffers,
-      );
-      if (bounds != null) {
-        if (!computedGlobalBounds) {
-          maxValGlobal = bounds.maxVal;
-          oldestTimeGlobal = bounds.oldestTime;
-          latestTimeGlobal = bounds.latestTime;
-          computedGlobalBounds = true;
-        } else {
-          if (bounds.maxVal > maxValGlobal) maxValGlobal = bounds.maxVal;
-          if (bounds.oldestTime < oldestTimeGlobal) {
-            oldestTimeGlobal = bounds.oldestTime;
-          }
-          if (bounds.latestTime > latestTimeGlobal) {
-            latestTimeGlobal = bounds.latestTime;
-          }
-        }
+      final writeIdx = SignalParser.historyWriteIndices[streamKey] ?? 0;
+      final tsHistory = SignalParser.historyTimestamps[streamKey];
+      final history = SignalParser.historyBuffers[streamKey];
+
+      if (history == null || tsHistory == null || visibleSamples <= 1) continue;
+
+      streamsFound = true;
+
+      final lastWrittenIdx =
+          (writeIdx - 1 + SignalParser.kAllocatedSampleBufferSize) %
+          SignalParser.kAllocatedSampleBufferSize;
+      final oldestInViewIdx =
+          (writeIdx -
+              visibleSamples +
+              SignalParser.kAllocatedSampleBufferSize) %
+          SignalParser.kAllocatedSampleBufferSize;
+      final isBufferFull =
+          SignalParser.historyWriteIndices[streamKey] != null &&
+          writeIdx >= visibleSamples;
+      if (!isBufferFull) {
+        return;
       }
+      final streamOldest = tsHistory[oldestInViewIdx].toDouble();
+      final streamLatest = tsHistory[lastWrittenIdx].toDouble();
+
+      if (streamOldest < oldestTimeGlobal) oldestTimeGlobal = streamOldest;
+      if (streamLatest > latestTimeGlobal) latestTimeGlobal = streamLatest;
+
+      final totalChannels =
+          history.length ~/ SignalParser.kAllocatedSampleBufferSize;
+      var scanIdx = oldestInViewIdx;
+      for (var s = 0; s < visibleSamples; s++) {
+        final flatBase = scanIdx * totalChannels;
+        for (var ch = 0; ch < totalChannels; ch++) {
+          final val = history[flatBase + ch].abs();
+          if (val > maxValGlobal) maxValGlobal = val;
+        }
+        scanIdx = (scanIdx + 1) % SignalParser.kAllocatedSampleBufferSize;
+      }
+    }
+
+    if (!streamsFound || oldestTimeGlobal >= latestTimeGlobal) {
+      oldestTimeGlobal = 0.0;
+      latestTimeGlobal = 1.0;
+    }
+
+    for (final streamKey in SignalParser.historyBuffers.keys) {
+      _generateSharedCanvasSmoothBuffersLocked(
+        streamKey: streamKey,
+        renderParams: renderParams,
+        visibleSamples: visibleSamples,
+        globalOldestTime: oldestTimeGlobal,
+        globalLatestTime: latestTimeGlobal,
+        accumulatedBuffers: accumulatedBuffers,
+      );
     }
 
     final primaryKey = SignalParser.historyTimestamps.keys.firstOrNull ?? '';
@@ -47,7 +80,11 @@ class PlotDrawer {
     final width = p.renderWidth <= 0 ? 1000.0 : p.renderWidth;
     final height = p.renderHeight <= 0 ? 1000.0 : p.renderHeight;
 
-    final eventXOffsets = _computeEventPixelCoordinates(width, visibleSamples);
+    final eventXOffsets = _computeEventPixelCoordinatesLocked(
+      width,
+      oldestTimeGlobal,
+      latestTimeGlobal,
+    );
 
     final gridLineVertices = Float32List(5 * 4 + 10 * 4);
     final yTickValues = <double>[];
@@ -114,12 +151,14 @@ class PlotDrawer {
     }
   }
 
-  static _StreamBounds? _generateSharedCanvasRenderBuffers(
-    String streamKey,
-    Map<String, LiveViewRenderParams> renderParams,
-    int visibleSamples,
-    Map<String, List<TransferableTypedData>> accumulatedBuffers,
-  ) {
+  static void _generateSharedCanvasSmoothBuffersLocked({
+    required String streamKey,
+    required Map<String, LiveViewRenderParams> renderParams,
+    required int visibleSamples,
+    required double globalOldestTime,
+    required double globalLatestTime,
+    required Map<String, List<TransferableTypedData>> accumulatedBuffers,
+  }) {
     final p = renderParams[streamKey] ?? const LiveViewRenderParams();
     final cols = p.renderWidth <= 0 ? 1000 : p.renderWidth.floor();
     final viewHeight = p.renderHeight <= 0 ? 1000.0 : p.renderHeight;
@@ -128,136 +167,127 @@ class PlotDrawer {
     final history = SignalParser.historyBuffers[streamKey];
     final tsHistory = SignalParser.historyTimestamps[streamKey];
 
-    if (history == null || tsHistory == null || cols <= 0) return null;
+    if (history == null ||
+        tsHistory == null ||
+        cols <= 0 ||
+        visibleSamples <= 1) {
+      return;
+    }
 
     final totalChannels =
         history.length ~/ SignalParser.kAllocatedSampleBufferSize;
+
     final channelVertexLists = List<Float32List>.generate(
       totalChannels,
       (_) => Float32List(cols * 4),
     );
 
-    final lastWrittenIdx =
-        (writeIdx - 1 + SignalParser.kAllocatedSampleBufferSize) %
-        SignalParser.kAllocatedSampleBufferSize;
-    final latestTime = tsHistory[lastWrittenIdx];
     final oldestInViewIdx =
         (writeIdx - visibleSamples + SignalParser.kAllocatedSampleBufferSize) %
         SignalParser.kAllocatedSampleBufferSize;
-    final oldestTime = tsHistory[oldestInViewIdx];
 
-    final totalTimeSpan = latestTime - oldestTime;
-    final timePerPixel = totalTimeSpan / cols;
-
-    var maxVal = 0.000000001;
+    var localMaxVal = 0.000000001;
     var scanIdx = oldestInViewIdx;
-
     for (var s = 0; s < visibleSamples; s++) {
       final flatBase = scanIdx * totalChannels;
       for (var ch = 0; ch < totalChannels; ch++) {
         final val = history[flatBase + ch].abs();
-        if (val > maxVal) maxVal = val;
+        if (val > localMaxVal) localMaxVal = val;
       }
       scanIdx = (scanIdx + 1) % SignalParser.kAllocatedSampleBufferSize;
     }
 
     final midY = viewHeight / 2.0;
-    final scalingFactor = midY / maxVal;
+    final scalingFactor = midY / localMaxVal;
 
-    var historySearchIdx = oldestInViewIdx;
+    final totalTimeSpan = globalLatestTime - globalOldestTime;
+    final timeScale = totalTimeSpan > 0 ? (cols - 1) / totalTimeSpan : 1.0;
 
-    for (var col = 0; col < cols; col++) {
-      final vIdx = col * 4;
-      final x1 = col.toDouble();
-      final x2 = (col + 1).toDouble();
+    final rawStride = (visibleSamples - 1) / (cols - 1);
+    final initialX =
+        (tsHistory[oldestInViewIdx] - globalOldestTime) * timeScale;
 
-      final targetTime1 = oldestTime + (col * timePerPixel).floor();
-      final targetTime2 = oldestTime + ((col + 1) * timePerPixel).floor();
+    var lastX = initialX;
+    final lastY = Float64List(totalChannels);
+    final flatStart = oldestInViewIdx * totalChannels;
+    for (var ch = 0; ch < totalChannels; ch++) {
+      lastY[ch] = midY - (history[flatStart + ch] * scalingFactor);
+    }
 
-      while (tsHistory[historySearchIdx] < targetTime1 &&
-          historySearchIdx != lastWrittenIdx) {
-        historySearchIdx =
-            (historySearchIdx + 1) % SignalParser.kAllocatedSampleBufferSize;
-      }
-      final idx1 = historySearchIdx;
+    for (var col = 1; col < cols; col++) {
+      final targetSampleIndex = col * rawStride;
+      final floorIdx = targetSampleIndex.floor();
+      final fraction = targetSampleIndex - floorIdx;
 
-      while (tsHistory[historySearchIdx] < targetTime2 &&
-          historySearchIdx != lastWrittenIdx) {
-        historySearchIdx =
-            (historySearchIdx + 1) % SignalParser.kAllocatedSampleBufferSize;
-      }
-      final idx2 = historySearchIdx;
+      final s1Idx =
+          (oldestInViewIdx + floorIdx) %
+          SignalParser.kAllocatedSampleBufferSize;
+      final s2Idx = (s1Idx + 1) % SignalParser.kAllocatedSampleBufferSize;
 
-      final flatIdx1 = idx1 * totalChannels;
-      final flatIdx2 = idx2 * totalChannels;
+      final t1 = tsHistory[s1Idx];
+      final t2 = tsHistory[s2Idx];
+      final sampleTime = t1 + (t2 - t1) * fraction;
+
+      final currentX = (sampleTime - globalOldestTime) * timeScale;
+      final vIdx = (col - 1) * 4;
+
+      final flatIdx1 = s1Idx * totalChannels;
+      final flatIdx2 = s2Idx * totalChannels;
 
       for (var ch = 0; ch < totalChannels; ch++) {
-        final y1 = midY - (history[flatIdx1 + ch] * scalingFactor);
-        final y2 = midY - (history[flatIdx2 + ch] * scalingFactor);
+        final y1 = history[flatIdx1 + ch];
+        final y2 = history[flatIdx2 + ch];
+        final blendedVal = y1 + (y2 - y1) * fraction;
+        final currentY = midY - (blendedVal * scalingFactor);
 
         final list = channelVertexLists[ch];
-        list[vIdx] = x1;
-        list[vIdx + 1] = y1;
-        list[vIdx + 2] = x2;
-        list[vIdx + 3] = y2;
+        list[vIdx] = lastX;
+        list[vIdx + 1] = lastY[ch];
+        list[vIdx + 2] = currentX;
+        list[vIdx + 3] = currentY;
+
+        lastY[ch] = currentY;
       }
+
+      lastX = currentX;
+    }
+
+    final finalVIdx = (cols - 1) * 4;
+    for (var ch = 0; ch < totalChannels; ch++) {
+      final list = channelVertexLists[ch];
+      list[finalVIdx] = lastX;
+      list[finalVIdx + 1] = lastY[ch];
+      list[finalVIdx + 2] = lastX;
+      list[finalVIdx + 3] = lastY[ch];
     }
 
     accumulatedBuffers[streamKey] = channelVertexLists
         .map((list) => TransferableTypedData.fromList([list]))
         .toList();
-
-    return _StreamBounds(
-      maxVal: maxVal,
-      oldestTime: oldestTime.toDouble(),
-      latestTime: latestTime.toDouble(),
-    );
   }
 
-  static Float32List _computeEventPixelCoordinates(
+  static Float32List _computeEventPixelCoordinatesLocked(
     double renderWidth,
-    int visibleSamples,
+    double globalOldestTime,
+    double globalLatestTime,
   ) {
     if (SignalParser.capturedEventTimestamps.isEmpty ||
         SignalParser.historyTimestamps.isEmpty) {
       return Float32List(0);
     }
 
-    final primaryKey = SignalParser.historyTimestamps.keys.first;
-    final tsHistory = SignalParser.historyTimestamps[primaryKey]!;
-    final writeIdx = SignalParser.historyWriteIndices[primaryKey] ?? 0;
-
-    final lastWrittenIdx =
-        (writeIdx - 1 + SignalParser.kAllocatedSampleBufferSize) %
-        SignalParser.kAllocatedSampleBufferSize;
-    final latestTime = tsHistory[lastWrittenIdx];
-    final oldestInViewIdx =
-        (writeIdx - visibleSamples + SignalParser.kAllocatedSampleBufferSize) %
-        SignalParser.kAllocatedSampleBufferSize;
-    final oldestTime = tsHistory[oldestInViewIdx];
-    final totalTimeSpan = latestTime - oldestTime;
-
+    final totalTimeSpan = globalLatestTime - globalOldestTime;
     if (totalTimeSpan <= 0) return Float32List(0);
 
     final validXOffsets = <double>[];
     for (final eventTime in SignalParser.capturedEventTimestamps) {
-      if (eventTime >= oldestTime && eventTime <= latestTime) {
-        final xPixel = ((eventTime - oldestTime) / totalTimeSpan) * renderWidth;
+      if (eventTime >= globalOldestTime && eventTime <= globalLatestTime) {
+        final xPixel =
+            ((eventTime - globalOldestTime) / totalTimeSpan) * renderWidth;
         validXOffsets.add(xPixel);
       }
     }
 
     return Float32List.fromList(validXOffsets);
   }
-}
-
-class _StreamBounds {
-  const _StreamBounds({
-    required this.maxVal,
-    required this.oldestTime,
-    required this.latestTime,
-  });
-  final double maxVal;
-  final double oldestTime;
-  final double latestTime;
 }

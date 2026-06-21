@@ -630,7 +630,10 @@ final _processorTemplatesUnsorted = {
     id: 'websocket_sink',
     className: 'WebsocketSink',
     isTemplate: true,
-    options: const {'port': IntOption(value: 5550, displayName: 'Port')},
+    options: const {
+      'port': IntOption(value: 5550, displayName: 'Port'),
+      'interval': IntOption(value: 1000, displayName: 'Interval (ms)'),
+    },
     ports: const [Port(name: 'input', type: 'AnyType', isIn: true)],
   ),
 };

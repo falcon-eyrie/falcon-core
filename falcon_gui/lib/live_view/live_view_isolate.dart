@@ -89,6 +89,7 @@ class LiveViewWorker {
   void _handleDisconnect() {
     unawaited(_activeConnection?.close());
     _activeConnection = null;
+    SignalParser.clear();
     config.controllerSendPort.send('CLEAR_BUFFERS');
     _reconnectTimer = Timer(const Duration(seconds: 1), () {
       _reconnectTimer = null;

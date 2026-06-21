@@ -7,6 +7,13 @@ class SignalParser {
   static final Map<String, Uint64List> historyTimestamps = {};
   static final Map<String, int> historyWriteIndices = {};
   static final List<int> capturedEventTimestamps = [];
+  
+  static void clear() {
+    historyBuffers.clear();
+    historyTimestamps.clear();
+    historyWriteIndices.clear();
+    capturedEventTimestamps.clear();
+  }
 
   static void parseRawPacket(Uint8List raw) {
     final byteData = ByteData.sublistView(raw);
