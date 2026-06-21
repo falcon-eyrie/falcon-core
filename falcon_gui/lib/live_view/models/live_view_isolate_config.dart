@@ -15,8 +15,10 @@ class LiveViewInitConfig {
 class LiveViewRenderData {
   const LiveViewRenderData({
     required this.batchRenderBuffers,
+    required this.events,
   });
-  final Map<String, TransferableTypedData> batchRenderBuffers;
+  final Map<String, List<TransferableTypedData>> batchRenderBuffers;
+  final TransferableTypedData events;
 }
 
 class LiveViewRenderParams {

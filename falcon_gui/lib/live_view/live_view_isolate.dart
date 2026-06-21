@@ -4,6 +4,7 @@ import 'dart:isolate';
 
 import 'package:falcon_gui/live_view/models/live_view_isolate_config.dart';
 import 'package:falcon_gui/live_view/plot_drawer.dart';
+import 'package:falcon_gui/live_view/signal_parser.dart';
 import 'package:flutter/services.dart';
 
 Future<void> liveViewIsolate(LiveViewInitConfig config) async {
@@ -49,8 +50,9 @@ class LiveViewWorker {
       ws.listen(
         (dynamic raw) {
           try {
-            PlotDrawer.processNewBatch(
-              raw: raw as Uint8List,
+            SignalParser.parseRawPacket(raw as Uint8List);
+
+            PlotDrawer.generateRenderPayload(
               sendPort: config.controllerSendPort,
               renderParams: _renderParams,
               visibleSamples: _visibleSamples,

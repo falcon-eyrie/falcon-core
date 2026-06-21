@@ -14,7 +14,9 @@ class LiveViewController extends ChangeNotifier {
   }
 
   final Map<String, LiveViewRenderParams> _lastSentRenderParams = {};
-  final Map<String, Float32List> optimizedRenderBuffers = {};
+  final Map<String, List<Float32List>> optimizedRenderBuffers = {};
+  Float32List optimizedEventLines = Float32List.fromList([]);
+
   int visibleSamples = 90000;
 
   bool isConnected = false;
@@ -89,21 +91,28 @@ class LiveViewController extends ChangeNotifier {
         _isolateSendPort = message;
         _sendParamsToIsolate();
       } else if (message is LiveViewRenderData) {
-        message.batchRenderBuffers.forEach((streamAddress, transferableBuffer) {
-          final transferableDataView = transferableBuffer.materialize();
-          final uint8List = transferableDataView.asUint8List();
-
-          optimizedRenderBuffers[streamAddress] = Float32List.view(
-            uint8List.buffer,
-            uint8List.offsetInBytes,
-            uint8List.length ~/ 4,
-          );
+        message.batchRenderBuffers.forEach((streamAddress, buffers) {
+          optimizedRenderBuffers[streamAddress] = buffers.map((b) {
+            final view = b.materialize().asUint8List();
+            return Float32List.view(
+              view.buffer,
+              view.offsetInBytes,
+              view.length ~/ 4,
+            );
+          }).toList();
 
           _lastSentRenderParams.putIfAbsent(
             streamAddress,
             LiveViewRenderParams.new,
           );
         });
+
+        final eventView = message.events.materialize().asUint8List();
+        optimizedEventLines = Float32List.view(
+          eventView.buffer,
+          eventView.offsetInBytes,
+          eventView.length ~/ 4,
+        );
 
         notifyListeners();
       } else if (message == 'CONNECTED') {

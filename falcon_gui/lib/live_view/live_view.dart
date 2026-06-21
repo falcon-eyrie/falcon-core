@@ -118,7 +118,9 @@ class _SignalCard extends StatelessWidget {
                               constraints.maxHeight,
                             ),
                             painter: _LivePlotPainter(
-                              unifiedVertexBuffer: optimizedData,
+                              vertexBuffers: optimizedData,
+                              eventXCoordinates:
+                                  liveViewController.optimizedEventLines,
                             ),
                           ),
                         );
@@ -137,23 +139,51 @@ class _SignalCard extends StatelessWidget {
 
 class _LivePlotPainter extends CustomPainter {
   const _LivePlotPainter({
-    required this.unifiedVertexBuffer,
+    required this.vertexBuffers,
+    required this.eventXCoordinates,
   });
 
-  final Float32List unifiedVertexBuffer;
+  final List<Float32List> vertexBuffers;
+  final Float32List eventXCoordinates;
+
+  static const List<Color> _channelColors = [
+    Color(0xFF34BCFB),
+    Color(0xFFFFC252),
+    Color(0xFFFF5252),
+    Color(0xFF7669F0),
+    Color(0xFF9BE37C),
+    Color(0xFFF069C5),
+  ];
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = const Color.fromARGB(255, 52, 188, 251)
+    final basePaint = Paint()
       ..strokeWidth = 1.6
       ..style = PaintingStyle.stroke;
 
-    canvas.drawRawPoints(PointMode.lines, unifiedVertexBuffer, paint);
+    for (var i = 0; i < vertexBuffers.length; i++) {
+      if (vertexBuffers[i].isEmpty) continue;
+      canvas.drawRawPoints(
+        PointMode.lines,
+        vertexBuffers[i],
+        basePaint..color = _channelColors[i % _channelColors.length],
+      );
+    }
+
+    final eventPaint = Paint()
+      ..color = const Color.fromARGB(255, 186, 8, 8)
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.stroke;
+
+    for (var i = 0; i < eventXCoordinates.length; i++) {
+      final x = eventXCoordinates[i];
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), eventPaint);
+    }
   }
 
   @override
   bool shouldRepaint(covariant _LivePlotPainter oldDelegate) {
-    return oldDelegate.unifiedVertexBuffer != unifiedVertexBuffer;
+    return oldDelegate.vertexBuffers != vertexBuffers ||
+        oldDelegate.eventXCoordinates != eventXCoordinates;
   }
 }
