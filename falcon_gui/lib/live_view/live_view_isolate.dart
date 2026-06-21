@@ -1,242 +1,77 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:typed_data';
 
-import 'package:falcon_gui/live_view/falcon_ws_message.dart';
-import 'package:falcon_gui/live_view/signal_buffer.dart';
+import 'package:falcon_gui/live_view/models/live_view_isolate_config.dart';
+import 'package:falcon_gui/live_view/plot_drawer.dart';
 import 'package:flutter/services.dart';
 
-class ProcessFrameCommand {
-  ProcessFrameCommand({
-    required this.visibleSamples,
-    required this.renderWidth,
-  });
-  final int visibleSamples;
-  final double renderWidth;
-}
-
-class LiveViewInitConfig {
-  LiveViewInitConfig({
-    required this.token,
-    required this.controllerSendPort,
-    required this.wsAddress,
-  });
-  final RootIsolateToken token;
-  final SendPort controllerSendPort;
-  final String wsAddress;
-}
-
-class LiveViewIsolateResponse {
-  LiveViewIsolateResponse({
-    required this.upstreamAddress,
-    required this.latestWriteIndex,
-    required this.transferableBuffer,
-  });
-  final String upstreamAddress;
-  final int latestWriteIndex;
-  final TransferableTypedData transferableBuffer;
-}
-
-void liveViewIsolate(
-  LiveViewInitConfig config,
-) {
+Future<void> liveViewIsolate(LiveViewInitConfig config) async {
   BackgroundIsolateBinaryMessenger.ensureInitialized(config.token);
+  await LiveViewWorker(config).start();
+}
 
-  final commandPort = ReceivePort();
-  config.controllerSendPort.send(commandPort.sendPort);
+class LiveViewWorker {
+  LiveViewWorker(this.config);
 
-  final realtimeSignalBuffers = <String, SignalBuffer>{};
-  WebSocket? activeConnection;
-  Timer? reconnectTimer;
+  final LiveViewInitConfig config;
+  final ReceivePort _commandPort = ReceivePort();
 
-  late final void Function() establishWSConnection;
+  WebSocket? _activeConnection;
+  Timer? _reconnectTimer;
 
-  void handleDisconnect() {
-    unawaited(activeConnection?.close());
-    activeConnection = null;
-    realtimeSignalBuffers.clear();
-    config.controllerSendPort.send('CLEAR_BUFFERS');
-    reconnectTimer = Timer(const Duration(seconds: 1), () {
-      reconnectTimer = null;
-      establishWSConnection();
-    });
+  Map<String, LiveViewRenderParams> _renderParams = {};
+  int _visibleSamples = 90000;
+  Future<void> start() async {
+    config.controllerSendPort.send(_commandPort.sendPort);
+    _commandPort.listen(_handleUiCommand);
+    await _establishWSConnection();
   }
 
-  establishWSConnection = () async {
-    if (reconnectTimer != null) return;
+  void _handleUiCommand(dynamic message) {
+    if (message is Map<String, LiveViewRenderParams>) {
+      _renderParams = message;
+    } else if (message is int) {
+      _visibleSamples = message;
+    }
+  }
+
+  Future<void> _establishWSConnection() async {
+    if (_reconnectTimer != null) return;
     try {
       final ws = await WebSocket.connect(
         config.wsAddress,
       ).timeout(const Duration(seconds: 5));
       ws.pingInterval = const Duration(seconds: 5);
-      activeConnection = ws;
+      _activeConnection = ws;
       config.controllerSendPort.send('CONNECTED');
 
       ws.listen(
         (dynamic raw) {
           try {
-            final bytes = raw as Uint8List;
-            final wsMessage = FalconWSMessage.fromBytes(bytes);
-
-            final payload = wsMessage.payload;
-
-            switch (payload) {
-              case MultiChannelSignalPayload():
-                realtimeSignalBuffers
-                    .putIfAbsent(
-                      wsMessage.upstreamAddress,
-                      () => SignalBuffer(nchannels: payload.nchannels),
-                    )
-                    .appendSignalBuffer(payload);
-
-              case EventPayload():
-                for (final buffer in realtimeSignalBuffers.values) {
-                  buffer.events.add(payload);
-                }
-              case UnknownPayload():
-                throw UnimplementedError();
-            }
+            PlotDrawer.processNewBatch(
+              raw: raw as Uint8List,
+              sendPort: config.controllerSendPort,
+              renderParams: _renderParams,
+              visibleSamples: _visibleSamples,
+            );
           } catch (_) {}
         },
-        onError: (_) => handleDisconnect(),
-        onDone: handleDisconnect,
+        onError: (_) => _handleDisconnect(),
+        onDone: _handleDisconnect,
       );
     } catch (_) {
-      handleDisconnect();
+      _handleDisconnect();
     }
-  };
+  }
 
-  final localMins = Float64List(64);
-  final localMaxs = Float64List(64);
-
-  commandPort.listen((message) {
-    if (message is! ProcessFrameCommand) return;
-
-    final totalPixelCols = message.renderWidth.floor();
-    if (message.visibleSamples < 2 || totalPixelCols <= 0) return;
-
-    for (final entry in realtimeSignalBuffers.entries) {
-      final address = entry.key;
-      final buffer = entry.value;
-      final channels = buffer.nchannels;
-      if (channels == 0) continue;
-
-      final maxSamples = buffer.bufferSize;
-      final currentHeadIndex = buffer.latestWriteIndex % message.visibleSamples;
-      final samplesPerPixel = message.visibleSamples / totalPixelCols;
-      final totalSamplesAvailable = buffer.isBufferFull
-          ? maxSamples
-          : buffer.latestWriteIndex;
-      final wipeGapSamples = (message.visibleSamples * 0.03).ceil().clamp(
-        5,
-        50,
-      );
-
-      final floatsPerChannel = totalPixelCols * 4;
-      final vertexBuffer = Float32List(channels * floatsPerChannel);
-
-      const minVal = -10.0;
-      const range = 20.0;
-
-      final dataView = buffer.dataView;
-
-      for (var col = 0; col < totalPixelCols; col++) {
-        final startScreenIdx = (col * samplesPerPixel).floor();
-        final endScreenIdx = ((col + 1) * samplesPerPixel).floor().clamp(
-          0,
-          message.visibleSamples,
-        );
-        final x = col.toDouble();
-
-        // 1. Check wipe gap once per pixel column
-        var inWipeGap = false;
-        for (
-          var screenIdx = startScreenIdx;
-          screenIdx < endScreenIdx;
-          screenIdx++
-        ) {
-          if (screenIdx > currentHeadIndex &&
-              screenIdx < (currentHeadIndex + wipeGapSamples)) {
-            inWipeGap = true;
-            break;
-          }
-        }
-
-        if (inWipeGap) {
-          for (var ch = 0; ch < channels; ch++) {
-            final baseOffset = (ch * floatsPerChannel) + (col * 4);
-            vertexBuffer[baseOffset] = -1.0;
-            vertexBuffer[baseOffset + 1] = -1.0;
-            vertexBuffer[baseOffset + 2] = -1.0;
-            vertexBuffer[baseOffset + 3] = -1.0;
-          }
-          continue;
-        }
-
-        localMins.fillRange(0, channels, double.infinity);
-        localMaxs.fillRange(0, channels, double.negativeInfinity);
-        var hasValidSamples = false;
-
-        for (
-          var screenIdx = startScreenIdx;
-          screenIdx < endScreenIdx;
-          screenIdx++
-        ) {
-          var distanceBehindHead = currentHeadIndex - screenIdx;
-          if (distanceBehindHead < 0) {
-            distanceBehindHead += message.visibleSamples;
-          }
-
-          final targetDataIndex = buffer.latestWriteIndex - distanceBehindHead;
-
-          if (targetDataIndex < 0 || targetDataIndex >= totalSamplesAvailable) {
-            continue;
-          }
-
-          var ringBufferIdx = targetDataIndex;
-          while (ringBufferIdx >= maxSamples) {
-            ringBufferIdx -= maxSamples;
-          }
-
-          final baseFlatIndex = ringBufferIdx * channels;
-          hasValidSamples = true;
-
-          for (var ch = 0; ch < channels; ch++) {
-            final value = dataView[baseFlatIndex + ch];
-
-            if (value < localMins[ch]) localMins[ch] = value;
-            if (value > localMaxs[ch]) localMaxs[ch] = value;
-          }
-        }
-
-        for (var ch = 0; ch < channels; ch++) {
-          final baseOffset = (ch * floatsPerChannel) + (col * 4);
-
-          if (!hasValidSamples) {
-            vertexBuffer[baseOffset] = -1.0;
-            vertexBuffer[baseOffset + 1] = -1.0;
-            vertexBuffer[baseOffset + 2] = -1.0;
-            vertexBuffer[baseOffset + 3] = -1.0;
-            continue;
-          }
-
-          vertexBuffer[baseOffset] = x;
-          vertexBuffer[baseOffset + 1] = (localMins[ch] - minVal) / range;
-          vertexBuffer[baseOffset + 2] = x;
-          vertexBuffer[baseOffset + 3] = (localMaxs[ch] - minVal) / range;
-        }
-      }
-
-      config.controllerSendPort.send(
-        LiveViewIsolateResponse(
-          upstreamAddress: address,
-          latestWriteIndex: buffer.latestWriteIndex,
-          transferableBuffer: TransferableTypedData.fromList([vertexBuffer]),
-        ),
-      );
-    }
-  });
-
-  establishWSConnection();
+  void _handleDisconnect() {
+    unawaited(_activeConnection?.close());
+    _activeConnection = null;
+    config.controllerSendPort.send('CLEAR_BUFFERS');
+    _reconnectTimer = Timer(const Duration(seconds: 1), () {
+      _reconnectTimer = null;
+      unawaited(_establishWSConnection());
+    });
+  }
 }

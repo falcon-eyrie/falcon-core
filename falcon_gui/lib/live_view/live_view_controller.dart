@@ -1,51 +1,75 @@
 import 'dart:async';
 import 'dart:isolate';
-import 'dart:ui';
 
 import 'package:falcon_gui/live_view/live_view_isolate.dart';
+import 'package:falcon_gui/live_view/models/live_view_isolate_config.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 
 final liveViewController = LiveViewController();
 
 class LiveViewController extends ChangeNotifier {
   LiveViewController() {
     unawaited(_initWorkerIsolate());
-    _initEngineTicker();
   }
 
+  final Map<String, LiveViewRenderParams> _lastSentRenderParams = {};
   final Map<String, Float32List> optimizedRenderBuffers = {};
-  final Map<String, int> renderBufferHeadIndices = {};
+  int visibleSamples = 90000;
 
   bool isConnected = false;
-
-  Ticker? _ticker;
   Isolate? _workerIsolate;
   SendPort? _isolateSendPort;
   late ReceivePort _controllerReceivePort;
-  bool _isIsolateReady = false;
 
-  double lastKnownScreenWidth = 1000;
-  int visibleSamples = 90000;
-  double yScaleMultiplier = 15000;
-
-  void _initEngineTicker() {
-    _ticker = Ticker(
-      (_) => _tickLiveViewIsolate(),
-      debugLabel: 'LiveViewIsolateTicker',
-    );
-    unawaited(_ticker?.start());
+  double getScaleMultiplier(String streamAddress) {
+    return _lastSentRenderParams[streamAddress]?.yScaleMultiplier ?? 15000.0;
   }
 
-  void _tickLiveViewIsolate() {
-    if (!_isIsolateReady || _isolateSendPort == null) return;
-
-    _isolateSendPort!.send(
-      ProcessFrameCommand(
-        visibleSamples: visibleSamples,
-        renderWidth: lastKnownScreenWidth,
-      ),
+  void updateLayoutDimensions({
+    required String streamAddress,
+    required double width,
+    required double height,
+  }) {
+    final streamRenderParams = _lastSentRenderParams[streamAddress];
+    if (streamRenderParams == null ||
+        (streamRenderParams.renderWidth == width &&
+            streamRenderParams.renderHeight == height)) {
+      return;
+    }
+    _lastSentRenderParams[streamAddress] = streamRenderParams.copyWith(
+      renderWidth: width,
+      renderHeight: height,
     );
+
+    _sendParamsToIsolate();
+  }
+
+  void updateProcessorScale(String streamAddress, double nextScale) {
+    final streamRenderParams = _lastSentRenderParams[streamAddress];
+    if (streamRenderParams == null) {
+      return;
+    }
+    _lastSentRenderParams[streamAddress] = streamRenderParams.copyWith(
+      yScaleMultiplier: nextScale,
+    );
+
+    _sendParamsToIsolate();
+    notifyListeners();
+  }
+
+  void updateVisibleSamples(int nextValue) {
+    visibleSamples = nextValue;
+
+    _isolateSendPort!.send(visibleSamples);
+
+    notifyListeners();
+  }
+
+  void _sendParamsToIsolate() {
+    if (_isolateSendPort != null && _lastSentRenderParams.isNotEmpty) {
+      _isolateSendPort!.send(_lastSentRenderParams);
+    }
   }
 
   Future<void> _initWorkerIsolate() async {
@@ -63,45 +87,40 @@ class LiveViewController extends ChangeNotifier {
     _controllerReceivePort.listen((message) {
       if (message is SendPort) {
         _isolateSendPort = message;
-        _isIsolateReady = true;
-      } else if (message is LiveViewIsolateResponse) {
-        final address = message.upstreamAddress;
+        _sendParamsToIsolate();
+      } else if (message is LiveViewRenderData) {
+        message.batchRenderBuffers.forEach((streamAddress, transferableBuffer) {
+          final transferableDataView = transferableBuffer.materialize();
+          final uint8List = transferableDataView.asUint8List();
 
-        final transferableDataView = message.transferableBuffer.materialize();
+          optimizedRenderBuffers[streamAddress] = Float32List.view(
+            uint8List.buffer,
+            uint8List.offsetInBytes,
+            uint8List.length ~/ 4,
+          );
 
-        final uint8List = transferableDataView.asUint8List();
+          _lastSentRenderParams.putIfAbsent(
+            streamAddress,
+            LiveViewRenderParams.new,
+          );
+        });
 
-        final optimizedData = Float32List.view(
-          uint8List.buffer,
-          uint8List.offsetInBytes,
-          uint8List.length ~/ 4, // 4 bytes per Float32
-        );
-
-        optimizedRenderBuffers[address] = optimizedData;
-        renderBufferHeadIndices[address] = message.latestWriteIndex;
         notifyListeners();
       } else if (message == 'CONNECTED') {
         isConnected = true;
         notifyListeners();
       } else if (message == 'CLEAR_BUFFERS') {
         isConnected = false;
-        clearBuffers();
+        optimizedRenderBuffers.clear();
+        notifyListeners();
       }
     });
   }
 
   @override
   void dispose() {
-    _ticker?.stop();
-    _ticker?.dispose();
     _controllerReceivePort.close();
     _workerIsolate?.kill();
     super.dispose();
-  }
-
-  void clearBuffers() {
-    optimizedRenderBuffers.clear();
-    renderBufferHeadIndices.clear();
-    notifyListeners();
   }
 }

@@ -48,7 +48,7 @@ class BaseData {};
  */
 class BaseType {
    public:
-    static const bool ispure() { return true; }
+    static bool ispure() { return true; }
     using Data = BaseData;
 };
 
@@ -77,7 +77,7 @@ class DefineType {
     static const std::string datatype() { return DATA::static_datatype(); }
     static const std::string dataname() { return DATA::static_dataname(); }
 
-    static const bool ispure() { return pure && BASETYPE::ispure(); }
+    static bool ispure() { return pure && BASETYPE::ispure(); }
 
     using Data = DATA;
     using Parameters = PARAMS;
@@ -304,7 +304,7 @@ class Capabilities {
      *
      * @param prototype
      */
-    void Validate(const Data& prototype) const {}
+    void Validate(const Data& _) const {}
 };
 
 }  // namespace nsAnyType

@@ -25,17 +25,30 @@ namespace Serialization {
 
 static const uint8_t VERSION = 1;
 
-enum class Format { NONE = -1, FULL, COMPACT, HEADERONLY, STREAMHEADER };
-// NONE: no packet header, no data header, no data
-// FULL: packet header, data header and data
-// HEADERONLY: packet header, data header, no data
-// STREAMHEADER: packet header, no data header, no data
-// COMPACT: data only
+/**
+ * @brief Specifies the serialization format for data transmission and packet structures.
+ */
+enum class Format : std::int8_t {
+    /** No packet header, no data header, no data. */
+    NONE = -1,
+
+    /** Packet header, data header and data. */
+    FULL,
+
+    /** Data only. May contain metadata such as payload length. */
+    COMPACT,
+
+    /** Packet header, data header, no data. */
+    HEADERONLY,
+
+    /** Packet header, no data header, no data. */
+    STREAMHEADER
+};
 
 std::string format_to_string(Format fmt);
 Format string_to_format(std::string s);
 
-enum class Encoding { BINARY = 0, YAML, FLATBUFFER };
+enum class Encoding : std::uint8_t { BINARY = 0, YAML, FLATBUFFER };
 
 std::string encoding_to_string(Encoding fmt);
 Encoding string_to_encoding(std::string s);
