@@ -14,8 +14,12 @@ class LiveViewController extends ChangeNotifier {
   }
 
   final Map<String, LiveViewRenderParams> _lastSentRenderParams = {};
+
   final Map<String, List<Float32List>> optimizedRenderBuffers = {};
   Float32List optimizedEventLines = Float32List.fromList([]);
+  Float32List optimizedGridLines = Float32List.fromList([]);
+  List<double> xTickValues = [];
+  List<double> yTickValues = [];
 
   int visibleSamples = 90000;
 
@@ -23,6 +27,13 @@ class LiveViewController extends ChangeNotifier {
   Isolate? _workerIsolate;
   SendPort? _isolateSendPort;
   late ReceivePort _controllerReceivePort;
+
+  bool _isFrozen = false;
+  bool get isFrozen => _isFrozen;
+  set isFrozen(bool newValue) {
+    _isFrozen = newValue;
+    notifyListeners();
+  }
 
   double getScaleMultiplier(String streamAddress) {
     return _lastSentRenderParams[streamAddress]?.yScaleMultiplier ?? 15000.0;
@@ -113,6 +124,16 @@ class LiveViewController extends ChangeNotifier {
           eventView.offsetInBytes,
           eventView.length ~/ 4,
         );
+
+        final gridLinesView = message.grid.materialize().asUint8List();
+        optimizedGridLines = Float32List.view(
+          gridLinesView.buffer,
+          gridLinesView.offsetInBytes,
+          gridLinesView.length ~/ 4,
+        );
+
+        xTickValues = message.xTickValues;
+        yTickValues = message.yTickValues;
 
         notifyListeners();
       } else if (message == 'CONNECTED') {

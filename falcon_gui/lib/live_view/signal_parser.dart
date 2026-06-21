@@ -13,8 +13,6 @@ class SignalParser {
     final totalLength = raw.length;
     var offset = 0;
 
-    capturedEventTimestamps.clear();
-
     while (offset < totalLength) {
       final addrLen = byteData.getUint8(offset++);
       final upstreamAddress = String.fromCharCodes(

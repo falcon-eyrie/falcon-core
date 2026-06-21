@@ -23,6 +23,9 @@ class LiveViewWorker {
 
   Map<String, LiveViewRenderParams> _renderParams = {};
   int _visibleSamples = 90000;
+
+  var _isFrozen = false;
+
   Future<void> start() async {
     config.controllerSendPort.send(_commandPort.sendPort);
     _commandPort.listen(_handleUiCommand);
@@ -32,9 +35,28 @@ class LiveViewWorker {
   void _handleUiCommand(dynamic message) {
     if (message is Map<String, LiveViewRenderParams>) {
       _renderParams = message;
+      if (!_isFrozen) {
+        _generateRenderPayload();
+      }
     } else if (message is int) {
       _visibleSamples = message;
+      if (!_isFrozen) {
+        _generateRenderPayload();
+      }
+    } else if (message is bool) {
+      _isFrozen = message;
+      if (!_isFrozen) {
+        _generateRenderPayload();
+      }
     }
+  }
+
+  void _generateRenderPayload() {
+    PlotDrawer.generateRenderPayload(
+      sendPort: config.controllerSendPort,
+      renderParams: _renderParams,
+      visibleSamples: _visibleSamples,
+    );
   }
 
   Future<void> _establishWSConnection() async {
@@ -51,12 +73,9 @@ class LiveViewWorker {
         (dynamic raw) {
           try {
             SignalParser.parseRawPacket(raw as Uint8List);
-
-            PlotDrawer.generateRenderPayload(
-              sendPort: config.controllerSendPort,
-              renderParams: _renderParams,
-              visibleSamples: _visibleSamples,
-            );
+            if (!_isFrozen) {
+              _generateRenderPayload();
+            }
           } catch (_) {}
         },
         onError: (_) => _handleDisconnect(),

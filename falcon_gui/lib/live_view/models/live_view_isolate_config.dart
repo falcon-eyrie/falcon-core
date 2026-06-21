@@ -16,9 +16,15 @@ class LiveViewRenderData {
   const LiveViewRenderData({
     required this.batchRenderBuffers,
     required this.events,
+    required this.grid,
+    required this.xTickValues,
+    required this.yTickValues,
   });
   final Map<String, List<TransferableTypedData>> batchRenderBuffers;
   final TransferableTypedData events;
+  final TransferableTypedData grid;
+  final List<double> xTickValues;
+  final List<double> yTickValues;
 }
 
 class LiveViewRenderParams {

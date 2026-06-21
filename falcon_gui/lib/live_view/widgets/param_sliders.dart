@@ -19,7 +19,7 @@ class _ViewParamSlidersState extends State<ViewParamSliders> {
   @override
   void initState() {
     super.initState();
-    // Default or current baseline window source state fallback
+
     _localVisibleSamples = liveViewController.visibleSamples;
   }
 
@@ -38,14 +38,13 @@ class _ViewParamSlidersState extends State<ViewParamSliders> {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
             decoration: BoxDecoration(
-              color: Colors.black87,
+              color: const Color(0xFF20202C),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.white10),
             ),
             child: Listener(
               onPointerSignal: (pointerSignal) {
                 if (pointerSignal is PointerScrollEvent) {
-                  // Incremental scroll updates
                   final step = pointerSignal.scrollDelta.dy > 0 ? -1000 : 1000;
                   final nextValue = (_localVisibleSamples + step).clamp(
                     1,
