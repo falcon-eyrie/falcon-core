@@ -158,19 +158,19 @@ class Data : public IData<Data, BaseType> {
      *
      * @return int64_t
      */
-    int64_t ingestion_ns() const;
+    int64_t ingestion_tsc() const;
 
     /**
      * @brief Set the ingestion timestamp to now. This should only be called
      * by a "source" processor when the data packet is first ingested.
      */
-    void set_ingestion_ns();
+    void set_ingestion_tsc();
 
     /**
      * @brief Forward the ingestion timestamp from an upstream data packet
      * to this data packet.
      */
-    void forward_ingestion_ns(const Data& data);
+    void forward_ingestion_tsc(const Data& data);
 
     /**
      * @brief set_source_timestamp set the timepoint based on the internal
@@ -281,10 +281,10 @@ class Data : public IData<Data, BaseType> {
 
    protected:
     /**
-     * @brief timestamp in nanoseconds when the data packet
+     * @brief CPU timestamp counter when the data packet
      * was first ingested by Falcon.
      */
-    int64_t ingestion_ns_;
+    int64_t ingestion_tsc_;
     TimePoint source_timestamp_;
     uint64_t hardware_timestamp_;  // e.g. from Neuralynx
     uint64_t serial_number_;

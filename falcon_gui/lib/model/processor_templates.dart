@@ -576,7 +576,7 @@ final _processorTemplatesUnsorted = {
     isTemplate: true,
     options: const {
       'elec_start': IntOption(value: 0, displayName: 'Start electrode'),
-      'elec_end': IntOption(value: 32, displayName: 'End electrode'),
+      'elec_end': IntOption(value: 31, displayName: 'End electrode'),
     },
     ports: const [
       Port(name: 'signal', type: 'TimeSeriesType<double>', isIn: false),
