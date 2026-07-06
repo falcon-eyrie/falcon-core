@@ -29,7 +29,8 @@ bool path_exists(const std::string& name) {
     return (stat(name.c_str(), &buffer) == 0);
 }
 
-std::vector<std::string>& str_split(const std::string& s, char delim, std::vector<std::string>& elems) {
+std::vector<std::string>& str_split(const std::string& s, char delim,
+                                    std::vector<std::string>& elems) {
     std::stringstream ss(s);
     std::string item;
     while (std::getline(ss, item, delim)) {

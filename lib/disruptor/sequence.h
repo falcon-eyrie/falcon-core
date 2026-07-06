@@ -117,7 +117,7 @@ class PaddedLong : public MutableLong {
    public:
     PaddedLong(int64_t initial_value = kInitialCursorValue) : MutableLong(initial_value) {}
 
-//    private:
+    //    private:
     // int64_t padding_[SEQUENCE_PADDING_LENGTH];
 };
 

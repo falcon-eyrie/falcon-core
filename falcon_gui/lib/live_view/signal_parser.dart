@@ -7,7 +7,7 @@ class SignalParser {
   static final Map<String, Uint64List> historyTimestamps = {};
   static final Map<String, int> historyWriteIndices = {};
   static final List<int> capturedEventTimestamps = [];
-  
+
   static void clear() {
     historyBuffers.clear();
     historyTimestamps.clear();
