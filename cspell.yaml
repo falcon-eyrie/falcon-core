@@ -14,6 +14,8 @@ words:
   - bugprone
   - buildconstant
   - channelmap
+  - cntfrq
+  - cntvct
   - COPYONLY
   - cppdbg
   - cppzmq
@@ -38,6 +40,7 @@ words:
   - keypair
   - latencybenchmark
   - levelcrossingdetector
+  - lfence
   - LIBCXX
   - libpython
   - libzmq
@@ -53,6 +56,8 @@ words:
   - nlxreader
   - nlxrecord
   - nlxtestbench
+  - nocloudlog
+  - noscreenlog
   - npackets
   - nsamples
   - ontime
@@ -62,6 +67,7 @@ words:
   - pixz
   - RCVTIMEO
   - rdtsc
+  - rdtscp
   - recvlen
   - REGISTERPROCESSOR
   - remixicon

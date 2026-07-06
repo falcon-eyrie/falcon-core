@@ -14,6 +14,16 @@ class TscDurationClock {
     }
 
     static void init() noexcept {
+#if defined(__aarch64__) || defined(_M_ARM64)
+        // ARM64: Read the exact hardware frequency directly from the chip register
+        uint64_t frq;
+        asm volatile("mrs %0, cntfrq_el0" : "=r"(frq));
+        tsc_frequency = static_cast<double>(frq);
+
+        tsc_fn_ptr = &hardware_clock_tsc;
+        duration_fn_ptr = &hardware_duration;
+#else
+        // x86 / x86_64: Calibrate via a 100ms benchmark loop
         if (!check_cpu_flag("constant_tsc") || !check_cpu_flag("nonstop_tsc") ||
             !check_cpu_flag("rdtscp")) {
             return;
@@ -32,9 +42,33 @@ class TscDurationClock {
 
         tsc_fn_ptr = &hardware_clock_tsc;
         duration_fn_ptr = &hardware_duration;
+#endif
     }
 
    private:
+#if defined(__aarch64__) || defined(_M_ARM64)
+    static inline uint64_t hardware_tsc() noexcept {
+        uint64_t vct;
+        asm volatile(
+            "isb\n\t"
+            "mrs %0, cntvct_el0"
+            : "=r"(vct)
+            :
+            : "memory");
+        return vct;
+    }
+
+    static inline uint64_t hardware_bench_end() noexcept {
+        uint64_t vct;
+        asm volatile(
+            "mrs %0, cntvct_el0\n\t"
+            "isb"
+            : "=r"(vct)
+            :
+            : "memory");
+        return vct;
+    }
+#else
     static inline uint64_t hardware_tsc() noexcept {
         uint32_t lo, hi;
         asm volatile(
@@ -52,6 +86,7 @@ class TscDurationClock {
             : "=a"(lo), "=d"(hi)::"rcx", "memory");
         return (static_cast<uint64_t>(hi) << 32) | lo;
     }
+#endif
 
     static uint64_t hardware_clock_tsc() noexcept { return hardware_tsc(); }
 
