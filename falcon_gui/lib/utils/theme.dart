@@ -1,3 +1,4 @@
+import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:flutter/material.dart';
 
 extension ThemeExtensions on BuildContext {
@@ -133,28 +134,17 @@ class FalconTheme {
 }
 
 abstract final class DefaultProcessorColor {
-  static final _classNames = <String>[];
-
-  static Color byClassName({required String className}) {
-    Color colorGenerator(int index) {
-      final hue = ((index + 7) * 137) % 360;
-      return HSVColor.fromAHSV(1, hue.toDouble(), 0.6, 0.7).toColor();
+  static Color byCategory({required Processor processor}) {
+    if (processor.isSource) {
+      return const Color.fromARGB(255, 59, 131, 88);
+    } else if (processor.isIntermediate) {
+      return const Color(0xFF5959BC);
+    } else if (processor.isSink) {
+      return const Color(0xFFB6555C);
     }
 
-    int index;
-    if (_classNames.contains(className)) {
-      index = _classNames.indexOf(className);
-    } else {
-      _classNames.add(className);
-      index = _classNames.indexOf(className);
-    }
-
-    return colorGenerator(index);
-  }
-
-  static void register(String className) {
-    if (!_classNames.contains(className)) {
-      _classNames.add(className);
-    }
+    throw UnimplementedError(
+      'Processor category is not registered in color theme.',
+    );
   }
 }

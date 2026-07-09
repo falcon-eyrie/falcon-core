@@ -1,5 +1,4 @@
 import 'package:falcon_gui/model/falcon_graph.dart';
-import 'package:falcon_gui/utils/theme.dart';
 import 'package:yaml/yaml.dart';
 
 OneOfOption _createEncodingOption() => OneOfOption(
@@ -20,11 +19,6 @@ OneOfOption _createSignalTypeOption() => OneOfOption(
 );
 
 final Map<String, Processor> allProcessorTemplates = () {
-  // Register default colors
-  for (final processor in _processorTemplatesUnsorted.values) {
-    DefaultProcessorColor.register(processor.className);
-  }
-
   // Sort processors: alphabetically
   final sortedKeys = _processorTemplatesUnsorted.keys.toList()
     ..sort((a, b) {

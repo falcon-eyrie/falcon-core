@@ -142,8 +142,8 @@ class LiveViewController extends ChangeNotifier {
       } else if (message == 'CLEAR_BUFFERS') {
         isConnected = false;
         optimizedRenderBuffers.clear();
-        optimizedGridLines.clear();
-        optimizedEventLines.clear();
+        optimizedGridLines = Float32List(0);
+        optimizedEventLines = Float32List(0);
         xTickValues.clear();
         yTickValues.clear();
         notifyListeners();

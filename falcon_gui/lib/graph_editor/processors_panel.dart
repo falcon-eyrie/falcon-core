@@ -62,8 +62,8 @@ class _ProcessorsPanelState extends State<ProcessorsPanel> {
                   decoration: BoxDecoration(
                     color: isHovered
                         ? context.c.secondary
-                        : DefaultProcessorColor.byClassName(
-                            className: processor.className,
+                        : DefaultProcessorColor.byCategory(
+                            processor: processor,
                           ),
                     borderRadius: BorderRadius.circular(12),
                   ),

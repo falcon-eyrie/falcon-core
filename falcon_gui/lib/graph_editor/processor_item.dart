@@ -136,8 +136,8 @@ class _HeaderState extends State<_Header> {
   Widget build(BuildContext context) {
     final processorColor =
         widget.processor.uiMetadata.color ??
-        DefaultProcessorColor.byClassName(
-          className: widget.processor.className,
+        DefaultProcessorColor.byCategory(
+          processor: widget.processor,
         );
 
     final headerColor =
