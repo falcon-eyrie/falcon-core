@@ -630,4 +630,18 @@ final _processorTemplatesUnsorted = {
     },
     ports: const [Port(name: 'input', type: 'AnyType', isIn: true)],
   ),
+  'pcie_parallel_out': Processor(
+    id: 'pcie_parallel_out',
+    className: 'PCIeParallelOutput',
+    isTemplate: true,
+    options: const {
+      'target_event': StringOption(value: "target", displayName: 'Target Event'),
+      'pin_nr': IntOption(value: 5, displayName: 'Pin Nr (ms)'),
+      'pulse_width_ns': IntOption(
+        value: 1000000,
+        displayName: 'Pulse width (ns)',
+      ),
+    },
+    ports: const [Port(name: 'events', type: 'EventType', isIn: true)],
+  ),
 };

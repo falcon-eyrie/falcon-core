@@ -6,4 +6,7 @@ sudo apt-get install -y \
   git \
   wget \
   xz-utils \
-  pixz
+  pixz \
+  zlib1g-dev \
+  libssl-dev \
+  ninja-build

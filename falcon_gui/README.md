@@ -12,8 +12,8 @@ GUI is built using [Flutter](https://flutter.dev/). To build and run the GUI, `f
 
 ```bash
 curl -fsSL https://fvm.app/install.sh | bash
-fvm install 3.44.0
-fvm global 3.44.0
+fvm install 3.44.7
+fvm global 3.44.7
 ```
 
 And then ensure `flutter` and `dart` are in the `PATH` with correct versions:

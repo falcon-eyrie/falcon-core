@@ -9,7 +9,7 @@ class FalconFilePicker {
 
   static Future<File?> pickGraphFile() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         allowedExtensions: [graphFileExtension],
         initialDirectory: defaultGraphsDirectory.path,
         dialogTitle: 'Select a Falcon Graph File',
@@ -33,7 +33,7 @@ class FalconFilePicker {
 
   static Future<File?> createNewGraphFile() async {
     try {
-      final result = await FilePicker.platform.saveFile(
+      final result = await FilePicker.saveFile(
         allowedExtensions: [graphFileExtension],
         initialDirectory: defaultGraphsDirectory.path,
         dialogTitle: 'Create a New Falcon Graph File',
@@ -54,7 +54,7 @@ class FalconFilePicker {
 
   static Future<File?> saveGraphAs(File currentFile) async {
     try {
-      final result = await FilePicker.platform.saveFile(
+      final result = await FilePicker.saveFile(
         allowedExtensions: [graphFileExtension],
         initialDirectory: defaultGraphsDirectory.path,
         dialogTitle: 'Save Falcon Graph File As',
@@ -83,7 +83,7 @@ class FalconFilePicker {
     required String dialogTitle,
   }) async {
     try {
-      final result = await FilePicker.platform.getDirectoryPath(
+      final result = await FilePicker.getDirectoryPath(
         initialDirectory: Directory(initialDirectory).absolute.path,
         dialogTitle: dialogTitle,
         lockParentWindow: true,

@@ -73,14 +73,14 @@ class _ProcessorsPanelState extends State<ProcessorsPanel> {
                       Text(
                         processor.className,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: isHovered ? context.c.onSecondary : null,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(width: 4),
                       Icon(
                         RemixIcons.function_add_line,
                         size: 16,
-                        color: isHovered ? context.c.onSecondary : null,
+                        color: Colors.white,
                       ),
                     ],
                   ),

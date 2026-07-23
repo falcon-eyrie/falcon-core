@@ -289,7 +289,7 @@ class FileOptionField extends StatelessWidget {
   final ValueChanged<FileOption> onChanged;
 
   Future<void> _pickFile() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       // May or may not introduce type constraint in the future
       // ignore: avoid_redundant_argument_values
       type: FileType.any,
