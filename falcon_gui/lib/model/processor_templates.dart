@@ -636,7 +636,7 @@ final _processorTemplatesUnsorted = {
     isTemplate: true,
     options: const {
       'target_event': StringOption(
-        value: "target",
+        value: 'target_event',
         displayName: 'Target Event',
       ),
       'pin_nr': IntOption(value: 5, displayName: 'Pin Nr (ms)'),

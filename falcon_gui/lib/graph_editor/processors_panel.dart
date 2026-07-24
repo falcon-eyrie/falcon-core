@@ -70,7 +70,7 @@ class _ProcessorsPanelState extends State<ProcessorsPanel> {
                       ).textTheme.bodyMedium?.copyWith(color: Colors.white),
                     ),
                     const SizedBox(width: 4),
-                    Icon(
+                    const Icon(
                       RemixIcons.function_add_line,
                       size: 16,
                       color: Colors.white,
