@@ -1,4 +1,4 @@
-![Falcon version](https://img.shields.io/badge/Falcon-v2.0.0--rc1-green) ![License](https://img.shields.io/badge/License-GPLv3-blue)
+![Falcon version](https://img.shields.io/badge/Falcon-v2.0.0--rc5-green) ![License](https://img.shields.io/badge/License-GPLv3-blue)
 # Falcon
 
 Falcon is a modular and extensible software framework for soft real-time signal processing, originally designed for short-latency closed-loop neural applications.
