@@ -635,7 +635,10 @@ final _processorTemplatesUnsorted = {
     className: 'PCIeParallelOutput',
     isTemplate: true,
     options: const {
-      'target_event': StringOption(value: "target", displayName: 'Target Event'),
+      'target_event': StringOption(
+        value: "target",
+        displayName: 'Target Event',
+      ),
       'pin_nr': IntOption(value: 5, displayName: 'Pin Nr (ms)'),
       'pulse_width_ns': IntOption(
         value: 1000000,

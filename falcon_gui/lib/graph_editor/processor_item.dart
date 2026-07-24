@@ -136,14 +136,10 @@ class _HeaderState extends State<_Header> {
   Widget build(BuildContext context) {
     final processorColor =
         widget.processor.uiMetadata.color ??
-        DefaultProcessorColor.byCategory(
-          processor: widget.processor,
-        );
+        DefaultProcessorColor.byCategory(processor: widget.processor);
 
     final headerColor =
-        graphManager.isProcessorCompatibleForSelectedPort(
-          widget.processor.id,
-        )
+        graphManager.isProcessorCompatibleForSelectedPort(widget.processor.id)
         ? processorColor
         : Colors.grey;
     final MouseCursor cursor;
@@ -294,9 +290,7 @@ class _ProcessorNameState extends State<_ProcessorName> {
                       text: widget.processorName,
                       children: [
                         if (_isHovering) ...[
-                          const WidgetSpan(
-                            child: SizedBox(width: 4),
-                          ),
+                          const WidgetSpan(child: SizedBox(width: 4)),
                           WidgetSpan(
                             child: Icon(
                               RemixIcons.edit_line,
@@ -391,12 +385,7 @@ class _ProcessorNameEditorState extends State<_ProcessorNameEditor> {
         enabledBorder: InputBorder.none,
         focusedBorder: InputBorder.none,
         errorStyle: TextStyle(
-          color: Color.fromARGB(
-            255,
-            255,
-            231,
-            231,
-          ),
+          color: Color.fromARGB(255, 255, 231, 231),
           fontSize: 12,
           height: 1.5,
         ),
@@ -411,10 +400,7 @@ class _ProcessorNameEditorState extends State<_ProcessorNameEditor> {
 }
 
 class _PreventEdit extends StatelessWidget {
-  const _PreventEdit({
-    required this.isPreventing,
-    required this.child,
-  });
+  const _PreventEdit({required this.isPreventing, required this.child});
   final Widget child;
   final bool isPreventing;
 

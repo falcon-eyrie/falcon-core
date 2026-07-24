@@ -5,11 +5,7 @@ import 'package:falcon_gui/utils/misc.dart';
 import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 
-enum StatusDialogType {
-  info,
-  warning,
-  error,
-}
+enum StatusDialogType { info, warning, error }
 
 void showStatusDialog({
   required String title,
@@ -32,10 +28,7 @@ void showStatusDialog({
             ),
             child: Text(
               message,
-              style: TextStyle(
-                color: context.c.onSurfaceVariant,
-                fontSize: 16,
-              ),
+              style: TextStyle(color: context.c.onSurfaceVariant, fontSize: 16),
             ),
           ),
         );

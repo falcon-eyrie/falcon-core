@@ -157,8 +157,6 @@ class _RootPageState extends State<RootPage> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: GraphEditor(),
-    );
+    return const Scaffold(body: GraphEditor());
   }
 }

@@ -232,10 +232,7 @@ class _LeanSliderLayout extends StatelessWidget {
                 inactiveTrackColor: Colors.white12,
                 thumbColor: color,
               ),
-              child: RotatedBox(
-                quarterTurns: 3,
-                child: slider,
-              ),
+              child: RotatedBox(quarterTurns: 3, child: slider),
             ),
           ),
         ],

@@ -23,13 +23,7 @@ final processorIdRegex = RegExp(r'^[a-zA-Z_][a-zA-Z0-9_]*$');
 
 final processorIdSuffixRegex = RegExp(r'(\d+)$');
 
-final topLeftMatrix = Matrix4.identity()
-  ..translateByDouble(
-    40,
-    40,
-    0,
-    1,
-  );
+final topLeftMatrix = Matrix4.identity()..translateByDouble(40, 40, 0, 1);
 
 const greyScaleFilter = ColorFilter.matrix(<double>[
   0.2126,
@@ -77,12 +71,7 @@ class ClickableIcon extends StatelessWidget {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: onPressed,
-        child: tooltip == null
-            ? icon
-            : Tooltip(
-                message: tooltip,
-                child: icon,
-              ),
+        child: tooltip == null ? icon : Tooltip(message: tooltip, child: icon),
       ),
     );
   }

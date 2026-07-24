@@ -23,9 +23,7 @@ class FalconLog {
       final fractionStr = parts[2]; // "803026" (microseconds)
 
       // Replace '/' with '-' for DateTime.parse compatibility
-      final dateTime = DateTime.parse(
-        dateTimeStr.replaceAll('/', '-'),
-      );
+      final dateTime = DateTime.parse(dateTimeStr.replaceAll('/', '-'));
 
       // Convert the fractional part into microseconds
       final microseconds = int.parse(fractionStr);

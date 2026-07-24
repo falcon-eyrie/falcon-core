@@ -116,9 +116,7 @@ class FalconManager extends ChangeNotifier {
       final yamlAsString = await file.readAsString();
 
       try {
-        final graph = FalconGraphSerializerX.fromYaml(
-          yamlAsString,
-        );
+        final graph = FalconGraphSerializerX.fromYaml(yamlAsString);
 
         _currentGraphFile = file;
         notifyListeners();
@@ -194,17 +192,14 @@ class FalconManager extends ChangeNotifier {
       } else {
         // TODO(ben): start process using linux command and pipe the
         // output to a file in logs directory
-        final localBackendProcess = await Process.start(
-          _falconBackendBinPath,
-          [
-            '-c',
-            if (kDebugMode) ...[
-              'build/falcon/config.yaml',
-            ] else ...[
-              '${falconInstallationPath.path}/config.yaml',
-            ],
+        final localBackendProcess = await Process.start(_falconBackendBinPath, [
+          '-c',
+          if (kDebugMode) ...[
+            'build/falcon/config.yaml',
+          ] else ...[
+            '${falconInstallationPath.path}/config.yaml',
           ],
-        );
+        ]);
         _localFalconBackendPid = localBackendProcess.pid;
         logInfo('Started new Falcon process with PID $_localFalconBackendPid');
       }
@@ -319,9 +314,7 @@ class FalconManager extends ChangeNotifier {
   }
 
   /// Send a Falcon command
-  Future<List<String>?> sendCommand(
-    FalconZmqCommand command,
-  ) async {
+  Future<List<String>?> sendCommand(FalconZmqCommand command) async {
     if (_falconZMQ == null || !_falconZMQ!.isConnected) {
       logInfo('FalconManager: ZMQ not connected');
       return null;
@@ -410,8 +403,4 @@ class FalconManager extends ChangeNotifier {
 }
 
 /// Falcon process priority status.
-enum PriorityStatus {
-  prioritized,
-  notPrioritized,
-  unknown,
-}
+enum PriorityStatus { prioritized, notPrioritized, unknown }

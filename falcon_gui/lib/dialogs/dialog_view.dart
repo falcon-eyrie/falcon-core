@@ -18,9 +18,7 @@ class DialogView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: IntrinsicWidth(
         child: IntrinsicHeight(
           child: Center(
@@ -53,10 +51,7 @@ class DialogView extends StatelessWidget {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: content,
-                ),
+                Padding(padding: const EdgeInsets.all(8), child: content),
               ],
             ),
           ),

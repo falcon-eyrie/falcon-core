@@ -67,9 +67,7 @@ class _GraphEditorState extends State<GraphEditor> {
     return Column(
       children: [
         MouseRegion(
-          onExit: (_) => _setActiveProcessorPanelCategory(
-            null,
-          ),
+          onExit: (_) => _setActiveProcessorPanelCategory(null),
           onHover: (_) => _hideProcessorPanelTimer?.cancel(),
           child: ControlsBar(
             activeCategory: _activeCategory,
@@ -115,9 +113,7 @@ class _GraphEditorState extends State<GraphEditor> {
                     ),
 
                     // YAML Editor (right)
-                    if (!_isYamlCollapsed) ...[
-                      const _YamlEditor(),
-                    ],
+                    if (!_isYamlCollapsed) ...[const _YamlEditor()],
                   ],
                 ),
               ), // Logs Panel left

@@ -42,9 +42,7 @@ class GraphManager extends ChangeNotifier {
   /// AnimationController for focusing on a processor.
   late final AnimationController focusAnimationController;
 
-  final _hoverDebounce = Debounce(
-    delay: const Duration(milliseconds: 1),
-  );
+  final _hoverDebounce = Debounce(delay: const Duration(milliseconds: 1));
 
   List<Processor> get processors => _graph.processors.values.toList()
     ..sort(
@@ -84,9 +82,7 @@ class GraphManager extends ChangeNotifier {
   /// The original processor can already be in the canvas or a template from
   /// the panel. In either case, the new processor will be a real processor in
   /// the canvas. The new processor will have `isTemplate` set to false.
-  String duplicateProcessor({
-    required Processor processor,
-  }) {
+  String duplicateProcessor({required Processor processor}) {
     _selectedPortUniqueId = null;
     var newId = processor.isTemplate ? '${processor.id}1' : processor.id;
 
@@ -270,18 +266,14 @@ class GraphManager extends ChangeNotifier {
 
     final maxX = _graph.processors.values.fold<double>(
       0,
-      (prev, processor) => math.max(
-        prev,
-        processor.uiMetadata.position.dx + 1000,
-      ),
+      (prev, processor) =>
+          math.max(prev, processor.uiMetadata.position.dx + 1000),
     );
 
     final maxY = _graph.processors.values.fold<double>(
       0,
-      (prev, processor) => math.max(
-        prev,
-        processor.uiMetadata.position.dy + 1000,
-      ),
+      (prev, processor) =>
+          math.max(prev, processor.uiMetadata.position.dy + 1000),
     );
 
     _minX = _graph.processors.values.fold<double>(
@@ -350,10 +342,7 @@ class GraphManager extends ChangeNotifier {
   }) {
     // If we are not in the create connection mode, all ports are idle
     if (_selectedPortUniqueId == null) {
-      if (_graph.isPortInAConnection(
-        processorId: processorId,
-        port: port,
-      )) {
+      if (_graph.isPortInAConnection(processorId: processorId, port: port)) {
         return PortSelectabilityStatus.connectedIdle;
       } else {
         return PortSelectabilityStatus.idle;
@@ -407,9 +396,7 @@ class GraphManager extends ChangeNotifier {
       _alreadyConnectedPortIds.clear();
       _sameProcessorPortIds.clear();
 
-      for (final otherProcessor in [
-        ..._graph.processors.values,
-      ]) {
+      for (final otherProcessor in [..._graph.processors.values]) {
         for (final otherPort in otherProcessor.ports) {
           final otherUniqueId =
               '${otherProcessor.id}-${otherPort.directionalName}';

@@ -16,11 +16,7 @@ Future<void> showFalconInstancesNotFoundBanner() async {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Remix.information_line,
-              size: 48,
-              color: Colors.blue,
-            ),
+            const Icon(Remix.information_line, size: 48, color: Colors.blue),
             const SizedBox(height: 16),
             const Text(
               'No Falcon backend instances were detected running on '

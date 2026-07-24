@@ -200,16 +200,11 @@ class _ProcessorPanelButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: isActive ? context.c.onPrimary : null,
-            ),
+            Icon(icon, color: isActive ? context.c.onPrimary : null),
             const SizedBox(width: 4),
             Text(
               label,
-              style: TextStyle(
-                color: isActive ? context.c.onPrimary : null,
-              ),
+              style: TextStyle(color: isActive ? context.c.onPrimary : null),
             ),
           ],
         ),

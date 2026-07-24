@@ -20,24 +20,16 @@ Future<bool?> showOnCloseGUIDialog() async {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Remix.alarm_warning_line,
-                  size: 48,
-                ),
+                const Icon(Remix.alarm_warning_line, size: 48),
                 const SizedBox(height: 16),
                 const Text(
                   'A Falcon backend instance is currently running '
                   'on this machine.',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  _closeDialogExplanation,
-                ),
+                const Text(_closeDialogExplanation),
                 const SizedBox(height: 24),
                 Wrap(
                   alignment: WrapAlignment.spaceBetween,

@@ -67,9 +67,7 @@ class _LogsPanelState extends State<LogsPanel> {
                             itemBuilder: (context, index) {
                               final log = logs.elementAt(index);
 
-                              return _LogRow(
-                                log: log,
-                              );
+                              return _LogRow(log: log);
                             },
                           ),
                         ),
@@ -101,10 +99,7 @@ class _LogsPanelState extends State<LogsPanel> {
                         }
                       });
                     },
-                    child: Container(
-                      height: 8,
-                      color: Colors.transparent,
-                    ),
+                    child: Container(height: 8, color: Colors.transparent),
                   ),
                 ),
               ),
@@ -185,9 +180,7 @@ const _logsDescription =
     'and current processors in the pipeline.';
 
 class _LogRow extends StatelessWidget {
-  const _LogRow({
-    required this.log,
-  });
+  const _LogRow({required this.log});
 
   final FalconLog log;
 
@@ -212,11 +205,7 @@ class _LogRow extends StatelessWidget {
               margin: const EdgeInsets.only(top: 2),
               width: 16,
               height: 16,
-              child: Icon(
-                _logIcon(log.type),
-                size: 16,
-                color: color,
-              ),
+              child: Icon(_logIcon(log.type), size: 16, color: color),
             ),
           ),
 
@@ -232,9 +221,7 @@ class _LogRow extends StatelessWidget {
                   color: _logColor(context, log.type),
                 ),
                 children: [
-                  const TextSpan(
-                    text: ' ',
-                  ),
+                  const TextSpan(text: ' '),
                   TextSpan(
                     text: log.message,
                     style: const TextStyle(

@@ -3,13 +3,7 @@ import 'dart:math' as math;
 import 'package:falcon_gui/model/falcon_graph.dart';
 import 'package:flutter/material.dart';
 
-Offset cubicBezierPoint(
-  double t,
-  Offset p0,
-  Offset p1,
-  Offset p2,
-  Offset p3,
-) {
+Offset cubicBezierPoint(double t, Offset p0, Offset p1, Offset p2, Offset p3) {
   // Using Horner's method for better performance
   final u = 1 - t;
   final t2 = t * t;
@@ -114,10 +108,7 @@ bool isPointNearCubicBezier(
       );
 
   // Ensure at least 1 sample per threshold distance for full coverage
-  final samples = math.max(
-    16,
-    math.min(64, (polyLength / threshold).ceil()),
-  );
+  final samples = math.max(16, math.min(64, (polyLength / threshold).ceil()));
   final step = 1.0 / samples;
 
   // Track previous point to check line segments between samples
@@ -169,17 +160,14 @@ bool isPointNearCubicBezier(
 
 /// Finds a non-overlapping position for a new processor in the graph.
 Offset findNonOverlappingPosition({required List<Processor> processors}) {
-  final biggestNodeSize = processors.fold<Size>(
-    Size.zero,
-    (prev, processor) {
-      final processorSize = Size(400, processor.options.length * 40.0 + 300);
+  final biggestNodeSize = processors.fold<Size>(Size.zero, (prev, processor) {
+    final processorSize = Size(400, processor.options.length * 40.0 + 300);
 
-      return Size(
-        math.max(prev.width, processorSize.width),
-        math.max(prev.height, processorSize.height),
-      );
-    },
-  );
+    return Size(
+      math.max(prev.width, processorSize.width),
+      math.max(prev.height, processorSize.height),
+    );
+  });
   const padding = 20;
   final existingPositions = processors
       .map((p) => p.uiMetadata.position & biggestNodeSize)

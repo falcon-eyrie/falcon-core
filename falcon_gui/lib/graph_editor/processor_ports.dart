@@ -32,10 +32,7 @@ class ProcessorPortsView extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text('States', style: context.t.textTheme.labelMedium),
                 for (final port in states)
-                  _PortRow(
-                    processor: processor,
-                    port: port,
-                  ),
+                  _PortRow(processor: processor, port: port),
               ],
 
               if (states.isNotEmpty &&
@@ -46,19 +43,13 @@ class ProcessorPortsView extends StatelessWidget {
 
               if (inPorts.isNotEmpty) ...[
                 for (final port in inPorts) ...[
-                  _PortRow(
-                    processor: processor,
-                    port: port,
-                  ),
+                  _PortRow(processor: processor, port: port),
                 ],
               ],
 
               if (outPorts.isNotEmpty) ...[
                 for (final port in outPorts) ...[
-                  _PortRow(
-                    processor: processor,
-                    port: port,
-                  ),
+                  _PortRow(processor: processor, port: port),
                 ],
               ],
               const SizedBox(height: 8),
@@ -80,11 +71,7 @@ class ProcessorPortsView extends StatelessWidget {
                         ? 'Collapse Options'
                         : 'Expand Options',
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 8,
-                        right: 8,
-                        left: 8,
-                      ),
+                      padding: const EdgeInsets.only(top: 8, right: 8, left: 8),
                       child: Icon(
                         processor.uiMetadata.isExpanded
                             ? RemixIcons.arrow_up_wide_line
@@ -104,10 +91,7 @@ class ProcessorPortsView extends StatelessWidget {
 }
 
 class _PortRow extends StatefulWidget {
-  const _PortRow({
-    required this.processor,
-    required this.port,
-  });
+  const _PortRow({required this.processor, required this.port});
 
   final Processor processor;
   final Port port;

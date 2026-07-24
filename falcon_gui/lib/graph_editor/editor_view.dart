@@ -187,11 +187,7 @@ class _CancelNewConnectionModeInfo extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              RemixIcons.mouse_line,
-              size: 16,
-              color: context.c.onSecondary,
-            ),
+            Icon(RemixIcons.mouse_line, size: 16, color: context.c.onSecondary),
             const SizedBox(width: 8),
             Text(
               'Select another port to create connection. '

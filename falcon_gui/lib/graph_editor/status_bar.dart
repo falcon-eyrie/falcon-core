@@ -182,17 +182,11 @@ class _FalconStateIndicator extends StatelessWidget {
       message: _stateExplanation(falconState),
       child: Row(
         children: [
-          const Icon(
-            RemixIcons.circle_fill,
-            color: Colors.white,
-            size: 14,
-          ),
+          const Icon(RemixIcons.circle_fill, color: Colors.white, size: 14),
           const SizedBox(width: 4),
           Text(
             falconState.toString(),
-            style: const TextStyle(
-              color: Colors.white,
-            ),
+            style: const TextStyle(color: Colors.white),
           ),
         ],
       ),

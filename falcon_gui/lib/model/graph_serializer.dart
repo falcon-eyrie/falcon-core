@@ -20,9 +20,7 @@ extension FalconGraphSerializerX on FalconGraph {
       final processorsMap = <String, Object?>{};
 
       for (final processor in processors.values) {
-        final processorMap = <String, Object?>{
-          'class': processor.className,
-        };
+        final processorMap = <String, Object?>{'class': processor.className};
 
         if (processor.options.isNotEmpty) {
           processorMap['options'] = {
@@ -63,9 +61,7 @@ extension FalconGraphSerializerX on FalconGraph {
       ];
     }
 
-    final root = <String, Object?>{
-      'graph': graph,
-    };
+    final root = <String, Object?>{'graph': graph};
 
     if (!excludeUIMetadata) {
       final uiMetadata = <String, Object?>{};

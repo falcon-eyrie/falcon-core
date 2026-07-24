@@ -17,10 +17,7 @@ class ZMQIsolateWorker {
   Future<void> start() async {
     _isolate = await Isolate.spawn(
       _broker,
-      _WorkerInitData(
-        loggerSendPort,
-        _receivePort.sendPort,
-      ),
+      _WorkerInitData(loggerSendPort, _receivePort.sendPort),
       onError: loggerSendPort,
     );
 
@@ -75,11 +72,7 @@ class ZMQIsolateWorker {
   }
 
   Future<List<String>> sendAndReceive(String socketId, List<String> parts) {
-    return _send({
-      'op': 'sendRecv',
-      'socketId': socketId,
-      'parts': parts,
-    });
+    return _send({'op': 'sendRecv', 'socketId': socketId, 'parts': parts});
   }
 
   Stream<List<String>> receiveStream(String socketId) {
@@ -226,11 +219,7 @@ class ZMQIsolateWorker {
       try {
         final result = zmq.recvMultipartStringsSync(socket);
 
-        data.sendPort.send({
-          'id': data.id,
-          'stream': true,
-          'result': result,
-        });
+        data.sendPort.send({'id': data.id, 'stream': true, 'result': result});
       } catch (e, s) {
         logError('ZMQIsolateWorker _subscriptionLoop error: $e', s);
         if (!e.toString().contains('Resource temporarily unavailable')) {

@@ -4,11 +4,7 @@ import 'package:falcon_gui/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:remixicon/remixicon.dart';
 
-enum ActiveProcessorCategory {
-  sources,
-  intermediates,
-  sinks,
-}
+enum ActiveProcessorCategory { sources, intermediates, sinks }
 
 class ProcessorsPanel extends StatefulWidget {
   const ProcessorsPanel({required this.activeCategory, super.key});
@@ -46,49 +42,45 @@ class _ProcessorsPanelState extends State<ProcessorsPanel> {
         runSpacing: 8,
         alignment: WrapAlignment.center,
         crossAxisAlignment: WrapCrossAlignment.center,
-        children: processors.map(
-          (processor) {
-            final isHovered = _hoveredProcessorId == processor.className;
-            return MouseRegion(
-              cursor: SystemMouseCursors.click,
-              onEnter: (event) =>
-                  setState(() => _hoveredProcessorId = processor.className),
-              onExit: (event) => setState(() => _hoveredProcessorId = ''),
-              child: GestureDetector(
-                onTap: () =>
-                    graphManager.duplicateProcessor(processor: processor),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isHovered
-                        ? context.c.secondary
-                        : DefaultProcessorColor.byCategory(
-                            processor: processor,
-                          ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        processor.className,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        RemixIcons.function_add_line,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                    ],
-                  ),
+        children: processors.map((processor) {
+          final isHovered = _hoveredProcessorId == processor.className;
+          return MouseRegion(
+            cursor: SystemMouseCursors.click,
+            onEnter: (event) =>
+                setState(() => _hoveredProcessorId = processor.className),
+            onExit: (event) => setState(() => _hoveredProcessorId = ''),
+            child: GestureDetector(
+              onTap: () =>
+                  graphManager.duplicateProcessor(processor: processor),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: isHovered
+                      ? context.c.secondary
+                      : DefaultProcessorColor.byCategory(processor: processor),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      processor.className,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.white),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      RemixIcons.function_add_line,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ],
                 ),
               ),
-            );
-          },
-        ).toList(),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

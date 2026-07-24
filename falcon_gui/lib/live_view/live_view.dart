@@ -256,10 +256,7 @@ class _LivePlotPainter extends CustomPainter {
 
       textPainter.paint(
         canvas,
-        Offset(
-          targetX,
-          size.height - textPainter.height - 4.0,
-        ),
+        Offset(targetX, size.height - textPainter.height - 4.0),
       );
     }
   }

@@ -316,10 +316,7 @@ class FileOptionField extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            option.displayName,
-            style: const TextStyle(fontSize: 12),
-          ),
+          Text(option.displayName, style: const TextStyle(fontSize: 12)),
           const SizedBox(height: 4),
           Row(
             children: [
@@ -418,13 +415,10 @@ class _YamlListOptionFieldState extends State<YamlListOptionField> {
               ...widget.option.value.value.map(
                 (item) => _YamlOptionChip(
                   onIconClicked: () {
-                    final newList = List<String>.from(
-                      widget.option.value.value,
-                    )..remove(item);
+                    final newList = List<String>.from(widget.option.value.value)
+                      ..remove(item);
                     widget.onChanged(
-                      widget.option.copyWith(
-                        newValue: YamlList.wrap(newList),
-                      ),
+                      widget.option.copyWith(newValue: YamlList.wrap(newList)),
                     );
                   },
                   icon: RemixIcons.delete_bin_line,
@@ -465,11 +459,7 @@ class _YamlListOptionFieldState extends State<YamlListOptionField> {
 }
 
 class _YamlOptionChip extends StatelessWidget {
-  const _YamlOptionChip({
-    required this.child,
-    this.onIconClicked,
-    this.icon,
-  });
+  const _YamlOptionChip({required this.child, this.onIconClicked, this.icon});
 
   final Widget child;
   final IconData? icon;
@@ -494,10 +484,7 @@ class _YamlOptionChip extends StatelessWidget {
           const SizedBox(width: 2),
           if (icon != null && onIconClicked != null)
             ClickableIcon(
-              icon: Icon(
-                icon,
-                size: 12,
-              ),
+              icon: Icon(icon, size: 12),
               onPressed: onIconClicked!,
             ),
           const SizedBox(width: 2),

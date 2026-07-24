@@ -106,10 +106,7 @@ class FalconGraph extends Equatable {
     );
   }
 
-  bool isPortInAConnection({
-    required String processorId,
-    required Port port,
-  }) {
+  bool isPortInAConnection({required String processorId, required Port port}) {
     return _connections.any(
       (conn) =>
           (conn.inProcessor == processorId && conn.inPort == port.name) ||
