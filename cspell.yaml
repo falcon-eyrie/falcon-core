@@ -25,6 +25,7 @@ words:
   - Debouncer
   - Digilynx
   - dummysink
+  - elec
   - endmacro
   - ETERM
   - FETCHCONTENT
@@ -53,6 +54,7 @@ words:
   - ncolumns
   - neuralynx
   - Neuro
+  - neuromed
   - nlxreader
   - nlxrecord
   - nlxtestbench
