@@ -1,4 +1,3 @@
 cmake_minimum_required(VERSION 3.16)
 
-add_library(dummy_writer src/dummy_writer.cpp)
-add_library(dummy_reader src/dummy_reader.cpp)
+add_library(template_extension src/dummy_writer.cpp src/dummy_reader.cpp src/dummy_data.cpp)
