@@ -11,7 +11,7 @@ class DummyWriter : public IProcessor {
 
    public:
     DummyWriter() : IProcessor() {
-        add_option("rate", freq_, "Freq (in Hz) at which dummy data is generated.");
+        add_option("freq", freq_, "Freq (in Hz) at which dummy data is generated.");
         add_option("message", value_, "Value to write to the output port.");
     }
 
