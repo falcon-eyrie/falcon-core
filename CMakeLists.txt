@@ -159,8 +159,6 @@ message(STATUS "Checking for extensions.")
 
 include(scripts/cmake/ParseExtensions.cmake)
 
-option(COMPILE_EXTENSIONS "compile all extensions" ON)
-
 ## External extensions ##
 add_subdirectory(lib)
 add_subdirectory(falcon)

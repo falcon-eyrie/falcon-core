@@ -183,7 +183,7 @@ if (COMPILE_EXTENSIONS)
 
             string(REPLACE "-" "_" TARGET_NAME_CLEAN "${EXT_NAME}")
 
-            if (TARGET ${TARGET_NAME_CLEAN})
+            if (TARGET "${TARGET_NAME_CLEAN}")
                 add_dependencies(${TARGET_NAME_CLEAN} datatypebuffer)
                 list(APPEND PROCESSOR_LIBS ${TARGET_NAME_CLEAN})
             endif ()

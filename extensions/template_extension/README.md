@@ -12,7 +12,9 @@ processors:
     dummy_writer:
         class: DummyWriter
         options:
-            rate: 5
+            rate: 6
+            message: "hello"
+
     dummy_reader:
         class: DummyReader
 

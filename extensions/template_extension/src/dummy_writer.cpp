@@ -1,17 +1,18 @@
 #include <chrono>
 #include <string>
+#include "dummy_data.cpp"
 #include "iprocessor.hpp"
 
-#include "dummy_data.cpp"
 class DummyWriter : public IProcessor {
    private:
     PortOut<DummyType>* event_port_;
-    options::Measurement<double> event_rate_{1, "Hz", options::positive<double>()};
+    options::Measurement<double> freq_{1, "Hz", options::positive<double>()};
     options::String value_{};
 
    public:
     DummyWriter() : IProcessor() {
-        add_option("rate", event_rate_, "Rate (in Hz) at which dummy data is generated.");
+        add_option("rate", freq_, "Freq (in Hz) at which dummy data is generated.");
+        add_option("message", value_, "Value to write to the output port.");
     }
 
     void CreatePorts() override {
@@ -21,10 +22,7 @@ class DummyWriter : public IProcessor {
 
     void Process(ProcessingContext& context) override {
         DummyType::Data* data = nullptr;
-
-        std::default_random_engine generator;
-
-        auto delay = std::chrono::milliseconds(static_cast<unsigned int>(1000.0 / event_rate_()));
+        auto delay = std::chrono::milliseconds(static_cast<unsigned int>(1000.0 / freq_()));
 
         while (!context.terminated()) {
             std::this_thread::sleep_for(delay);

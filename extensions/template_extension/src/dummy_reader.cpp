@@ -1,4 +1,4 @@
-
+#include <chrono>
 #include "dummy_data.cpp"
 #include "iprocessor.hpp"
 
@@ -21,6 +21,8 @@ class DummyReader : public IProcessor {
             }
 
             LOG(UPDATE) << name() << ": received event " << data->value() << ".";
+            
+            event_port_->slot(0)->ReleaseData();
         }
     }
 };
