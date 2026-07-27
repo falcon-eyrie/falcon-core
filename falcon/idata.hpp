@@ -128,7 +128,7 @@ struct Parameters {};
  */
 class Data : public IData<Data, BaseType> {
    public:
-    Data() : hardware_timestamp_(0), serial_number_(0) {}
+    Data() : hardware_timestamp_(0), serial_number_(0) { set_ingestion_tsc(); }
     virtual ~Data() {}
 
     /**
