@@ -72,3 +72,4 @@ cmake_cache/
 extensions/*
 
 !extensions/template_extension
+!extensions/README.md
