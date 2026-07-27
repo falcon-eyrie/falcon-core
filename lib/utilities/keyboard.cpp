@@ -60,7 +60,7 @@ void nonblock(int state) {
     tcsetattr(STDIN_FILENO, TCSANOW, &ttystate);
 }
 
-void s_signal_handler(int signal_value) {
+void s_signal_handler(int _) {
     s_interrupted = 1;
 }
 

@@ -43,6 +43,7 @@ class ProcessingSequenceBarrier : SequenceBarrierInterface {
           dependent_sequences_(sequences),
           alerted_(false) {}
 
+    virtual ~ProcessingSequenceBarrier() = default;
     virtual int64_t WaitFor(const int64_t& sequence) {
         return wait_strategy_->WaitFor(dependent_sequences_, *cursor_, *this, sequence);
     }
